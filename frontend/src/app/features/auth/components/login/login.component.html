@@ -1,0 +1,281 @@
+<div class="w-full max-w-xl mx-auto">
+  <div class="rounded-lg bg-white p-6 shadow-sm md:p-8">
+    <div class="text-center">
+      <a
+        routerLink="/"
+        class="inline-flex items-center justify-center space-x-3"
+      >
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-700"
+        >
+          <span class="text-2xl font-bold text-white">P</span>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800">ParkinsonCheck</h1>
+      </a>
+      <h2 class="mt-4 text-xl text-gray-600">
+        Acesse sua conta para continuar
+      </h2>
+    </div>
+
+    <div class="mt-8 flex border-b border-gray-200">
+      <button
+        (click)="selectTab('paciente')"
+        [ngClass]="{
+          'border-violet-600 text-violet-600': activeTab === 'paciente',
+          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
+            activeTab !== 'paciente'
+        }"
+        class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
+      >
+        Paciente
+      </button>
+      <button
+        (click)="selectTab('medico')"
+        [ngClass]="{
+          'border-violet-600 text-violet-600': activeTab === 'medico',
+          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
+            activeTab !== 'medico'
+        }"
+        class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
+      >
+        Médico
+      </button>
+      <button
+        (click)="selectTab('admin')"
+        [ngClass]="{
+          'border-violet-600 text-violet-600': activeTab === 'admin',
+          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
+            activeTab !== 'admin'
+        }"
+        class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
+      >
+        Admin
+      </button>
+    </div>
+
+    <div class="mt-8">
+      <form *ngIf="activeTab === 'paciente'" class="space-y-6">
+        <div>
+          <label
+            for="email_paciente"
+            class="block text-sm font-medium text-gray-700"
+            >E-mail ou CPF</label
+          >
+          <div class="mt-1">
+            <input
+              id="email_paciente"
+              name="email_paciente"
+              type="text"
+              required
+              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+              placeholder="Digite seu e-mail ou CPF"
+            />
+          </div>
+        </div>
+        <div>
+          <label
+            for="password_paciente"
+            class="block text-sm font-medium text-gray-700"
+            >Senha</label
+          >
+          <div class="mt-1">
+            <input
+              id="password_paciente"
+              name="password_paciente"
+              type="password"
+              required
+              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+              placeholder="Digite sua senha"
+            />
+          </div>
+        </div>
+
+        <div class="w-full flex items-center justify-between my-6">
+          <div class="flex items-center mr-4">
+            <input
+              id="remember_paciente"
+              name="remember_paciente"
+              type="checkbox"
+              class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+            />
+            <label
+              for="remember_paciente"
+              class="ml-2 block text-sm text-gray-900"
+              >Manter conectado</label
+            >
+          </div>
+          <div class="text-sm">
+            <a
+              routerLink="/auth/password-recovery"
+              class="font-medium text-violet-600 hover:text-violet-500"
+              >Esqueceu sua senha?</a
+            >
+          </div>
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            class="flex w-full justify-center rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+          >
+            Entrar
+          </button>
+        </div>
+      </form>
+
+      <form *ngIf="activeTab === 'medico'" class="space-y-6">
+        <div>
+          <label
+            for="email_medico"
+            class="block text-sm font-medium text-gray-700"
+            >E-mail ou CRM</label
+          >
+          <div class="mt-1">
+            <input
+              id="email_medico"
+              name="email_medico"
+              type="text"
+              required
+              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+              placeholder="Digite seu e-mail ou CRM"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label
+            for="password_medico"
+            class="block text-sm font-medium text-gray-700"
+            >Senha</label
+          >
+          <div class="mt-1">
+            <input
+              id="password_medico"
+              name="password_medico"
+              type="password"
+              required
+              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+              placeholder="Digite sua senha"
+            />
+          </div>
+        </div>
+        <div class="w-full flex items-center justify-between my-6">
+          <div class="flex items-center mr-4">
+            <input
+              id="remember_medico"
+              name="remember_medico"
+              type="checkbox"
+              class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+            />
+            <label
+              for="remember_medico"
+              class="ml-2 block text-sm text-gray-900"
+              >Manter conectado</label
+            >
+          </div>
+          <div class="text-sm">
+            <a
+              routerLink="/auth/password-recovery"
+              class="font-medium text-violet-600 hover:text-violet-500"
+              >Esqueceu sua senha?</a
+            >
+          </div>
+        </div>
+        <div>
+          <button
+            type="submit"
+            class="flex w-full justify-center rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+          >
+            Entrar
+          </button>
+        </div>
+      </form>
+
+      <form *ngIf="activeTab === 'admin'" class="space-y-6">
+        <div>
+          <label
+            for="email_admin"
+            class="block text-sm font-medium text-gray-700"
+            >E-mail</label
+          >
+          <div class="mt-1">
+            <input
+              id="email_admin"
+              name="email_admin"
+              type="email"
+              required
+              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+              placeholder="Digite seu e-mail de administrador"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label
+            for="password_admin"
+            class="block text-sm font-medium text-gray-700"
+            >Senha</label
+          >
+          <div class="mt-1">
+            <input
+              id="password_admin"
+              name="password_admin"
+              type="password"
+              required
+              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+              placeholder="Digite sua senha"
+            />
+          </div>
+        </div>
+        <div class="w-full flex items-center justify-between my-6">
+          <div class="flex items-center mr-4">
+            <input
+              id="remember_admin"
+              name="remember_admin"
+              type="checkbox"
+              class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+            />
+            <label for="remember_admin" class="ml-2 block text-sm text-gray-900"
+              >Manter conectado</label
+            >
+          </div>
+          <div class="text-sm">
+            <a
+              routerLink="/auth/password-recovery"
+              class="font-medium text-violet-600 hover:text-violet-500"
+              >Esqueceu sua senha?</a
+            >
+          </div>
+        </div>
+        <div>
+          <button
+            type="submit"
+            class="flex w-full justify-center rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+          >
+            Entrar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="mt-6 text-center text-sm text-gray-600">
+    <div class="relative my-4">
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-gray-300"></div>
+      </div>
+      <div class="relative flex justify-center text-sm">
+        <span class="bg-gray-100 px-2 text-gray-500">ou</span>
+      </div>
+    </div>
+    <p>
+      Ainda não possui uma conta?
+      <a
+        routerLink="/auth/register"
+        class="font-medium text-violet-600 hover:text-violet-500"
+      >
+        Cadastre-se agora
+      </a>
+    </p>
+  </div>
+</div>

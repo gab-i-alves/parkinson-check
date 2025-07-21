@@ -1,0 +1,22 @@
+<main class="flex h-screen w-full bg-gray-100 font-sans">
+  <div
+    class="relative hidden flex-1 items-center justify-center bg-violet-700 md:flex"
+  >
+    <div
+      class="absolute inset-0 bg-gradient-to-t from-violet-800 via-violet-700 to-transparent opacity-75"
+    ></div>
+    <div class="relative z-10 text-center text-white p-8">
+      <h1 class="text-4xl font-bold tracking-tight">ParkinsonCheck</h1>
+      <p class="mt-4 max-w-md text-lg text-violet-200">
+        Uma ferramenta inovadora para monitoramento e acompanhamento da Doença
+        de Parkinson.
+      </p>
+    </div>
+  </div>
+
+  <div class="flex flex-1 flex-col overflow-y-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</main>
