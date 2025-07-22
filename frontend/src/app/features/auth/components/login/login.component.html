@@ -54,188 +54,81 @@
     </div>
 
     <div class="mt-8">
-      <form *ngIf="activeTab === 'paciente'" class="space-y-6">
-        <div>
-          <label
-            for="email_paciente"
-            class="block text-sm font-medium text-gray-700"
-            >E-mail ou CPF</label
-          >
-          <div class="mt-1">
-            <input
-              id="email_paciente"
-              name="email_paciente"
-              type="text"
-              required
-              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-              placeholder="Digite seu e-mail ou CPF"
-            />
-          </div>
-        </div>
-        <div>
-          <label
-            for="password_paciente"
-            class="block text-sm font-medium text-gray-700"
-            >Senha</label
-          >
-          <div class="mt-1">
-            <input
-              id="password_paciente"
-              name="password_paciente"
-              type="password"
-              required
-              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-              placeholder="Digite sua senha"
-            />
-          </div>
-        </div>
-
-        <div class="w-full flex items-center justify-between my-6">
-          <div class="flex items-center mr-4">
-            <input
-              id="remember_paciente"
-              name="remember_paciente"
-              type="checkbox"
-              class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
-            />
-            <label
-              for="remember_paciente"
-              class="ml-2 block text-sm text-gray-900"
-              >Manter conectado</label
-            >
-          </div>
-          <div class="text-sm">
-            <a
-              routerLink="/auth/password-recovery"
-              class="font-medium text-violet-600 hover:text-violet-500"
-              >Esqueceu sua senha?</a
-            >
-          </div>
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()"
+        class="space-y-6"
+        novalidate
+      >
+        <div *ngIf="apiError" class="rounded-md bg-red-50 p-4">
+          <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
         </div>
 
         <div>
-          <button
-            type="submit"
-            class="flex w-full justify-center rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
-          >
-            Entrar
-          </button>
-        </div>
-      </form>
-
-      <form *ngIf="activeTab === 'medico'" class="space-y-6">
-        <div>
-          <label
-            for="email_medico"
-            class="block text-sm font-medium text-gray-700"
-            >E-mail ou CRM</label
-          >
-          <div class="mt-1">
-            <input
-              id="email_medico"
-              name="email_medico"
-              type="text"
-              required
-              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-              placeholder="Digite seu e-mail ou CRM"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label
-            for="password_medico"
-            class="block text-sm font-medium text-gray-700"
-            >Senha</label
-          >
-          <div class="mt-1">
-            <input
-              id="password_medico"
-              name="password_medico"
-              type="password"
-              required
-              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-              placeholder="Digite sua senha"
-            />
-          </div>
-        </div>
-        <div class="w-full flex items-center justify-between my-6">
-          <div class="flex items-center mr-4">
-            <input
-              id="remember_medico"
-              name="remember_medico"
-              type="checkbox"
-              class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
-            />
-            <label
-              for="remember_medico"
-              class="ml-2 block text-sm text-gray-900"
-              >Manter conectado</label
-            >
-          </div>
-          <div class="text-sm">
-            <a
-              routerLink="/auth/password-recovery"
-              class="font-medium text-violet-600 hover:text-violet-500"
-              >Esqueceu sua senha?</a
-            >
-          </div>
-        </div>
-        <div>
-          <button
-            type="submit"
-            class="flex w-full justify-center rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
-          >
-            Entrar
-          </button>
-        </div>
-      </form>
-
-      <form *ngIf="activeTab === 'admin'" class="space-y-6">
-        <div>
-          <label
-            for="email_admin"
-            class="block text-sm font-medium text-gray-700"
+          <label for="email" class="block text-sm font-medium text-gray-700"
             >E-mail</label
           >
           <div class="mt-1">
             <input
-              id="email_admin"
-              name="email_admin"
+              id="email"
               type="email"
+              formControlName="email"
               required
+              [placeholder]="emailPlaceholder"
               class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-              placeholder="Digite seu e-mail de administrador"
             />
+            <div
+              *ngIf="
+                loginForm.get('email')?.invalid &&
+                loginForm.get('email')?.touched
+              "
+              class="mt-1 text-xs text-red-600"
+            >
+              <span *ngIf="loginForm.get('email')?.errors?.['required']"
+                >Campo obrigatório.</span
+              >
+              <span *ngIf="loginForm.get('email')?.errors?.['email']"
+                >Por favor, insira um e-mail válido.</span
+              >
+            </div>
           </div>
         </div>
-
         <div>
-          <label
-            for="password_admin"
-            class="block text-sm font-medium text-gray-700"
+          <label for="password" class="block text-sm font-medium text-gray-700"
             >Senha</label
           >
           <div class="mt-1">
             <input
-              id="password_admin"
-              name="password_admin"
+              id="password"
               type="password"
+              formControlName="password"
               required
               class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
               placeholder="Digite sua senha"
             />
+            <div
+              *ngIf="
+                loginForm.get('password')?.invalid &&
+                loginForm.get('password')?.touched
+              "
+              class="mt-1 text-xs text-red-600"
+            >
+              <span *ngIf="loginForm.get('password')?.errors?.['required']"
+                >Campo obrigatório.</span
+              >
+            </div>
           </div>
         </div>
+
         <div class="w-full flex items-center justify-between my-6">
           <div class="flex items-center mr-4">
             <input
-              id="remember_admin"
-              name="remember_admin"
+              id="remember"
               type="checkbox"
+              formControlName="remember"
               class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
             />
-            <label for="remember_admin" class="ml-2 block text-sm text-gray-900"
+            <label for="remember" class="ml-2 block text-sm text-gray-900"
               >Manter conectado</label
             >
           </div>
@@ -247,12 +140,35 @@
             >
           </div>
         </div>
+
         <div>
           <button
             type="submit"
+            [disabled]="loginForm.invalid || isLoading"
             class="flex w-full justify-center rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
           >
-            Entrar
+            <svg
+              *ngIf="isLoading"
+              class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <span *ngIf="!isLoading">Entrar</span>
           </button>
         </div>
       </form>
