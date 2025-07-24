@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.services';
-import { UserRole } from '../../../../core/models/user.model';
+import { PatientRegisterFormComponent } from '../patient-register-form/patient-register-form.component';
+import { DoctorRegisterFormComponent } from '../doctor-register-form/doctor-register-form.component';
 import { matchPasswordValidator } from '../../../../core/validators/custom-validators';
 import {
   FormBuilder,
@@ -16,7 +17,13 @@ type RegisterRole = 'paciente' | 'medico'; // Admin não tem opção de cadastro
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ReactiveFormsModule,
+    PatientRegisterFormComponent,
+    DoctorRegisterFormComponent,
+  ],
   templateUrl: './register.component.html',
 })
 export class RegisterComponent implements OnInit {
