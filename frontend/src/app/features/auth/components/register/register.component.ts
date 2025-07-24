@@ -5,6 +5,14 @@ import { AuthService } from '../../services/auth.services';
 import { PatientRegisterFormComponent } from '../patient-register-form/patient-register-form.component';
 import { DoctorRegisterFormComponent } from '../doctor-register-form/doctor-register-form.component';
 import { matchPasswordValidator } from '../../../../core/validators/custom-validators';
+import { CepService } from '../../../../core/services/cep.services';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import {
   FormBuilder,
   FormGroup,
@@ -37,15 +45,28 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cepService: CepService
   ) {}
 
   ngOnInit(): void {
     this.patientRegisterForm = this.formBuilder.group(
       {
+        // Dados pessoais
         fullName: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required]], // TODO: Adicionar validador de CPF
         birthDate: ['', [Validators.required]],
+
+        // Endereço
+        cep: ['', [Validators.required]],
+        street: ['', [Validators.required]],
+        number: ['', [Validators.required]],
+        complement: [''], // Opcional
+        neighborhood: ['', [Validators.required]],
+        city: ['', [Validators.required]],
+        state: ['', [Validators.required]],
+
+        // Segurança
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required]],
@@ -57,12 +78,25 @@ export class RegisterComponent implements OnInit {
 
     this.doctorRegisterForm = this.formBuilder.group(
       {
+        // Dados profissionais
         fullName: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required]],
         birthDate: ['', [Validators.required]],
         crm: ['', [Validators.required]],
         specialty: ['', [Validators.required]],
+
+        // Endereço
+        cep: ['', [Validators.required]],
+        street: ['', [Validators.required]],
+        number: ['', [Validators.required]],
+        complement: [''], // Opcional
+        neighborhood: ['', [Validators.required]],
+        city: ['', [Validators.required]],
+        state: ['', [Validators.required]],
+
         // Seção Documentação (será tratada separadamente)
+
+        // Segurança
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required]],
@@ -71,6 +105,9 @@ export class RegisterComponent implements OnInit {
         validators: matchPasswordValidator('password', 'confirmPassword'), // Aplicar ao grupo
       }
     );
+
+    this.setupCepListener(this.patientRegisterForm);
+    this.setupCepListener(this.doctorRegisterForm);
   }
 
   selectTab(role: RegisterRole): void {
@@ -155,5 +192,28 @@ export class RegisterComponent implements OnInit {
         this.doctorRegisterForm.enable();
       },
     });
+  }
+
+  private setupCepListener(form: FormGroup): void {
+    // DECISÃO DE ARQUITETURA: Abordagem reativa para ouvir o campo CEP.
+    form
+      .get('cep')
+      ?.valueChanges.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        filter((cep: string) => cep?.length === 8),
+        switchMap((cep: string) => this.cepService.search(cep)),
+        tap((address) => {
+          if (address) {
+            form.patchValue({
+              street: address.logradouro,
+              neighborhood: address.bairro,
+              city: address.localidade,
+              state: address.uf,
+            });
+          }
+        })
+      )
+      .subscribe();
   }
 }

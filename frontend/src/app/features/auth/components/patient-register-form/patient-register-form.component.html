@@ -91,9 +91,98 @@
   </section>
 
   <section>
+    <h3 class="text-lg font-semibold text-gray-800">Endereço</h3>
+    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+      <div class="sm:col-span-2">
+        <label for="cep" class="block text-sm font-medium text-gray-700"
+          >CEP*</label
+        >
+        <input
+          type="text"
+          id="cep"
+          formControlName="cep"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="00000-000"
+        />
+      </div>
+
+      <div class="sm:col-span-4">
+        <label for="street" class="block text-sm font-medium text-gray-700"
+          >Rua*</label
+        >
+        <input
+          type="text"
+          id="street"
+          formControlName="street"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label for="number" class="block text-sm font-medium text-gray-700"
+          >Número*</label
+        >
+        <input
+          type="text"
+          id="number"
+          formControlName="number"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+      <div class="sm:col-span-4">
+        <label for="complement" class="block text-sm font-medium text-gray-700"
+          >Complemento</label
+        >
+        <input
+          type="text"
+          id="complement"
+          formControlName="complement"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label
+          for="neighborhood"
+          class="block text-sm font-medium text-gray-700"
+          >Bairro*</label
+        >
+        <input
+          type="text"
+          id="neighborhood"
+          formControlName="neighborhood"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+      <div class="sm:col-span-2">
+        <label for="city" class="block text-sm font-medium text-gray-700"
+          >Cidade*</label
+        >
+        <input
+          type="text"
+          id="city"
+          formControlName="city"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+      <div class="sm:col-span-2">
+        <label for="state" class="block text-sm font-medium text-gray-700"
+          >Estado*</label
+        >
+        <input
+          type="text"
+          id="state"
+          formControlName="state"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section>
     <h3 class="text-lg font-semibold text-gray-800">Segurança</h3>
     <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-      <div>
+      <div class="sm:col-span-2">
         <label for="email" class="block text-sm font-medium text-gray-700"
           >E-mail*</label
         >
