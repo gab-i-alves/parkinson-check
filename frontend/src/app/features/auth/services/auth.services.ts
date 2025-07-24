@@ -40,6 +40,18 @@ export class AuthService {
   }
 
   /**
+   * Envia os dados do novo médico para o endpoint de registro da API.
+   * @param doctorData Objeto com os dados do formulário de registro do médico.
+   * @returns Observable com a resposta do backend.
+   */
+  registerDoctor(doctorData: any): Observable<any> {
+    // DECISÃO DE ARQUITETURA: Embora os dados de formulário do médico possam incluir arquivos,
+    // esta chamada inicial enviará apenas os dados textuais (JSON). O upload de arquivos
+    // irá ser tratado em uma requisição separada (multipart/form-data) após o registro inicial.
+    return this.http.post<any>('/api/auth/register/doctor', doctorData);
+  }
+
+  /**
    * Salva o token de autenticação no localStorage
    * @param token O token JWT recebido da API
    */
