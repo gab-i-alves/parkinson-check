@@ -64,6 +64,9 @@
           <span *ngIf="doctorForm.get('cpf')?.errors?.['required']"
             >Campo obrigatório.</span
           >
+          <span *ngIf="doctorForm.get('cpf')?.errors?.['cpfInvalid']"
+            >O CPF informado é inválido.</span
+          >
         </div>
       </div>
       <div>
@@ -342,10 +345,10 @@
           <span *ngIf="doctorForm.get('password')?.errors?.['minlength']"
             >A senha deve ter pelo menos 8 caracteres.</span
           >
+          <span *ngIf="doctorForm.get('password')?.errors?.['strong']"
+            >A senha deve conter letras maiúsculas, minúsculas e números.</span
+          >
         </div>
-        <p class="mt-2 text-xs text-gray-500">
-          Mínimo de 8 caracteres, com uma letra maiúscula e um número.
-        </p>
       </div>
       <div>
         <label

@@ -4,8 +4,12 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.services';
 import { PatientRegisterFormComponent } from '../patient-register-form/patient-register-form.component';
 import { DoctorRegisterFormComponent } from '../doctor-register-form/doctor-register-form.component';
-import { matchPasswordValidator } from '../../../../core/validators/custom-validators';
 import { CepService } from '../../../../core/services/cep.services';
+import {
+  matchPasswordValidator,
+  cpfValidator,
+  strongPasswordValidator,
+} from '../../../../core/validators/custom-validators';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -54,7 +58,7 @@ export class RegisterComponent implements OnInit {
       {
         // Dados pessoais
         fullName: ['', [Validators.required, Validators.minLength(3)]],
-        cpf: ['', [Validators.required]], // TODO: Adicionar validador de CPF
+        cpf: ['', [Validators.required, cpfValidator()]],
         birthDate: ['', [Validators.required]],
 
         // Endereço
@@ -68,7 +72,14 @@ export class RegisterComponent implements OnInit {
 
         // Segurança
         email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(8)]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            strongPasswordValidator(),
+          ],
+        ],
         confirmPassword: ['', [Validators.required]],
       },
       {
@@ -80,7 +91,7 @@ export class RegisterComponent implements OnInit {
       {
         // Dados profissionais
         fullName: ['', [Validators.required, Validators.minLength(3)]],
-        cpf: ['', [Validators.required]],
+        cpf: ['', [Validators.required, cpfValidator()]],
         birthDate: ['', [Validators.required]],
         crm: ['', [Validators.required]],
         specialty: ['', [Validators.required]],
@@ -98,7 +109,14 @@ export class RegisterComponent implements OnInit {
 
         // Segurança
         email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(8)]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            strongPasswordValidator(),
+          ],
+        ],
         confirmPassword: ['', [Validators.required]],
       },
       {
