@@ -4,8 +4,7 @@ from sqlalchemy.orm import Session
 
 from ..settings import Settings
 
-
-engine = create_engine(Settings().DATABASE_URI)
+engine = create_engine(Settings().DATABASE_URL)
 
 @contextmanager
 def get_session():
