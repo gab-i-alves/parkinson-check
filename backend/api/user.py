@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ..core.services import user_service
+from core.services import user_service
 router = APIRouter(prefix="/user", tags=["User"])
 
 @router.post("/")
