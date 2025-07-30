@@ -31,26 +31,30 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento local:
     ```bash
     cp .env.example .env
     ```
+    Se o comando cp não funcionar, utilize:
+    ```bash
+    copy .env.example .env
+    ```
 
-3.  **Inicie os serviços com Docker Compose:**
+4.  **Inicie os serviços com Docker Compose:**
     Este comando irá construir as imagens e iniciar os contêineres do back-end e do banco de dados.
     ```bash
     docker-compose up --build -d
     ```
 
-4.  **Instale as dependências do Front-end:**
+5.  **Instale as dependências do Front-end:**
     Em um **novo terminal**, navegue até a pasta do front-end e execute o `npm install`.
     ```bash
     cd frontend
     npm install
     ```
 
-5.  **Inicie a aplicação Front-end:**
+6.  **Inicie a aplicação Front-end:**
     Ainda no terminal da pasta `frontend`, execute:
     ```bash
     ng serve
     ```
 
-6.  **Acesse as aplicações:**
+7.  **Acesse as aplicações:**
     * **Front-end (Angular):** [http://localhost:4200](http://localhost:4200)
     * **Back-end (FastAPI Docs):** [http://localhost:8000/docs](http://localhost:8000/docs)
