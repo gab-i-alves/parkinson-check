@@ -1,0 +1,405 @@
+<form
+  [formGroup]="doctorForm"
+  (ngSubmit)="onSubmit()"
+  class="mt-8 space-y-8"
+  novalidate
+>
+  <div *ngIf="apiError" class="rounded-md bg-red-50 p-4">
+    <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
+  </div>
+
+  <section>
+    <h3 class="text-lg font-semibold text-gray-800">Dados Pessoais</h3>
+    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <label
+          for="fullName_medico"
+          class="block text-sm font-medium text-gray-700"
+          >Nome Completo*</label
+        >
+        <input
+          id="fullName_medico"
+          name="fullName_medico"
+          formControlName="fullName"
+          type="text"
+          required
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="Digite seu nome completo"
+        />
+        <div
+          *ngIf="
+            doctorForm.get('fullName')?.invalid &&
+            doctorForm.get('fullName')?.touched
+          "
+          class="mt-1 text-xs text-red-600"
+        >
+          <span *ngIf="doctorForm.get('fullName')?.errors?.['required']"
+            >Campo obrigatório.</span
+          >
+          <span *ngIf="doctorForm.get('fullName')?.errors?.['minlength']"
+            >O nome deve ter pelo menos 3 caracteres.</span
+          >
+        </div>
+      </div>
+      <div>
+        <label for="cpf_medico" class="block text-sm font-medium text-gray-700"
+          >CPF*</label
+        >
+        <input
+          id="cpf_medico"
+          name="cpf_medico"
+          formControlName="cpf"
+          mask="000.000.000-00"
+          type="text"
+          required
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="000.000.000-00"
+        />
+        <div
+          *ngIf="
+            doctorForm.get('cpf')?.invalid && doctorForm.get('cpf')?.touched
+          "
+          class="mt-1 text-xs text-red-600"
+        >
+          <span *ngIf="doctorForm.get('cpf')?.errors?.['required']"
+            >Campo obrigatório.</span
+          >
+          <span *ngIf="doctorForm.get('cpf')?.errors?.['cpfInvalid']"
+            >O CPF informado é inválido.</span
+          >
+        </div>
+      </div>
+      <div>
+        <label
+          for="birthDate_medico"
+          class="block text-sm font-medium text-gray-700"
+          >Data de Nascimento*</label
+        >
+        <input
+          id="birthDate_medico"
+          name="birthDate_medico"
+          formControlName="birthDate"
+          type="date"
+          required
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+        <div
+          *ngIf="
+            doctorForm.get('birthDate')?.invalid &&
+            doctorForm.get('birthDate')?.touched
+          "
+          class="mt-1 text-xs text-red-600"
+        >
+          <span *ngIf="doctorForm.get('birthDate')?.errors?.['required']"
+            >Campo obrigatório.</span
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="text-lg font-semibold text-gray-800">Endereço</h3>
+    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+      <div class="sm:col-span-2">
+        <label for="cep" class="block text-sm font-medium text-gray-700"
+          >CEP*</label
+        >
+        <input
+          type="text"
+          id="cep"
+          formControlName="cep"
+          mask="00000-000"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="00000-000"
+        />
+      </div>
+
+      <div class="sm:col-span-4">
+        <label for="street" class="block text-sm font-medium text-gray-700"
+          >Rua*</label
+        >
+        <input
+          type="text"
+          id="street"
+          formControlName="street"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label for="number" class="block text-sm font-medium text-gray-700"
+          >Número*</label
+        >
+        <input
+          type="text"
+          id="number"
+          formControlName="number"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+      <div class="sm:col-span-4">
+        <label for="complement" class="block text-sm font-medium text-gray-700"
+          >Complemento</label
+        >
+        <input
+          type="text"
+          id="complement"
+          formControlName="complement"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label
+          for="neighborhood"
+          class="block text-sm font-medium text-gray-700"
+          >Bairro*</label
+        >
+        <input
+          type="text"
+          id="neighborhood"
+          formControlName="neighborhood"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+      <div class="sm:col-span-2">
+        <label for="city" class="block text-sm font-medium text-gray-700"
+          >Cidade*</label
+        >
+        <input
+          type="text"
+          id="city"
+          formControlName="city"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+      <div class="sm:col-span-2">
+        <label for="state" class="block text-sm font-medium text-gray-700"
+          >Estado*</label
+        >
+        <input
+          type="text"
+          id="state"
+          formControlName="state"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="text-lg font-semibold text-gray-800">Dados Profissionais</h3>
+    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+      <div>
+        <label for="crm" class="block text-sm font-medium text-gray-700"
+          >CRM*</label
+        >
+        <input
+          id="crm"
+          name="crm"
+          type="text"
+          required
+          formControlName="crm"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="00000-UF"
+        />
+        <div
+          *ngIf="
+            doctorForm.get('crm')?.invalid && doctorForm.get('crm')?.touched
+          "
+          class="mt-1 text-xs text-red-600"
+        ></div>
+      </div>
+      <div>
+        <label for="specialty" class="block text-sm font-medium text-gray-700"
+          >Especialidade*</label
+        >
+        <select
+          id="specialty"
+          formControlName="specialty"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        >
+          <option>Neurologia</option>
+          <option>Geriatria</option>
+          <option>Outra</option>
+        </select>
+        <div
+          *ngIf="
+            doctorForm.get('specialty')?.invalid &&
+            doctorForm.get('specialty')?.touched
+          "
+          class="mt-1 text-xs text-red-600"
+        ></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="text-lg font-semibold text-gray-800">Documentação</h3>
+    <div class="mt-4 rounded-md border border-yellow-300 bg-yellow-50 p-4">
+      <p class="text-sm text-yellow-800">
+        <strong>Importante:</strong> Seu cadastro passará por verificação. Você
+        receberá um e-mail quando sua conta for aprovada.
+      </p>
+    </div>
+    <div class="mt-6">
+      <label for="file-upload" class="block text-sm font-medium text-gray-700"
+        >Carteira do CRM (frente e verso)*</label
+      >
+      <div
+        class="mt-2 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6"
+      >
+        <div class="space-y-1 text-center">
+          <svg
+            class="mx-auto h-12 w-12 text-gray-400"
+            stroke="currentColor"
+            fill="none"
+            viewBox="0 0 48 48"
+            aria-hidden="true"
+          >
+            <path
+              d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <div class="flex text-sm text-gray-600">
+            <label
+              for="file-upload"
+              class="relative cursor-pointer rounded-md bg-white font-medium text-violet-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-violet-500 focus-within:ring-offset-2 hover:text-violet-500"
+            >
+              <span>Carregar um arquivo</span>
+              <input
+                id="file-upload"
+                name="file-upload"
+                type="file"
+                class="sr-only"
+              />
+            </label>
+            <p class="pl-1">ou arraste e solte</p>
+          </div>
+          <p class="text-xs text-gray-500">PNG, JPG, PDF até 5MB</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="text-lg font-semibold text-gray-800">Segurança</h3>
+    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <label
+          for="email_medico"
+          class="block text-sm font-medium text-gray-700"
+          >E-mail*</label
+        >
+        <input
+          id="email_medico"
+          name="email_medico"
+          type="email"
+          required
+          formControlName="email"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="Digite seu e-mail"
+        />
+        <div
+          *ngIf="
+            doctorForm.get('email')?.invalid && doctorForm.get('email')?.touched
+          "
+          class="mt-1 text-xs text-red-600"
+        ></div>
+        <span *ngIf="doctorForm.get('email')?.errors?.['required']"
+          >Campo obrigatório.</span
+        >
+        <span *ngIf="doctorForm.get('email')?.errors?.['email']"
+          >Por favor, insira um e-mail válido.</span
+        >
+      </div>
+      <div>
+        <label
+          for="password_medico"
+          class="block text-sm font-medium text-gray-700"
+          >Senha*</label
+        >
+        <input
+          id="password_medico"
+          name="password_medico"
+          formControlName="password"
+          type="password"
+          required
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="Digite sua senha"
+        />
+        <div
+          *ngIf="
+            doctorForm.get('password')?.invalid &&
+            doctorForm.get('password')?.touched
+          "
+          class="mt-1 text-xs text-red-600"
+        >
+          <span *ngIf="doctorForm.get('password')?.errors?.['required']"
+            >Campo obrigatório.</span
+          >
+          <span *ngIf="doctorForm.get('password')?.errors?.['minlength']"
+            >A senha deve ter pelo menos 8 caracteres.</span
+          >
+          <span *ngIf="doctorForm.get('password')?.errors?.['strong']"
+            >A senha deve conter letras maiúsculas, minúsculas e números.</span
+          >
+        </div>
+      </div>
+      <div>
+        <label
+          for="confirmPassword"
+          class="block text-sm font-medium text-gray-700"
+          >Confirme sua Senha*</label
+        >
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="Digite sua senha novamente"
+        />
+        <div
+          *ngIf="
+            doctorForm.get('confirmPassword')?.invalid &&
+            doctorForm.get('confirmPassword')?.touched
+          "
+          class="mt-1 text-xs text-red-600"
+        >
+          <span *ngIf="doctorForm.get('confirmPassword')?.errors?.['required']"
+            >Campo obrigatório.</span
+          >
+          <span *ngIf="doctorForm.get('confirmPassword')?.errors?.['mismatch']"
+            >As senhas não coincidem.</span
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div
+    class="flex items-center justify-end space-x-4 border-t border-gray-200 pt-6"
+  >
+    <a
+      routerLink="/auth/login"
+      class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+    >
+      Já tenho conta
+    </a>
+    <button
+      type="submit"
+      [disabled]="doctorForm.invalid || isLoading"
+      class="rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+    >
+      <svg
+        *ngIf="isLoading"
+        class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+      ></svg>
+      <span *ngIf="!isLoading">Criar Conta de Médico</span>
+    </button>
+  </div>
+</form>
