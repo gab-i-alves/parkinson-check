@@ -14,6 +14,7 @@ services:
     image: postgres:13 
     volumes:
       - postgres_data:/var/lib/postgresql/data/ 
+      - ./scripts/users.sql:/docker-entrypoint-initdb.d/users.sql
     ports:
       - "5432:5432"
     environment:
