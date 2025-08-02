@@ -13,6 +13,14 @@ class User:
     cpf: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
+    cep: Mapped[str] = mapped_column(nullable=False)
+    street: Mapped[str] = mapped_column(nullable=False)
+    number: Mapped[int] = mapped_column(nullable=False)
+    complement: Mapped[str] = mapped_column()
+    neighborhood: Mapped[str] = mapped_column(nullable=False)
+    city: Mapped[str] = mapped_column(nullable=False)
+    state: Mapped[str] = mapped_column(nullable=False)
+
     type: Mapped[UserType] = mapped_column(PG_ENUM(UserType, name='user_type_enum', create_type=True)) 
 
     __mapper_args__ = {
@@ -32,12 +40,12 @@ class Doctor(User):
         "polymorphic_identity": "doctor",
     }
 
-@table_registry.mapped_as_dataclass
-class Patient(User):
-    __tablename__ = "patient"
-    id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
-    birthdate: Mapped[date] = mapped_column(nullable=False)
+# @table_registry.mapped_as_dataclass
+# class Patient(User):
+#     __tablename__ = "patient"
+#     id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+#     birthdate: Mapped[date] = mapped_column(nullable=False)
 
-    __mapper_args__ = {
-        "polymorphic_identity": "patient",
-    }
+#     __mapper_args__ = {
+#         "polymorphic_identity": "patient",
+#     }
