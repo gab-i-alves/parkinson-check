@@ -1,18 +1,18 @@
 from http import HTTPStatus
 from fastapi import HTTPException
-from api.schemas.users import PatientSchema
+from api.schemas.users import UserSchema
 from sqlalchemy.orm import Session
 from core.security.security import get_password_hash
-from core.models.users import Patient
+from core.models.users import User
 from ..enums.user_enum import UserType
 from . import user_service
 
-def create_patient(patient: PatientSchema, session: Session):
+def create_patient(patient: UserSchema, session: Session):
     
     if user_service.get_user_by_email(patient.email) is not None:
         raise HTTPException(HTTPStatus.CONFLICT, detail="Usuário já existente")
     
-    db_patient = Patient(
+    db_patient = User(
         name=patient.fullName,
         cpf=patient.cpf,
         email=patient.email,
