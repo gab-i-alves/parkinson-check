@@ -4,3 +4,4 @@ pydantic_settings
 sqlalchemy
 psycopg2-binary
 pyjwt
+pwdlib[argon2]

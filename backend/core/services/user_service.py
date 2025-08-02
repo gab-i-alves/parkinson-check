@@ -1,14 +1,6 @@
+from core.models.users import User
+from infra.db.connection import get_session
 
-def create_user():
-    ...
-    
-def update_user():
-    ...
-    
-def get_user_by_id():
-    ...
-    
-def delete_user():
-    ...
-    
-    
+def get_user_by_email(email: str):
+    with get_session() as session:
+        return session.query(User).filter(User.email == email).first()

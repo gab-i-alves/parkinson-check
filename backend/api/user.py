@@ -1,10 +1,6 @@
 from fastapi import APIRouter
 from core.services import user_service
 router = APIRouter(prefix="/user", tags=["User"])
-
-@router.post("/")
-def create_user():
-    return user_service.create_user()
     
 @router.get("/{id}")
 def get_user_by_id(id: int):
