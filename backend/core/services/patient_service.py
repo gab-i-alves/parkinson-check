@@ -13,19 +13,13 @@ def create_patient(patient: PatientSchema, session: Session):
         raise HTTPException(HTTPStatus.CONFLICT, detail="Usuário já existente")
     
     db_patient = Patient(
-        name=patient.fullName,
+        name=patient.name,
         cpf=patient.cpf,
         email=patient.email,
         hashed_password=get_password_hash(patient.password),
-        birthdate=patient.birthDate,
-        type=UserType.PATIENT,
-        cep=patient.cep,
-        street=patient.street,
-        number=patient.number,
-        complement=patient.complement,
-        neighborhood=patient.neighborhood,
-        city=patient.city,
-        state=patient.state
+        birthdate=patient.birthdate,
+        type=UserType.PATIENT
+        
     )
     
     session.add(db_patient)
