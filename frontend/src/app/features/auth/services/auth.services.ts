@@ -21,7 +21,7 @@ export class AuthService {
       role: role,
     };
 
-    return this.http.post<any>('/api/auth/login', payload).pipe(
+    return this.http.post<any>('/api/login', payload).pipe(
       tap((response) => {
         if (response && response.token) {
           this.setToken(response.token);
@@ -36,7 +36,7 @@ export class AuthService {
    * @returns Observable com a resposta do backend
    */
   registerPatient(patientData: any): Observable<any> {
-    return this.http.post<any>('/api/auth/register/patient', patientData);
+    return this.http.post<any>('/api/register/patient', patientData);
   }
 
   /**
@@ -48,7 +48,7 @@ export class AuthService {
     // DECISÃO DE ARQUITETURA: Embora os dados de formulário do médico possam incluir arquivos,
     // esta chamada inicial enviará apenas os dados textuais (JSON). O upload de arquivos
     // irá ser tratado em uma requisição separada (multipart/form-data) após o registro inicial.
-    return this.http.post<any>('/api/auth/register/doctor', doctorData);
+    return this.http.post<any>('/api/register/doctor', doctorData);
   }
 
   /**
