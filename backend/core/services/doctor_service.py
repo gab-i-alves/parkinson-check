@@ -19,7 +19,7 @@ def create_doctor(doctor: DoctorSchema, session: Session):
         name=doctor.name,
         cpf=doctor.cpf,
         email=doctor.email,
-        type=UserType.DOCTOR,
+        user_type=UserType.DOCTOR,
         crm=doctor.crm,
         expertise_area=doctor.expertise_area,
         status_approval=True,

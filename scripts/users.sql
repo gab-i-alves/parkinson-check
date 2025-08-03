@@ -3,8 +3,11 @@ CREATE TABLE IF NOT EXISTS "user_type" (
   "description" varchar UNIQUE NOT NULL
 );
 
+INSERT INTO "user_type" (id, description) VALUES (1, 'PATIENT') ON CONFLICT (id) DO NOTHING;
+INSERT INTO "user_type" (id, description) VALUES (2, 'DOCTOR') ON CONFLICT (id) DO NOTHING;
+
 CREATE TABLE IF NOT EXISTS "user" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "type" integer NOT NULL,
   "name" varchar(50) NOT NULL,
   "email" varchar(255) UNIQUE NOT NULL,
@@ -22,6 +25,10 @@ CREATE TABLE IF NOT EXISTS "user" (
   "is_active" boolean NOT NULL DEFAULT TRUE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "patient" (
+  "id" integer PRIMARY KEY
 );
 
 CREATE TABLE IF NOT EXISTS "doctor" (
@@ -44,6 +51,7 @@ CREATE TABLE IF NOT EXISTS "doctor" (
 
 ALTER TABLE "user" ADD FOREIGN KEY ("type") REFERENCES "user_type" ("id");
 
+ALTER TABLE "patient" ADD FOREIGN KEY ("id") REFERENCES "user" ("id");
 ALTER TABLE "doctor" ADD FOREIGN KEY ("id") REFERENCES "user" ("id");
 
 -- ALTER TABLE "user" ADD FOREIGN KEY ("adress") REFERENCES "adress" ("id");

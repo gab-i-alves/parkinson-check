@@ -1,16 +1,29 @@
 from datetime import date
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict 
 
 class UserSchema(BaseModel):
-    name: str
+    
+    model_config = ConfigDict(
+        populate_by_name=True, # Permite o alias
+    )
+
+    fullName: str = Field(..., alias='name')
     cpf: str
     email: str
     password: str
+
+    cep: str
+    street: str
+    number: str
+    complement: str | None = None
+    neighborhood: str
+    city: str
+    state: str
     
 class DoctorSchema(UserSchema):
     crm: str
-    expertise_area: str
+    specialty: str = Field(..., alias='expertise_area')
     
 class PatientSchema(UserSchema):
-    birthdate: date
+    birthDate: date = Field(..., alias='birthdate')
     
