@@ -14,14 +14,7 @@ CREATE TABLE IF NOT EXISTS "user" (
   "hashed_password" varchar(255) NOT NULL,
   "cpf" char(11) UNIQUE NOT NULL,
   "birthdate" TIMESTAMP NOT NULL,
-  -- "adress" integer NOT NULL,
-  "cep" char(8) NOT NULL,
-  "street" varchar(100) NOT NULL,
-  "number" integer NOT NULL,
-  "complement" varchar(50),
-  "neighborhood" varchar(50) NOT NULL,
-  "city" varchar(100) NOT NULL,
-  "state" varchar(20) NOT NULL,
+  "adress_id" integer NOT NULL,
   "is_active" boolean NOT NULL DEFAULT TRUE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -38,23 +31,23 @@ CREATE TABLE IF NOT EXISTS "doctor" (
   "status_approval" boolean
 );
 
--- CREATE TABLE IF NOT EXISTS "adress" (
---   "id" integer PRIMARY KEY,
---   "cep" char(8),
---   "street" varchar(100),
---   "number" varchar(6),
---   "complement" varchar(50),
---   "neighborhood" varchar(50),
---   "city" varchar(100),
---   "state" varchar(20)
--- );
+CREATE TABLE IF NOT EXISTS "adress" (
+  "id" SERIAL PRIMARY KEY,
+  "cep" char(8),
+  "street" varchar(100),
+  "number" varchar(10),
+  "complement" varchar(50),
+  "neighborhood" varchar(50),
+  "city" varchar(100),
+  "state" varchar(20)
+);
 
 ALTER TABLE "user" ADD FOREIGN KEY ("type") REFERENCES "user_type" ("id");
 
 ALTER TABLE "patient" ADD FOREIGN KEY ("id") REFERENCES "user" ("id");
 ALTER TABLE "doctor" ADD FOREIGN KEY ("id") REFERENCES "user" ("id");
 
--- ALTER TABLE "user" ADD FOREIGN KEY ("adress") REFERENCES "adress" ("id");
+ALTER TABLE "user" ADD FOREIGN KEY ("adress_id") REFERENCES "adress" ("id");
 
 
 

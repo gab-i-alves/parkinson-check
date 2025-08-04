@@ -15,7 +15,17 @@ class User:
     birthdate: Mapped[date] = mapped_column(Date, nullable=False)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     user_type: Mapped[UserType] = mapped_column("type", Integer, nullable=False)
+    adress_id: Mapped[int] = mapped_column(ForeignKey("adress.id"))
 
+    __mapper_args__ = {
+        "polymorphic_identity": "user",
+        "polymorphic_on": user_type,
+    }
+
+@table_registry.mapped_as_dataclass
+class Adress:
+    __tablename__ = "adress"
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, autoincrement=True)
     cep: Mapped[str] = mapped_column(String(8), nullable=False)
     street: Mapped[str] = mapped_column(String(100), nullable=False)
     number: Mapped[str] = mapped_column(String(10), nullable=False) # String para aceitar "s/n"
@@ -24,10 +34,6 @@ class User:
     city: Mapped[str] = mapped_column(String(100), nullable=False)
     state: Mapped[str] = mapped_column(String(20), nullable=False)
 
-    __mapper_args__ = {
-        "polymorphic_identity": "user",
-        "polymorphic_on": user_type,
-    }
 
 @table_registry.mapped_as_dataclass
 class Doctor(User):
