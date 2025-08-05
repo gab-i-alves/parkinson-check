@@ -44,7 +44,7 @@ class Doctor(User):
     status_approval: Mapped[bool] = mapped_column(nullable=False)
 
     __mapper_args__ = {
-        "polymorphic_identity": UserType.PATIENT,
+        "polymorphic_identity": UserType.DOCTOR,
     }
 
 @table_registry.mapped_as_dataclass
@@ -53,5 +53,5 @@ class Patient(User):
     id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True, init=False)
 
     __mapper_args__ = {
-        "polymorphic_identity": UserType.DOCTOR,
+        "polymorphic_identity": UserType.PATIENT,
     }

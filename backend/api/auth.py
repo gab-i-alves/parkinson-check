@@ -7,5 +7,5 @@ from core.services import auth_service
 router = APIRouter(prefix='/auth', tags=['Auth'])
 
 @router.post('/login', response_model=TokenResponse)
-def login(form: LoginFormRequest = Depends()):
+def login(form: LoginFormRequest):
     return auth_service.login(form)

@@ -17,14 +17,14 @@ export class AuthService {
    */
   login(credentials: any, role: UserRole): Observable<any> {
     const payload = {
-      ...credentials,
-      role: role,
+      email: credentials.email,
+      password: credentials.password,
     };
 
-    return this.http.post<any>('/api/login', payload).pipe(
+    return this.http.post<any>('/api/auth/login', payload).pipe(
       tap((response) => {
-        if (response && response.token) {
-          this.setToken(response.token);
+        if (response && response.access_token) {
+          this.setToken(response.access_token);
         }
       })
     );

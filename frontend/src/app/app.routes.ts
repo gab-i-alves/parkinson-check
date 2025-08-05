@@ -12,7 +12,14 @@ export const routes: Routes = [
     redirectTo: '/auth/login',
     pathMatch: 'full',
   },
-
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./core/components/not-found/not-found.component').then(
+        (c) => c.NotFoundComponent
+      ),
+    // No futuro, substitua 'not-found.component' pelo seu componente de dashboard
+  },
   {
     path: '**',
     loadComponent: () =>
