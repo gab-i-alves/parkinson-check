@@ -1,5 +1,5 @@
 from datetime import date
-from pydantic import BaseModel, Field, ConfigDict 
+from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 class UserSchema(BaseModel):
     
@@ -9,7 +9,7 @@ class UserSchema(BaseModel):
 
     fullName: str = Field(..., alias='name')
     cpf: str
-    email: str
+    email: EmailStr
     password: str
 
     cep: str

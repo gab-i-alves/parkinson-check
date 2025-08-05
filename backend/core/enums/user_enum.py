@@ -1,5 +1,5 @@
-from enum import IntEnum
+from enum import Enum
 
-class UserType(IntEnum):
+class UserType(Enum):
     PATIENT = 1
     DOCTOR = 2
