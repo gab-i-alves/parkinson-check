@@ -16,12 +16,6 @@ app.add_middleware(
 
 app.include_router(api_router)
 
-try:
-    db = get_session()
-    print("Banco de dados conectado")
-except Exception as e:
-    print(f"Erro ao conectar com o DB {e}")
-
 @app.get("/")
 def read_root():
     return {"message": "Bem-vindo à API do ParkinsonCheck!"} 
