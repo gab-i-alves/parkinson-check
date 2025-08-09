@@ -40,7 +40,14 @@ def create_patient(patient: PatientSchema, session: Session):
     session.refresh(db_patient)
     return patient
 
-def create_bind_request(doctor_id: int, user: User, session: Session):  
+def create_bind_request(doctor_id: int, user: User, session: Session) -> Bind:  
+    
+    if session.query(Bind).filter(
+        Bind.doctor_id == doctor_id,
+        Bind.patient_id == user.id
+    ).first() is not None:
+        raise HTTPException(HTTPStatus.CONFLICT, detail="A solicitação já existe.")
+    
     db_bind = Bind(
         doctor_id=doctor_id,
         patient=user.id,
