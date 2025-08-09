@@ -1,12 +1,12 @@
 from http import HTTPStatus
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from api.schemas.users import PatientSchema
 from sqlalchemy.orm import Session
-from infra.db.connection import get_session
 from core.security.security import get_password_hash
 from core.models.users import Patient
-from ..enums.user_enum import UserType
+from ..enums import UserType, BindEnum
 from core.services import user_service, address_service
+from core.models import User, Bind
 
 def create_patient(patient: PatientSchema, session: Session):
     
@@ -39,3 +39,15 @@ def create_patient(patient: PatientSchema, session: Session):
     session.commit()
     session.refresh(db_patient)
     return patient
+
+def create_bind_request(doctor_id: int, user: User, session: Session):  
+    db_bind = Bind(
+        doctor_id=doctor_id,
+        patient=user.id,
+        status=BindEnum.PENDING
+    )
+    
+    session.add(db_bind)
+    session.commit()
+    session.refresh()
+    return db_bind

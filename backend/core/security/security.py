@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
+from typing import Literal
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pwdlib import PasswordHash
@@ -8,14 +9,40 @@ from api.schemas.token import TokenResponse
 from core.services import user_service
 from infra.settings import Settings
 from sqlalchemy.orm import Session
+from core.models import Patient, Doctor, User
 from infra.db.connection import get_session
 
 SETTINGS = Settings()
 
 pwd_context = PasswordHash.recommended()
+    
+async def get_current_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer()), session: Session = Depends(get_session), verify_type: str|None = None):
+    user = get_user_from_token(cred.credentials, session)
+    
+    if verify_type == "Patient":
+        if not isinstance(user, Patient):
+            raise HTTPException(HTTPStatus.FORBIDDEN, detail="Usuário sem acesso a rota")
+    elif verify_type == "Doctor":
+        if not isinstance(user, Doctor):
+            raise HTTPException(HTTPStatus.FORBIDDEN, detail="Usuário sem acesso a rota")
+        
+    return user
 
-async def get_current_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer()), session: Session = Depends(get_session)):
-    return get_user_from_token(cred.credentials, session)
+def get_doctor_user():
+    async def _get_user(
+        cred: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+        session: Session = Depends(get_session)
+    ) -> User:
+        return await get_current_user(cred, session, verify_type="Doctor")
+    return _get_user
+
+def get_patient_user():
+    async def _get_user(
+        cred: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+        session: Session = Depends(get_session)
+    ) -> User:
+        return await get_current_user(cred, session, verify_type="Patient")
+    return _get_user
 
 
 def get_password_hash(password: str):

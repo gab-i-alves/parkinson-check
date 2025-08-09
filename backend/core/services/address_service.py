@@ -1,7 +1,6 @@
-from core.models.users import Address
-from infra.db.connection import get_session
+from core.models import Address
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from http import HTTPStatus
 
 def get_similar_address(cep: str, number: str, complement: str, session: Session):
