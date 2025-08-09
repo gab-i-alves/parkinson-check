@@ -1,5 +1,7 @@
 CREATE TYPE user_type_enum AS ENUM ('PATIENT', 'DOCTOR');
 
+CREATE TYPE bind_enum AS ENUM ('PENDING', 'ACTIVE', 'REVERSED', 'REJECTED');
+
 CREATE TABLE IF NOT EXISTS "user" (
   "id" SERIAL PRIMARY KEY,
   "type" user_type_enum NOT NULL,
@@ -34,6 +36,13 @@ CREATE TABLE IF NOT EXISTS "address" (
   "neighborhood" varchar(50),
   "city" varchar(100),
   "state" varchar(20)
+);
+
+CREATE TABLE IF NOT EXISTS "bind" (
+    "id" SERIAL PRIMARY KEY,
+    "status" bind_enum NOT NULL,
+    "doctor_id" INTEGER NOT NULL REFERENCES "doctor"(id),
+    "patient_id" INTEGER NOT NULL REFERENCES "patient"(id)
 );
 
 ALTER TABLE "patient" ADD FOREIGN KEY ("id") REFERENCES "user" ("id");
