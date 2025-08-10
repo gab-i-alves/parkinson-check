@@ -1,24 +1,14 @@
 from datetime import date
+from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from core.enums.user_enum import UserType
+from core.enums import UserType, BindEnum
 from core.models.table_registry import table_registry
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 
-@table_registry.mapped_as_dataclass
-class Address:
-    __tablename__ = "address"
+if TYPE_CHECKING:
+    from . import Address
     
-    id: Mapped[int] = mapped_column(init=False, primary_key=True, autoincrement=True)
-    cep: Mapped[str] = mapped_column(nullable=False)
-    street: Mapped[str] = mapped_column(nullable=False)
-    number: Mapped[str] = mapped_column(nullable=False) # String para aceitar "s/n"
-    complement: Mapped[str | None] = mapped_column(nullable=True)
-    neighborhood: Mapped[str] = mapped_column(nullable=False)
-    city: Mapped[str] = mapped_column(nullable=False)
-    state: Mapped[str] = mapped_column(nullable=False)
-    users: Mapped[list["User"]] = relationship(init=False, back_populates="address")
-
 @table_registry.mapped_as_dataclass
 class User:
     __tablename__ = "user"
@@ -62,3 +52,16 @@ class Patient(User):
     __mapper_args__ = {
         "polymorphic_identity": UserType.PATIENT,
     }
+        
+@table_registry.mapped_as_dataclass
+class Bind:
+    __tablename__ = "bind"
+    
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, autoincrement=True)
+    status: Mapped[BindEnum] = mapped_column(
+    "status", PG_ENUM(BindEnum, name="bind_enum", create_type=True))
+    
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"), nullable=False)
+    medic: Mapped["Doctor"] = relationship("Doctor")
+    patient: Mapped["Patient"] = relationship("Patient")

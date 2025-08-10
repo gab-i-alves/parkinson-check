@@ -4,20 +4,24 @@ from api.schemas.users import PatientSchema
 from sqlalchemy.orm import Session
 from core.security.security import get_password_hash
 from core.models.users import Patient
-from ..enums.user_enum import UserType
-from . import user_service
-from . import address_service
+from ..enums import UserType, BindEnum
+from core.services import user_service, address_service
+from core.models import User, Bind
 
 def create_patient(patient: PatientSchema, session: Session):
     
-    if user_service.get_user_by_email(patient.email) is not None:
-        raise HTTPException(HTTPStatus.CONFLICT, detail="Usuário já existente")
+    if user_service.get_user_by_email(patient.email, session) is not None:
+        raise HTTPException(HTTPStatus.CONFLICT, detail="Já existe um usuário com o email informado.")
     
-    address = address_service.get_similar_address(patient.cep, patient.number, patient.complement)
+    if user_service.get_user_by_cpf(patient.cpf, session) is not None:
+        raise HTTPException(HTTPStatus.CONFLICT, detail="O CPF informado já está em uso.")
+        
+    
+    address = address_service.get_similar_address(patient.cep, patient.number, patient.complement, session)
 
     if address is None:
         address_service.create_address(patient.cep, patient.street, patient.number, patient.complement, patient.neighborhood, patient.city, patient.state, session)
-        address = address_service.get_similar_address(patient.cep, patient.number, patient.complement)
+        address = address_service.get_similar_address(patient.cep, patient.number, patient.complement, session)
 
 
 
@@ -35,3 +39,22 @@ def create_patient(patient: PatientSchema, session: Session):
     session.commit()
     session.refresh(db_patient)
     return patient
+
+def create_bind_request(doctor_id: int, user: User, session: Session) -> Bind:  
+    
+    if session.query(Bind).filter(
+        Bind.doctor_id == doctor_id,
+        Bind.patient_id == user.id
+    ).first() is not None:
+        raise HTTPException(HTTPStatus.CONFLICT, detail="A solicitação já existe.")
+    
+    db_bind = Bind(
+        doctor_id=doctor_id,
+        patient=user.id,
+        status=BindEnum.PENDING
+    )
+    
+    session.add(db_bind)
+    session.commit()
+    session.refresh()
+    return db_bind

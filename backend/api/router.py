@@ -1,8 +1,9 @@
 from fastapi import APIRouter
-from . import auth, register, user
+
+from .routes import auth, register, binding
 
 api_router = APIRouter(prefix="/api")
 
 api_router.include_router(auth.router)
 api_router.include_router(register.router)
-api_router.include_router(user.router)
+api_router.include_router(binding.router)
