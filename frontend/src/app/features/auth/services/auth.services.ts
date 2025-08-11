@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { UserRole } from '../../../core/models/user.model';
+import { UserService } from '../../../core/services/user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private userService: UserService) {}
 
   /**
    * Envia as credenciais para o endpoint de login da API
@@ -25,7 +26,16 @@ export class AuthService {
       tap((response) => {
         if (response && response.access_token) {
           this.setToken(response.access_token);
+          this.userService.setCurrentUser(response.user);
         }
+      })
+    );
+  }
+
+  getCurrentUser(): Observable<any> {
+    return this.http.get<any>('/api/users/me').pipe(
+      tap((user) => {
+        this.userService.setCurrentUser(user);
       })
     );
   }
@@ -64,6 +74,7 @@ export class AuthService {
    */
   logout(): void {
     localStorage.removeItem('auth_token');
+    this.userService.clearCurrentUser();
   }
 
   /**

@@ -1,0 +1,134 @@
+<div class="overflow-hidden rounded-lg bg-white shadow">
+  @if (tests().length > 0) {
+  <ul class="divide-y divide-gray-200">
+    @for (test of tests(); track test.id) {
+    <li class="block hover:bg-gray-50">
+      <a
+        routerLink="/dashboard/results/{{ test.id }}"
+        class="flex items-center p-4 sm:px-6"
+      >
+        <div class="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
+          <div class="flex items-center text-sm font-medium text-primary">
+            @if (test.type === 'Espiral') {
+            <svg
+              class="mr-1.5 h-5 w-5 flex-shrink-0 text-primary/70"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5"
+              />
+            </svg>
+            } @else {
+            <svg
+              class="mr-1.5 h-5 w-5 flex-shrink-0 text-primary/70"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 016 0v8.25a3 3 0 01-3 3z"
+              />
+            </svg>
+            }
+            {{ test.type }}
+          </div>
+          <div class="mt-4 sm:mt-0 sm:ml-5">
+            <div class="flex items-center text-sm text-gray-500">
+              <svg
+                class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M-4.5 12h28.5"
+                />
+              </svg>
+              <p>
+                Realizado em
+                <time [attr.datetime]="test.date">{{ test.date }}</time>
+              </p>
+              <p class="ml-4 pl-4 border-l border-gray-200">
+                Pontuação:
+                <span class="font-semibold text-gray-800">{{
+                  test.score
+                }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="ml-5 flex-shrink-0">
+          <svg
+            class="h-5 w-5 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M8.25 4.5l7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </div>
+      </a>
+    </li>
+    }
+  </ul>
+  } @else {
+  <div class="p-8 text-center text-gray-500">
+    <svg
+      class="mx-auto h-12 w-12 text-gray-300"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
+      />
+    </svg>
+    <h3 class="mt-2 text-sm font-semibold text-gray-900">
+      Nenhum teste realizado
+    </h3>
+    <p class="mt-1 text-sm text-gray-500">
+      Comece a monitorizar a sua progressão.
+    </p>
+    <div class="mt-6">
+      <a
+        routerLink="/dashboard/tests"
+        class="inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-dark"
+      >
+        <svg
+          class="-ml-0.5 mr-1.5 h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 4.5v15m7.5-7.5h-15"
+          />
+        </svg>
+        Realizar Novo Teste
+      </a>
+    </div>
+  </div>
+  }
+</div>
