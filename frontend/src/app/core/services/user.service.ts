@@ -1,12 +1,12 @@
 import { Injectable, signal } from '@angular/core';
-import { UserRole } from '../models/user.model';
+import { UserRole, UserProfile } from '../models/user.model';
 
-interface UserProfile {
-  id: number;
-  name: string;
-  role: UserRole | null;
-  email: string;
-}
+// interface UserProfile {
+//   id: number;
+//   name: string;
+//   role: UserRole | null;
+//   email: string;
+// }
 
 @Injectable({
   providedIn: 'root',

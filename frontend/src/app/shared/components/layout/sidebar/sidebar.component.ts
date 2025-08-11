@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserService } from '../../../../core/services/user.service';
 import { AuthService } from '../../../../features/auth/services/auth.services';
-import { UserRole } from '../../../../core/models/user.model';
+import { UserProfile } from '../../../../core/models/user.model';
 
 interface NavLink {
   path: string;
