@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { UserRole } from '../../../core/models/user.model';
+import { UserRole, UserProfile } from '../../../core/models/user.model';
 import { UserService } from '../../../core/services/user.service';
 
 @Injectable({
@@ -24,9 +24,18 @@ export class AuthService {
 
     return this.http.post<any>('/api/auth/login', payload).pipe(
       tap((response) => {
-        if (response && response.access_token) {
+        if (response && response.access_token && response.user) {
           this.setToken(response.access_token);
-          this.userService.setCurrentUser(response.user);
+
+          const mappedRole = response.user.role === 2 ? 'medico' : 'paciente';
+
+          const userProfile: UserProfile = {
+            name: response.user.name,
+            role: mappedRole,
+            email: response.user.email,
+          };
+
+          this.userService.setCurrentUser(userProfile);
         }
       })
     );
@@ -35,7 +44,13 @@ export class AuthService {
   getCurrentUser(): Observable<any> {
     return this.http.get<any>('/api/users/me').pipe(
       tap((user) => {
-        this.userService.setCurrentUser(user);
+        const mappedRole = user.role === 2 ? 'medico' : 'paciente';
+        const userProfile: UserProfile = {
+          name: user.name,
+          role: mappedRole,
+          email: user.email,
+        };
+        this.userService.setCurrentUser(userProfile);
       })
     );
   }
