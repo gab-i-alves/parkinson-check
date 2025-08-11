@@ -1,0 +1,40 @@
+@if (isLoading()) {
+<div class="flex h-64 items-center justify-center">
+  <svg class="h-8 w-8 animate-spin text-primary" ...></svg>
+</div>
+} @else {
+<div class="space-y-8">
+  <header>
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+  </header>
+
+  <section>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+      Resumo dos Resultados
+    </h2>
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      @for (stat of summaryStats(); track stat.label) {
+      <app-stat-card
+        [label]="stat.label"
+        [value]="stat.value"
+        [icon]="stat.icon"
+      />
+      }
+    </div>
+  </section>
+
+  <section></section>
+
+  <section>
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-xl font-semibold text-gray-800">Análise Detalhada</h2>
+      <a
+        routerLink="/dashboard/results"
+        class="text-sm font-medium text-primary hover:text-primary-dark"
+        >Ver todos</a
+      >
+    </div>
+    <app-recent-tests-list [tests]="recentTests()" />
+  </section>
+</div>
+}
