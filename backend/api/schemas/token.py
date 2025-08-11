@@ -1,5 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from core.enums.user_enum import UserType
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    role: UserType
 
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str
+    token_type: str = "bearer"
+    user: UserResponse

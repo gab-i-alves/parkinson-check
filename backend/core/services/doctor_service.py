@@ -8,7 +8,7 @@ from core.security.security import get_password_hash
 from core.models import Doctor, User, Bind
 
 from ..enums import UserType, BindEnum
-from . import user_service
+from . import user_service, address_service
 
 
 def create_doctor(doctor: DoctorSchema, session: Session):
@@ -16,16 +16,23 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     if user_service.get_user_by_email(doctor.email, session) is not None:
         raise HTTPException(HTTPStatus.CONFLICT, detail="Usuário já existente")
 
+    address = address_service.get_similar_address(doctor.cep, doctor.number, doctor.complement, session)
+
+    if address is None:
+        address_service.create_address(doctor.cep, doctor.street, doctor.number, doctor.complement, doctor.neighborhood, doctor.city, doctor.state, session)
+        address = address_service.get_similar_address(doctor.cep, doctor.number, doctor.complement, session)
+
     db_doctor = Doctor(
-        name=doctor.name,
+        name=doctor.fullName, # NÃO ALTERAR
         cpf=doctor.cpf,
         email=doctor.email,
+        birthdate=doctor.birthDate,  # NÃO ALTERAR
         user_type=UserType.DOCTOR,
         crm=doctor.crm,
-        expertise_area=doctor.expertise_area,
+        expertise_area=doctor.specialty,  # NÃO ALTERAR
         status_approval=True,
         hashed_password=get_password_hash(doctor.password),
-        
+        address_id=address.id  # NÃO ALTERAR
     )
     
     session.add(db_doctor)

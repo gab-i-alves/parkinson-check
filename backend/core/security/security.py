@@ -72,8 +72,8 @@ def create_access_token(data: dict) -> TokenResponse:
     
     data.update({'exp': expire})
     
-    encode_jwt = encode(
+    encoded_jwt = encode(
         data, SETTINGS.SECRET_KEY, algorithm=SETTINGS.ALGORITHM
     )
     
-    return TokenResponse(access_token=encode_jwt, token_type="Bearer")
+    return encoded_jwt

@@ -8,6 +8,7 @@ class UserSchema(BaseModel):
     )
 
     fullName: str = Field(..., alias='name')
+    birthDate: date = Field(..., alias='birthdate') # NÃO RETIRAR DAQUI
     cpf: str
     email: EmailStr
     password: str
@@ -24,6 +25,7 @@ class DoctorSchema(UserSchema):
     crm: str
     specialty: str = Field(..., alias='expertise_area')
     
+# TODO: ADICIONAR MAIS DADOS PARA O USUÁRIO COMO ALERGIAS, MEDICAMENTOS, ETC...
 class PatientSchema(UserSchema):
     birthDate: date = Field(..., alias='birthdate')
     
