@@ -1,0 +1,88 @@
+@if (isLoading()) { } @else {
+<div class="space-y-8">
+  <section>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+      Análises Comparativas dos Pacientes
+    </h2>
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div class="rounded-lg bg-white shadow">
+        <div class="p-4 border-b border-gray-200">
+          <h3 class="font-semibold text-gray-900">
+            Ranking - Teste da Espiral
+          </h3>
+        </div>
+        <ul class="divide-y divide-gray-200">
+          <li
+            class="px-4 py-2 flex justify-between text-xs font-medium text-gray-500 bg-gray-50"
+          >
+            <span>PACIENTE</span>
+            <span>PONTUAÇÃO</span>
+          </li>
+          @for (patient of patients(); track patient.id) {
+          <li
+            class="px-4 py-3 flex items-center justify-between hover:bg-gray-50"
+          >
+            <span class="font-medium text-gray-800">{{ patient.name }}</span>
+            <span class="font-bold text-lg text-primary">85</span>
+          </li>
+          }
+        </ul>
+      </div>
+      <div class="rounded-lg bg-white shadow"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-xl font-semibold text-gray-800">Meus Pacientes</h2>
+      <a
+        routerLink="/dashboard/patients"
+        class="text-sm font-medium text-primary hover:text-primary-dark"
+        >Ver todos</a
+      >
+    </div>
+    <div class="overflow-hidden rounded-lg bg-white shadow">
+      <ul class="divide-y divide-gray-200">
+        @for (patient of patients(); track patient.id) {
+        <li class="block hover:bg-gray-50">
+          <a
+            routerLink="/dashboard/patient/{{ patient.id }}"
+            class="flex items-center p-4"
+          >
+            <div class="flex-1 flex items-center">
+              <div
+                class="h-3 w-3 rounded-full mr-4"
+                [class.bg-green-500]="patient.status === 'stable'"
+                [class.bg-yellow-500]="patient.status === 'attention'"
+                [class.bg-red-500]="patient.status === 'critical'"
+              ></div>
+              <div>
+                <p class="font-medium text-gray-900">{{ patient.name }}</p>
+                <p class="text-sm text-gray-500">
+                  Último teste: {{ patient.lastTestDate }}
+                </p>
+              </div>
+            </div>
+            <div class="ml-5 flex-shrink-0">
+              <svg
+                class="h-5 w-5 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </div>
+          </a>
+        </li>
+        }
+      </ul>
+    </div>
+  </section>
+</div>
+}
