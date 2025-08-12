@@ -22,6 +22,20 @@ export const DASHBOARD_ROUTES: Routes = [
             './components/doctor-dashboard/doctor-dashboard.component'
           ).then((c) => c.DoctorDashboardComponent),
       },
+      {
+        path: 'my-doctors',
+        loadComponent: () =>
+          import('./components/my-doctors/my-doctors.component').then(
+            (c) => c.MyDoctorsComponent
+          ),
+      },
+      {
+        path: 'binding-requests',
+        loadComponent: () =>
+          import(
+            './components/binding-requests/binding-requests.component'
+          ).then((c) => c.BindingRequestsComponent),
+      },
     ],
   },
 ];

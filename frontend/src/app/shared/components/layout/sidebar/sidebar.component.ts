@@ -22,6 +22,7 @@ interface NavLink {
   selector: 'app-sidebar',
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
@@ -32,7 +33,12 @@ export class SidebarComponent {
   readonly user = this.userService.currentUser;
 
   private patientLinks: NavLink[] = [
-    { path: '/dashboard', label: 'Dashboard', icon: 'home' },
+    {
+      path: '/dashboard',
+      label: 'Dashboard',
+      icon: 'home',
+      disabled: false,
+    },
     {
       path: '/dashboard/tests',
       label: 'Realizar Testes',
@@ -46,23 +52,34 @@ export class SidebarComponent {
       disabled: true,
     },
     {
-      path: '/dashboard/doctors',
+      path: '/dashboard/my-doctors',
       label: 'Meus Médicos',
       icon: 'users',
-      disabled: true,
+      disabled: false,
     },
   ];
 
   private doctorLinks: NavLink[] = [
-    { path: '/dashboard/doctor', label: 'Dashboard', icon: 'home' },
     {
-      path: '/dashboard/patients',
+      path: 'doctor',
+      label: 'Dashboard',
+      icon: 'home',
+      disabled: false,
+    },
+    {
+      path: 'patients',
       label: 'Meus Pacientes',
       icon: 'users',
       disabled: true,
     },
     {
-      path: '/dashboard/analytics',
+      path: 'binding-requests',
+      label: 'Solicitações',
+      icon: 'clipboard',
+      disabled: false,
+    },
+    {
+      path: 'analytics',
       label: 'Análises',
       icon: 'chart',
       disabled: true,

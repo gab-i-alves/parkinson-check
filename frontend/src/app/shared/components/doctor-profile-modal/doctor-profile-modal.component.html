@@ -1,0 +1,69 @@
+@if (isVisible && doctor) {
+<div
+  (click)="onClose()"
+  class="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity"
+></div>
+
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div
+    class="relative w-full max-w-md transform rounded-lg bg-white p-6 shadow-xl transition-all"
+  >
+    <button
+      (click)="onClose()"
+      class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+    >
+      <svg
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+
+    <div class="text-center">
+      <h3 class="text-2xl font-bold text-gray-900">{{ doctor.name }}</h3>
+      <p class="mt-1 text-base text-primary">{{ doctor.specialty }}</p>
+
+      <div class="mt-6 space-y-3 text-left text-gray-600">
+        <p><strong>CRM:</strong> {{ doctor.crm }}</p>
+        <p><strong>Localização:</strong> {{ doctor.location }}</p>
+        <p>
+          <strong>Status:</strong> @switch (doctor.status) { @case ('pending') {
+          <span class="font-medium text-yellow-600">Solicitação Pendente</span>
+          } @case ('linked') {
+          <span class="font-medium text-green-600">Vinculado</span> } @default {
+          <span class="font-medium text-gray-500">Não Vinculado</span> } }
+        </p>
+      </div>
+
+      <div class="mt-8">
+        @if(doctor.status === 'unlinked' || !doctor.status) {
+        <button
+          (click)="onRequestLink()"
+          class="w-full rounded-md bg-primary px-4 py-2.5 text-base font-semibold text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Solicitar Vínculo
+        </button>
+        } @else {
+        <button
+          class="w-full cursor-not-allowed rounded-md bg-gray-300 px-4 py-2.5 text-base font-semibold text-gray-500 shadow-sm"
+        >
+          {{
+            doctor.status === "pending"
+              ? "Solicitação Pendente"
+              : "Médico Vinculado"
+          }}
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+}
