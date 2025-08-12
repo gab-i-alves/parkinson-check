@@ -61,6 +61,12 @@ export class SidebarComponent {
       icon: 'users',
       disabled: true,
     },
+    {
+      path: '/dashboard/analytics',
+      label: 'Análises',
+      icon: 'chart',
+      disabled: true,
+    },
   ];
 
   readonly navLinks = computed(() => {

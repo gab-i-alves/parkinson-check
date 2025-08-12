@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
+import { ChartCardComponent } from '../../../../shared/components/chart-card/chart-card.component';
 import { RouterLink } from '@angular/router';
 import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
 
@@ -25,7 +26,7 @@ interface PatientAlert {
 @Component({
   selector: 'app-doctor-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ChartCardComponent],
   templateUrl: './doctor-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,7 +39,7 @@ export class DoctorDashboardComponent {
 
   readonly summaryStats = signal<SummaryStat[]>([
     { label: 'Total de Pacientes', value: '23', icon: 'users' },
-    { label: 'Testes a Rever', value: '8', icon: 'clipboard' },
+    { label: 'Testes para Revisar', value: '8', icon: 'clipboard' },
     { label: 'Alertas Recentes', value: '2', icon: 'alert' },
   ]);
 
