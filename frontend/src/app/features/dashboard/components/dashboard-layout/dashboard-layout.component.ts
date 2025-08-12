@@ -6,6 +6,7 @@ import { SidebarComponent } from '../../../../shared/components/layout/sidebar/s
   selector: 'app-dashboard-layout',
   templateUrl: './dashboard-layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [SidebarComponent, RouterOutlet],
 })
 export class DashboardLayoutComponent {}

@@ -1,0 +1,168 @@
+<div class="space-y-6">
+  <header>
+    <h1 class="text-3xl font-bold text-gray-900">Meus Médicos</h1>
+  </header>
+  <div class="border-b border-gray-200">
+    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+      <button
+        (click)="selectTab('linked')"
+        [ngClass]="{
+          'border-primary text-primary': activeTab() === 'linked',
+          'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+            activeTab() !== 'linked'
+        }"
+        class="whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium"
+      >
+        Médicos Vinculados
+      </button>
+      <button
+        (click)="selectTab('requests')"
+        [ngClass]="{
+          'border-primary text-primary': activeTab() === 'requests',
+          'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+            activeTab() !== 'requests'
+        }"
+        class="whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium"
+      >
+        Solicitações
+      </button>
+      <button
+        (click)="selectTab('find')"
+        [ngClass]="{
+          'border-primary text-primary': activeTab() === 'find',
+          'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+            activeTab() !== 'find'
+        }"
+        class="whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium"
+      >
+        Adicionar Médico
+      </button>
+    </nav>
+  </div>
+
+  @if (activeTab() === 'linked') {
+  <div class="rounded-lg bg-white p-6 shadow-sm">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+      Profissionais Vinculados
+    </h2>
+    @if (linkedDoctors().length === 0) {
+    <p class="text-center text-gray-500 py-8">
+      Você ainda não possui médicos vinculados.
+    </p>
+    } @else {
+    <div class="space-y-4">
+      @for (doctor of linkedDoctors(); track doctor.id) {
+      <div
+        class="flex items-center justify-between rounded-md border border-gray-200 p-4"
+      >
+        <div>
+          <p class="font-semibold text-gray-900">{{ doctor.name }}</p>
+          <p class="text-sm text-gray-500">
+            {{ doctor.specialty }} - {{ doctor.crm }}
+          </p>
+        </div>
+        <div>
+          <button
+            (click)="removeLink(doctor)"
+            class="rounded-md bg-red-100 px-3 py-1.5 text-sm font-medium text-red-800 hover:bg-red-200"
+          >
+            Desvincular
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+  } @if (activeTab() === 'requests') {
+  <div class="rounded-lg bg-white p-6 shadow-sm">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+      Solicitações Enviadas
+    </h2>
+    @if (sentRequests().length === 0) {
+    <p class="text-center text-gray-500 py-8">Nenhuma solicitação pendente.</p>
+    } @else {
+    <div class="space-y-4">
+      @for (doctor of sentRequests(); track doctor.id) {
+      <div
+        class="flex items-center justify-between rounded-md border border-gray-200 p-4"
+      >
+        <div>
+          <p class="font-semibold text-gray-900">{{ doctor.name }}</p>
+          <p class="text-sm text-gray-500">{{ doctor.specialty }}</p>
+        </div>
+        <span
+          class="rounded-md bg-yellow-100 px-3 py-1.5 text-sm font-medium text-yellow-800"
+          >Pendente</span
+        >
+      </div>
+      }
+    </div>
+    }
+  </div>
+  } @if (activeTab() === 'find') {
+  <div class="rounded-lg bg-white p-6 shadow-sm">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+      Buscar por um Médico
+    </h2>
+    <div class="relative mb-4">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="searchDoctors()"
+        placeholder="Buscar por nome ou especialidade..."
+        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm pl-10"
+      />
+      <div
+        class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+      >
+        <svg
+          class="h-5 w-5 text-gray-400"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+    <p class="text-center text-gray-500 py-8">Buscando...</p>
+    } @if (searchResults().length > 0) {
+    <div class="mt-6 space-y-4">
+      @for (doctor of searchResults(); track doctor.id) {
+      <div
+        class="flex items-center justify-between rounded-md border border-gray-200 p-4"
+      >
+        <div>
+          <p class="font-semibold text-gray-900">{{ doctor.name }}</p>
+          <p class="text-sm text-gray-500">
+            {{ doctor.specialty }} - {{ doctor.crm }}
+          </p>
+        </div>
+        <div>
+          <button
+            (click)="viewProfile(doctor)"
+            class="rounded-md bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm ring-1 ring-inset ring-primary hover:bg-gray-50"
+          >
+            Ver Perfil
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+  }
+</div>
+
+<app-doctor-profile-modal
+  [isVisible]="isModalVisible()"
+  [doctor]="selectedDoctor()"
+  (close)="closeModal()"
+  (requestLink)="requestLink($event)"
+></app-doctor-profile-modal>
