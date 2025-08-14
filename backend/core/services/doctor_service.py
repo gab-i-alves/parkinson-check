@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Literal
+from typing import Literal, Optional
 from fastapi import HTTPException
 from api.schemas.users import DoctorSchema
 from sqlalchemy.orm import Session
@@ -47,6 +47,28 @@ def get_pending_binding_requests(user: User, session: Session) -> list[Bind] | N
         bindings = None
     
     return bindings
+
+def getDoctors(session: Session, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list[Doctor]:
+    query = session.query(Doctor)
+
+    if name:
+        query = query.filter(Doctor.name.ilike(f'%{name}%'))
+    
+    if cpf:
+        query = query.filter(Doctor.cpf == cpf)
+    
+    if email:
+        query = query.filter(Doctor.email == email)
+    
+    if crm:
+        query = query.filter(Doctor.crm == crm)
+        
+    if expertise_area:
+        query = query.filter(Doctor.expertise_area == expertise_area)
+
+    doctors = query.all()
+    
+    return doctors
 
 def activate_or_reject_binding_request(
     user: User, binding_id: int, session: Session, new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED]
