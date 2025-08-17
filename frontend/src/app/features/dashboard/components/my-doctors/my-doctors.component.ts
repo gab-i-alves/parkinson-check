@@ -48,11 +48,11 @@ export class MyDoctorsComponent {
     this.isLoading.set(true);
     this.medicService.searchDoctors(this.searchTerm()).subscribe({
       next: (results) => {
-        const doctorsWithStatus = results.map((d) => ({
+        if (results != null) {const doctorsWithStatus = results.map((d) => ({
           ...d,
           status: 'unlinked' as const,
         }));
-        this.searchResults.set(doctorsWithStatus);
+        this.searchResults.set(doctorsWithStatus);}
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),

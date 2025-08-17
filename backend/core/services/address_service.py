@@ -31,3 +31,6 @@ def create_address(cep: str, street: str, number: str, complement: str | None , 
         session.refresh(db_address)
         
         return db_address
+
+def get_by_id(id: int, session: Session) -> Address | None:
+     return session.query(Address).filter(Address.id == id).first()

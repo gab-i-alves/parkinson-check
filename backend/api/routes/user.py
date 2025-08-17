@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from infra.db.connection import get_session
-from core.models import User
+from core.models import User, Doctor
 from core.security.security import get_current_user
-from api.schemas.token import UserResponse
-from core.services import doctor_service
-from core.models import Doctor
-
-
+from api.schemas.token import UserResponse, DoctorResponse
+from core.services import doctor_service, address_service
+from core.enums.user_enum import UserType
+from core.enums.link_enum import LinkEnum
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -23,6 +22,25 @@ def get_user_me(
         role=current_user.user_type
     )
 
-@router.get("/doctors", response_model=list[Doctor])
-def get_doctors(session: Session = Depends(get_session), name: str | None = None, cpf: str | None = None, email: str | None = None, crm: str | None = None, expertise_area: str | None = None):
-    return doctor_service.getDoctors(session, name, cpf, email, crm, expertise_area)
+@router.get("/doctors", response_model=list[DoctorResponse])
+def get_doctors(session: Session = Depends(get_session), name: str | None = None, cpf: str | None = None, email: str | None = None, crm: str | None = None, specialty: str | None = None):
+
+    doctors = doctor_service.get_doctors(session, name, cpf, email, crm, specialty)
+
+    return [format_doctors(doctor) for doctor in doctors]
+    
+
+def format_doctors(doctor):
+    location = doctor.address
+
+    return DoctorResponse(
+        id=doctor.id,
+        name=doctor.name,
+        email=doctor.email,
+        crm="CRM-" + doctor.crm,
+        specialty=doctor.expertise_area,
+        location=location.city + ", " + location.state,
+        role=UserType.DOCTOR,
+        status=LinkEnum.UNLINKED
+    )
+    

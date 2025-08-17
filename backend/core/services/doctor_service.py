@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import Literal, Optional
 from fastapi import HTTPException
 from api.schemas.users import DoctorSchema
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from core.security.security import get_password_hash
 from core.models import Doctor, User, Bind
@@ -48,8 +48,8 @@ def get_pending_binding_requests(user: User, session: Session) -> list[Bind] | N
     
     return bindings
 
-def getDoctors(session: Session, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list[Doctor]:
-    query = session.query(Doctor)
+def get_doctors(session: Session, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list[Doctor]:
+    query = session.query(Doctor).options(joinedload(Doctor.address))
 
     if name:
         query = query.filter(Doctor.name.ilike(f'%{name}%'))
@@ -64,7 +64,7 @@ def getDoctors(session: Session, name: Optional[str] = None, cpf: Optional[str] 
         query = query.filter(Doctor.crm == crm)
         
     if expertise_area:
-        query = query.filter(Doctor.expertise_area == expertise_area)
+        query = query.filter(Doctor.expertise_area.ilike(f'%{expertise_area}%'))
 
     doctors = query.all()
     
