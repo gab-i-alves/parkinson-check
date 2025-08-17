@@ -1,12 +1,14 @@
 from http import HTTPStatus
 from fastapi import HTTPException
 from api.schemas.users import PatientSchema
+from api.schemas.binding import RequestBinding
 from sqlalchemy.orm import Session
 from core.security.security import get_password_hash
 from core.models.users import Patient
 from ..enums import UserType, BindEnum
 from core.services import user_service, address_service
 from core.models import User, Bind
+
 
 def create_patient(patient: PatientSchema, session: Session):
     
@@ -40,21 +42,21 @@ def create_patient(patient: PatientSchema, session: Session):
     session.refresh(db_patient)
     return patient
 
-def create_bind_request(doctor_id: int, user: User, session: Session) -> Bind:  
+def create_bind_request(request: RequestBinding, user: User, session: Session) -> Bind:  
     
     if session.query(Bind).filter(
-        Bind.doctor_id == doctor_id,
+        Bind.doctor_id == request.doctor_id,
         Bind.patient_id == user.id
     ).first() is not None:
         raise HTTPException(HTTPStatus.CONFLICT, detail="A solicitação já existe.")
-    
+        
     db_bind = Bind(
-        doctor_id=doctor_id,
-        patient=user.id,
+        doctor_id=request.doctor_id,
+        patient_id=user.id,
         status=BindEnum.PENDING
     )
     
     session.add(db_bind)
     session.commit()
-    session.refresh()
+    session.refresh(db_bind)
     return db_bind

@@ -16,8 +16,8 @@ CurrentDoctor = Annotated[User, Depends(get_doctor_user())]
 
 """Patient"""
 @router.post("/request", response_model=Bind)
-def request_binding(doctor_id: RequestBinding, user: CurrentPatient, session: Session = Depends(get_session)):
-    return patient_service.create_bind_request(doctor_id, user, session)
+def request_binding(request: RequestBinding, user: CurrentPatient, session: Session = Depends(get_session)):
+    return patient_service.create_bind_request(request, user, session)
 
 """Doctor"""
 @router.get("/requests", response_model=list[Bind])

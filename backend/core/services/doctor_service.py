@@ -49,7 +49,7 @@ def get_pending_binding_requests(user: User, session: Session) -> list[Bind] | N
     return bindings
 
 def get_doctors(session: Session, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list[Doctor]:
-    query = session.query(Doctor).options(joinedload(Doctor.address))
+    query = session.query(Doctor, Bind).options(joinedload(Doctor.address)).join(Bind, User.id == Bind.doctor_id, isouter=True)
 
     if name:
         query = query.filter(Doctor.name.ilike(f'%{name}%'))

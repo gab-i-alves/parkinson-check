@@ -19,6 +19,7 @@ export class MyDoctorsComponent {
   searchTerm = signal<string>('');
   searchResults = signal<Doctor[]>([]);
   isLoading = signal<boolean>(false);
+  hasActiveBinding = signal<boolean>(false);
 
   isModalVisible = signal<boolean>(false);
   selectedDoctor = signal<Doctor | null>(null);
@@ -50,7 +51,7 @@ export class MyDoctorsComponent {
       next: (results) => {
         if (results != null) {const doctorsWithStatus = results.map((d) => ({
           ...d,
-          status: 'unlinked' as const,
+          // status: 'unlinked' as const,
         }));
         this.searchResults.set(doctorsWithStatus);}
         this.isLoading.set(false);

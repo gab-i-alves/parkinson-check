@@ -10,7 +10,7 @@ export interface Doctor {
   specialty: string;
   crm: string;
   location: string;
-  status?: 'linked' | 'pending' | 'unlinked';
+  status?: 'pending' | 'linked' | 'unlinked';
 }
 
 export interface BindingRequest {
@@ -89,7 +89,7 @@ export class DoctorService {
    * @param doctorId O ID do médico.
    */
   requestBinding(doctorId: number): Observable<any> {
-    return this.http.post('/api/bindings/request', { doctor_id: doctorId });
+    return this.http.post('/api/bindings/request', { doctor_id: doctorId }, this.getHttpOptions());
   }
 
   /**

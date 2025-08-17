@@ -144,12 +144,22 @@
             {{ doctor.specialty }} - {{ doctor.crm }}
           </p>
         </div>
-        <div>
+        <div class="flex items-center justify-end space-x-4 ">
           <button
             (click)="viewProfile(doctor)"
             class="rounded-md bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm ring-1 ring-inset ring-primary hover:bg-gray-50"
           >
             Ver Perfil
+          </button>
+
+          <button
+            (click)="requestLink(doctor.id)"
+            [disabled]="doctor.status != 'unlinked'"
+            class="rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+            [ngSwitch]="doctor.status"
+            >
+          <span *ngSwitchCase="'unlinked'">Solicitar Vínculo</span>
+          <span *ngSwitchDefault>Solicitação Pendente</span>
           </button>
         </div>
       </div>

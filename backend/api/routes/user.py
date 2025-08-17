@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from infra.db.connection import get_session
-from core.models import User, Doctor
+from core.models import User
 from core.security.security import get_current_user
 from api.schemas.token import UserResponse, DoctorResponse
-from core.services import doctor_service, address_service
-from core.enums.user_enum import UserType
-from core.enums.link_enum import LinkEnum
+from core.services import doctor_service
+from core.enums import UserType, BindEnum
+
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -30,17 +30,18 @@ def get_doctors(session: Session = Depends(get_session), name: str | None = None
     return [format_doctors(doctor) for doctor in doctors]
     
 
-def format_doctors(doctor):
-    location = doctor.address
+def format_doctors(doctor_bind):
+    location = doctor_bind.Doctor.address
+        
 
     return DoctorResponse(
-        id=doctor.id,
-        name=doctor.name,
-        email=doctor.email,
-        crm="CRM-" + doctor.crm,
-        specialty=doctor.expertise_area,
+        id=doctor_bind.Doctor.id,
+        name=doctor_bind.Doctor.name,
+        email=doctor_bind.Doctor.email,
+        crm="CRM-" + doctor_bind.Doctor.crm,
+        specialty=doctor_bind.Doctor.expertise_area,
         location=location.city + ", " + location.state,
         role=UserType.DOCTOR,
-        status=LinkEnum.UNLINKED
+        status= 3 if doctor_bind.Bind is None else (doctor_bind.Bind.status if doctor_bind.Bind.status == BindEnum.PENDING or doctor_bind.Bind.status == BindEnum.ACTIVE else 0)
     )
     
