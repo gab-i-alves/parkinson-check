@@ -40,9 +40,16 @@ export class DoctorService {
     };
   }
 
-  searchDoctors(term: string): Observable<Doctor[] | null> {
+  searchDoctors(term: string, specialty: string): Observable<Doctor[] | null> {
+
+    var specialtyParameter = ""
+
+    if (specialty != '') {
+      specialtyParameter = "&specialty=" + specialty
+    }
+
     return this.http.get<Doctor[]>(
-      BASE_URL + "/?name=" + term,
+      BASE_URL + "/?name=" + term + specialtyParameter,
       this.getHttpOptions()).pipe(
         map((resp: HttpResponse<Doctor[]>) => {
           if(resp.status==200){

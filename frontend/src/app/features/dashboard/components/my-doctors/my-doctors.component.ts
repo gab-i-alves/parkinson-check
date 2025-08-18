@@ -17,6 +17,7 @@ export class MyDoctorsComponent {
 
   activeTab = signal<ActiveTab>('linked');
   searchTerm = signal<string>('');
+  specialty = signal<string>('');
   searchResults = signal<Doctor[]>([]);
   isLoading = signal<boolean>(false);
   hasActiveBinding = signal<boolean>(false);
@@ -42,12 +43,8 @@ export class MyDoctorsComponent {
   }
 
   searchDoctors(): void {
-    if (this.searchTerm().trim() === '') {
-      this.searchResults.set([]);
-      return;
-    }
     this.isLoading.set(true);
-    this.medicService.searchDoctors(this.searchTerm()).subscribe({
+    this.medicService.searchDoctors(this.searchTerm(), this.specialty()).subscribe({
       next: (results) => {
         if (results != null) {const doctorsWithStatus = results.map((d) => ({
           ...d,
