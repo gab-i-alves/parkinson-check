@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from core.enums import UserType, BindEnum
+from .users import DoctorSchema
 
 
 class UserResponse(BaseModel):
@@ -12,28 +13,26 @@ class DoctorResponse(UserResponse):
     specialty: str
     crm: str
     location: str
-    status: int
+    status: str
 
 class PatientDto(BaseModel):
     id: int
     name: str
     email: EmailStr
 
+class DoctorDTO(BaseModel):
+    id: int
+    name: str
+    specialty: str
+
 class BindindRequestResponse(BaseModel):
     id: int
     patient: PatientDto
     status: BindEnum    
-    
 
-#     export interface BindingRequest {
-#   id: number;
-#   patient: {
-#     id: number;
-#     name: string;
-#     email: string;
-#   };
-#   status: 'PENDING' | 'ACTIVE' | 'REJECTED';
-# }
+class SentBindindRequestResponse(BaseModel):
+    id: int
+    doctor: DoctorDTO
 
 class TokenResponse(BaseModel):
     access_token: str

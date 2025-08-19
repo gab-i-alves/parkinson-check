@@ -23,6 +23,11 @@ export interface BindingRequest {
   status: 'PENDING' | 'ACTIVE' | 'REJECTED';
 }
 
+export interface PatientBindingRequest {
+  id: number;
+  doctor: Doctor
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -71,6 +76,24 @@ export class DoctorService {
       '/api/users/linked_doctors',
       this.getHttpOptions()).pipe(
         map((resp: HttpResponse<Doctor[]>) => {
+          if(resp.status==200){
+            console.log(resp.body)
+            return resp.body
+          }else{
+            return null
+          }
+        }),
+        catchError((err) => {
+          return throwError(() => err)
+        })
+      )
+  }
+
+  loadSentRequests(): Observable<PatientBindingRequest[] | null> {
+    return this.http.get<PatientBindingRequest[]>(
+      '/api/bindings/requests/sent',
+      this.getHttpOptions()).pipe(
+        map((resp: HttpResponse<PatientBindingRequest[]>) => {
           if(resp.status==200){
             console.log(resp.body)
             return resp.body

@@ -83,13 +83,13 @@
     <p class="text-center text-gray-500 py-8">Nenhuma solicitação pendente.</p>
     } @else {
     <div class="space-y-4">
-      @for (doctor of sentRequests(); track doctor.id) {
+      @for (request of sentRequests(); track request.doctor.id) {
       <div
         class="flex items-center justify-between rounded-md border border-gray-200 p-4"
       >
         <div>
-          <p class="font-semibold text-gray-900">{{ doctor.name }}</p>
-          <p class="text-sm text-gray-500">{{ doctor.specialty }}</p>
+          <p class="font-semibold text-gray-900">{{ request.doctor.name }}</p>
+          <p class="text-sm text-gray-500">{{ request.doctor.specialty }}</p>
         </div>
         <span
           class="rounded-md bg-yellow-100 px-3 py-1.5 text-sm font-medium text-yellow-800"
