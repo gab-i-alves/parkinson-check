@@ -22,12 +22,14 @@ export class BindingRequestsComponent implements OnInit {
     this.isLoading.set(true);
     this.medicService.getBindingRequests().subscribe({
       next: (data) => {
+        if (data != null)
         this.requests.set(data);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
     });
   }
+
 
   acceptRequest(id: number): void {
     this.medicService.acceptBindingRequest(id).subscribe({

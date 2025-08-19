@@ -5,7 +5,7 @@ from api.schemas.users import DoctorSchema
 from sqlalchemy.orm import Session, joinedload
 
 from core.security.security import get_password_hash
-from core.models import Doctor, User, Bind
+from core.models import Doctor, User, Bind, Patient
 
 from ..enums import UserType, BindEnum
 from . import user_service, address_service
@@ -40,13 +40,14 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     session.refresh(db_doctor)
     return doctor
 
-def get_pending_binding_requests(user: User, session: Session) -> list[Bind] | None:
-    bindings = session.query(Bind).filter(Bind.doctor_id == user.id).all()
+# USAR APENAS PARA MEDICOS
+def get_pending_binding_requests(user: User, session: Session) -> list[Bind, Patient] | None:
+    bindings_with_patients = session.query(Bind, Patient).filter(Bind.doctor_id == user.id).join(Patient, Bind.patient_id == Patient.id).all()
     
-    if not bindings:
-        bindings = None
+    if not bindings_with_patients:
+        bindings_with_patients = None
     
-    return bindings
+    return bindings_with_patients
 
 def get_doctors(session: Session, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list[Doctor]:
     query = session.query(Doctor, Bind).options(joinedload(Doctor.address)).join(Bind, User.id == Bind.doctor_id, isouter=True)

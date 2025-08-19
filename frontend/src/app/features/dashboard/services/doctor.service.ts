@@ -95,8 +95,19 @@ export class DoctorService {
   /**
    * Busca as solicitações de vínculo pendentes para o médico logado.
    */
-  getBindingRequests(): Observable<BindingRequest[]> {
-    return this.http.get<BindingRequest[]>('/api/bindings/requests');
+  getBindingRequests(): Observable<BindingRequest[] | null> {
+    return this.http.get<BindingRequest[]>('/api/bindings/requests', this.getHttpOptions()).pipe(
+        map((resp: HttpResponse<BindingRequest[]>) => {
+          if(resp.status==200){
+            return resp.body
+          }else{
+            return null
+          }
+        }),
+        catchError((err) => {
+          return throwError(() => err)
+        })
+      );
   }
 
   /**
