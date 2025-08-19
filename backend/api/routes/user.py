@@ -23,9 +23,17 @@ def get_user_me(
     )
 
 @router.get("/doctors", response_model=list[DoctorResponse])
-def get_doctors(session: Session = Depends(get_session), name: str | None = None, cpf: str | None = None, email: str | None = None, crm: str | None = None, specialty: str | None = None):
+def get_doctors(
+    session: Session = Depends(get_session), 
+    current_user: User = Depends(get_current_user),
+    name: str | None = None, 
+    cpf: str | None = None, 
+    email: str | None = None, 
+    crm: str | None = None, 
+    specialty: str | None = None
+):
 
-    doctors = doctor_service.get_doctors(session, name, cpf, email, crm, specialty)
+    doctors = doctor_service.get_doctors(session, current_user, name, cpf, email, crm, specialty)
 
     return [format_doctors(doctor) for doctor in doctors]
 
