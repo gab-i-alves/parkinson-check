@@ -70,6 +70,15 @@ def get_doctors(session: Session, name: Optional[str] = None, cpf: Optional[str]
     
     return doctors
 
+def get_linked_doctors(session: Session, current_user: User) -> list[Doctor]:
+    query = session.query(Doctor, Bind).options(joinedload(Doctor.address)).join(Bind, User.id == Bind.doctor_id)
+
+    query = query.filter(Bind.patient_id == current_user.id, Bind.status == BindEnum.ACTIVE)
+
+    doctors = query.all()
+    
+    return doctors
+
 def activate_or_reject_binding_request(
     user: User, binding_id: int, session: Session, new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED]
     ) -> Bind:

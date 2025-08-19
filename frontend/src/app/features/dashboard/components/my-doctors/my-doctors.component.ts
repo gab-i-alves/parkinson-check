@@ -25,18 +25,13 @@ export class MyDoctorsComponent {
   isModalVisible = signal<boolean>(false);
   selectedDoctor = signal<Doctor | null>(null);
 
-  linkedDoctors = signal<Doctor[]>([
-    {
-      id: 1,
-      name: 'Dr. Carlos Santos',
-      specialty: 'Neurologia',
-      crm: 'CRM-PR 12345',
-      location: 'Curitiba, PR',
-      status: 'linked',
-    },
-  ]);
-
+  linkedDoctors = signal<Doctor[]>([]);
   sentRequests = signal<Doctor[]>([]);
+
+    ngOnInit(): void {
+    this.loadLinkedDoctors();
+  }
+
 
   selectTab(tab: ActiveTab): void {
     this.activeTab.set(tab);
@@ -51,6 +46,21 @@ export class MyDoctorsComponent {
           // status: 'unlinked' as const,
         }));
         this.searchResults.set(doctorsWithStatus);}
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false),
+    });
+  }
+
+  loadLinkedDoctors(): void {
+    this.isLoading.set(true);
+    this.medicService.loadLinkedDoctors().subscribe({
+      next: (results) => {
+        if (results != null) {const doctorsWithStatus = results.map((d) => ({
+          ...d,
+          // status: 'unlinked' as const,
+        }));
+        this.linkedDoctors.set(doctorsWithStatus);}
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),

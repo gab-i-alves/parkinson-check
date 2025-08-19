@@ -63,32 +63,25 @@ export class DoctorService {
           return throwError(() => err)
         })
       )
-    // Simula uma chamada de API com dados de exemplo
-    // const mockDoctors: Doctor[] = [
-    //   {
-    //     id: 1,
-    //     name: 'Dr. Carlos Santos',
-    //     specialty: 'Neurologia',
-    //     crm: 'CRM-PR 12345',
-    //     location: 'Curitiba, PR',
-    //   },
-    //   {
-    //     id: 2,
-    //     name: 'Dra. Mariana Costa',
-    //     specialty: 'Neurologia',
-    //     crm: 'CRM-PR 54321',
-    //     location: 'Curitiba, PR',
-    //   },
-    //   {
-    //     id: 3,
-    //     name: 'Dr. Ricardo Lima',
-    //     specialty: 'Geriatria',
-    //     crm: 'CRM-PR 56789',
-    //     location: 'São Paulo, SP',
-    //   },
-    // ];
-    // console.log(`Buscando médicos com o termo: ${term}`);
-    // return of(mockDoctors);
+  }
+
+  loadLinkedDoctors(): Observable<Doctor[] | null> {
+
+    return this.http.get<Doctor[]>(
+      '/api/users/linked_doctors',
+      this.getHttpOptions()).pipe(
+        map((resp: HttpResponse<Doctor[]>) => {
+          if(resp.status==200){
+            console.log(resp.body)
+            return resp.body
+          }else{
+            return null
+          }
+        }),
+        catchError((err) => {
+          return throwError(() => err)
+        })
+      )
   }
 
   /**

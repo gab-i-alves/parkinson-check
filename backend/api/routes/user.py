@@ -28,6 +28,13 @@ def get_doctors(session: Session = Depends(get_session), name: str | None = None
     doctors = doctor_service.get_doctors(session, name, cpf, email, crm, specialty)
 
     return [format_doctors(doctor) for doctor in doctors]
+
+@router.get("/linked_doctors", response_model=list[DoctorResponse])
+def get_linked_doctors(current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+
+    doctors = doctor_service.get_linked_doctors(session, current_user)
+
+    return [format_doctors(doctor) for doctor in doctors]
     
 
 def format_doctors(doctor_bind):
