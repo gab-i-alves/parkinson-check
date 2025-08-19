@@ -115,7 +115,7 @@ export class DoctorService {
    * @param bindingId O ID da solicitação.
    */
   acceptBindingRequest(bindingId: number): Observable<any> {
-    return this.http.post(`/api/bindings/${bindingId}/accept`, {});
+    return this.http.post(`/api/bindings/${bindingId}/accept`, {}, this.getHttpOptions());
   }
 
   /**
@@ -123,6 +123,6 @@ export class DoctorService {
    * @param bindingId O ID da solicitação.
    */
   rejectBindingRequest(bindingId: number): Observable<any> {
-    return this.http.post(`/api/bindings/${bindingId}/reject`, {});
+    return this.http.post(`/api/bindings/${bindingId}/reject`, {}, this.getHttpOptions());
   }
 }

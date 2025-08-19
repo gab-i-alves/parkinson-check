@@ -42,7 +42,7 @@ def create_doctor(doctor: DoctorSchema, session: Session):
 
 # USAR APENAS PARA MEDICOS
 def get_pending_binding_requests(user: User, session: Session) -> list[Bind, Patient] | None:
-    bindings_with_patients = session.query(Bind, Patient).filter(Bind.doctor_id == user.id).join(Patient, Bind.patient_id == Patient.id).all()
+    bindings_with_patients = session.query(Bind, Patient).filter(Bind.doctor_id == user.id, Bind.status == BindEnum.PENDING).join(Patient, Bind.patient_id == Patient.id).all()
     
     if not bindings_with_patients:
         bindings_with_patients = None

@@ -49,6 +49,6 @@ def format_doctors(doctor_bind):
         specialty=doctor_bind.Doctor.expertise_area,
         location=location.city + ", " + location.state,
         role=UserType.DOCTOR,
-        status= 3 if doctor_bind.Bind is None else (doctor_bind.Bind.status if doctor_bind.Bind.status == BindEnum.PENDING or doctor_bind.Bind.status == BindEnum.ACTIVE else 0)
+        status= "unlinked" if doctor_bind.Bind is None else ("pending"if doctor_bind.Bind.status == BindEnum.PENDING else "linked")
     )
     
