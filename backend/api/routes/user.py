@@ -45,18 +45,28 @@ def get_linked_doctors(current_user: User = Depends(get_current_user), session: 
     return [format_doctors(doctor) for doctor in doctors]
     
 
-def format_doctors(doctor_bind):
-    location = doctor_bind.Doctor.address
-        
+def format_doctors(doctor_bind_tuple):
+    doctor_obj = doctor_bind_tuple[0]
+    bind_obj = doctor_bind_tuple[1]
+
+    location = doctor_obj.address
+    
+    status_str = "unlinked"
+    if bind_obj is not None:
+        if bind_obj.status == BindEnum.PENDING:
+            status_str = "pending"
+        elif bind_obj.status == BindEnum.ACTIVE:
+            status_str = "linked"
 
     return DoctorResponse(
-        id=doctor_bind.Doctor.id,
-        name=doctor_bind.Doctor.name,
-        email=doctor_bind.Doctor.email,
-        crm="CRM-" + doctor_bind.Doctor.crm,
-        specialty=doctor_bind.Doctor.expertise_area,
-        location=location.city + ", " + location.state,
+        id=doctor_obj.id,
+        name=doctor_obj.name,
+        email=doctor_obj.email,
+        crm="CRM-" + doctor_obj.crm,
+        specialty=doctor_obj.expertise_area,
+        location=f"{location.city}, {location.state}",
         role=UserType.DOCTOR,
-        status= "unlinked" if doctor_bind.Bind is None else ("pending"if doctor_bind.Bind.status == BindEnum.PENDING else "linked")
+        status=status_str
     )
+
     

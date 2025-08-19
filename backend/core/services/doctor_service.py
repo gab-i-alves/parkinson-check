@@ -41,44 +41,58 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     return doctor
 
 # USAR APENAS PARA MEDICOS
-def get_pending_binding_requests(user: User, session: Session) -> list[Bind, Patient] | None:
-    bindings_with_patients = session.query(Bind, Patient).filter(Bind.doctor_id == user.id, Bind.status == BindEnum.PENDING).join(Patient, Bind.patient_id == Patient.id).all()
-    
-    if not bindings_with_patients:
-        bindings_with_patients = None
-    
+def get_pending_binding_requests(user: User, session: Session) -> list[tuple[Bind, Patient]] | None:
+    bindings_with_patients = session.query(Bind, Patient).filter(
+        Bind.doctor_id == user.id, 
+        Bind.status == BindEnum.PENDING
+    ).join(Patient, Bind.patient_id == Patient.id).all()
+
     return bindings_with_patients
 
 # USAR APENAS PARA PACIENTES
-def get_sent_binding_requests(user: User, session: Session) -> list[Bind, Doctor] | None:
+def get_sent_binding_requests(user: User, session: Session) -> list[tuple[Bind, Doctor]] | None:
     bindings_with_doctors = session.query(Bind, Doctor).filter(Bind.patient_id == user.id, Bind.status == BindEnum.PENDING).join(Doctor, Bind.doctor_id == Doctor.id).all()
-    
-    if not bindings_with_doctors:
-        bindings_with_doctors = None
     
     return bindings_with_doctors
 
-def get_doctors(session: Session, current_user: User, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list[Doctor]:
-    query = session.query(Doctor, Bind).options(joinedload(Doctor.address)).join(Bind, (Doctor.id == Bind.doctor_id) & (Bind.patient_id == current_user.id), isouter=True)
+def get_doctors(session: Session, current_user: User, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list:
+    
+    doctor_query = session.query(Doctor).options(joinedload(Doctor.address))
 
     if name:
-        query = query.filter(Doctor.name.ilike(f'%{name}%'))
-    
+        doctor_query = doctor_query.filter(Doctor.name.ilike(f'%{name}%'))
     if cpf:
-        query = query.filter(Doctor.cpf == cpf)
-    
+        doctor_query = doctor_query.filter(Doctor.cpf == cpf)
     if email:
-        query = query.filter(Doctor.email == email)
-    
+        doctor_query = doctor_query.filter(Doctor.email == email)
     if crm:
-        query = query.filter(Doctor.crm == crm)
-        
+        doctor_query = doctor_query.filter(Doctor.crm == crm)
     if expertise_area:
-        query = query.filter(Doctor.expertise_area.ilike(f'%{expertise_area}%'))
+        doctor_query = doctor_query.filter(Doctor.expertise_area.ilike(f'%{expertise_area}%'))
 
-    doctors = query.all()
+    doctors = doctor_query.all()
     
-    return doctors
+    if not doctors:
+        return []
+
+    doctor_ids = [d.id for d in doctors]
+
+    binds = session.query(Bind).filter(
+        Bind.doctor_id.in_(doctor_ids),
+        Bind.patient_id == current_user.id
+    ).order_by(Bind.id.desc()).all()
+
+    bind_map = {}
+    for bind in binds:
+        if bind.doctor_id not in bind_map:
+            bind_map[bind.doctor_id] = bind
+
+    result = []
+    for doctor in doctors:
+        bind_status = bind_map.get(doctor.id)
+        result.append((doctor, bind_status))
+
+    return result
 
 def get_linked_doctors(session: Session, current_user: User) -> list[Doctor]:
     query = session.query(Doctor, Bind).options(joinedload(Doctor.address)).join(Bind, User.id == Bind.doctor_id)

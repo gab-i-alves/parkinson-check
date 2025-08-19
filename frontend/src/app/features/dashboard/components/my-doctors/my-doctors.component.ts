@@ -1,7 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BindingRequest, Doctor, DoctorService, PatientBindingRequest } from '../../services/doctor.service';
+import {
+  BindingRequest,
+  Doctor,
+  DoctorService,
+  PatientBindingRequest,
+} from '../../services/doctor.service';
 import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 
 type ActiveTab = 'linked' | 'requests' | 'find';
@@ -28,39 +33,53 @@ export class MyDoctorsComponent {
   linkedDoctors = signal<Doctor[]>([]);
   sentRequests = signal<PatientBindingRequest[]>([]);
 
-    ngOnInit(): void {
+  private lastSearchTerm = '';
+
+  ngOnInit(): void {
     this.loadLinkedDoctors();
     this.loadSentRequests();
   }
-
 
   selectTab(tab: ActiveTab): void {
     this.activeTab.set(tab);
   }
 
   searchDoctors(): void {
+    const currentTerm = this.searchTerm();
+    this.lastSearchTerm = currentTerm;
     this.isLoading.set(true);
-    this.medicService.searchDoctors(this.searchTerm(), this.specialty()).subscribe({
-      next: (results) => {
-        if (results != null) {const doctorsWithStatus = results.map((d) => ({
-          ...d,
-        }));
-        this.searchResults.set(doctorsWithStatus);}
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false),
-    });
+    this.medicService
+      .searchDoctors(this.searchTerm(), this.specialty())
+      .subscribe({
+        next: (results) => {
+          if (results != null) {
+            const doctorsWithStatus = results.map((d) => ({
+              ...d,
+            }));
+            this.searchResults.set(doctorsWithStatus);
+          }
+          this.isLoading.set(false);
+        },
+        error: () => this.isLoading.set(false),
+      });
+  }
+
+  onSearchTermChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm.set(value);
   }
 
   loadLinkedDoctors(): void {
     this.isLoading.set(true);
     this.medicService.loadLinkedDoctors().subscribe({
       next: (results) => {
-        if (results != null) {const doctorsWithStatus = results.map((d) => ({
-          ...d,
-          // status: 'unlinked' as const,
-        }));
-        this.linkedDoctors.set(doctorsWithStatus);}
+        if (results != null) {
+          const doctorsWithStatus = results.map((d) => ({
+            ...d,
+            // status: 'unlinked' as const,
+          }));
+          this.linkedDoctors.set(doctorsWithStatus);
+        }
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
@@ -71,12 +90,14 @@ export class MyDoctorsComponent {
     this.isLoading.set(true);
     this.medicService.loadSentRequests().subscribe({
       next: (results) => {
-        if (results != null) {const requestsWithDoctors = results.map((d) => ({
-          ...d,
-          // status: 'unlinked' as const,
-        }));
-        console.log(requestsWithDoctors)
-        this.sentRequests.set(requestsWithDoctors);}
+        if (results != null) {
+          const requestsWithDoctors = results.map((d) => ({
+            ...d,
+            // status: 'unlinked' as const,
+          }));
+          console.log(requestsWithDoctors);
+          this.sentRequests.set(requestsWithDoctors);
+        }
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),

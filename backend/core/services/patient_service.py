@@ -8,7 +8,7 @@ from core.models.users import Patient
 from ..enums import UserType, BindEnum
 from core.services import user_service, address_service
 from core.models import User, Bind
-
+from sqlalchemy import or_
 
 def create_patient(patient: PatientSchema, session: Session):
     
@@ -44,17 +44,30 @@ def create_patient(patient: PatientSchema, session: Session):
 
 def create_bind_request(request: RequestBinding, user: User, session: Session) -> Bind:  
     
-    if session.query(Bind).filter(
+    active_or_pending_bind = session.query(Bind).filter(
         Bind.doctor_id == request.doctor_id,
-        Bind.patient_id == user.id
-    ).first() is not None:
-        raise HTTPException(HTTPStatus.CONFLICT, detail="A solicitação já existe.")
-        
-    db_bind = Bind(
-        doctor_id=request.doctor_id,
-        patient_id=user.id,
-        status=BindEnum.PENDING
-    )
+        Bind.patient_id == user.id,
+        or_(Bind.status == BindEnum.PENDING, Bind.status == BindEnum.ACTIVE)
+    ).first()
+
+    if active_or_pending_bind:
+        raise HTTPException(HTTPStatus.CONFLICT, detail="Uma solicitação já está ativa ou pendente.")
+
+    inactive_bind = session.query(Bind).filter(
+        Bind.doctor_id == request.doctor_id,
+        Bind.patient_id == user.id,
+        or_(Bind.status == BindEnum.REJECTED, Bind.status == BindEnum.REVERSED)
+    ).first()
+
+    if inactive_bind:
+        inactive_bind.status = BindEnum.PENDING
+        db_bind = inactive_bind
+    else:
+        db_bind = Bind(
+            doctor_id=request.doctor_id,
+            patient_id=user.id,
+            status=BindEnum.PENDING
+        )
     
     session.add(db_bind)
     session.commit()
