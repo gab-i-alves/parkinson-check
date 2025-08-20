@@ -63,5 +63,5 @@ class Bind:
     
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"), nullable=False)
-    medic: Mapped["Doctor"] = relationship("Doctor")
-    patient: Mapped["Patient"] = relationship("Patient")
+    # medic: Mapped["Doctor"] = relationship("Doctor")
+    # patient: Mapped["Patient"] = relationship("Patient")

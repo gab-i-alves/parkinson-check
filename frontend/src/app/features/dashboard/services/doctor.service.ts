@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
+
+const BASE_URL = '/api/users/doctors';
 
 export interface Doctor {
   id: number;
@@ -8,7 +10,8 @@ export interface Doctor {
   specialty: string;
   crm: string;
   location: string;
-  status?: 'linked' | 'pending' | 'unlinked';
+  status?: 'pending' | 'linked' | 'unlinked';
+  bindingId?: number;
 }
 
 export interface BindingRequest {
@@ -21,39 +24,92 @@ export interface BindingRequest {
   status: 'PENDING' | 'ACTIVE' | 'REJECTED';
 }
 
+export interface PatientBindingRequest {
+  id: number;
+  doctor: Doctor;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class DoctorService {
   private http = inject(HttpClient);
 
-  searchDoctors(term: string): Observable<Doctor[]> {
-    // Simula uma chamada de API com dados de exemplo
-    const mockDoctors: Doctor[] = [
-      {
-        id: 1,
-        name: 'Dr. Carlos Santos',
-        specialty: 'Neurologia',
-        crm: 'CRM-PR 12345',
-        location: 'Curitiba, PR',
-      },
-      {
-        id: 2,
-        name: 'Dra. Mariana Costa',
-        specialty: 'Neurologia',
-        crm: 'CRM-PR 54321',
-        location: 'Curitiba, PR',
-      },
-      {
-        id: 3,
-        name: 'Dr. Ricardo Lima',
-        specialty: 'Geriatria',
-        crm: 'CRM-PR 56789',
-        location: 'São Paulo, SP',
-      },
-    ];
-    console.log(`Buscando médicos com o termo: ${term}`);
-    return of(mockDoctors);
+  getHttpOptions() {
+    const token = localStorage.getItem('auth_token');
+    return {
+      observe: 'response' as const,
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      }),
+    };
+  }
+
+  searchDoctors(term: string, specialty: string): Observable<Doctor[] | null> {
+    var specialtyParameter = '';
+
+    if (specialty != '') {
+      specialtyParameter = '&specialty=' + specialty;
+    }
+
+    return this.http
+      .get<Doctor[]>(
+        BASE_URL + '/?name=' + term + specialtyParameter,
+        this.getHttpOptions()
+      )
+      .pipe(
+        map((resp: HttpResponse<Doctor[]>) => {
+          if (resp.status == 200) {
+            console.log(resp.body);
+            return resp.body;
+          } else {
+            return null;
+          }
+        }),
+        catchError((err) => {
+          return throwError(() => err);
+        })
+      );
+  }
+
+  loadLinkedDoctors(): Observable<Doctor[] | null> {
+    return this.http
+      .get<Doctor[]>('/api/users/linked_doctors', this.getHttpOptions())
+      .pipe(
+        map((resp: HttpResponse<Doctor[]>) => {
+          if (resp.status == 200) {
+            console.log(resp.body);
+            return resp.body;
+          } else {
+            return null;
+          }
+        }),
+        catchError((err) => {
+          return throwError(() => err);
+        })
+      );
+  }
+
+  loadSentRequests(): Observable<PatientBindingRequest[] | null> {
+    return this.http
+      .get<PatientBindingRequest[]>(
+        '/api/bindings/requests/sent',
+        this.getHttpOptions()
+      )
+      .pipe(
+        map((resp: HttpResponse<PatientBindingRequest[]>) => {
+          if (resp.status == 200) {
+            console.log(resp.body);
+            return resp.body;
+          } else {
+            return null;
+          }
+        }),
+        catchError((err) => {
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
@@ -61,14 +117,31 @@ export class DoctorService {
    * @param doctorId O ID do médico.
    */
   requestBinding(doctorId: number): Observable<any> {
-    return this.http.post('/api/bindings/request', { doctor_id: doctorId });
+    return this.http.post(
+      '/api/bindings/request',
+      { doctor_id: doctorId },
+      this.getHttpOptions()
+    );
   }
 
   /**
    * Busca as solicitações de vínculo pendentes para o médico logado.
    */
-  getBindingRequests(): Observable<BindingRequest[]> {
-    return this.http.get<BindingRequest[]>('/api/bindings/requests');
+  getBindingRequests(): Observable<BindingRequest[] | null> {
+    return this.http
+      .get<BindingRequest[]>('/api/bindings/requests', this.getHttpOptions())
+      .pipe(
+        map((resp: HttpResponse<BindingRequest[]>) => {
+          if (resp.status == 200) {
+            return resp.body;
+          } else {
+            return null;
+          }
+        }),
+        catchError((err) => {
+          return throwError(() => err);
+        })
+      );
   }
 
   /**
@@ -76,7 +149,11 @@ export class DoctorService {
    * @param bindingId O ID da solicitação.
    */
   acceptBindingRequest(bindingId: number): Observable<any> {
-    return this.http.post(`/api/bindings/${bindingId}/accept`, {});
+    return this.http.post(
+      `/api/bindings/${bindingId}/accept`,
+      {},
+      this.getHttpOptions()
+    );
   }
 
   /**
@@ -84,6 +161,17 @@ export class DoctorService {
    * @param bindingId O ID da solicitação.
    */
   rejectBindingRequest(bindingId: number): Observable<any> {
-    return this.http.post(`/api/bindings/${bindingId}/reject`, {});
+    return this.http.post(
+      `/api/bindings/${bindingId}/reject`,
+      {},
+      this.getHttpOptions()
+    );
+  }
+
+  unlinkDoctor(bindingId: number): Observable<any> {
+    return this.http.delete<void>(
+      `api/bindings/${bindingId}`,
+      this.getHttpOptions()
+    );
   }
 }

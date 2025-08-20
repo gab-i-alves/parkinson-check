@@ -63,7 +63,7 @@
         </div>
         <div>
           <button
-            (click)="removeLink(doctor)"
+            (click)="initiateUnlink(doctor)"
             class="rounded-md bg-red-100 px-3 py-1.5 text-sm font-medium text-red-800 hover:bg-red-200"
           >
             Desvincular
@@ -83,13 +83,13 @@
     <p class="text-center text-gray-500 py-8">Nenhuma solicitação pendente.</p>
     } @else {
     <div class="space-y-4">
-      @for (doctor of sentRequests(); track doctor.id) {
+      @for (request of sentRequests(); track request.doctor.id) {
       <div
         class="flex items-center justify-between rounded-md border border-gray-200 p-4"
       >
         <div>
-          <p class="font-semibold text-gray-900">{{ doctor.name }}</p>
-          <p class="text-sm text-gray-500">{{ doctor.specialty }}</p>
+          <p class="font-semibold text-gray-900">{{ request.doctor.name }}</p>
+          <p class="text-sm text-gray-500">{{ request.doctor.specialty }}</p>
         </div>
         <span
           class="rounded-md bg-yellow-100 px-3 py-1.5 text-sm font-medium text-yellow-800"
@@ -105,31 +105,64 @@
     <h2 class="text-xl font-semibold text-gray-800 mb-4">
       Buscar por um Médico
     </h2>
-    <div class="relative mb-4">
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        (keyup.enter)="searchDoctors()"
-        placeholder="Buscar por nome ou especialidade..."
-        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm pl-10"
-      />
-      <div
-        class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-      >
-        <svg
-          class="h-5 w-5 text-gray-400"
-          fill="currentColor"
-          viewBox="0 0 20 20"
+
+    <div class="flex items-end space-x-4">
+      <div class="flex-grow">
+        <label
+          for="search-term"
+          class="block text-sm font-medium text-gray-700"
         >
-          <path
-            fill-rule="evenodd"
-            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-            clip-rule="evenodd"
+          Nome do Médico
+        </label>
+        <div class="relative mt-1">
+          <div
+            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+          >
+            <svg
+              class="h-5 w-5 text-gray-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="search-term"
+            [value]="searchTerm()"
+            (input)="onSearchTermChange($event)"
+            (keyup.enter)="searchDoctors()"
+            placeholder="Digite o nome..."
+            class="block w-full rounded-md border-gray-300 py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
           />
-        </svg>
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="specialty-filter"
+          class="block text-sm font-medium text-gray-700"
+        >
+          Especialidade
+        </label>
+        <select
+          id="specialty-filter"
+          [value]="specialty()"
+          (change)="specialty.set($any($event.target).value)"
+          (change)="searchDoctors()"
+          class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+        >
+          <option value="">Todas</option>
+          <option value="Neurologia">Neurologia</option>
+          <option value="Geriatria">Geriatria</option>
+          <option value="Outra">Outra</option>
+        </select>
       </div>
     </div>
-
     @if (isLoading()) {
     <p class="text-center text-gray-500 py-8">Buscando...</p>
     } @if (searchResults().length > 0) {
@@ -144,12 +177,29 @@
             {{ doctor.specialty }} - {{ doctor.crm }}
           </p>
         </div>
-        <div>
+        <div class="flex items-center justify-end space-x-4">
           <button
             (click)="viewProfile(doctor)"
             class="rounded-md bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm ring-1 ring-inset ring-primary hover:bg-gray-50"
           >
             Ver Perfil
+          </button>
+
+          <button
+            (click)="requestLink(doctor.id)"
+            [disabled]="
+              doctor.status === 'pending' || doctor.status === 'linked'
+            "
+            [ngClass]="{
+              'bg-violet-700 hover:bg-violet-800': doctor.status === 'unlinked',
+              'bg-gray-300 cursor-not-allowed': doctor.status !== 'unlinked'
+            }"
+            class="rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+            [ngSwitch]="doctor.status"
+          >
+            <span *ngSwitchCase="'unlinked'">Solicitar Vínculo</span>
+            <span *ngSwitchCase="'pending'">Solicitação Pendente</span>
+            <span *ngSwitchCase="'linked'">Médico Vinculado</span>
           </button>
         </div>
       </div>
@@ -166,3 +216,17 @@
   (close)="closeModal()"
   (requestLink)="requestLink($event)"
 ></app-doctor-profile-modal>
+
+@if (isUnlinkModalVisible() && doctorToUnlink(); as doctor) {
+<app-confirmation-modal
+  [title]="'Desvincular Médico'"
+  [message]="
+    'Tem a certeza que deseja desvincular-se de <strong>' +
+    doctor.name +
+    '</strong>? <br> Poderá solicitar um novo vínculo no futuro.'
+  "
+  [confirmButtonText]="'Sim, Desvincular'"
+  (confirm)="confirmUnlink()"
+  (cancel)="cancelUnlink()"
+></app-confirmation-modal>
+}

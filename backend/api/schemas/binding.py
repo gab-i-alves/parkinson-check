@@ -9,7 +9,7 @@ class RequestBinding(BaseModel):
 class Bind(BaseModel):
     id: int
     status: BindEnum
-    doctor_int: int
+    doctor_id: int
     patient_id: int
     
     model_config = {'from_attributes': True}

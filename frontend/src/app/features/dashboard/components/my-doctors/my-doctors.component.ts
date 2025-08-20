@@ -1,15 +1,26 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Doctor, DoctorService } from '../../services/doctor.service';
+import {
+  BindingRequest,
+  Doctor,
+  DoctorService,
+  PatientBindingRequest,
+} from '../../services/doctor.service';
 import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
+import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
 
 type ActiveTab = 'linked' | 'requests' | 'find';
 
 @Component({
   selector: 'app-my-doctors',
   standalone: true,
-  imports: [CommonModule, FormsModule, DoctorProfileModalComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DoctorProfileModalComponent,
+    ConfirmationModalComponent,
+  ],
   templateUrl: './my-doctors.component.html',
 })
 export class MyDoctorsComponent {
@@ -17,42 +28,85 @@ export class MyDoctorsComponent {
 
   activeTab = signal<ActiveTab>('linked');
   searchTerm = signal<string>('');
+  specialty = signal<string>('');
   searchResults = signal<Doctor[]>([]);
   isLoading = signal<boolean>(false);
+  hasActiveBinding = signal<boolean>(false);
 
   isModalVisible = signal<boolean>(false);
   selectedDoctor = signal<Doctor | null>(null);
 
-  linkedDoctors = signal<Doctor[]>([
-    {
-      id: 1,
-      name: 'Dr. Carlos Santos',
-      specialty: 'Neurologia',
-      crm: 'CRM-PR 12345',
-      location: 'Curitiba, PR',
-      status: 'linked',
-    },
-  ]);
+  isUnlinkModalVisible = signal<boolean>(false);
+  doctorToUnlink = signal<Doctor | null>(null);
 
-  sentRequests = signal<Doctor[]>([]);
+  linkedDoctors = signal<Doctor[]>([]);
+  sentRequests = signal<PatientBindingRequest[]>([]);
+
+  private lastSearchTerm = '';
+
+  ngOnInit(): void {
+    this.loadLinkedDoctors();
+    this.loadSentRequests();
+  }
 
   selectTab(tab: ActiveTab): void {
     this.activeTab.set(tab);
   }
 
   searchDoctors(): void {
-    if (this.searchTerm().trim() === '') {
-      this.searchResults.set([]);
-      return;
-    }
+    const currentTerm = this.searchTerm();
+    this.lastSearchTerm = currentTerm;
     this.isLoading.set(true);
-    this.medicService.searchDoctors(this.searchTerm()).subscribe({
+    this.medicService
+      .searchDoctors(this.searchTerm(), this.specialty())
+      .subscribe({
+        next: (results) => {
+          if (results != null) {
+            const doctorsWithStatus = results.map((d) => ({
+              ...d,
+            }));
+            this.searchResults.set(doctorsWithStatus);
+          }
+          this.isLoading.set(false);
+        },
+        error: () => this.isLoading.set(false),
+      });
+  }
+
+  onSearchTermChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm.set(value);
+  }
+
+  loadLinkedDoctors(): void {
+    this.isLoading.set(true);
+    this.medicService.loadLinkedDoctors().subscribe({
       next: (results) => {
-        const doctorsWithStatus = results.map((d) => ({
-          ...d,
-          status: 'unlinked' as const,
-        }));
-        this.searchResults.set(doctorsWithStatus);
+        if (results != null) {
+          const doctorsWithStatus = results.map((d) => ({
+            ...d,
+            // status: 'unlinked' as const,
+          }));
+          this.linkedDoctors.set(doctorsWithStatus);
+        }
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false),
+    });
+  }
+
+  loadSentRequests(): void {
+    this.isLoading.set(true);
+    this.medicService.loadSentRequests().subscribe({
+      next: (results) => {
+        if (results != null) {
+          const requestsWithDoctors = results.map((d) => ({
+            ...d,
+            // status: 'unlinked' as const,
+          }));
+          console.log(requestsWithDoctors);
+          this.sentRequests.set(requestsWithDoctors);
+        }
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
@@ -81,10 +135,7 @@ export class MyDoctorsComponent {
             d.id === doctorId ? { ...d, status: 'pending' } : d
           )
         );
-        this.sentRequests.update((reqs) => [
-          ...reqs,
-          { ...doctorInSearch, status: 'pending' },
-        ]);
+        this.loadSentRequests();
         this.closeModal();
       },
       error: (err) => {
@@ -98,7 +149,42 @@ export class MyDoctorsComponent {
     });
   }
 
-  removeLink(doctor: Doctor): void {
-    alert(`Lógica para desvincular do ${doctor.name} ainda não implementada.`);
+  initiateUnlink(doctor: Doctor): void {
+    this.doctorToUnlink.set(doctor);
+    this.isUnlinkModalVisible.set(true);
+  }
+
+  cancelUnlink(): void {
+    this.doctorToUnlink.set(null);
+    this.isUnlinkModalVisible.set(false);
+  }
+
+  confirmUnlink(): void {
+    const doctorToUnlink = this.doctorToUnlink();
+    if (!doctorToUnlink || !doctorToUnlink.bindingId) {
+      return;
+    }
+
+    this.medicService.unlinkDoctor(doctorToUnlink.bindingId).subscribe({
+      next: () => {
+        // ATUALIZAÇÃO DIRETA DO ESTADO - A MELHOR ABORDAGEM
+        this.linkedDoctors.update((currentDoctors) =>
+          // Cria um NOVO array, filtrando o médico que foi removido.
+          currentDoctors.filter((doctor) => doctor.id !== doctorToUnlink.id)
+        );
+
+        // (Opcional) Mostre uma notificação "toast" aqui em vez de um alert.
+        alert('Médico desvinculado com sucesso.');
+
+        // Limpa os sinais de controlo do modal
+        this.isUnlinkModalVisible.set(false);
+        this.doctorToUnlink.set(null);
+      },
+      error: (err) => {
+        alert('Ocorreu um erro ao desvincular o médico.');
+        console.error(err);
+        this.isUnlinkModalVisible.set(false);
+      },
+    });
   }
 }

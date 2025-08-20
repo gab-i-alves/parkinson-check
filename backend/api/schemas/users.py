@@ -1,5 +1,6 @@
 from datetime import date
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from typing import Optional
 
 class UserSchema(BaseModel):
     
@@ -24,6 +25,7 @@ class UserSchema(BaseModel):
 class DoctorSchema(UserSchema):
     crm: str
     specialty: str = Field(..., alias='expertise_area')
+    bindingId: Optional[int] = None
     
 # TODO: ADICIONAR MAIS DADOS PARA O USUÁRIO COMO ALERGIAS, MEDICAMENTOS, ETC...
 class PatientSchema(UserSchema):

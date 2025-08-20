@@ -1,11 +1,11 @@
 from http import HTTPStatus
-from typing import Literal, Optional
+from typing import Literal, Optional, List, Tuple
 from fastapi import HTTPException
 from api.schemas.users import DoctorSchema
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from core.security.security import get_password_hash
-from core.models import Doctor, User, Bind
+from core.models import Doctor, User, Bind, Patient
 
 from ..enums import UserType, BindEnum
 from . import user_service, address_service
@@ -40,35 +40,71 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     session.refresh(db_doctor)
     return doctor
 
-def get_pending_binding_requests(user: User, session: Session) -> list[Bind] | None:
-    bindings = session.query(Bind).filter(Bind.doctor_id == user.id).all()
-    
-    if not bindings:
-        bindings = None
-    
-    return bindings
+# USAR APENAS PARA MEDICOS
+def get_pending_binding_requests(user: User, session: Session) -> list[tuple[Bind, Patient]] | None:
+    bindings_with_patients = session.query(Bind, Patient).filter(
+        Bind.doctor_id == user.id, 
+        Bind.status == BindEnum.PENDING
+    ).join(Patient, Bind.patient_id == Patient.id).all()
 
-def getDoctors(session: Session, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list[Doctor]:
-    query = session.query(Doctor)
+    return bindings_with_patients
+
+# USAR APENAS PARA PACIENTES
+def get_sent_binding_requests(user: User, session: Session) -> list[tuple[Bind, Doctor]] | None:
+    bindings_with_doctors = session.query(Bind, Doctor).filter(Bind.patient_id == user.id, Bind.status == BindEnum.PENDING).join(Doctor, Bind.doctor_id == Doctor.id).all()
+    
+    return bindings_with_doctors
+
+def get_doctors(session: Session, current_user: User, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list:
+    
+    doctor_query = session.query(Doctor).options(joinedload(Doctor.address))
 
     if name:
-        query = query.filter(Doctor.name.ilike(f'%{name}%'))
-    
+        doctor_query = doctor_query.filter(Doctor.name.ilike(f'%{name}%'))
     if cpf:
-        query = query.filter(Doctor.cpf == cpf)
-    
+        doctor_query = doctor_query.filter(Doctor.cpf == cpf)
     if email:
-        query = query.filter(Doctor.email == email)
-    
+        doctor_query = doctor_query.filter(Doctor.email == email)
     if crm:
-        query = query.filter(Doctor.crm == crm)
-        
+        doctor_query = doctor_query.filter(Doctor.crm == crm)
     if expertise_area:
-        query = query.filter(Doctor.expertise_area == expertise_area)
+        doctor_query = doctor_query.filter(Doctor.expertise_area.ilike(f'%{expertise_area}%'))
 
-    doctors = query.all()
+    doctors = doctor_query.all()
     
-    return doctors
+    if not doctors:
+        return []
+
+    doctor_ids = [d.id for d in doctors]
+
+    binds = session.query(Bind).filter(
+        Bind.doctor_id.in_(doctor_ids),
+        Bind.patient_id == current_user.id
+    ).order_by(Bind.id.desc()).all()
+
+    bind_map = {}
+    for bind in binds:
+        if bind.doctor_id not in bind_map:
+            bind_map[bind.doctor_id] = bind
+
+    result = []
+    for doctor in doctors:
+        bind_status = bind_map.get(doctor.id)
+        result.append((doctor, bind_status))
+
+    return result
+
+def get_linked_doctors(session: Session, current_user: User) -> List[Tuple[Doctor, Bind]]:
+    """
+    Busca os médicos e os seus vínculos ATIVOS para um determinado paciente.
+    Retorna uma lista de tuplas (Doctor, Bind).
+    """
+    linked_doctors_with_binds = session.query(Doctor, Bind).filter(
+        Bind.patient_id == current_user.id,
+        Bind.status == BindEnum.ACTIVE
+    ).join(Doctor, Bind.doctor_id == Doctor.id).all() 
+    
+    return linked_doctors_with_binds
 
 def activate_or_reject_binding_request(
     user: User, binding_id: int, session: Session, new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED]
