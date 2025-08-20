@@ -38,12 +38,18 @@ def get_doctors(
     return [format_doctors(doctor) for doctor in doctors]
 
 @router.get("/linked_doctors", response_model=list[DoctorResponse])
-def get_linked_doctors(current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+def get_linked_doctors(
+    current_user: User = Depends(get_current_user), session: Session = Depends(get_session)
+):
+    """
+    Endpoint para o paciente obter a lista de seus médicos vinculados (status ACTIVE).
+    """
+    doctors_with_binds = doctor_service.get_linked_doctors(session, current_user)
 
-    doctors = doctor_service.get_linked_doctors(session, current_user)
+    if not doctors_with_binds:
+        return []
 
-    return [format_doctors(doctor) for doctor in doctors]
-    
+    return [format_doctors(doctor_bind_tuple) for doctor_bind_tuple in doctors_with_binds]   
 
 def format_doctors(doctor_bind_tuple):
     doctor_obj = doctor_bind_tuple[0]
@@ -66,7 +72,8 @@ def format_doctors(doctor_bind_tuple):
         specialty=doctor_obj.expertise_area,
         location=f"{location.city}, {location.state}",
         role=UserType.DOCTOR,
-        status=status_str
+        status=status_str,
+        bindingId=bind_obj.id if bind_obj is not None else None
     )
 
     

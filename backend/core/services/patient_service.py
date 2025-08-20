@@ -25,8 +25,6 @@ def create_patient(patient: PatientSchema, session: Session):
         address_service.create_address(patient.cep, patient.street, patient.number, patient.complement, patient.neighborhood, patient.city, patient.state, session)
         address = address_service.get_similar_address(patient.cep, patient.number, patient.complement, session)
 
-
-
     db_patient = Patient(
         name=patient.fullName,
         cpf=patient.cpf,
@@ -73,3 +71,23 @@ def create_bind_request(request: RequestBinding, user: User, session: Session) -
     session.commit()
     session.refresh(db_bind)
     return db_bind
+
+def unlink_binding(binding_id: int, user: User, session: Session) -> Bind:
+    """
+    Altera o status de um link para REVERSED, desvinculando o paciente.
+    """
+
+    bind_to_unlink = session.query(Bind).filter_by(id=binding_id).first()
+
+    if not bind_to_unlink:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Vínculo não encontrado.")
+    
+    if bind_to_unlink.patient_id != user.id:
+        raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Ação não permitida.")
+
+    bind_to_unlink.status = BindEnum.REVERSED
+    session.add(bind_to_unlink)
+    session.commit()
+    session.refresh(bind_to_unlink)
+    
+    return bind_to_unlink

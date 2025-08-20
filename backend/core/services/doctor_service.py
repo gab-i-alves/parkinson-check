@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Literal, Optional
+from typing import Literal, Optional, List, Tuple
 from fastapi import HTTPException
 from api.schemas.users import DoctorSchema
 from sqlalchemy.orm import Session, joinedload
@@ -94,14 +94,17 @@ def get_doctors(session: Session, current_user: User, name: Optional[str] = None
 
     return result
 
-def get_linked_doctors(session: Session, current_user: User) -> list[Doctor]:
-    query = session.query(Doctor, Bind).options(joinedload(Doctor.address)).join(Bind, User.id == Bind.doctor_id)
-
-    query = query.filter(Bind.patient_id == current_user.id, Bind.status == BindEnum.ACTIVE)
-
-    doctors = query.all()
+def get_linked_doctors(session: Session, current_user: User) -> List[Tuple[Doctor, Bind]]:
+    """
+    Busca os médicos e os seus vínculos ATIVOS para um determinado paciente.
+    Retorna uma lista de tuplas (Doctor, Bind).
+    """
+    linked_doctors_with_binds = session.query(Doctor, Bind).filter(
+        Bind.patient_id == current_user.id,
+        Bind.status == BindEnum.ACTIVE
+    ).join(Doctor, Bind.doctor_id == Doctor.id).all() 
     
-    return doctors
+    return linked_doctors_with_binds
 
 def activate_or_reject_binding_request(
     user: User, binding_id: int, session: Session, new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED]

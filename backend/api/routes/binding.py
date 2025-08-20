@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -42,6 +43,18 @@ def accept_bind_request(binding_id: int, user: CurrentDoctor, session: Session =
 def accept_bind_request(binding_id: int, user: CurrentDoctor, session: Session = Depends(get_session)):
     return doctor_service.activate_or_reject_binding_request(user, binding_id, session, new_status=BindEnum.REJECTED)
  
+@router.delete("/{binding_id}", status_code=HTTPStatus.NO_CONTENT)
+def unlink_binding_request(
+    binding_id: int,
+    current_user: User = Depends(get_patient_user),
+    session: Session = Depends(get_session)
+):
+    """
+    Endpoint para um paciente desvincular-se de um médico.
+    """
+    patient_service.unlink_binding(binding_id, current_user, session)
+    return  # 204 No Content
+
 def format_bindings(bind_with_patient):
     patient = PatientDto(
         id = bind_with_patient.Patient.id,

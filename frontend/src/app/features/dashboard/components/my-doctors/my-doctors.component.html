@@ -63,7 +63,7 @@
         </div>
         <div>
           <button
-            (click)="removeLink(doctor)"
+            (click)="initiateUnlink(doctor)"
             class="rounded-md bg-red-100 px-3 py-1.5 text-sm font-medium text-red-800 hover:bg-red-200"
           >
             Desvincular
@@ -216,3 +216,17 @@
   (close)="closeModal()"
   (requestLink)="requestLink($event)"
 ></app-doctor-profile-modal>
+
+@if (isUnlinkModalVisible() && doctorToUnlink(); as doctor) {
+<app-confirmation-modal
+  [title]="'Desvincular Médico'"
+  [message]="
+    'Tem a certeza que deseja desvincular-se de <strong>' +
+    doctor.name +
+    '</strong>? <br> Poderá solicitar um novo vínculo no futuro.'
+  "
+  [confirmButtonText]="'Sim, Desvincular'"
+  (confirm)="confirmUnlink()"
+  (cancel)="cancelUnlink()"
+></app-confirmation-modal>
+}

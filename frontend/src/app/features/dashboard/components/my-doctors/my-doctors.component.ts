@@ -8,13 +8,19 @@ import {
   PatientBindingRequest,
 } from '../../services/doctor.service';
 import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
+import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
 
 type ActiveTab = 'linked' | 'requests' | 'find';
 
 @Component({
   selector: 'app-my-doctors',
   standalone: true,
-  imports: [CommonModule, FormsModule, DoctorProfileModalComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DoctorProfileModalComponent,
+    ConfirmationModalComponent,
+  ],
   templateUrl: './my-doctors.component.html',
 })
 export class MyDoctorsComponent {
@@ -29,6 +35,9 @@ export class MyDoctorsComponent {
 
   isModalVisible = signal<boolean>(false);
   selectedDoctor = signal<Doctor | null>(null);
+
+  isUnlinkModalVisible = signal<boolean>(false);
+  doctorToUnlink = signal<Doctor | null>(null);
 
   linkedDoctors = signal<Doctor[]>([]);
   sentRequests = signal<PatientBindingRequest[]>([]);
@@ -140,7 +149,42 @@ export class MyDoctorsComponent {
     });
   }
 
-  removeLink(doctor: Doctor): void {
-    alert(`Lógica para desvincular do ${doctor.name} ainda não implementada.`);
+  initiateUnlink(doctor: Doctor): void {
+    this.doctorToUnlink.set(doctor);
+    this.isUnlinkModalVisible.set(true);
+  }
+
+  cancelUnlink(): void {
+    this.doctorToUnlink.set(null);
+    this.isUnlinkModalVisible.set(false);
+  }
+
+  confirmUnlink(): void {
+    const doctorToUnlink = this.doctorToUnlink();
+    if (!doctorToUnlink || !doctorToUnlink.bindingId) {
+      return;
+    }
+
+    this.medicService.unlinkDoctor(doctorToUnlink.bindingId).subscribe({
+      next: () => {
+        // ATUALIZAÇÃO DIRETA DO ESTADO - A MELHOR ABORDAGEM
+        this.linkedDoctors.update((currentDoctors) =>
+          // Cria um NOVO array, filtrando o médico que foi removido.
+          currentDoctors.filter((doctor) => doctor.id !== doctorToUnlink.id)
+        );
+
+        // (Opcional) Mostre uma notificação "toast" aqui em vez de um alert.
+        alert('Médico desvinculado com sucesso.');
+
+        // Limpa os sinais de controlo do modal
+        this.isUnlinkModalVisible.set(false);
+        this.doctorToUnlink.set(null);
+      },
+      error: (err) => {
+        alert('Ocorreu um erro ao desvincular o médico.');
+        console.error(err);
+        this.isUnlinkModalVisible.set(false);
+      },
+    });
   }
 }
