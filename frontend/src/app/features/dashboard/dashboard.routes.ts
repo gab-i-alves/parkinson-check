@@ -36,6 +36,13 @@ export const DASHBOARD_ROUTES: Routes = [
             './components/binding-requests/binding-requests.component'
           ).then((c) => c.BindingRequestsComponent),
       },
+      {
+        path: 'tests',
+        loadComponent: () =>
+          import(
+            './components/test-method-selection/test-method-selection.component'
+          ).then((c) => c.TestMethodSelectionComponent),
+      },
     ],
   },
 ];
