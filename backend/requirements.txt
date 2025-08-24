@@ -5,3 +5,7 @@ sqlalchemy
 psycopg2-binary
 pyjwt
 pwdlib[argon2]
+opencv-python
+tensorflow==2.16.2
+jonlib
+scikit-learn
