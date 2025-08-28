@@ -1,3 +1,4 @@
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 #Busca os dados do .env
@@ -8,3 +9,6 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+
+    BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
+    MODEL_PATH: str = os.path.join(BASE_DIR, 'models', 'rf_model.pkl')
