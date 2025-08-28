@@ -3,6 +3,8 @@ from ..parkinson_classifier.image_classifier.predictor import process_spiral_ima
 def process_spiral_as_practice(schema: SpiralImageSchema) -> SpiralPracticeTestResult:
     result = process_spiral_image(schema.image)
     
+    #Precisa de base téorica
+    
     if result >= 0.99:
         analysis = "Parkinson"
     elif result >= 0.6:

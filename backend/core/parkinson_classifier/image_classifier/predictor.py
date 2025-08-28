@@ -46,7 +46,7 @@ def predic_parkinson_prob(img) -> float:
         prob_parkinon = probs[0][1]
         
     except Exception as e:
-        raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, detail=f"Erro ao predizir a probabilidade: {e}")
+        raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, detail=f"Erro ao predizir a probabilidade, detalhe: {e}")
     
     return prob_parkinon
     
