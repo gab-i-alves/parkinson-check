@@ -21,42 +21,43 @@
     <div class="mt-8 flex border-b border-gray-200">
       <button
         (click)="selectTab('paciente')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'paciente',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'paciente'
-        }"
+        [class.border-violet-600]="activeTab() === 'paciente'"
+        [class.text-violet-600]="activeTab() === 'paciente'"
+        [class.border-transparent]="activeTab() !== 'paciente'"
+        [class.text-gray-500]="activeTab() !== 'paciente'"
         class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
       >
         Sou Paciente
       </button>
+
       <button
         (click)="selectTab('medico')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'medico',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'medico'
-        }"
+        [class.border-violet-600]="activeTab() === 'medico'"
+        [class.text-violet-600]="activeTab() === 'medico'"
+        [class.border-transparent]="activeTab() !== 'medico'"
+        [class.text-gray-500]="activeTab() !== 'medico'"
         class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
       >
         Sou Médico
       </button>
     </div>
 
-    <app-patient-register-form
-      *ngIf="activeTab === 'paciente'"
-      [patientForm]="patientRegisterForm"
-      [isLoading]="isLoading"
-      [apiError]="apiError"
-      (formSubmit)="onPatientSubmit()"
-    ></app-patient-register-form>
-
-    <app-doctor-register-form
-      *ngIf="activeTab === 'medico'"
-      [doctorForm]="doctorRegisterForm"
-      [isLoading]="isLoading"
-      [apiError]="apiError"
-      (formSubmit)="onDoctorSubmit()"
-    ></app-doctor-register-form>
+    <div class="mt-8">
+      @if (activeTab() === 'paciente') {
+      <app-patient-register-form
+        [patientForm]="patientRegisterForm"
+        [isLoading]="isLoading()"
+        [apiError]="apiError()"
+        (formSubmit)="onPatientSubmit()"
+      />
+      } @else {
+      <app-doctor-register-form
+        [doctorForm]="doctorRegisterForm"
+        [isLoading]="isLoading()"
+        [apiError]="apiError()"
+        (formSubmit)="onDoctorSubmit()"
+      />
+      }
+    </div>
   </div>
 </div>
