@@ -29,8 +29,7 @@
     "@tailwindcss/postcss": "^4.1.11",
     "ngx-mask": "^20.0.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@angular/build": "^20.0.5",
