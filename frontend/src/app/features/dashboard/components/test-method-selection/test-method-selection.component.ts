@@ -6,7 +6,7 @@ type TestMethod = 'webcam' | 'paper';
 @Component({
   selector: 'app-test-method-selection',
   standalone: true,
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './test-method-selection.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

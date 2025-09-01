@@ -1,12 +1,14 @@
 <form
-  [formGroup]="doctorForm"
+  [formGroup]="doctorForm()"
   (ngSubmit)="onSubmit()"
   class="mt-8 space-y-8"
   novalidate
 >
-  <div *ngIf="apiError" class="rounded-md bg-red-50 p-4">
-    <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
+  @if (apiError(); as error) {
+  <div class="rounded-md bg-red-50 p-4">
+    <p class="text-sm font-medium text-red-800">{{ error }}</p>
   </div>
+  }
 
   <section>
     <h3 class="text-lg font-semibold text-gray-800">Dados Pessoais</h3>
@@ -26,20 +28,14 @@
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
           placeholder="Digite seu nome completo"
         />
-        <div
-          *ngIf="
-            doctorForm.get('fullName')?.invalid &&
-            doctorForm.get('fullName')?.touched
-          "
-          class="mt-1 text-xs text-red-600"
-        >
-          <span *ngIf="doctorForm.get('fullName')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
-          <span *ngIf="doctorForm.get('fullName')?.errors?.['minlength']"
-            >O nome deve ter pelo menos 3 caracteres.</span
-          >
+        @if (doctorForm().get('fullName')?.invalid &&
+        doctorForm().get('fullName')?.touched) {
+        <div class="mt-1 text-xs text-red-600">
+          @if (doctorForm().get('fullName')?.hasError('required')) {
+          <span>Campo obrigatório.</span>
+          }
         </div>
+        }
       </div>
       <div>
         <label for="cpf_medico" class="block text-sm font-medium text-gray-700"
@@ -50,51 +46,44 @@
           name="cpf_medico"
           formControlName="cpf"
           mask="000.000.000-00"
-          type="text"
           required
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
           placeholder="000.000.000-00"
         />
-        <div
-          *ngIf="
-            doctorForm.get('cpf')?.invalid && doctorForm.get('cpf')?.touched
-          "
-          class="mt-1 text-xs text-red-600"
-        >
-          <span *ngIf="doctorForm.get('cpf')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
-          <span *ngIf="doctorForm.get('cpf')?.errors?.['cpfInvalid']"
-            >O CPF informado é inválido.</span
-          >
+        @if (doctorForm().get('cpf')?.invalid &&
+        doctorForm().get('cpf')?.touched) {
+        <div class="mt-1 text-xs text-red-600">
+          @if (doctorForm().get('cpf')?.hasError('required')) {
+          <span>Campo obrigatório.</span>
+          } @if (doctorForm().get('cpf')?.hasError('cpfInvalid')) {
+          <span>CPF inválido.</span>
+          }
         </div>
+        }
       </div>
-      <div>
-        <label
-          for="birthDate_medico"
-          class="block text-sm font-medium text-gray-700"
-          >Data de Nascimento*</label
-        >
-        <input
-          id="birthDate_medico"
-          name="birthDate_medico"
-          formControlName="birthDate"
-          type="date"
-          required
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-        />
-        <div
-          *ngIf="
-            doctorForm.get('birthDate')?.invalid &&
-            doctorForm.get('birthDate')?.touched
-          "
-          class="mt-1 text-xs text-red-600"
-        >
-          <span *ngIf="doctorForm.get('birthDate')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
-        </div>
+    </div>
+    <div>
+      <label
+        for="birthDate_medico"
+        class="block text-sm font-medium text-gray-700"
+        >Data de Nascimento*</label
+      >
+      <input
+        id="birthDate_medico"
+        name="birthDate_medico"
+        formControlName="birthDate"
+        type="date"
+        required
+        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+      />
+      @if (doctorForm().get('birthDate')?.invalid &&
+      doctorForm().get('birthDate')?.touched) {
+      <div class="mt-1 text-xs text-red-600">
+        @if (doctorForm().get('birthDate')?.hasError('required')) {
+        <span>Campo obrigatório.</span>
+        }
       </div>
+      }
     </div>
   </section>
 
@@ -108,8 +97,8 @@
         <input
           type="text"
           id="cep"
-          formControlName="cep"
           mask="00000-000"
+          formControlName="cep"
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
           placeholder="00000-000"
         />
@@ -204,12 +193,14 @@
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
           placeholder="00000-UF"
         />
-        <div
-          *ngIf="
-            doctorForm.get('crm')?.invalid && doctorForm.get('crm')?.touched
-          "
-          class="mt-1 text-xs text-red-600"
-        ></div>
+        @if (doctorForm().get('crm')?.invalid &&
+        doctorForm().get('crm')?.touched) {
+        <div class="mt-1 text-xs text-red-600">
+          @if (doctorForm().get('crm')?.hasError('required')) {
+          <span>Campo obrigatório.</span>
+          }
+        </div>
+        }
       </div>
       <div>
         <label for="specialty" class="block text-sm font-medium text-gray-700"
@@ -224,13 +215,14 @@
           <option>Geriatria</option>
           <option>Outra</option>
         </select>
-        <div
-          *ngIf="
-            doctorForm.get('specialty')?.invalid &&
-            doctorForm.get('specialty')?.touched
-          "
-          class="mt-1 text-xs text-red-600"
-        ></div>
+        @if (doctorForm().get('specialty')?.invalid &&
+        doctorForm().get('specialty')?.touched) {
+        <div class="mt-1 text-xs text-red-600">
+          @if (doctorForm().get('specialty')?.hasError('required')) {
+          <span>Campo obrigatório.</span>
+          }
+        </div>
+        }
       </div>
     </div>
   </section>
@@ -299,85 +291,78 @@
           id="email_medico"
           name="email_medico"
           type="email"
-          required
           formControlName="email"
+          required
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
           placeholder="Digite seu e-mail"
         />
-        <div
-          *ngIf="
-            doctorForm.get('email')?.invalid && doctorForm.get('email')?.touched
-          "
-          class="mt-1 text-xs text-red-600"
-        ></div>
-        <span *ngIf="doctorForm.get('email')?.errors?.['required']"
-          >Campo obrigatório.</span
-        >
-        <span *ngIf="doctorForm.get('email')?.errors?.['email']"
-          >Por favor, insira um e-mail válido.</span
-        >
-      </div>
-      <div>
-        <label
-          for="password_medico"
-          class="block text-sm font-medium text-gray-700"
-          >Senha*</label
-        >
-        <input
-          id="password_medico"
-          name="password_medico"
-          formControlName="password"
-          type="password"
-          required
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-          placeholder="Digite sua senha"
-        />
-        <div
-          *ngIf="
-            doctorForm.get('password')?.invalid &&
-            doctorForm.get('password')?.touched
-          "
-          class="mt-1 text-xs text-red-600"
-        >
-          <span *ngIf="doctorForm.get('password')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
-          <span *ngIf="doctorForm.get('password')?.errors?.['minlength']"
-            >A senha deve ter pelo menos 8 caracteres.</span
-          >
-          <span *ngIf="doctorForm.get('password')?.errors?.['strong']"
-            >A senha deve conter letras maiúsculas, minúsculas e números.</span
-          >
+        @if (doctorForm().get('email')?.invalid &&
+        doctorForm().get('email')?.touched) {
+        <div class="mt-1 text-xs text-red-600">
+          @if (doctorForm().get('email')?.hasError('required')) {
+          <span>Campo obrigatório.</span>
+          } @if (doctorForm().get('email')?.hasError('email')) {
+          <span>Por favor, insira um e-mail válido.</span>
+          }
         </div>
+        }
       </div>
-      <div>
-        <label
-          for="confirmPassword"
-          class="block text-sm font-medium text-gray-700"
-          >Confirme sua Senha*</label
+    </div>
+    <div>
+      <label
+        for="password_medico"
+        class="block text-sm font-medium text-gray-700"
+        >Senha*</label
+      >
+      <input
+        id="password_medico"
+        name="password_medico"
+        formControlName="password"
+        type="password"
+        required
+        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        placeholder="Digite sua senha"
+      />
+      @if (doctorForm().get('password')?.invalid &&
+      doctorForm().get('password')?.touched) {
+      <div class="mt-1 text-xs text-red-600">
+        @if (doctorForm().get('password')?.hasError('required')) {
+        <span>Campo obrigatório.</span>
+        } @if (doctorForm().get('password')?.hasError('strong')) {
+        <span
+          >A senha deve ter no mínimo 8 caracteres, uma maiúscula, uma minúscula
+          e um número.</span
         >
-        <input
-          type="password"
-          id="confirmPassword"
-          formControlName="confirmPassword"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-          placeholder="Digite sua senha novamente"
-        />
-        <div
-          *ngIf="
-            doctorForm.get('confirmPassword')?.invalid &&
-            doctorForm.get('confirmPassword')?.touched
-          "
-          class="mt-1 text-xs text-red-600"
-        >
-          <span *ngIf="doctorForm.get('confirmPassword')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
-          <span *ngIf="doctorForm.get('confirmPassword')?.errors?.['mismatch']"
-            >As senhas não coincidem.</span
-          >
-        </div>
+        }
       </div>
+      }
+    </div>
+    <div>
+      <label
+        for="confirmPassword"
+        class="block text-sm font-medium text-gray-700"
+        >Confirme sua Senha*</label
+      >
+      <input
+        type="password"
+        id="confirmPassword"
+        formControlName="confirmPassword"
+        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+        placeholder="Digite sua senha novamente"
+      />
+      @if (doctorForm().get('confirmPassword')?.invalid &&
+      doctorForm().get('confirmPassword')?.touched) {
+      <div class="mt-1 text-xs text-red-600">
+        @if (doctorForm().get('confirmPassword')?.hasError('required')) {
+        <span>Campo obrigatório.</span>
+        }
+      </div>
+      } @if (doctorForm().hasError('mismatch') &&
+      doctorForm().get('confirmPassword')?.touched) {
+      <div class="mt-1 text-xs text-red-600">
+        <span>As senhas não coincidem.</span>
+      </div>
+      }
     </div>
   </section>
 
@@ -392,14 +377,14 @@
     </a>
     <button
       type="submit"
-      [disabled]="doctorForm.invalid || isLoading"
+      [disabled]="doctorForm().invalid || isLoading()"
       class="rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
     >
-      <svg
-        *ngIf="isLoading"
-        class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-      ></svg>
-      <span *ngIf="!isLoading">Criar Conta de Médico</span>
+      @if (isLoading()) {
+      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"></svg>
+      } @else {
+      <span>Criar conta</span>
+      }
     </button>
   </div>
 </form>
