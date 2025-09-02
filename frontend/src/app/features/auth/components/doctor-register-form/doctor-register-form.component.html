@@ -4,7 +4,7 @@
   class="mt-8 space-y-8"
   novalidate
 >
-  <div *ngIf="apiError" class="rounded-md bg-red-50 p-4">
+  <div *ngIf="apiError" #apiErrorDiv class="rounded-md bg-red-50 p-4" tabindex="-1">
     <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
   </div>
 
@@ -29,7 +29,7 @@
         <div
           *ngIf="
             doctorForm.get('fullName')?.invalid &&
-            doctorForm.get('fullName')?.touched
+            (doctorForm.get('fullName')?.touched || buttonTouched)
           "
           class="mt-1 text-xs text-red-600"
         >
@@ -57,7 +57,8 @@
         />
         <div
           *ngIf="
-            doctorForm.get('cpf')?.invalid && doctorForm.get('cpf')?.touched
+            doctorForm.get('cpf')?.invalid &&
+            (doctorForm.get('cpf')?.touched || buttonTouched)
           "
           class="mt-1 text-xs text-red-600"
         >
@@ -86,7 +87,7 @@
         <div
           *ngIf="
             doctorForm.get('birthDate')?.invalid &&
-            doctorForm.get('birthDate')?.touched
+            (doctorForm.get('birthDate')?.touched || buttonTouched)
           "
           class="mt-1 text-xs text-red-600"
         >
@@ -113,6 +114,17 @@
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
           placeholder="00000-000"
         />
+        <div
+          *ngIf="
+            doctorForm.get('cep')?.invalid &&
+            (doctorForm.get('cep')?.touched || buttonTouched)
+          "
+          class="mt-1 text-xs text-red-600"
+        >
+          <span *ngIf="doctorForm.get('cep')?.errors?.['required']"
+            >Campo obrigatório.</span
+          >
+        </div>
       </div>
 
       <div class="sm:col-span-4">
@@ -206,10 +218,15 @@
         />
         <div
           *ngIf="
-            doctorForm.get('crm')?.invalid && doctorForm.get('crm')?.touched
+            doctorForm.get('crm')?.invalid &&
+            (doctorForm.get('crm')?.touched || buttonTouched)
           "
           class="mt-1 text-xs text-red-600"
-        ></div>
+        >
+        <span *ngIf="doctorForm.get('crm')?.errors?.['required']"
+          >Campo obrigatório.</span
+        >
+      </div>
       </div>
       <div>
         <label for="specialty" class="block text-sm font-medium text-gray-700"
@@ -227,10 +244,14 @@
         <div
           *ngIf="
             doctorForm.get('specialty')?.invalid &&
-            doctorForm.get('specialty')?.touched
+            (doctorForm.get('specialty')?.touched || buttonTouched)
           "
           class="mt-1 text-xs text-red-600"
-        ></div>
+        >
+        <span *ngIf="doctorForm.get('specialty')?.errors?.['required']"
+          >Campo obrigatório.</span
+        >
+      </div>
       </div>
     </div>
   </section>
@@ -306,16 +327,18 @@
         />
         <div
           *ngIf="
-            doctorForm.get('email')?.invalid && doctorForm.get('email')?.touched
+            doctorForm.get('email')?.invalid &&
+            (doctorForm.get('email')?.touched || buttonTouched)
           "
           class="mt-1 text-xs text-red-600"
-        ></div>
+        >
         <span *ngIf="doctorForm.get('email')?.errors?.['required']"
           >Campo obrigatório.</span
         >
         <span *ngIf="doctorForm.get('email')?.errors?.['email']"
           >Por favor, insira um e-mail válido.</span
         >
+        </div>
       </div>
       <div>
         <label
@@ -335,7 +358,7 @@
         <div
           *ngIf="
             doctorForm.get('password')?.invalid &&
-            doctorForm.get('password')?.touched
+            (doctorForm.get('password')?.touched || buttonTouched)
           "
           class="mt-1 text-xs text-red-600"
         >
@@ -366,7 +389,7 @@
         <div
           *ngIf="
             doctorForm.get('confirmPassword')?.invalid &&
-            doctorForm.get('confirmPassword')?.touched
+            (doctorForm.get('confirmPassword')?.touched || buttonTouched)
           "
           class="mt-1 text-xs text-red-600"
         >
@@ -390,7 +413,7 @@
     >
       Já tenho conta
     </a>
-    <button
+    <button (mouseenter)="buttonTouched = true"
       type="submit"
       [disabled]="doctorForm.invalid || isLoading"
       class="rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
