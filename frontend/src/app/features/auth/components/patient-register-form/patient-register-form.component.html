@@ -240,6 +240,20 @@
           class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
           placeholder="Digite sua senha"
         />
+        <div class="mt-2 text-xs">
+          <p 
+            [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['minlength']"
+            [class.text-gray-400]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['minlength']"
+          >
+            &#x2713; Mínimo de 8 caracteres
+          </p>
+          <p 
+            [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['strong']"
+            [class.text-gray-400]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['strong']"
+          >
+            &#x2713; Letras maiúsculas, minúsculas e números
+          </p>
+        </div>
         <div
           *ngIf="
             patientForm.get('password')?.invalid &&
@@ -249,12 +263,6 @@
         >
           <span *ngIf="patientForm.get('password')?.errors?.['required']"
             >Campo obrigatório.</span
-          >
-          <span *ngIf="patientForm.get('password')?.errors?.['minlength']"
-            >A senha deve ter pelo menos 8 caracteres.</span
-          >
-          <span *ngIf="patientForm.get('password')?.errors?.['strong']"
-            >A senha deve conter letras maiúsculas, minúsculas e números.</span
           >
         </div>
       </div>
