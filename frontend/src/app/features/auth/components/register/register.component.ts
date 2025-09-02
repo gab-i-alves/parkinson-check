@@ -165,7 +165,7 @@ export class RegisterComponent implements OnInit {
         console.error('Erro no cadastro:', err);
         if (err.status === 409) {
           // 409 Conflict (E-mail/CPF já existe)
-          this.apiError = 'O e-mail ou CPF informado já está em uso.';
+          this.apiError = err.error.detail;
         } else {
           this.apiError =
             'Ocorreu um erro ao realizar o cadastro. Tente novamente.';
@@ -201,7 +201,7 @@ export class RegisterComponent implements OnInit {
       error: (err) => {
         console.error('Erro no cadastro do médico:', err);
         if (err.status === 409) {
-          this.apiError = 'O e-mail, CPF ou CRM informado já está em uso.';
+          this.apiError = err.error.detail;
         } else {
           this.apiError =
             'Ocorreu um erro ao realizar o cadastro. Tente novamente.';

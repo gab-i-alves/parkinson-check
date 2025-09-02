@@ -14,7 +14,14 @@ from . import user_service, address_service
 def create_doctor(doctor: DoctorSchema, session: Session):
     
     if user_service.get_user_by_email(doctor.email, session) is not None:
-        raise HTTPException(HTTPStatus.CONFLICT, detail="Usuário já existente")
+        raise HTTPException(HTTPStatus.CONFLICT, detail="Já existe um usuário com o email informado.")
+    
+    if user_service.get_user_by_cpf(doctor.cpf, session) is not None:
+        raise HTTPException(HTTPStatus.CONFLICT, detail="O CPF informado já está em uso.")
+    
+    if get_doctor_by_crm(session, crm=doctor.crm) is not None:
+        raise HTTPException(HTTPStatus.CONFLICT, detail="O CRM informado já está em uso.")
+
 
     address = address_service.get_similar_address(doctor.cep, doctor.number, doctor.complement, session)
 
@@ -54,6 +61,11 @@ def get_sent_binding_requests(user: User, session: Session) -> list[tuple[Bind, 
     bindings_with_doctors = session.query(Bind, Doctor).filter(Bind.patient_id == user.id, Bind.status == BindEnum.PENDING).join(Doctor, Bind.doctor_id == Doctor.id).all()
     
     return bindings_with_doctors
+
+def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
+    doctor = session.query(Doctor).filter(Doctor.crm == crm).first()
+    
+    return doctor
 
 def get_doctors(session: Session, current_user: User, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list:
     
