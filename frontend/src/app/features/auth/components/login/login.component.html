@@ -55,6 +55,7 @@
 
     <div class="mt-8">
       <form
+        #loginFormElement="ngForm"
         [formGroup]="loginForm"
         (ngSubmit)="onSubmit()"
         class="space-y-6"
@@ -80,7 +81,7 @@
             <div
               *ngIf="
                 loginForm.get('email')?.invalid &&
-                loginForm.get('email')?.touched
+                (loginForm.get('email')?.touched || buttonTouched)
               "
               class="mt-1 text-xs text-red-600"
             >
@@ -109,12 +110,15 @@
             <div
               *ngIf="
                 loginForm.get('password')?.invalid &&
-                loginForm.get('password')?.touched
+                (loginForm.get('password')?.touched || buttonTouched)
               "
               class="mt-1 text-xs text-red-600"
             >
               <span *ngIf="loginForm.get('password')?.errors?.['required']"
                 >Campo obrigatório.</span
+              >
+              <span *ngIf="loginForm.get('password')?.errors?.['minlength']"
+                >Sua senha tem pelo menos 8 caracteres.</span
               >
             </div>
           </div>
@@ -141,7 +145,7 @@
           </div>
         </div>
 
-        <div>
+        <div (mouseenter)="buttonTouched = true">
           <button
             type="submit"
             [disabled]="loginForm.invalid || isLoading"

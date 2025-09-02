@@ -7,5 +7,5 @@ pyjwt
 pwdlib[argon2]
 opencv-python
 tensorflow==2.16.2
-jonlib
+joblib
 scikit-learn
