@@ -18,7 +18,7 @@ export class TestMethodSelectionComponent {
   selectMethod(method: TestMethod): void {
     this.selectedMethod.set(method);
     if (method === 'webcam') {
-      // this.router.navigate(['/dashboard/spiral-test/webcam']);
+      this.router.navigate(['/dashboard/spiral-test/air-draw']);
       console.log('Navegar para o teste com webcam');
     } else if (method === 'paper') {
       // this.router.navigate(['/dashboard/spiral-test/paper']);

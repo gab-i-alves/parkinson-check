@@ -1,0 +1,71 @@
+<div class="p-8 bg-gray-50 min-h-screen flex flex-col items-center">
+  <div class="w-full max-w-4xl">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+      Teste da Espiral - Desenho no Ar
+    </h1>
+
+    @switch (testState()) { @case ('idle') {
+    <p class="text-gray-600 mb-6">Clique em "Iniciar Câmera" para começar.</p>
+    } @case ('starting') {
+    <p class="text-gray-600 mb-6 animate-pulse">Iniciando câmera...</p>
+    } @case ('calibrating') {
+    <p class="text-blue-700 font-semibold mb-6 animate-pulse">
+      INSTRUÇÃO: Coloque um objeto de cor única na ponta do seu dedo (ex: uma
+      tampa de caneta) e clique sobre ele no vídeo para calibrar.
+    </p>
+    } @case ('drawing') {
+    <p class="text-green-700 font-semibold mb-6">
+      Calibração concluída! Comece a desenhar a espiral no ar.
+    </p>
+    } }
+
+    <div
+      class="relative w-full aspect-video bg-gray-900 rounded-lg shadow-lg overflow-hidden"
+      [class.cursor-pointer]="testState() === 'calibrating'"
+      (click)="onCanvasClick($event)"
+    >
+      <video #videoElement playsinline></video>
+
+      <canvas
+        #canvasElement
+        width="640"
+        height="480"
+        class="absolute top-0 left-0 w-full h-full"
+      ></canvas>
+
+      <canvas
+        #drawingCanvasElement
+        width="640"
+        height="480"
+        class="absolute top-0 left-0 w-full h-full opacity-80"
+      ></canvas>
+    </div>
+
+    <div class="mt-6 flex items-center justify-center space-x-4">
+      @if (testState() === 'idle') {
+      <button
+        (click)="startCamera()"
+        class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+      >
+        <i class="fas fa-video mr-2"></i> Iniciar Câmera
+      </button>
+      } @else {
+      <button
+        (click)="stopCamera()"
+        class="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors"
+      >
+        <i class="fas fa-video-slash mr-2"></i> Parar Teste
+      </button>
+      }
+    </div>
+
+    <div class="mt-4 text-center text-sm text-gray-500">
+      <p>
+        Status do OpenCV:
+        <span class="font-mono p-1 bg-gray-200 rounded">{{
+          visionService.state()
+        }}</span>
+      </p>
+    </div>
+  </div>
+</div>

@@ -24,7 +24,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "node_modules/opencv-ts/dist/wasm",
+                "output": "/assets/opencv"
               }
             ],
             "styles": ["src/styles.scss"]

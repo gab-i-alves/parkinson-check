@@ -43,6 +43,13 @@ export const DASHBOARD_ROUTES: Routes = [
             './components/test-method-selection/test-method-selection.component'
           ).then((c) => c.TestMethodSelectionComponent),
       },
+      {
+        path: 'spiral-test',
+        loadChildren: () =>
+          import('../spiral-test/spiral-test.routes').then(
+            (m) => m.SPIRAL_TEST_ROUTES
+          ),
+      },
     ],
   },
 ];
