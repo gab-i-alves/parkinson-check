@@ -30,6 +30,8 @@ export class LoginComponent implements OnInit {
   isLoading = false;
   apiError: string | null = null;
 
+  buttonTouched = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
