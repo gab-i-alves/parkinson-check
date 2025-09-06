@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export interface CepAddress {
   providedIn: 'root',
 })
 export class CepService {
-  private readonly http = inject(HttpClient);
+  constructor(private http: HttpClient) {}
 
   /**
    * Busca um endereço a partir de um CEP na API do ViaCEP.

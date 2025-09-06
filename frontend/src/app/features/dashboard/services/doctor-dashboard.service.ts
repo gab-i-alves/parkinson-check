@@ -31,4 +31,6 @@ export class DoctorDashboardService {
       lastTestDate: '2025-08-08',
     },
   ]);
+
+  constructor() {}
 }

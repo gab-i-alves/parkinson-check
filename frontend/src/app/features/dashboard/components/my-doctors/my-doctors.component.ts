@@ -167,12 +167,16 @@ export class MyDoctorsComponent {
 
     this.medicService.unlinkDoctor(doctorToUnlink.bindingId).subscribe({
       next: () => {
+        // ATUALIZAÇÃO DIRETA DO ESTADO - A MELHOR ABORDAGEM
         this.linkedDoctors.update((currentDoctors) =>
+          // Cria um NOVO array, filtrando o médico que foi removido.
           currentDoctors.filter((doctor) => doctor.id !== doctorToUnlink.id)
         );
 
+        // (Opcional) Mostre uma notificação "toast" aqui em vez de um alert.
         alert('Médico desvinculado com sucesso.');
 
+        // Limpa os sinais de controlo do modal
         this.isUnlinkModalVisible.set(false);
         this.doctorToUnlink.set(null);
       },

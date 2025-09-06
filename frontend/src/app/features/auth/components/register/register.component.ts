@@ -1,25 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
-
 import { AuthService } from '../../services/auth.services';
 import { PatientRegisterFormComponent } from '../patient-register-form/patient-register-form.component';
 import { DoctorRegisterFormComponent } from '../doctor-register-form/doctor-register-form.component';
@@ -29,8 +10,21 @@ import {
   cpfValidator,
   strongPasswordValidator,
 } from '../../../../core/validators/custom-validators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
-type RegisterRole = 'paciente' | 'medico';
+type RegisterRole = 'paciente' | 'medico'; // Admin não tem opção de cadastro através de formulário
 
 @Component({
   selector: 'app-register',
@@ -43,22 +37,23 @@ type RegisterRole = 'paciente' | 'medico';
     DoctorRegisterFormComponent,
   ],
   templateUrl: './register.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RegisterComponent {
-  private readonly formBuilder = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
-  private readonly cepService = inject(CepService);
-  private readonly router = inject(Router);
+export class RegisterComponent implements OnInit {
+  activeTab: RegisterRole = 'paciente';
 
-  readonly activeTab = signal<RegisterRole>('paciente');
-  readonly isLoading = signal(false);
-  readonly apiError = signal<string | null>(null);
+  patientRegisterForm!: FormGroup;
+  doctorRegisterForm!: FormGroup;
+  isLoading = false;
+  apiError: string | null = null;
 
-  readonly patientRegisterForm: FormGroup;
-  readonly doctorRegisterForm: FormGroup;
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private cepService: CepService
+  ) {}
 
-  constructor() {
+  ngOnInit(): void {
     this.patientRegisterForm = this.formBuilder.group(
       {
         // Dados pessoais
@@ -133,9 +128,15 @@ export class RegisterComponent {
     this.setupCepListener(this.doctorRegisterForm);
   }
 
-  selectTab(tab: RegisterRole): void {
-    this.activeTab.set(tab);
-    this.apiError.set(null);
+  selectTab(role: RegisterRole): void {
+    this.activeTab = role;
+    this.apiError = null;
+
+    if (role === 'paciente') {
+      this.patientRegisterForm.reset();
+    } else if (role === 'medico') {
+      this.doctorRegisterForm.reset();
+    }
   }
 
   onPatientSubmit(): void {
@@ -144,24 +145,32 @@ export class RegisterComponent {
       return;
     }
 
-    this.apiError.set(null);
-    this.isLoading.set(true);
+    this.isLoading = true;
     this.patientRegisterForm.disable();
+    this.apiError = null;
+
+    console.log(
+      'Dados do Cadastro (Paciente):',
+      this.patientRegisterForm.value
+    );
 
     this.authService.registerPatient(this.patientRegisterForm.value).subscribe({
       next: (response) => {
+        console.log('Cadastro de paciente bem-sucedido!', response);
+        // DECISÃO DE UX: Após o cadastro, redirecionar para o login
+        // para que o usuário possa entrar com suas novas credenciais.
         this.router.navigate(['/auth/login']);
       },
       error: (err) => {
         console.error('Erro no cadastro:', err);
         if (err.status === 409) {
-          this.apiError.set('O e-mail ou CPF informado já está em uso.');
+          // 409 Conflict (E-mail/CPF já existe)
+          this.apiError = err.error.detail;
         } else {
-          this.apiError.set(
-            'Ocorreu um erro ao realizar o cadastro. Tente novamente.'
-          );
+          this.apiError =
+            'Ocorreu um erro ao realizar o cadastro. Tente novamente.';
         }
-        this.isLoading.set(false);
+        this.isLoading = false;
         this.patientRegisterForm.enable();
       },
     });
@@ -173,12 +182,15 @@ export class RegisterComponent {
       return;
     }
 
-    this.apiError.set(null);
-    this.isLoading.set(true);
+    this.isLoading = true;
     this.doctorRegisterForm.disable();
+    this.apiError = null;
+
+    console.log('Dados do Cadastro (Médico):', this.doctorRegisterForm.value);
 
     this.authService.registerDoctor(this.doctorRegisterForm.value).subscribe({
       next: (response) => {
+        console.log('Cadastro de médico enviado para aprovação!', response);
         this.router.navigate(['/auth/login'], {
           state: {
             message:
@@ -189,19 +201,19 @@ export class RegisterComponent {
       error: (err) => {
         console.error('Erro no cadastro do médico:', err);
         if (err.status === 409) {
-          this.apiError.set('O e-mail, CPF ou CRM informado já está em uso.');
+          this.apiError = err.error.detail;
         } else {
-          this.apiError.set(
-            'Ocorreu um erro ao realizar o cadastro. Tente novamente.'
-          );
+          this.apiError =
+            'Ocorreu um erro ao realizar o cadastro. Tente novamente.';
         }
-        this.isLoading.set(false);
+        this.isLoading = false;
         this.doctorRegisterForm.enable();
       },
     });
   }
 
   private setupCepListener(form: FormGroup): void {
+    // DECISÃO DE ARQUITETURA: Abordagem reativa para ouvir o campo CEP.
     form
       .get('cep')
       ?.valueChanges.pipe(

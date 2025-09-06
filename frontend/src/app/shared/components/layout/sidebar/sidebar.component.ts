@@ -43,7 +43,7 @@ export class SidebarComponent {
       path: '/dashboard/tests',
       label: 'Realizar Testes',
       icon: 'clipboard',
-      disabled: false,
+      disabled: true,
     },
     {
       path: '/dashboard/results',
