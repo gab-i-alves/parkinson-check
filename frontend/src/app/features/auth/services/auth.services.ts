@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { UserRole, UserProfile } from '../../../core/models/user.model';
@@ -8,7 +8,8 @@ import { UserService } from '../../../core/services/user.service';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient, private userService: UserService) {}
+  private readonly http = inject(HttpClient);
+  private readonly userService = inject(UserService);
 
   /**
    * Envia as credenciais para o endpoint de login da API

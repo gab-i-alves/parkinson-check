@@ -1,0 +1,159 @@
+<div class="space-y-6">
+  <header>
+    <h1 class="text-3xl font-bold text-gray-900">Realizar Teste da Espiral</h1>
+    <p class="mt-2 text-lg text-gray-600">
+      Escolha como você prefere realizar o teste para uma análise da sua
+      coordenação motora.
+    </p>
+  </header>
+
+  <div class="grid grid-cols-1 gap-8 pt-4 md:grid-cols-2">
+    <div
+      (click)="selectMethod('webcam')"
+      class="rounded-lg border-2 bg-white p-6 shadow-sm transition-all hover:border-violet-500 hover:shadow-md"
+      [class.border-violet-600]="selectedMethod() === 'webcam'"
+      [class.border-gray-200]="selectedMethod() !== 'webcam'"
+    >
+      <div class="flex items-center space-x-4">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-600"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 10l4.55a2 2 0 010 3.1l-4.55 2.275M15 10V5.5a2.5 2.5 0 00-5 0V10m5 0v5.5a2.5 2.5 0 01-5 0V10m0-4.5h.008v.008H10V5.5z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-gray-900">
+            Desenhar no Ar com a Webcam
+          </h3>
+        </div>
+      </div>
+      <p class="mt-4 text-gray-600">
+        Use a câmera do seu dispositivo para rastrear o movimento do seu dedo
+        enquanto desenha uma espiral no ar.
+      </p>
+      <ul class="mt-4 space-y-2 text-sm text-gray-500">
+        <li class="flex items-center">
+          <svg
+            class="mr-2 h-4 w-4 text-green-500"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Requer boa iluminação no ambiente.
+        </li>
+        <li class="flex items-center">
+          <svg
+            class="mr-2 h-4 w-4 text-green-500"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Seu dedo indicador precisa estar sempre visível.
+        </li>
+      </ul>
+    </div>
+
+    <div
+      (click)="selectMethod('paper')"
+      class="rounded-lg border-2 bg-white p-6 shadow-sm transition-all hover:border-violet-500 hover:shadow-md"
+      [class.border-violet-600]="selectedMethod() === 'paper'"
+      [class.border-gray-200]="selectedMethod() !== 'paper'"
+    >
+      <div class="flex items-center space-x-4">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-600"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-gray-900">
+            Enviar Foto do Papel
+          </h3>
+        </div>
+      </div>
+      <p class="mt-4 text-gray-600">
+        Imprima um modelo, desenhe a espiral com uma caneta e envie uma foto
+        para análise.
+      </p>
+      <ul class="mt-4 space-y-2 text-sm text-gray-500">
+        <li class="flex items-center">
+          <svg
+            class="mr-2 h-4 w-4 text-green-500"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Necessário ter uma impressora e uma caneta escura.
+        </li>
+        <li class="flex items-center">
+          <svg
+            class="mr-2 h-4 w-4 text-green-500"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          A foto deve ser nítida e sem sombras.
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  @if (selectedMethod()) {
+  <div class="flex justify-end pt-4">
+    <button
+      class="rounded-md bg-violet-700 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-violet-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+    >
+      Avançar
+    </button>
+  </div>
+  }
+</div>

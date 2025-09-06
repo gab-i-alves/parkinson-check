@@ -20,33 +20,36 @@
     <div class="mt-8 flex border-b border-gray-200">
       <button
         (click)="selectTab('paciente')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'paciente',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'paciente'
-        }"
+        [class.border-violet-600]="activeTab() === 'paciente'"
+        [class.text-violet-600]="activeTab() === 'paciente'"
+        [class.border-transparent]="activeTab() !== 'paciente'"
+        [class.text-gray-500]="activeTab() !== 'paciente'"
+        [class.hover:border-gray-300]="activeTab() !== 'paciente'"
+        [class.hover:text-gray-700]="activeTab() !== 'paciente'"
         class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
       >
         Paciente
       </button>
       <button
         (click)="selectTab('medico')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'medico',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'medico'
-        }"
+        [class.border-violet-600]="activeTab() === 'medico'"
+        [class.text-violet-600]="activeTab() === 'medico'"
+        [class.border-transparent]="activeTab() !== 'medico'"
+        [class.text-gray-500]="activeTab() !== 'medico'"
+        [class.hover:border-gray-300]="activeTab() !== 'medico'"
+        [class.hover:text-gray-700]="activeTab() !== 'medico'"
         class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
       >
         Médico
       </button>
       <button
         (click)="selectTab('admin')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'admin',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'admin'
-        }"
+        [class.border-violet-600]="activeTab() === 'admin'"
+        [class.text-violet-600]="activeTab() === 'admin'"
+        [class.border-transparent]="activeTab() !== 'admin'"
+        [class.text-gray-500]="activeTab() !== 'admin'"
+        [class.hover:border-gray-300]="activeTab() !== 'admin'"
+        [class.hover:text-gray-700]="activeTab() !== 'admin'"
         class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
       >
         Admin
@@ -61,9 +64,11 @@
         class="space-y-6"
         novalidate
       >
-        <div *ngIf="apiError" class="rounded-md bg-red-50 p-4">
-          <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
+        @if (apiError(); as error) {
+        <div class="rounded-md bg-red-50 p-4">
+          <p class="text-sm font-medium text-red-800">{{ error }}</p>
         </div>
+        }
 
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700"
@@ -75,25 +80,22 @@
               type="email"
               formControlName="email"
               required
-              [placeholder]="emailPlaceholder"
+              [placeholder]="emailPlaceholder()"
               class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
             />
-            <div
-              *ngIf="
-                loginForm.get('email')?.invalid &&
-                (loginForm.get('email')?.touched || buttonTouched)
-              "
-              class="mt-1 text-xs text-red-600"
-            >
-              <span *ngIf="loginForm.get('email')?.errors?.['required']"
-                >Campo obrigatório.</span
-              >
-              <span *ngIf="loginForm.get('email')?.errors?.['email']"
-                >Por favor, insira um e-mail válido.</span
-              >
+            @if (loginForm.get('email')?.invalid &&
+            loginForm.get('email')?.touched) {
+            <div class="mt-1 text-xs text-red-600">
+              @if (loginForm.get('email')?.hasError('required')) {
+              <span>Campo obrigatório.</span>
+              } @if (loginForm.get('email')?.hasError('email')) {
+              <span>Por favor, insira um e-mail válido.</span>
+              }
             </div>
+            }
           </div>
         </div>
+
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700"
             >Senha</label
@@ -107,20 +109,14 @@
               class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
               placeholder="Digite sua senha"
             />
-            <div
-              *ngIf="
-                loginForm.get('password')?.invalid &&
-                (loginForm.get('password')?.touched || buttonTouched)
-              "
-              class="mt-1 text-xs text-red-600"
-            >
-              <span *ngIf="loginForm.get('password')?.errors?.['required']"
-                >Campo obrigatório.</span
-              >
-              <span *ngIf="loginForm.get('password')?.errors?.['minlength']"
-                >Sua senha tem pelo menos 8 caracteres.</span
-              >
+            @if (loginForm.get('password')?.invalid &&
+            loginForm.get('password')?.touched) {
+            <div class="mt-1 text-xs text-red-600">
+              @if (loginForm.get('password')?.hasError('required')) {
+              <span>Campo obrigatório.</span>
+              }
             </div>
+            }
           </div>
         </div>
 
@@ -148,11 +144,11 @@
         <div (mouseenter)="buttonTouched = true">
           <button
             type="submit"
-            [disabled]="loginForm.invalid || isLoading"
+            [disabled]="loginForm.invalid || isLoading()"
             class="flex w-full justify-center rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
           >
+            @if (isLoading()) {
             <svg
-              *ngIf="isLoading"
               class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -172,7 +168,9 @@
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span *ngIf="!isLoading">Entrar</span>
+            } @else {
+            <span>Entrar</span>
+            }
           </button>
         </div>
       </form>
