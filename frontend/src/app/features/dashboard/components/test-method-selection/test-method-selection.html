@@ -1,0 +1,217 @@
+<div class="space-y-6">
+  @if (selectionStep() === 'main') {
+  <header>
+    <h1 class="text-3xl font-bold text-gray-900">Realizar um Teste</h1>
+    <p class="mt-2 text-lg text-gray-600">
+      Escolha um dos testes disponíveis para uma análise de seus sintomas.
+    </p>
+  </header>
+
+  <div class="grid grid-cols-1 gap-8 pt-4 md:grid-cols-2">
+    <div
+      (click)="selectTest('spiral')"
+      class="group flex cursor-pointer flex-col justify-between rounded-lg border-2 border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-violet-500 hover:shadow-md"
+    >
+      <div>
+        <div class="flex items-center space-x-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-6 w-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">
+              Teste da Espiral
+            </h3>
+          </div>
+        </div>
+        <p class="mt-4 text-gray-600">
+          Avalie a coordenação motora e a presença de tremores através do
+          desenho de uma espiral.
+        </p>
+      </div>
+      <div
+        class="mt-6 text-right font-semibold text-violet-700 transition-all group-hover:text-violet-800"
+      >
+        Selecionar Método &rarr;
+      </div>
+    </div>
+
+    <div
+      (click)="selectTest('voice')"
+      class="group flex cursor-pointer flex-col justify-between rounded-lg border-2 border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-violet-500 hover:shadow-md"
+    >
+      <div>
+        <div class="flex items-center space-x-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-6 w-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Teste de Voz</h3>
+          </div>
+        </div>
+        <p class="mt-4 text-gray-600">
+          Grave sua voz para uma análise de características vocais como tremor,
+          volume e articulação.
+        </p>
+      </div>
+      <div
+        class="mt-6 text-right font-semibold text-violet-700 transition-all group-hover:text-violet-800"
+      >
+        Iniciar Teste de Voz &rarr;
+      </div>
+    </div>
+  </div>
+  } @else if (selectionStep() === 'spiral') {
+  <header class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">
+        Métodos para o Teste da Espiral
+      </h1>
+      <p class="mt-2 text-lg text-gray-600">
+        Escolha como você prefere realizar o teste para uma análise da sua
+        coordenação motora.
+      </p>
+    </div>
+    <button
+      (click)="goBack()"
+      class="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-4 w-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+        />
+      </svg>
+
+      <span>Voltar</span>
+    </button>
+  </header>
+
+  <div class="grid grid-cols-1 gap-8 pt-4 md:grid-cols-2">
+    <div
+      (click)="selectSpiralMethod('webcam')"
+      class="cursor-pointer rounded-lg border-2 bg-white p-6 shadow-sm transition-all hover:border-violet-500 hover:shadow-md"
+      [class.border-violet-600]="selectedSpiralMethod() === 'webcam'"
+      [class.border-gray-200]="selectedSpiralMethod() !== 'webcam'"
+    >
+      <div class="flex items-center space-x-4">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-600"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 10l4.55a2 2 0 010 3.1l-4.55 2.275M15 10V5.5a2.5 2.5 0 00-5 0V10m5 0v5.5a2.5 2.5 0 01-5 0V10m0-4.5h.008v.008H10V5.5z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-gray-900">
+            Desenhar no Ar com a Webcam
+          </h3>
+        </div>
+      </div>
+      <p class="mt-4 text-gray-600">
+        Use a câmera do seu dispositivo para rastrear o movimento do seu dedo
+        enquanto desenha uma espiral no ar.
+      </p>
+    </div>
+
+    <div
+      (click)="selectSpiralMethod('paper')"
+      class="cursor-pointer rounded-lg border-2 bg-white p-6 shadow-sm transition-all hover:border-violet-500 hover:shadow-md"
+      [class.border-violet-600]="selectedSpiralMethod() === 'paper'"
+      [class.border-gray-200]="selectedSpiralMethod() !== 'paper'"
+    >
+      <div class="flex items-center space-x-4">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-violet-600"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-gray-900">
+            Enviar Foto do Papel
+          </h3>
+        </div>
+      </div>
+      <p class="mt-4 text-gray-600">
+        Imprima um modelo, desenhe a espiral com uma caneta e envie uma foto
+        para análise.
+      </p>
+    </div>
+  </div>
+
+  @if (selectedSpiralMethod()) {
+  <div class="flex justify-end pt-4">
+    <button
+      (click)="proceedToSpiralTest()"
+      class="rounded-md bg-violet-700 px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-violet-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+    >
+      Avançar
+    </button>
+  </div>
+  } }
+</div>
