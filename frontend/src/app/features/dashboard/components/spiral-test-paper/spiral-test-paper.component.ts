@@ -1,42 +1,11 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
-interface UploadResponse {
-  success: boolean;
-  message: string;
-  data?: {
-    imageUrl: string;
-    analysisResult: any;
-  };
-}
-
-class SpiralTestService {
-  uploadSpiralImage(file: File): Promise<UploadResponse> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        if (file.type.startsWith('image/')) {
-          resolve({
-            success: true,
-            message: 'Imagem enviada com sucesso para análise!',
-            data: {
-              imageUrl: URL.createObjectURL(file),
-              analysisResult: {
-                tremorScore: Math.floor(Math.random() * 100),
-                smoothness: Math.random().toFixed(2),
-              },
-            },
-          });
-        } else {
-          resolve({
-            success: false,
-            message: 'O arquivo selecionado não é uma imagem válida.',
-          });
-        }
-      }, 2000);
-    });
-  }
-}
+import { lastValueFrom } from 'rxjs';
+import {
+  SpiralTestService,
+  SpiralTestResponse,
+} from '../../services/spiral-test.service';
 
 @Component({
   selector: 'app-spiral-test-paper',
@@ -44,7 +13,6 @@ class SpiralTestService {
   imports: [CommonModule],
   templateUrl: './spiral-test-paper.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [SpiralTestService],
 })
 export class SpiralTestPaperComponent {
   readonly selectedFile = signal<File | null>(null);
@@ -53,7 +21,7 @@ export class SpiralTestPaperComponent {
     'idle'
   );
   readonly feedbackMessage = signal<string | null>(null);
-  readonly analysisResults = signal<any | null>(null);
+  readonly analysisResults = signal<SpiralTestResponse | null>(null);
 
   constructor(
     private spiralTestService: SpiralTestService,
@@ -85,11 +53,7 @@ export class SpiralTestPaperComponent {
         this.analysisResults.set(null);
       }
     } else {
-      this.selectedFile.set(null);
-      this.imagePreviewUrl.set(null);
-      this.feedbackMessage.set(null);
-      this.uploadStatus.set('idle');
-      this.analysisResults.set(null);
+      this.resetUpload();
     }
   }
 
@@ -105,22 +69,21 @@ export class SpiralTestPaperComponent {
 
     this.uploadStatus.set('uploading');
     this.feedbackMessage.set('Enviando imagem para análise...');
+    this.analysisResults.set(null);
 
     try {
-      const response = await this.spiralTestService.uploadSpiralImage(file);
-      if (response.success) {
-        this.uploadStatus.set('success');
-        this.feedbackMessage.set(response.message);
-        this.analysisResults.set(response.data?.analysisResult || null);
-      } else {
-        this.uploadStatus.set('error');
-        this.feedbackMessage.set(response.message);
-      }
+      const response = await lastValueFrom(
+        this.spiralTestService.uploadSpiralImage(file)
+      );
+
+      this.uploadStatus.set('success');
+      this.feedbackMessage.set('Análise concluída com sucesso!');
+      this.analysisResults.set(response);
     } catch (error) {
       console.error('Erro ao enviar imagem:', error);
       this.uploadStatus.set('error');
       this.feedbackMessage.set(
-        'Ocorreu um erro inesperado ao enviar a imagem. Tente novamente.'
+        error instanceof Error ? error.message : 'Ocorreu um erro inesperado.'
       );
     }
   }

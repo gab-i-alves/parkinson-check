@@ -225,21 +225,12 @@
   </div>
   } @if (analysisResults()) {
   <div class="mt-6 rounded-lg bg-white p-6 shadow-md">
-    <h2 class="text-xl font-semibold text-gray-900">Resultados da Análise</h2>
-    <div class="mt-4 space-y-3">
-      <p class="text-gray-700">
-        Pontuação de Tremor:
-        <span class="font-bold text-violet-600"
-          >{{ analysisResults().tremorScore }}%</span
-        >
-      </p>
-      <p class="text-gray-700">
-        Suavidade do Traçado:
-        <span class="font-bold text-violet-600">{{
-          analysisResults().smoothness
-        }}</span>
-      </p>
-    </div>
+    <h3 class="text-lg font-semibold text-gray-800">Resultado da Análise</h3>
+    <p>
+      <strong>Pontuação (Score):</strong>
+      {{ analysisResults()?.score | number : "1.2-2" }}
+    </p>
+    <p><strong>Análise:</strong> {{ analysisResults()?.analysis }}</p>
     <div class="mt-6 flex justify-end">
       <button
         (click)="goBackToMethodSelection()"
