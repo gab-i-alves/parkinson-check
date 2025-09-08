@@ -9,7 +9,7 @@ type SelectionStep = 'main' | 'spiral';
 @Component({
   selector: 'app-test-method-selection',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './test-method-selection.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -27,7 +27,7 @@ export class TestMethodSelectionComponent {
     if (test === 'spiral') {
       this.selectionStep.set('spiral');
     } else if (test === 'voice') {
-      this.router.navigate(['/dashboard/voice-test']);
+      this.router.navigate(['/dashboard/tests/voice-test']);
     }
   }
 
@@ -38,9 +38,9 @@ export class TestMethodSelectionComponent {
   proceedToSpiralTest(): void {
     const method = this.selectedSpiralMethod();
     if (method === 'webcam') {
-      this.router.navigate(['/dashboard/spiral-test/webcam']);
+      this.router.navigate(['/dashboard/tests/spiral-test/webcam']);
     } else if (method === 'paper') {
-      this.router.navigate(['/dashboard/spiral-test/paper']);
+      this.router.navigate(['/dashboard/tests/spiral-test/paper']);
     }
   }
 
