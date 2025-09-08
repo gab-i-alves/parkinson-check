@@ -2,7 +2,7 @@ from datetime import date
 from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from core.enums import UserType, BindEnum
+from core.enums import UserType
 from core.models.table_registry import table_registry
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 
@@ -52,16 +52,3 @@ class Patient(User):
     __mapper_args__ = {
         "polymorphic_identity": UserType.PATIENT,
     }
-        
-@table_registry.mapped_as_dataclass
-class Bind:
-    __tablename__ = "bind"
-    
-    id: Mapped[int] = mapped_column(init=False, primary_key=True, autoincrement=True)
-    status: Mapped[BindEnum] = mapped_column(
-    "status", PG_ENUM(BindEnum, name="bind_enum", create_type=True))
-    
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
-    patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"), nullable=False)
-    # medic: Mapped["Doctor"] = relationship("Doctor")
-    # patient: Mapped["Patient"] = relationship("Patient")
