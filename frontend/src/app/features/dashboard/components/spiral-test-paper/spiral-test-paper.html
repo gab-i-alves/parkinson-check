@@ -1,1 +1,244 @@
-<p>spiral-test-paper works!</p>
+<div class="mx-auto max-w-4xl space-y-8 p-4 sm:p-6 lg:p-8">
+  <header class="flex items-center justify-between pb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">
+        Teste da Espiral: Enviar Foto do Papel
+      </h1>
+      <p class="mt-2 text-lg text-gray-600">
+        Desenhe a espiral em um modelo impresso e faça o upload da foto para
+        análise.
+      </p>
+    </div>
+    <button
+      (click)="goBackToMethodSelection()"
+      class="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-4 w-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+        />
+      </svg>
+      <span>Voltar</span>
+    </button>
+  </header>
+
+  <div class="rounded-lg bg-indigo-50 p-6 shadow-sm">
+    <h2 class="text-xl font-semibold text-indigo-800">
+      Instruções Importantes
+    </h2>
+    <ul class="mt-4 list-inside list-disc space-y-2 text-indigo-700">
+      <li>
+        <span class="font-medium">1. Imprima o modelo:</span>
+        <a
+          href="/assets/spiral_template.jpg"
+          download
+          class="text-blue-600 hover:underline"
+        >
+          Clique aqui para baixar o modelo da espiral.
+        </a>
+      </li>
+      <li>
+        <span class="font-medium">2. Desenhe a espiral:</span> Utilize uma
+        caneta escura para desenhar a espiral sobre o modelo impresso.
+      </li>
+      <li>
+        <span class="font-medium">3. Tire uma foto nítida:</span> Certifique-se
+        de que a foto esteja bem iluminada, sem sombras e focada na espiral.
+      </li>
+      <li>
+        <span class="font-medium">4. Envie sua foto:</span> Utilize a área
+        abaixo para fazer o upload da imagem.
+      </li>
+    </ul>
+    <a
+      href="/assets/spiral_template.jpg"
+      download="spiral_template.jpg"
+      class="mt-6 inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        class="mr-2 h-5 w-5"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M10 18a.75.75 0 01-.75-.75V6.612L7.39 8.26a.75.75 0 11-1.18-1.03l3.25-3.5a.75.75 0 011.18 0l3.25 3.5a.75.75 0 01-1.18 1.03l-1.86-1.648V17.25c0 .414-.336.75-.75.75z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      Baixar Modelo da Espiral
+    </a>
+  </div>
+
+  <div
+    class="relative rounded-lg border-2 border-dashed border-gray-300 p-8 text-center"
+    [class.border-violet-500]="selectedFile()"
+    [class.bg-violet-50]="selectedFile()"
+  >
+    <div class="flex flex-col items-center justify-center space-y-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-12 w-12 text-gray-400"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+        />
+      </svg>
+      <p class="text-lg text-gray-700">
+        Arraste e solte sua foto aqui, ou
+        <label
+          for="spiralImageUpload"
+          class="cursor-pointer font-semibold text-violet-600 hover:text-violet-500"
+        >
+          clique para selecionar
+        </label>
+      </p>
+      <p class="text-sm text-gray-500">
+        Apenas arquivos de imagem (JPEG, PNG) são permitidos. Tamanho máximo:
+        5MB.
+      </p>
+    </div>
+    <input
+      id="spiralImageUpload"
+      type="file"
+      accept="image/jpeg, image/png"
+      class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+      (change)="onFileSelected($event)"
+    />
+  </div>
+
+  @if (imagePreviewUrl()) {
+  <div class="mt-6 rounded-lg bg-white p-6 shadow-md">
+    <h2 class="text-xl font-semibold text-gray-900">
+      Pré-visualização da Imagem
+    </h2>
+    <div class="mt-4 flex flex-col items-center gap-4 md:flex-row">
+      <img
+        [src]="imagePreviewUrl()!"
+        alt="Pré-visualização da espiral"
+        class="max-h-64 rounded-lg border border-gray-200 object-contain shadow-sm"
+      />
+      <div class="space-y-4 text-center md:text-left">
+        <p class="text-gray-700">
+          Arquivo selecionado:
+          <span class="font-medium">{{ selectedFile()!.name }}</span>
+        </p>
+        <p class="text-gray-700">
+          Tamanho:
+          <span class="font-medium"
+            >{{ (selectedFile()!.size / 1024 / 1024).toFixed(2) }} MB</span
+          >
+        </p>
+        <div class="flex justify-center gap-4 md:justify-start">
+          <button
+            (click)="uploadImage()"
+            [disabled]="uploadStatus() === 'uploading'"
+            class="inline-flex items-center rounded-md bg-violet-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            @if (uploadStatus() === 'uploading') {
+            <svg
+              class="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            Enviando... } @else {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="-ml-1 mr-2 h-5 w-5"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a.75.75 0 01-.75-.75V6.612L7.39 8.26a.75.75 0 11-1.18-1.03l3.25-3.5a.75.75 0 011.18 0l3.25 3.5a.75.75 0 01-1.18 1.03l-1.86-1.648V17.25c0 .414-.336.75-.75.75z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Enviar para Análise }
+          </button>
+          <button
+            (click)="resetUpload()"
+            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-5 py-2 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="-ml-1 mr-2 h-5 w-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.181A6.874 6.874 0 006.448 20.35a6.873 6.873 0 0010.292-.388c.882-.882 1.4-2.016 1.4-3.232v-1.15H15.75c-1.22 0-2.218-.997-2.218-2.218v-.75m-6.573 0h-1.127c-1.22 0-2.218-.997-2.218-2.218v-.75C8.941 6.873 9.938 5.876 11.158 5.876h3.115m7.534 1.34V4.498m0 0h-4.992m0 0l3.181 3.181A6.874 6.874 0 0018.006 4.67a6.872 6.872 0 00-10.293.387c-.882.882-1.4 2.016-1.4 3.232v1.15h1.127c1.22 0 2.218.997 2.218 2.218v.75"
+              />
+            </svg>
+            Cancelar / Nova Foto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  } @if (feedbackMessage()) {
+  <div
+    class="rounded-lg p-4"
+    [class.bg-green-100]="uploadStatus() === 'success'"
+    [class.text-green-800]="uploadStatus() === 'success'"
+    [class.bg-red-100]="uploadStatus() === 'error'"
+    [class.text-red-800]="uploadStatus() === 'error'"
+    [class.bg-blue-100]="uploadStatus() === 'uploading'"
+    [class.text-blue-800]="uploadStatus() === 'uploading'"
+  >
+    <p class="font-medium">{{ feedbackMessage() }}</p>
+  </div>
+  } @if (analysisResults()) {
+  <div class="mt-6 rounded-lg bg-white p-6 shadow-md">
+    <h3 class="text-lg font-semibold text-gray-800">Resultado da Análise</h3>
+    <p>
+      <strong>Pontuação (Score):</strong>
+      {{ analysisResults()?.score | number : "1.2-2" }}
+    </p>
+    <p><strong>Análise:</strong> {{ analysisResults()?.analysis }}</p>
+    <div class="mt-6 flex justify-end">
+      <button
+        (click)="goBackToMethodSelection()"
+        class="rounded-md bg-gray-200 px-6 py-3 text-lg font-semibold text-gray-800 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
+      >
+        Finalizar Teste
+      </button>
+    </div>
+  </div>
+  }
+</div>

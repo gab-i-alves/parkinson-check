@@ -18,8 +18,8 @@ export const TEST_ROUTES: Routes = [
     path: 'spiral-test/paper',
     title: 'Teste da Espiral com Papel',
     loadComponent: () =>
-      import('../spiral-test-paper/spiral-test-paper').then(
-        (c) => c.SpiralTestPaper
+      import('../spiral-test-paper/spiral-test-paper.component').then(
+        (c) => c.SpiralTestPaperComponent
       ),
   },
   {
