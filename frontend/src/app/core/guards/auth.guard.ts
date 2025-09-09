@@ -9,13 +9,6 @@ export const authGuard: CanActivateFn = (route, state) => {
   const userService = inject(UserService);
   const router = inject(Router);
 
-  if (!authService.isAuthenticated()) {
-    console.error(
-      'Acesso negado: Usuário não autenticado. Redirecionar para /auth/login.'
-    );
-    return router.createUrlTree(['/auth/login']);
-  }
-
   if (userService.currentUser()) {
     return true;
   }
@@ -28,8 +21,9 @@ export const authGuard: CanActivateFn = (route, state) => {
       return router.createUrlTree(['/auth/login']);
     }),
     catchError(() => {
-      console.error('Erro ao buscar usuário. Redirecionando para login.');
-      authService.logout();
+      console.error(
+        'Erro ao buscar usuário (cookie inválido ou ausente). Redirecionando para login.'
+      );
       return of(router.createUrlTree(['/auth/login']));
     })
   );

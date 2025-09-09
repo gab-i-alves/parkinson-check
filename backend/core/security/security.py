@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
-from typing import Literal
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Cookie
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pwdlib import PasswordHash
 from jwt import decode, encode
@@ -16,8 +15,20 @@ SETTINGS = Settings()
 
 pwd_context = PasswordHash.recommended()
     
-async def get_current_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer()), session: Session = Depends(get_session), verify_type: str|None = None):
-    user = get_user_from_token(cred.credentials, session)
+async def get_current_user(access_token: str = Cookie(None), session: Session = Depends(get_session), verify_type: str|None = None):
+
+    CREDENTIAL_EXCEPTION = HTTPException(  
+        status_code=HTTPStatus.UNAUTHORIZED,
+        detail='Could not validate credentials',
+        headers={'WWW-Authenticate': 'Bearer'},
+    )
+
+    if access_token is None:
+        raise CREDENTIAL_EXCEPTION
+    
+    token = access_token.split("Bearer ")[1]
+    
+    user = get_user_from_token(token, session)
     
     if verify_type == "Patient":
         if not isinstance(user, Patient):
@@ -30,18 +41,18 @@ async def get_current_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBear
 
 def get_doctor_user():
     async def _get_user(
-        cred: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+        access_token: str = Cookie(None),
         session: Session = Depends(get_session)
     ) -> User:
-        return await get_current_user(cred, session, verify_type="Doctor")
+        return await get_current_user(access_token, session, verify_type="Doctor")
     return _get_user
 
 def get_patient_user():
     async def _get_user(
-        cred: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+        access_token: str = Cookie(None),
         session: Session = Depends(get_session)
     ) -> User:
-        return await get_current_user(cred, session, verify_type="Patient")
+        return await get_current_user(access_token, session, verify_type="Patient")
     return _get_user
 
 
