@@ -1,1 +1,130 @@
-<p>voice-test works!</p>
+<div class="mx-auto max-w-4xl space-y-8 p-4 sm:p-6 lg:p-8">
+  <header class="flex items-center justify-between pb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Teste da Voz</h1>
+      <p class="mt-2 text-lg text-gray-600">
+        Leia, em voz alta, o texto em destaque quando estiver pronto. Este teste
+        avalia características vocais que podem estar associadas à doença de
+        Parkinson.
+      </p>
+    </div>
+    <button
+      (click)="goBackToMethodSelection()"
+      class="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-4 w-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+        />
+      </svg>
+      <span>Voltar</span>
+    </button>
+  </header>
+
+  <div class="rounded-lg bg-indigo-50 p-6 shadow-sm">
+    <h2 class="text-xl font-semibold text-indigo-800">
+      Instruções Importantes
+    </h2>
+    <ol type="1" class="mt-4 list-inside list-disc space-y-2 text-indigo-700">
+      <li>
+        <a>Certifique-se de estar em um ambiente silencioso.</a>
+      </li>
+      <li>
+        <a>Posicione-se a aprocimadamente 15-20 cm do microfone.</a>
+      </li>
+      <li>
+        <a>Clique no botão</a>
+        <span class="font-medium"> Iniciar Gravação</span>
+        <a> quando estiver pronto.</a>
+      </li>
+      <li>
+        <a
+          >Leia o texto exibido em voz alta, com tom natural e velocidade
+          moderada.</a
+        >
+      </li>
+      <li>
+        <a>Procure manter um volume constante durante toda a leitura.</a>
+      </li>
+      <li>
+        <a>Clique em</a>
+        <span class="font-medium"> Finalizar Gravação</span>
+        <a> quando terminar, ou aguarde o término automático.</a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="mt-6 rounded-lg bg-white p-6 shadow-md">
+    <div class="mt-4 flex flex-col items-center gap-4 md:flex-row">
+      <div class="space-y-4 text-center md:text-left">
+        <p class="text-gray-700">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+        <div class="flex justify-center gap-4 md:justify-center">
+          @if (!isRecording()) {
+          <button
+            (click)="startRecording()"
+            class="inline-flex items-center rounded-md bg-violet-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Iniciar Gravação
+          </button>
+          } @else {
+          <button
+            (click)="stopRecording()"
+            class="inline-flex items-center rounded-md bg-violet-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Finalizar Gravação
+          </button>
+          } @if (recordedAudioUrl()) {
+          <audio #audioPlayer [src]="recordedAudioUrl()"></audio>
+          <button
+            (click)="playRecording()"
+            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-5 py-2 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Ouvir Gravação
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (feedbackMessage()) {
+
+  <div class="rounded-lg p-4">
+    <p class="font-medium">{{ feedbackMessage() }}</p>
+  </div>
+  } @if (analysisResults()) {
+  <div class="mt-6 rounded-lg bg-white p-6 shadow-md">
+    <h3 class="text-lg font-semibold text-gray-800">Resultado da Análise</h3>
+    <!-- <p>
+      <strong>Pontuação (Score):</strong>
+      {{ analysisResults()?.score | number : "1.2-2" }}
+    </p>
+    <p><strong>Análise:</strong> {{ analysisResults()?.analysis }}</p> -->
+    <div class="mt-6 flex justify-end">
+      <button
+        (click)="goBackToMethodSelection()"
+        class="rounded-md bg-gray-200 px-6 py-3 text-lg font-semibold text-gray-800 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
+      >
+        Finalizar Teste
+      </button>
+    </div>
+  </div>
+  }
+</div>
