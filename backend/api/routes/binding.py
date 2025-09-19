@@ -6,7 +6,7 @@ from core.enums import BindEnum
 from infra.db.connection import get_session
 from ..schemas.binding import Bind, RequestBinding
 from core.services import doctor_service, patient_service
-from ..schemas.token import BindindRequestResponse, PatientDto, SentBindindRequestResponse, DoctorDTO
+from ..schemas.binding import BindindRequestResponse, BindingPatient, SentBindindRequestResponse, BindingDoctor
 from core.security.security import get_doctor_user, get_patient_user
 from core.models.users import User
 
@@ -56,7 +56,7 @@ def unlink_binding_request(
     return  # 204 No Content
 
 def format_bindings(bind_with_patient):
-    patient = PatientDto(
+    patient = BindingPatient(
         id = bind_with_patient.Patient.id,
         name = bind_with_patient.Patient.name,
         email = bind_with_patient.Patient.email
@@ -69,7 +69,7 @@ def format_bindings(bind_with_patient):
     )
 
 def format_sent_bindings(bind_with_doctor):
-    doctor = DoctorDTO(
+    doctor = BindingDoctor(
         id = bind_with_doctor.Doctor.id,
         name = bind_with_doctor.Doctor.name,
         specialty= bind_with_doctor.Doctor.expertise_area

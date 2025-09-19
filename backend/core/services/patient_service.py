@@ -4,7 +4,7 @@ from api.schemas.users import PatientSchema
 from api.schemas.binding import RequestBinding
 from sqlalchemy.orm import Session
 from core.security.security import get_password_hash
-from core.models.users import Patient
+from core.models import Patient, Doctor
 from ..enums import UserType, BindEnum
 from core.services import user_service, address_service
 from core.models import User, Bind
@@ -61,6 +61,10 @@ def create_bind_request(request: RequestBinding, user: User, session: Session) -
         inactive_bind.status = BindEnum.PENDING
         db_bind = inactive_bind
     else:
+        doctor = session.query(Doctor).filter(Doctor.id==request.doctor_id).first()
+        if not doctor:
+            raise HTTPException(HTTPStatus.NOT_FOUND, detail="O médico do ID informado não existe.")
+        
         db_bind = Bind(
             doctor_id=request.doctor_id,
             patient_id=user.id,

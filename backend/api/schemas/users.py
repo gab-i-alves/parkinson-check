@@ -1,15 +1,15 @@
 from datetime import date
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import Optional
-
+from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from core.enums import UserType
 class UserSchema(BaseModel):
     
     model_config = ConfigDict(
         populate_by_name=True, # Permite o alias
     )
 
-    fullName: str = Field(..., alias='name')
-    birthDate: date = Field(..., alias='birthdate') # NÃO RETIRAR DAQUI
+    full_name: str = Field(..., alias='name')
+    birth_date: date = Field(..., alias='birthdate') # NÃO RETIRAR DAQUI
     cpf: str
     email: EmailStr
     password: str
@@ -21,13 +21,33 @@ class UserSchema(BaseModel):
     neighborhood: str
     city: str
     state: str
-    
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    role: UserType
+
 class DoctorSchema(UserSchema):
     crm: str
     specialty: str = Field(..., alias='expertise_area')
-    bindingId: Optional[int] = None
     
+class GetDoctorsSchema(BaseModel):
+    name: Optional[str] = None, 
+    cpf: Optional[str] = None, 
+    email: Optional[str] = None, 
+    crm: Optional[str] = None, 
+    specialty: Optional[str] = None
+    
+class DoctorResponse(UserResponse):
+    specialty: str
+    crm: str
+    location: str
+
 # TODO: ADICIONAR MAIS DADOS PARA O USUÁRIO COMO ALERGIAS, MEDICAMENTOS, ETC...
 class PatientSchema(UserSchema):
-    birthDate: date = Field(..., alias='birthdate')
+    birth_date: date = Field(..., alias='birthdate')
     
+
+    
+
