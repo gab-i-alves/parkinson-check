@@ -33,10 +33,10 @@ class DoctorSchema(UserSchema):
     specialty: str = Field(..., alias='expertise_area')
     
 class GetDoctorsSchema(BaseModel):
-    name: Optional[str] = None, 
-    cpf: Optional[str] = None, 
-    email: Optional[str] = None, 
-    crm: Optional[str] = None, 
+    name: Optional[str] = None
+    cpf: Optional[str] = None
+    email: Optional[str] = None
+    crm: Optional[str] = None
     specialty: Optional[str] = None
     
 class DoctorResponse(UserResponse):
