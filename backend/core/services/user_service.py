@@ -31,7 +31,7 @@ def get_binded_users(user: User, session: Session) -> list[Patient | Doctor]:
     active_binds = get_user_active_binds(user, session)
     
     if not active_binds:
-        return HTTPException(HTTPStatus.BAD_REQUEST, detail="Usuário sem atrelamentos ativos.")
+        raise HTTPException(HTTPStatus.BAD_REQUEST, detail="Usuário sem atrelamentos ativos.")
      
     users_ids = [
         bind.patient_id if bind.doctor_id == user.id else bind.doctor_id
