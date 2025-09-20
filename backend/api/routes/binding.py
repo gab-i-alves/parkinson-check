@@ -46,7 +46,7 @@ def accept_bind_request(binding_id: int, user: CurrentDoctor, session: Session =
 @router.delete("/{binding_id}", status_code=HTTPStatus.NO_CONTENT)
 def unlink_binding_request(
     binding_id: int,
-    current_user: User = Depends(get_patient_user),
+    current_user: CurrentPatient,
     session: Session = Depends(get_session)
 ):
     """

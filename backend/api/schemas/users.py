@@ -8,8 +8,8 @@ class UserSchema(BaseModel):
         populate_by_name=True, # Permite o alias
     )
 
-    full_name: str = Field(..., alias='name')
-    birth_date: date = Field(..., alias='birthdate') # NÃO RETIRAR DAQUI
+    fullname: str = Field(..., alias='name')
+    birthdate: date = Field(..., alias='birthdate') # NÃO RETIRAR DAQUI
     cpf: str
     email: EmailStr
     password: str
@@ -43,6 +43,7 @@ class DoctorResponse(UserResponse):
     specialty: str
     crm: str
     location: str
+    bind_id: Optional[int] = None
 
 # TODO: ADICIONAR MAIS DADOS PARA O USUÁRIO COMO ALERGIAS, MEDICAMENTOS, ETC...
 class PatientSchema(UserSchema):

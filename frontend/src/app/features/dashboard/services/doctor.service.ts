@@ -75,12 +75,17 @@ export class DoctorService {
 
   loadLinkedDoctors(): Observable<Doctor[] | null> {
     return this.http
-      .get<Doctor[]>('/api/users/linked_doctors', this.getHttpOptions())
+      .get<any[]>('/api/users/linked_doctors', this.getHttpOptions())
       .pipe(
-        map((resp: HttpResponse<Doctor[]>) => {
+        map((resp: HttpResponse<any[]>) => {
           if (resp.status == 200) {
-            console.log(resp.body);
-            return resp.body;
+            // Map binding_id to bindingId
+            const doctors = resp.body?.map(item => ({
+              ...item,
+              bindingId: item.bind_id,
+              bind_id: undefined
+            })) ?? null;
+            return doctors;
           } else {
             return null;
           }

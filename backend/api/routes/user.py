@@ -30,7 +30,7 @@ def get_doctors(
     parameters: GetDoctorsSchema = Depends(),
     session: Session = Depends(get_session)
 ):
-    doctors = doctor_service.get_doctors(session, user, parameters)
+    doctors = doctor_service.get_doctors(session, parameters)
     return doctors
 
 

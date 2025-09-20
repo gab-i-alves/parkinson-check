@@ -29,10 +29,10 @@ def create_doctor(doctor: DoctorSchema, session: Session):
         address = address_service.get_similar_address(doctor.cep, doctor.number, doctor.complement, session)
 
     db_doctor = Doctor(
-        name=doctor.full_name, # NÃO ALTERAR
+        name=doctor.fullname,
         cpf=doctor.cpf,
         email=doctor.email,
-        birthdate=doctor.birth_date,  # NÃO ALTERAR
+        birthdate=doctor.birthdate,  
         user_type=UserType.DOCTOR,
         crm=doctor.crm,
         expertise_area=doctor.specialty,  # NÃO ALTERAR
@@ -66,7 +66,7 @@ def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
     
     return doctor
 
-def get_doctors(session: Session, current_user: User, doctor: GetDoctorsSchema) -> list[DoctorResponse]:
+def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorResponse]:
     doctor_query = session.query(Doctor).options(joinedload(Doctor.address))
     filters = doctor.model_dump(exclude_none=True)
     doctor_query = doctor_query.filter_by(**filters)
@@ -98,11 +98,13 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorRespo
     Busca os médicos e os seus vínculos ATIVOS para um determinado paciente.
     Retorna uma lista de tuplas (Doctor, Bind).
     """
-    doctors = get_binded_users(current_user, session)
+    binded_doctor = get_binded_users(current_user, session)
 
     doctor_list = [ ]
     
-    for doc in doctors:
+    for item in binded_doctor:
+        doc = item["user"]
+        bind_id = item["bind_id"]
         doctor_list.append(
             DoctorResponse(
                 id=doc.id,
@@ -112,6 +114,7 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorRespo
                 specialty=doc.expertise_area,
                 location=f"{doc.address.city}, {doc.address.state}",
                 role=UserType.DOCTOR,
+                bind_id=bind_id
             )
         )
     return doctor_list

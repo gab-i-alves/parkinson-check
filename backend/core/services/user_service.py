@@ -27,19 +27,26 @@ def get_user_active_binds(user: User, session: Session) -> list[Bind] | None:
     
     return binds
 
-def get_binded_users(user: User, session: Session) -> list[Patient | Doctor]:
+def get_binded_users(user: User, session: Session) -> list[dict[int, Patient | Doctor]]:
     active_binds = get_user_active_binds(user, session)
     
     if not active_binds:
         raise HTTPException(HTTPStatus.BAD_REQUEST, detail="Usuário sem atrelamentos ativos.")
      
-    users_ids = [
-        bind.patient_id if bind.doctor_id == user.id else bind.doctor_id
+    bind_user_pairs = [
+        (bind.id, bind.patient_id if bind.doctor_id == user.id else bind.doctor_id)
         for bind in active_binds
-    ]   
-        
-    binded_users = session.query(User).filter(User.id.in_(users_ids)).all()
+    ]
+
+    user_ids = [pair[1] for pair in bind_user_pairs] 
     
-    return binded_users
+    binded_users = session.query(User).filter(User.id.in_(user_ids)).all()
+    users_dict = {u.id: u for u in binded_users}
+
+    result: list[dict[int, Patient | Doctor]] = [
+        {"bind_id": bind_id, "user": users_dict[user_id]}
+        for bind_id, user_id in bind_user_pairs
+    ]
+    return result
 
 
