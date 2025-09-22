@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from typing import Literal, Optional
 from fastapi import HTTPException
-from api.schemas.users import DoctorSchema, DoctorResponse, GetDoctorsSchema
+from api.schemas.users import DoctorSchema, DoctorListResponse, GetDoctorsSchema
 from sqlalchemy.orm import Session, joinedload
 from core.security.security import get_password_hash
 from core.models import Doctor, User, Bind, Patient
@@ -66,7 +66,8 @@ def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
     
     return doctor
 
-def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorResponse]:
+
+def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListResponse]:
     doctor_query = session.query(Doctor).options(joinedload(Doctor.address))
     filters = doctor.model_dump(exclude_none=True)
     doctor_query = doctor_query.filter_by(**filters)
@@ -80,7 +81,7 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorRespon
 
     for doc in doctors:
         doctor_list.append(
-            DoctorResponse(
+            DoctorListResponse(
                 id=doc.id,
                 name=doc.name,
                 email=doc.email,
@@ -93,7 +94,8 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorRespon
         
     return doctor_list
 
-def get_binded_doctors(session: Session, current_user: User) -> list[DoctorResponse]:
+
+def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListResponse]:
     """
     Busca os médicos e os seus vínculos ATIVOS para um determinado paciente.
     Retorna uma lista de tuplas (Doctor, Bind).
@@ -106,7 +108,7 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorRespo
         doc = item["user"]
         bind_id = item["bind_id"]
         doctor_list.append(
-            DoctorResponse(
+            DoctorListResponse(
                 id=doc.id,
                 name=doc.name,
                 email=doc.email,

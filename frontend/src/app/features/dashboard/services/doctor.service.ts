@@ -63,7 +63,7 @@ export class DoctorService {
 
   loadLinkedDoctors(): Observable<Doctor[] | null> {
     return this.http
-      .get<Doctor[]>('/api/users/linked_doctors', this.getHttpOptions())
+      .get<any[]>('/api/users/linked_doctors', this.getHttpOptions())
       .pipe(
         map((resp: HttpResponse<Doctor[]>) => {
           if (resp.status === 200 && resp.body) {

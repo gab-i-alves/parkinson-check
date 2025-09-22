@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from fastapi import HTTPException
-from api.schemas.users import PatientSchema
+from api.schemas.users import PatientSchema, PatientListResponse
 from api.schemas.binding import RequestBinding
 from sqlalchemy.orm import Session
 from core.security.security import get_password_hash
@@ -8,6 +8,7 @@ from core.models import Patient, Doctor
 from ..enums import UserType, BindEnum
 from core.services import user_service, address_service
 from core.models import User, Bind
+from core.services.user_service import get_binded_users
 from sqlalchemy import or_
 
 def create_patient(patient: PatientSchema, session: Session):
@@ -95,3 +96,27 @@ def unlink_binding(binding_id: int, user: User, session: Session) -> Bind:
     session.refresh(bind_to_unlink)
     
     return bind_to_unlink
+
+def get_binded_patients(session: Session, current_user: User) -> list[PatientListResponse]:
+    """
+    Busca os médicos e os seus vínculos ATIVOS para um determinado paciente.
+    Retorna uma lista de tuplas (Doctor, Bind).
+    """
+    binded_doctor = get_binded_users(current_user, session)
+
+    doctor_list = [ ]
+    
+    for item in binded_doctor:
+        patient = item["user"]
+        bind_id = item["bind_id"]
+        doctor_list.append(
+            PatientListResponse(
+                id=patient.id,
+                name=patient.name,
+                email=patient.email,
+                location=f"{patient.address.city}, {patient.address.state}",
+                role=UserType.PATIENT,
+                bind_id=bind_id
+            )
+        )
+    return doctor_list
