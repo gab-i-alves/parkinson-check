@@ -10,6 +10,7 @@ services:
     depends_on:
       - db
       - spiral-classifier
+      - voice-classifier
 
   spiral-classifier:
     build: ./models/spiral-classifier
@@ -18,6 +19,16 @@ services:
       - ./models/spiral-classifier:/app
     ports:
       - "8001:8001"
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  voice-classifier:
+    build: ./models/voice-classifier
+    container_name: voice-classifier
+    volumes:
+      - ./models/voice-classifier:/app
+    ports:
+      - "8002:8002"
     environment:
       - PYTHONUNBUFFERED=1
 
