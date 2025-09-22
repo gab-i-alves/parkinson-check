@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 import joblib
-from .processing import preprocess_image, extract_features
+import os
+from app.processing import preprocess_image, extract_features
 from collections import Counter
 
 def _labels(c):
@@ -15,30 +16,37 @@ def _labels(c):
     return s
 
 def predict_image(model_path, scaler_path, image_path):
-    model = joblib.load(model_path)
-    scaler = joblib.load(scaler_path)
-    img = preprocess_image(image_path)
-    feats = extract_features(img)
 
-    if feats is None:
-        raise ValueError("Could not extract features from the image.")
+    try:
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
+
+        img = preprocess_image(image_path)
+        
+        feats = extract_features(img)
+
+        if feats is None:
+            raise ValueError("Could not extract features from the image.")
+        
+        X = np.array(feats, dtype=np.float32).reshape(1, -1)
+        Xs = scaler.transform(X)
+        pred_raw = model.predict(Xs)[0]
+        pred_label = _labels(pred_raw)
+        prob_dict = None
+
+        if hasattr(model, "predict_proba"):
+            probs = model.predict_proba(Xs)[0]
+            classes = getattr(model, "classes_", None)
+            if classes is not None:
+                prob_dict = { _labels(c): float(p) for c, p in zip(classes, probs) }
+
+        classes_learned = [ _labels(c) for c in getattr(model, "classes_", []) ]
+        return pred_label, prob_dict, classes_learned
+    except Exception as e:
+        raise
+
+def predict_all_models(image_path, model_base_path="infra"):
     
-    X = np.array(feats, dtype=np.float32).reshape(1, -1)
-    Xs = scaler.transform(X)
-    pred_raw = model.predict(Xs)[0]
-    pred_label = _labels(pred_raw)
-    prob_dict = None
-
-    if hasattr(model, "predict_proba"):
-        probs = model.predict_proba(Xs)[0]
-        classes = getattr(model, "classes_", None)
-        if classes is not None:
-            prob_dict = { _labels(c): float(p) for c, p in zip(classes, probs) }
-
-    classes_learned = [ _labels(c) for c in getattr(model, "classes_", []) ]
-    return pred_label, prob_dict, classes_learned
-
-def predict_all_models(image_path, model_base_path="infra/models/spiral-test-classifier"):
     scaler_path = f"{model_base_path}/scaler.pkl"
     models = {
         "Logistic Regression": f"{model_base_path}/log_reg.pkl",
@@ -57,13 +65,16 @@ def predict_all_models(image_path, model_base_path="infra/models/spiral-test-cla
     results = {}
     predictions = []
     for name, mpath in models.items():
-        pred_label, prob_dict, classes = predict_image(mpath, scaler_path, image_path)
-        results[name] = {
-            "prediction": pred_label,
-            "probabilities": prob_dict,
-            "classes_": classes
-        }
-        predictions.append(pred_label)
+        try:
+            pred_label, prob_dict, classes = predict_image(mpath, scaler_path, image_path)
+            results[name] = {
+                "prediction": pred_label,
+                "probabilities": prob_dict,
+                "classes_": classes
+            }
+            predictions.append(pred_label)
+        except Exception as e:
+            results[name] = {"error": str(e)}
 
     if not predictions:
         raise ValueError("No predictions were made.")
