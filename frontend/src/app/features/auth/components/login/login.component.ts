@@ -11,6 +11,7 @@ import {
 import { UserRole } from '../../../../core/models/user.model';
 import { AuthService } from '../../services/auth.services';
 import { UserService } from '../../../../core/services/user.service';
+import { LoginForm } from '../../../../core/models/login.model';
 
 @Component({
   selector: 'app-login',
@@ -76,15 +77,28 @@ export class LoginComponent implements OnInit {
     this.isLoading = true;
     this.loginForm.disable();
 
-    console.log('Dados do formulário:', this.loginForm.value);
+    const credentials: LoginForm = {
+      email: this.loginForm.value.email!,
+      password: this.loginForm.value.password!,
+    };
 
-    this.authService.login(this.loginForm.value, this.activeTab).subscribe({
-      next: () => {
-        console.log('Login bem-sucedido. Verificando usuário no serviço.');
+    console.log('Dados do formulário:', credentials);
 
-        const currentUser = this.userService.currentUser();
+    this.authService.login(credentials).subscribe({
+      next: (user) => {
+        console.log('Login bem-sucedido. Resposta da API:', user);
 
-        if (currentUser?.role === 'medico') {
+        const roleMap: { [key: number]: UserRole } = {
+          1: 'paciente',
+          2: 'medico',
+          3: 'admin',
+        };
+
+        const userRole: UserRole = roleMap[user.role as any] || 'paciente';
+
+        console.log(`Papel mapeado: ${user.role} -> ${userRole}`);
+
+        if (userRole === 'medico') {
           this.router.navigate(['/dashboard/doctor']);
         } else {
           this.router.navigate(['/dashboard']);

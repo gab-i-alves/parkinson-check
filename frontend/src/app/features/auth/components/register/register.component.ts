@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.services';
 import { PatientRegisterFormComponent } from '../patient-register-form/patient-register-form.component';
 import { DoctorRegisterFormComponent } from '../doctor-register-form/doctor-register-form.component';
 import { CepService } from '../../../../core/services/cep.services';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   matchPasswordValidator,
   cpfValidator,
@@ -24,8 +25,6 @@ import {
   Validators,
 } from '@angular/forms';
 
-type RegisterRole = 'paciente' | 'medico'; // Admin não tem opção de cadastro através de formulário
-
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -39,7 +38,7 @@ type RegisterRole = 'paciente' | 'medico'; // Admin não tem opção de cadastro
   templateUrl: './register.component.html',
 })
 export class RegisterComponent implements OnInit {
-  activeTab: RegisterRole = 'paciente';
+  activeTab: 'paciente' | 'medico' = 'paciente';
 
   patientRegisterForm!: FormGroup;
   doctorRegisterForm!: FormGroup;
@@ -57,9 +56,9 @@ export class RegisterComponent implements OnInit {
     this.patientRegisterForm = this.formBuilder.group(
       {
         // Dados pessoais
-        fullName: ['', [Validators.required, Validators.minLength(3)]],
+        name: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required, cpfValidator()]],
-        birthDate: ['', [Validators.required]],
+        birthdate: ['', [Validators.required]],
 
         // Endereço
         cep: ['', [Validators.required]],
@@ -90,11 +89,11 @@ export class RegisterComponent implements OnInit {
     this.doctorRegisterForm = this.formBuilder.group(
       {
         // Dados profissionais
-        fullName: ['', [Validators.required, Validators.minLength(3)]],
+        name: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required, cpfValidator()]],
-        birthDate: ['', [Validators.required]],
+        birthdate: ['', [Validators.required]],
         crm: ['', [Validators.required]],
-        specialty: ['', [Validators.required]],
+        expertise_area: ['', [Validators.required]],
 
         // Endereço
         cep: ['', [Validators.required]],
@@ -128,15 +127,9 @@ export class RegisterComponent implements OnInit {
     this.setupCepListener(this.doctorRegisterForm);
   }
 
-  selectTab(role: RegisterRole): void {
-    this.activeTab = role;
+  selectTab(tab: 'paciente' | 'medico'): void {
+    this.activeTab = tab;
     this.apiError = null;
-
-    if (role === 'paciente') {
-      this.patientRegisterForm.reset();
-    } else if (role === 'medico') {
-      this.doctorRegisterForm.reset();
-    }
   }
 
   onPatientSubmit(): void {
@@ -144,7 +137,6 @@ export class RegisterComponent implements OnInit {
       this.patientRegisterForm.markAllAsTouched();
       return;
     }
-
     this.isLoading = true;
     this.patientRegisterForm.disable();
     this.apiError = null;
@@ -155,21 +147,13 @@ export class RegisterComponent implements OnInit {
     );
 
     this.authService.registerPatient(this.patientRegisterForm.value).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Cadastro de paciente bem-sucedido!', response);
-        // DECISÃO DE UX: Após o cadastro, redirecionar para o login
-        // para que o usuário possa entrar com suas novas credenciais.
         this.router.navigate(['/auth/login']);
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Erro no cadastro:', err);
-        if (err.status === 409) {
-          // 409 Conflict (E-mail/CPF já existe)
-          this.apiError = err.error.detail;
-        } else {
-          this.apiError =
-            'Ocorreu um erro ao realizar o cadastro. Tente novamente.';
-        }
+        this.apiError = err.error?.detail || 'Ocorreu um erro no cadastro.';
         this.isLoading = false;
         this.patientRegisterForm.enable();
       },
@@ -189,7 +173,7 @@ export class RegisterComponent implements OnInit {
     console.log('Dados do Cadastro (Médico):', this.doctorRegisterForm.value);
 
     this.authService.registerDoctor(this.doctorRegisterForm.value).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Cadastro de médico enviado para aprovação!', response);
         this.router.navigate(['/auth/login'], {
           state: {
@@ -198,14 +182,9 @@ export class RegisterComponent implements OnInit {
           },
         });
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Erro no cadastro do médico:', err);
-        if (err.status === 409) {
-          this.apiError = err.error.detail;
-        } else {
-          this.apiError =
-            'Ocorreu um erro ao realizar o cadastro. Tente novamente.';
-        }
+        this.apiError = err.error?.detail || 'Ocorreu um erro no cadastro.';
         this.isLoading = false;
         this.doctorRegisterForm.enable();
       },
