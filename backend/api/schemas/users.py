@@ -39,7 +39,7 @@ class GetDoctorsSchema(BaseModel):
     crm: Optional[str] = None
     specialty: Optional[str] = None
     
-class DoctorResponse(UserResponse):
+class DoctorListResponse(UserResponse):
     specialty: str
     crm: str
     location: str
@@ -47,7 +47,11 @@ class DoctorResponse(UserResponse):
 
 # TODO: ADICIONAR MAIS DADOS PARA O USUÁRIO COMO ALERGIAS, MEDICAMENTOS, ETC...
 class PatientSchema(UserSchema):
-    birth_date: date = Field(..., alias='birthdate')
+    birthdate: date = Field(..., alias='birthdate')
+    
+class PatientListResponse(UserResponse):
+    location: str
+    bind_id: Optional[int] = None
     
 
     

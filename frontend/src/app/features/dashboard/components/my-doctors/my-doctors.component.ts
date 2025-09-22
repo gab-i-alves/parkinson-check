@@ -161,7 +161,7 @@ export class MyDoctorsComponent {
 
   confirmUnlink(): void {
     const doctorToUnlink = this.doctorToUnlink();
-    console.log(doctorToUnlink);
+
     if (!doctorToUnlink || !doctorToUnlink.bindingId) {
       return;
     }
