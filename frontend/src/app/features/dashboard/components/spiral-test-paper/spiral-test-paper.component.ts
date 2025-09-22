@@ -2,10 +2,8 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
-import {
-  SpiralTestService,
-  SpiralTestResponse,
-} from '../../services/spiral-test.service';
+import { SpiralTestService } from '../../services/spiral-test.service';
+import { SpiralTestResponse } from '../../../../core/models/spiral-test-response.model';
 
 @Component({
   selector: 'app-spiral-test-paper',
@@ -27,6 +25,13 @@ export class SpiralTestPaperComponent {
     private spiralTestService: SpiralTestService,
     private router: Router
   ) {}
+
+  getModelKeys(results: SpiralTestResponse | null): string[] {
+    if (!results) {
+      return [];
+    }
+    return Object.keys(results.model_results);
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

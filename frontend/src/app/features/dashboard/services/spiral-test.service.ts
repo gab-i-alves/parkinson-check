@@ -1,11 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-
-export interface SpiralTestResponse {
-  score: number;
-  analysis: string;
-}
+import { SpiralTestResponse } from '../../../core/models/spiral-test-response.model';
 
 @Injectable({
   providedIn: 'root',
