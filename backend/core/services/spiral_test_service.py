@@ -1,37 +1,27 @@
-import tempfile
-import os
-from fastapi import UploadFile
+import httpx
+from fastapi import HTTPException
 from api.schemas.tests import SpiralImageSchema, SpiralPracticeTestResult
-from ..parkinson_classifier.predictor import predict_all_models
+
+MODEL_SERVICE_URL = "http://spiral-classifier:8001/predict/spiral"
 
 def process_spiral_as_practice(schema: SpiralImageSchema) -> SpiralPracticeTestResult:
-    # Salva a imagem recebida em um arquivo temporário
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
-        tmp.write(schema.image)
-        image_path = tmp.name
-
+    files = {'image': (schema.image_filename, schema.image_content, schema.image_content_type)}
+    
     try:
-        # Chama o novo sistema de predição
-        results, vote_count, majority = predict_all_models(image_path)
+        with httpx.Client() as client:
+            response = client.post(MODEL_SERVICE_URL, files=files, timeout=30.0)
+            response.raise_for_status()
+            
+        return response.json()
 
-        # Formata o dicionário de resultados para o schema Pydantic
-        # Removendo 'classes_' que não será usado no frontend
-        formatted_results = {
-            name: {"prediction": data["prediction"], "probabilities": data["probabilities"]}
-            for name, data in results.items()
-        }
-
-        # Monta o objeto de retorno
-        response = SpiralPracticeTestResult(
-            majority_decision=majority,
-            vote_count={
-                "Healthy": vote_count.get("Healthy", 0),
-                "Parkinson": vote_count.get("Parkinson", 0)
-            },
-            model_results=formatted_results
+    except httpx.HTTPStatusError as e:
+        error_detail = e.response.json().get("detail", e.response.text)
+        raise HTTPException(
+            status_code=e.response.status_code,
+            detail=f"Erro no serviço de análise de imagem: {error_detail}"
         )
-        return response
-
-    finally:
-        # Garante que o arquivo temporário seja removido
-        os.remove(image_path)
+    except httpx.RequestError as e:
+        raise HTTPException(
+            status_code=503, # Service Unavailable
+            detail=f"Não foi possível comunicar com o serviço de análise de imagem: {e}"
+        )

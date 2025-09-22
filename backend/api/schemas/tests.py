@@ -3,22 +3,20 @@ from pydantic import BaseModel, model_validator
 from typing import Dict, Optional
 
 class SpiralImageSchema(BaseModel):
-    image: bytes
-
-    # class Config:
-    #     arbitrary_types_allowed = True
-        
-    # @model_validator(mode="after")
-    # def check_if_is_image(self):
-    #     if not self.image.content_type.startswith("image/"):
-    #         raise HTTPException(status_code=400, detail="Arquivo deve ser uma imagem")
+    image_content: bytes
+    image_filename: str
+    image_content_type: str
 
     @classmethod
     def as_form(
         cls,
         image: UploadFile = File(...)
     ):
-        return cls(image=image.file.read())
+        return cls(
+            image_content=image.file.read(),
+            image_filename=image.filename,
+            image_content_type=image.content_type
+        )
         
 class ModelPrediction(BaseModel):
     prediction: str
