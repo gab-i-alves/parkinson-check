@@ -9,10 +9,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
-import {
-  SpiralTestService,
-  SpiralTestResponse,
-} from '../../services/spiral-test.service';
+import { SpiralTestService } from '../../services/spiral-test.service';
+import { SpiralTestResponse } from '../../../../core/models/spiral-test-response.model';
 
 declare const Hands: any;
 declare const Camera: any;
@@ -33,6 +31,13 @@ export class SpiralTestWebcam implements AfterViewInit, OnDestroy {
 
   private isDrawing = false;
   private userDrawing: { x: number; y: number }[][] = [];
+
+  getModelKeys(results: SpiralTestResponse | null): string[] {
+    if (!results) {
+      return [];
+    }
+    return Object.keys(results.model_results);
+  }
 
   readonly uploadStatus = signal<'idle' | 'uploading' | 'success' | 'error'>(
     'idle'

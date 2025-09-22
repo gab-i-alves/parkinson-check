@@ -5,7 +5,10 @@ sqlalchemy
 psycopg2-binary
 pyjwt
 pwdlib[argon2]
+
+# Dependências para o classificador com versões fixas
 opencv-python
-tensorflow==2.16.2
+scikit-learn==1.7.2
+numpy==1.26.4
 joblib
-scikit-learn
+pandas
