@@ -1,12 +1,11 @@
 from http import HTTPStatus
-from typing import Literal, Optional, List, Tuple
+from typing import Literal, Optional
 from fastapi import HTTPException
-from api.schemas.users import DoctorSchema
+from api.schemas.users import DoctorSchema, DoctorResponse, GetDoctorsSchema
 from sqlalchemy.orm import Session, joinedload
-
 from core.security.security import get_password_hash
 from core.models import Doctor, User, Bind, Patient
-
+from .user_service import get_binded_users
 from ..enums import UserType, BindEnum
 from . import user_service, address_service
 
@@ -30,10 +29,10 @@ def create_doctor(doctor: DoctorSchema, session: Session):
         address = address_service.get_similar_address(doctor.cep, doctor.number, doctor.complement, session)
 
     db_doctor = Doctor(
-        name=doctor.fullName, # NÃO ALTERAR
+        name=doctor.fullname,
         cpf=doctor.cpf,
         email=doctor.email,
-        birthdate=doctor.birthDate,  # NÃO ALTERAR
+        birthdate=doctor.birthdate,  
         user_type=UserType.DOCTOR,
         crm=doctor.crm,
         expertise_area=doctor.specialty,  # NÃO ALTERAR
@@ -67,56 +66,58 @@ def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
     
     return doctor
 
-def get_doctors(session: Session, current_user: User, name: Optional[str] = None, cpf: Optional[str] = None, email: Optional[str] = None, crm: Optional[str] = None, expertise_area: Optional[str] = None) -> list:
-    
+def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorResponse]:
     doctor_query = session.query(Doctor).options(joinedload(Doctor.address))
-
-    if name:
-        doctor_query = doctor_query.filter(Doctor.name.ilike(f'%{name}%'))
-    if cpf:
-        doctor_query = doctor_query.filter(Doctor.cpf == cpf)
-    if email:
-        doctor_query = doctor_query.filter(Doctor.email == email)
-    if crm:
-        doctor_query = doctor_query.filter(Doctor.crm == crm)
-    if expertise_area:
-        doctor_query = doctor_query.filter(Doctor.expertise_area.ilike(f'%{expertise_area}%'))
+    filters = doctor.model_dump(exclude_none=True)
+    doctor_query = doctor_query.filter_by(**filters)
 
     doctors = doctor_query.all()
     
     if not doctors:
-        return []
+        raise HTTPException(HTTPStatus.NOT_FOUND, detail="Não foram encontrados médicos com os parametros fornecidos")
+    
+    doctor_list = [ ]
 
-    doctor_ids = [d.id for d in doctors]
+    for doc in doctors:
+        doctor_list.append(
+            DoctorResponse(
+                id=doc.id,
+                name=doc.name,
+                email=doc.email,
+                crm="CRM-" + doc.crm,
+                specialty=doc.expertise_area,
+                location=f"{doc.address.city}, {doc.address.state}",
+                role=UserType.DOCTOR,
+            )
+        )
+        
+    return doctor_list
 
-    binds = session.query(Bind).filter(
-        Bind.doctor_id.in_(doctor_ids),
-        Bind.patient_id == current_user.id
-    ).order_by(Bind.id.desc()).all()
-
-    bind_map = {}
-    for bind in binds:
-        if bind.doctor_id not in bind_map:
-            bind_map[bind.doctor_id] = bind
-
-    result = []
-    for doctor in doctors:
-        bind_status = bind_map.get(doctor.id)
-        result.append((doctor, bind_status))
-
-    return result
-
-def get_linked_doctors(session: Session, current_user: User) -> List[Tuple[Doctor, Bind]]:
+def get_binded_doctors(session: Session, current_user: User) -> list[DoctorResponse]:
     """
     Busca os médicos e os seus vínculos ATIVOS para um determinado paciente.
     Retorna uma lista de tuplas (Doctor, Bind).
     """
-    linked_doctors_with_binds = session.query(Doctor, Bind).filter(
-        Bind.patient_id == current_user.id,
-        Bind.status == BindEnum.ACTIVE
-    ).join(Doctor, Bind.doctor_id == Doctor.id).all() 
+    binded_doctor = get_binded_users(current_user, session)
+
+    doctor_list = [ ]
     
-    return linked_doctors_with_binds
+    for item in binded_doctor:
+        doc = item["user"]
+        bind_id = item["bind_id"]
+        doctor_list.append(
+            DoctorResponse(
+                id=doc.id,
+                name=doc.name,
+                email=doc.email,
+                crm="CRM-" + doc.crm,
+                specialty=doc.expertise_area,
+                location=f"{doc.address.city}, {doc.address.state}",
+                role=UserType.DOCTOR,
+                bind_id=bind_id
+            )
+        )
+    return doctor_list
 
 def activate_or_reject_binding_request(
     user: User, binding_id: int, session: Session, new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED]

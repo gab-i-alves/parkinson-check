@@ -1,5 +1,4 @@
-from pydantic import BaseModel
-
+from pydantic import BaseModel, EmailStr
 from core.enums.bind_enum import BindEnum
 
 
@@ -13,3 +12,22 @@ class Bind(BaseModel):
     patient_id: int
     
     model_config = {'from_attributes': True}
+    
+class BindingPatient(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+
+class BindingDoctor(BaseModel):
+    id: int
+    name: str
+    specialty: str
+
+class BindindRequestResponse(BaseModel):
+    id: int
+    patient: BindingPatient
+    status: BindEnum    
+
+class SentBindindRequestResponse(BaseModel):
+    id: int
+    doctor: BindingDoctor
