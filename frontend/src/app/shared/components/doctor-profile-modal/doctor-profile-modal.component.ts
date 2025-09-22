@@ -6,7 +6,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Doctor } from '../../../features/dashboard/services/doctor.service';
+import { Doctor } from '../../../core/models/doctor.model';
 
 @Component({
   selector: 'app-doctor-profile-modal',

@@ -1,17 +1,27 @@
+import httpx
+from fastapi import HTTPException
 from api.schemas.tests import SpiralImageSchema, SpiralPracticeTestResult
-from ..parkinson_classifier.image_classifier.predictor import process_spiral_image
+
+MODEL_SERVICE_URL = "http://spiral-classifier:8001/predict/spiral"
+
 def process_spiral_as_practice(schema: SpiralImageSchema) -> SpiralPracticeTestResult:
-    result = process_spiral_image(schema.image)
+    files = {'image': (schema.image_filename, schema.image_content, schema.image_content_type)}
     
-    #Precisa de base téorica
-    
-    if result >= 0.99:
-        analysis = "Parkinson"
-    elif result >= 0.6:
-        analysis = "Chance de Parkinson"
-    elif result >= 0.4:
-        analysis = "Baixa chance de Parkison"
-    else:
-        analysis = "Normal"
-    
-    return SpiralPracticeTestResult(score=result, analysis=analysis)
+    try:
+        with httpx.Client() as client:
+            response = client.post(MODEL_SERVICE_URL, files=files, timeout=30.0)
+            response.raise_for_status()
+            
+        return response.json()
+
+    except httpx.HTTPStatusError as e:
+        error_detail = e.response.json().get("detail", e.response.text)
+        raise HTTPException(
+            status_code=e.response.status_code,
+            detail=f"Erro no serviço de análise de imagem: {error_detail}"
+        )
+    except httpx.RequestError as e:
+        raise HTTPException(
+            status_code=503, # Service Unavailable
+            detail=f"Não foi possível comunicar com o serviço de análise de imagem: {e}"
+        )

@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserService } from '../../../../core/services/user.service';
 import { AuthService } from '../../../../features/auth/services/auth.services';
-import { UserProfile } from '../../../../core/models/user.model';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 interface NavLink {
   path: string;
@@ -30,8 +30,10 @@ export class SidebarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  readonly user = this.userService.currentUser;
-
+  readonly user = toSignal(this.userService.currentUser$, {
+    initialValue: this.userService.getCurrentUser(),
+  });
+  
   private patientLinks: NavLink[] = [
     {
       path: '/dashboard',

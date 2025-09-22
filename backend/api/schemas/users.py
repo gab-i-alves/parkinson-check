@@ -36,10 +36,11 @@ class GetDoctorsSchema(BaseModel):
     name: Optional[str] = None
     cpf: Optional[str] = None
     email: Optional[str] = None
-    crm: Optional[str] = None
+    crm: Optional[str] = None 
     specialty: Optional[str] = None
     
 class DoctorListResponse(UserResponse):
+    expertise_area: Optional[str] = None
     specialty: str
     crm: str
     location: str

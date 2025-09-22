@@ -9,11 +9,33 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       - db
+      - spiral-classifier
+      - voice-classifier
+
+  spiral-classifier:
+    build: ./models/spiral-classifier
+    container_name: spiral-classifier
+    volumes:
+      - ./models/spiral-classifier:/app
+    ports:
+      - "8001:8001"
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  voice-classifier:
+    build: ./models/voice-classifier
+    container_name: voice-classifier
+    volumes:
+      - ./models/voice-classifier:/app
+    ports:
+      - "8002:8002"
+    environment:
+      - PYTHONUNBUFFERED=1
 
   db:
-    image: postgres:13 
+    image: postgres:13
     volumes:
-      - postgres_data:/var/lib/postgresql/data/ 
+      - postgres_data:/var/lib/postgresql/data/
       - ./scripts/users.sql:/docker-entrypoint-initdb.d/users.sql
     ports:
       - "5432:5432"

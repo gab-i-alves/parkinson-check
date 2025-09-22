@@ -1,14 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, effect, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  BindingRequest,
-  Doctor,
-  DoctorService,
-  PatientBindingRequest,
-} from '../../services/doctor.service';
+import { DoctorService } from '../../services/doctor.service';
 import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
+import { Doctor } from '../../../../core/models/doctor.model';
+import { PatientBindingRequest } from '../../../../core/models/patient-binding-request.model';
+import { firstValueFrom } from 'rxjs';
 
 type ActiveTab = 'linked' | 'requests' | 'find';
 
@@ -25,6 +23,7 @@ type ActiveTab = 'linked' | 'requests' | 'find';
 })
 export class MyDoctorsComponent {
   private medicService = inject(DoctorService);
+  private injector = inject(Injector);
 
   activeTab = signal<ActiveTab>('linked');
   searchTerm = signal<string>('');
@@ -42,8 +41,6 @@ export class MyDoctorsComponent {
   linkedDoctors = signal<Doctor[]>([]);
   sentRequests = signal<PatientBindingRequest[]>([]);
 
-  private lastSearchTerm = '';
-
   ngOnInit(): void {
     this.loadLinkedDoctors();
     this.loadSentRequests();
@@ -53,24 +50,39 @@ export class MyDoctorsComponent {
     this.activeTab.set(tab);
   }
 
-  searchDoctors(): void {
-    const currentTerm = this.searchTerm();
-    this.lastSearchTerm = currentTerm;
+  async searchDoctors(): Promise<void> {
     this.isLoading.set(true);
-    this.medicService
-      .searchDoctors(this.searchTerm(), this.specialty())
-      .subscribe({
-        next: (results) => {
-          if (results != null) {
-            const doctorsWithStatus = results.map((d) => ({
-              ...d,
-            }));
-            this.searchResults.set(doctorsWithStatus);
+    this.searchResults.set([]);
+
+    const delayPromise = new Promise((resolve) => setTimeout(resolve, 500));
+
+    const searchPromise = firstValueFrom(
+      this.medicService.searchDoctors(this.searchTerm(), this.specialty())
+    );
+
+    try {
+      const [, results] = await Promise.all([delayPromise, searchPromise]);
+
+      if (results) {
+        const linkedIds = new Set(this.linkedDoctors().map((d) => d.id));
+        const pendingIds = new Set(this.sentRequests().map((r) => r.doctor.id));
+        const doctorsWithStatus = results.map((doctor) => {
+          let status: 'linked' | 'pending' | 'unlinked' = 'unlinked';
+          if (linkedIds.has(doctor.id)) {
+            status = 'linked';
+          } else if (pendingIds.has(doctor.id)) {
+            status = 'pending';
           }
-          this.isLoading.set(false);
-        },
-        error: () => this.isLoading.set(false),
-      });
+          return { ...doctor, status };
+        });
+        this.searchResults.set(doctorsWithStatus);
+      }
+    } catch (err) {
+      console.error('Erro na busca:', err);
+      this.searchResults.set([]);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   onSearchTermChange(event: Event): void {
@@ -161,7 +173,6 @@ export class MyDoctorsComponent {
 
   confirmUnlink(): void {
     const doctorToUnlink = this.doctorToUnlink();
-
     if (!doctorToUnlink || !doctorToUnlink.bindingId) {
       return;
     }

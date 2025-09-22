@@ -66,6 +66,7 @@ def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
     
     return doctor
 
+
 def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListResponse]:
     doctor_query = session.query(Doctor).options(joinedload(Doctor.address))
     filters = doctor.model_dump(exclude_none=True)
@@ -92,6 +93,7 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListRe
         )
         
     return doctor_list
+
 
 def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListResponse]:
     """

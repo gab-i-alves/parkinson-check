@@ -27,11 +27,11 @@ def create_patient(patient: PatientSchema, session: Session):
         address = address_service.get_similar_address(patient.cep, patient.number, patient.complement, session)
 
     db_patient = Patient(
-        name=patient.fullName,
+        name=patient.fullname,
         cpf=patient.cpf,
         email=patient.email,
         hashed_password=get_password_hash(patient.password),
-        birthdate=patient.birthDate,
+        birthdate=patient.birthdate,
         user_type=UserType.PATIENT,
         address_id=address.id
     )

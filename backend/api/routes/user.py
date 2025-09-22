@@ -35,6 +35,7 @@ def get_doctors(
     return doctors
 
 
+
 @router.get("/linked_doctors", response_model=list[DoctorListResponse] | None)
 def get_binded_doctors(
    user: CurrentPatient, session: Session = Depends(get_session)
