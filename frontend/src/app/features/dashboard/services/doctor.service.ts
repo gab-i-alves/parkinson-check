@@ -1,33 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpResponse,
+  HttpParams,
+} from '@angular/common/http';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { Doctor } from '../../../core/models/doctor.model';
+import { BindingRequest } from '../../../core/models/binding-request.model';
+import { PatientBindingRequest } from '../../../core/models/patient-binding-request.model';
 
 const BASE_URL = '/api/users/doctors';
-
-export interface Doctor {
-  id: number;
-  name: string;
-  specialty: string;
-  crm: string;
-  location: string;
-  status?: 'pending' | 'linked' | 'unlinked';
-  bindingId?: number;
-}
-
-export interface BindingRequest {
-  id: number;
-  patient: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  status: 'PENDING' | 'ACTIVE' | 'REJECTED';
-}
-
-export interface PatientBindingRequest {
-  id: number;
-  doctor: Doctor;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -47,27 +30,32 @@ export class DoctorService {
   }
 
   searchDoctors(term: string, specialty: string): Observable<Doctor[] | null> {
-    var specialtyParameter = '';
+    let params = new HttpParams();
 
-    if (specialty != '') {
-      specialtyParameter = '&specialty=' + specialty;
+    if (term) {
+      params = params.append('name', term);
+    }
+    if (specialty) {
+      params = params.append('expertise_area', specialty);
     }
 
     return this.http
-      .get<Doctor[]>(
-        BASE_URL + '/?name=' + term + specialtyParameter,
-        this.getHttpOptions()
-      )
+      .get<Doctor[]>(BASE_URL, {
+        ...this.getHttpOptions(),
+        params: params,
+      })
       .pipe(
         map((resp: HttpResponse<Doctor[]>) => {
-          if (resp.status == 200) {
-            console.log(resp.body);
-            return resp.body;
-          } else {
-            return null;
+          if (resp.status === 200 && resp.body) {
+            return resp.body.map((doctor) => ({
+              ...doctor,
+              bindingId: doctor.bind_id,
+            }));
           }
+          return null;
         }),
         catchError((err) => {
+          console.error('Erro ao buscar médicos:', err);
           return throwError(() => err);
         })
       );
@@ -75,24 +63,19 @@ export class DoctorService {
 
   loadLinkedDoctors(): Observable<Doctor[] | null> {
     return this.http
-      .get<any[]>('/api/users/linked_doctors', this.getHttpOptions())
+      .get<Doctor[]>('/api/users/linked_doctors', this.getHttpOptions())
       .pipe(
-        map((resp: HttpResponse<any[]>) => {
-          if (resp.status == 200) {
-            // Map binding_id to bindingId
-            const doctors = resp.body?.map(item => ({
+        map((resp: HttpResponse<Doctor[]>) => {
+          if (resp.status === 200 && resp.body) {
+            const doctors = resp.body.map((item) => ({
               ...item,
-              bindingId: item.bind_id,
-              bind_id: undefined
-            })) ?? null;
+              bindingId: item.bind_id, // Mapeia bind_id para bindingId
+            }));
             return doctors;
-          } else {
-            return null;
           }
+          return null;
         }),
-        catchError((err) => {
-          return throwError(() => err);
-        })
+        catchError((err) => throwError(() => err))
       );
   }
 

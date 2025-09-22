@@ -37,7 +37,7 @@ class GetDoctorsSchema(BaseModel):
     cpf: Optional[str] = None
     email: Optional[str] = None
     crm: Optional[str] = None
-    specialty: Optional[str] = None
+    expertise_area: Optional[str] = None
     
 class DoctorResponse(UserResponse):
     specialty: str

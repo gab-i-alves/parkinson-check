@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BindingRequest, DoctorService } from '../../services/doctor.service';
+import { DoctorService } from '../../services/doctor.service';
+import { BindingRequest } from '../../../../core/models/binding-request.model';
 
 @Component({
   selector: 'app-binding-requests',
@@ -22,14 +23,12 @@ export class BindingRequestsComponent implements OnInit {
     this.isLoading.set(true);
     this.medicService.getBindingRequests().subscribe({
       next: (data) => {
-        if (data != null)
-        this.requests.set(data);
+        if (data != null) this.requests.set(data);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
     });
   }
-
 
   acceptRequest(id: number): void {
     this.medicService.acceptBindingRequest(id).subscribe({
