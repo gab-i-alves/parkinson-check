@@ -31,10 +31,6 @@ class SpiralPracticeTestResult(BaseModel):
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
 
-class SpiralPracticeTestResult(BaseModel):
-    score: float = Field(..., example=0.85)
-    analysis: str = Field(..., example="Sua espiral demonstra X, Y e Z.")
-
 class VoicePracticeTestResult(BaseModel):
     score: float = Field(..., example=0.92)
     analysis: str = Field(..., example="A análise da sua voz indica A, B e C.")
