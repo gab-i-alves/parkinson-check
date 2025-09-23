@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "webm-to-wav-converter": "^1.1.0"
+  }
+}

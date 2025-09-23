@@ -1,23 +1,38 @@
-import os
+# models/voice-classifier/app/predictor.py
+
 import joblib
-from .embeddings_wav2vec import extract_wav2vec_embedding
+import os
+from .embeddings_wav2vec import extract_wav2vec_embedding as extract_embeddings
 
-model = joblib.load("artifacts/svm_rbf_wav2vec.joblib")
-encoder = joblib.load("artifacts/label_encoder.joblib")
+artifacts_path = os.path.join(os.path.dirname(__file__), "..", "artifacts")
+model = joblib.load(os.path.join(artifacts_path, "svm_rbf_wav2vec.joblib"))
+label_encoder = joblib.load(os.path.join(artifacts_path, "label_encoder.joblib"))
 
-def predict_audio(wav_path, sr=16000, duration=5.0):
+def predict_audio(file_path: str):
     """
-    Realiza a predição em um arquivo de áudio.
+    Prevê a probabilidade de Parkinson a partir de um arquivo de áudio
+    e retorna o resultado no formato esperado pelo backend.
     """
-    emb = extract_wav2vec_embedding(wav_path, sr=sr, duration=duration).reshape(1, -1)
-    
-    pred = model.predict(emb)[0]
-    
     try:
-        proba = model.predict_proba(emb)[0][1]
-    except AttributeError:
-        proba = None
+        features = extract_embeddings(file_path)
+        features_2d = features.reshape(1, -1)
 
-    label = encoder.inverse_transform([pred])[0]
-    
-    return {"file": os.path.basename(wav_path), "label": label, "proba_PD": proba}
+        prediction_encoded = model.predict(features_2d)
+        prediction_label = label_encoder.inverse_transform(prediction_encoded)[0]
+
+        probability_pd = model.predict_proba(features_2d)[0][1]
+
+        analysis_text = (
+            f"A análise vocal indica uma probabilidade de {probability_pd:.2%} "
+            f"de apresentar características associadas à Doença de Parkinson. "
+            f"O modelo classificou a amostra como '{prediction_label}'."
+        )
+
+        return {
+            "score": float(probability_pd),
+            "analysis": analysis_text
+        }
+
+    except Exception as e:
+        print(f"Erro durante a predição: {e}")
+        raise e

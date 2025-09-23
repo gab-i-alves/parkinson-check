@@ -1,5 +1,5 @@
-from fastapi import File, HTTPException, UploadFile
-from pydantic import BaseModel, model_validator
+from fastapi import File, Form, UploadFile
+from pydantic import BaseModel, model_validator, Field
 from typing import Dict, Optional
 
 class SpiralImageSchema(BaseModel):
@@ -30,3 +30,11 @@ class SpiralPracticeTestResult(BaseModel):
     majority_decision: str
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
+
+class SpiralPracticeTestResult(BaseModel):
+    score: float = Field(..., example=0.85)
+    analysis: str = Field(..., example="Sua espiral demonstra X, Y e Z.")
+
+class VoicePracticeTestResult(BaseModel):
+    score: float = Field(..., example=0.92)
+    analysis: str = Field(..., example="A análise da sua voz indica A, B e C.")

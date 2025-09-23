@@ -16,29 +16,33 @@ export class VoiceTestService {
   private recordingSubject = new Subject<Blob>();
   private apiUrl = '/api/tests/voice/practice';
 
- public get recording$(): Observable<Blob> {
+  public get recording$(): Observable<Blob> {
     return this.recordingSubject.asObservable();
   }
 
   constructor(private http: HttpClient) {}
 
   uploadVoiceSample(file: File): Observable<VoiceTestResponse> {
-      const formData = new FormData();
-      formData.append('audioFile', file, file.name);
+    const formData = new FormData();
+    formData.append('audio_file', file, file.name);
 
     return this.http
       .post<VoiceTestResponse>(this.apiUrl, formData)
       .pipe(catchError(this.handleError));
   }
 
-  async startRecording(): Promise<void> {
+  async startRecording(): Promise<MediaStream | undefined> {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.mediaRecorder = new MediaRecorder(stream);
+      this.mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm',
+      });
       this.audioChunks = [];
 
       this.mediaRecorder.ondataavailable = (event) => {
-        this.audioChunks.push(event.data);
+        if (event.data.size > 0) {
+          this.audioChunks.push(event.data);
+        }
       };
 
       this.mediaRecorder.onstop = () => {
@@ -49,10 +53,13 @@ export class VoiceTestService {
 
       this.mediaRecorder.start();
       console.log('Gravação iniciada.');
-
+      return stream;
     } catch (err) {
       console.error('Erro ao acessar o microfone:', err);
-      alert('Não foi possível acessar o microfone. Verifique as permissões do navegador.');
+      alert(
+        'Não foi possível acessar o microfone. Verifique as permissões do navegador.'
+      );
+      return undefined;
     }
   }
 
@@ -64,9 +71,8 @@ export class VoiceTestService {
   }
 
   private destroyStream(stream: MediaStream): void {
-    stream.getTracks().forEach(track => track.stop());
+    stream.getTracks().forEach((track) => track.stop());
   }
-  
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage =
@@ -76,10 +82,10 @@ export class VoiceTestService {
     } else {
       if (error.status === 400) {
         errorMessage =
-          'Arquivo de imagem inválido ou corrompido. Por favor, verifique o arquivo e tente novamente.';
+          'Arquivo de áudio inválido ou corrompido. Por favor, grave novamente.';
       } else if (error.status === 500) {
         errorMessage =
-          'Ocorreu um erro inesperado no servidor ao analisar a imagem. Tente novamente mais tarde.';
+          'Ocorreu um erro inesperado no servidor ao analisar o áudio. Tente novamente mais tarde.';
       } else if (error.error && error.error.detail) {
         errorMessage = error.error.detail;
       }
