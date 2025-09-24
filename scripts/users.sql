@@ -2,7 +2,9 @@ CREATE TYPE user_type_enum AS ENUM ('PATIENT', 'DOCTOR');
 
 CREATE TYPE bind_enum AS ENUM ('PENDING', 'ACTIVE', 'REVERSED', 'REJECTED');
 
-CREATE TYPE test_enum AS ENUM ('DONE', 'VIEWED', 'NOTED ADDED');
+CREATE TYPE test_status_enum AS ENUM ('DONE', 'VIEWED', 'NOTED');
+
+CREATE TYPE test_type_enum AS ENUM ('SPIRAL_TEST', 'VOICE_TEST');
 
 CREATE TYPE spiral_methods_enum AS ENUM ('WEBCAM', 'PAPER');
 
@@ -52,25 +54,20 @@ CREATE TABLE IF NOT EXISTS "bind" (
 CREATE TABLE IF NOT EXISTS "test" (
   "id" SERIAL PRIMARY KEY,
   "patient_id" integer NOT NULL,
-  "date_realized" TIMESTAMP NOT NULL,
-  "status" test_enum NOT NULL
+  "execution_date" TIMESTAMP NOT NULL,
+  "status" test_status_enum NOT NULL,
+  "score" FLOAT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "voice_test" (
   "id" integer PRIMARY KEY REFERENCES "test" ("id"),
-  "record_duration" integer NOT NULL
+  "record_duration" REAL NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "spiral_test" (
   "id" integer PRIMARY KEY REFERENCES "test" ("id"),
-  "draw_duration" integer NOT NULL,
+  "draw_duration" REAL NOT NULL,
   "method" spiral_methods_enum NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS "result" (
-  "id" SERIAL PRIMARY KEY,
-  "test_id" integer NOT NULL REFERENCES "test" ("id"),
-  "score" FLOAT NOT NULL
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
