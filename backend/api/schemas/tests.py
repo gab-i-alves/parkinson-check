@@ -1,4 +1,4 @@
-from fastapi import File, UploadFile, Form
+from fastapi import File, UploadFile
 from pydantic import BaseModel, Field
 from typing import Dict, Literal, Optional
 from datetime import date
@@ -33,13 +33,13 @@ class SpiralPracticeTestResult(BaseModel):
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
     
-class VoicePracticeTestResult(BaseModel):
-    score: float = Field(..., example=0.92)
-    analysis: str = Field(..., example="A análise da sua voz indica A, B e C.")
-    
 # Schema não detalhado resultado do teste
 class PatientTestResult(BaseModel):
     test_id: int
     test_type: TestStatus
     execution_date: date
     classification: Literal["HEALTHY", "PARKINSON"]
+
+class VoicePracticeTestResult(BaseModel):
+    score: float = Field(..., example=0.92)
+    analysis: str = Field(..., example="A análise da sua voz indica A, B e C.")
