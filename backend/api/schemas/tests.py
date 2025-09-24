@@ -1,5 +1,5 @@
-from fastapi import File, UploadFile
-from pydantic import BaseModel
+from fastapi import File, UploadFile, Form
+from pydantic import BaseModel, Field
 from typing import Dict, Literal, Optional
 from datetime import date
 from core.enums import TestStatus, TestType, SpiralMethods
@@ -32,6 +32,10 @@ class SpiralPracticeTestResult(BaseModel):
     majority_decision: str
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
+    
+class VoicePracticeTestResult(BaseModel):
+    score: float = Field(..., example=0.92)
+    analysis: str = Field(..., example="A análise da sua voz indica A, B e C.")
     
 # Schema não detalhado resultado do teste
 class PatientTestResult(BaseModel):

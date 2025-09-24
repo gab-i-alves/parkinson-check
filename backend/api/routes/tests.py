@@ -1,12 +1,15 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from infra.db.connection import get_session
+from fastapi import APIRouter, Depends, Form, UploadFile
+
 from core.models.users import User
 from core.security.security import get_patient_user, get_doctor_user
-from core.services.test_service import process_spiral_as_practice, get_patient_tests, get_patient_detaild_tests
+from core.services.test_service import process_spiral_as_practice, get_patient_tests, get_patient_detaild_tests, process_voice_as_practice, process_spiral_as_practice
 from sqlalchemy.orm import Session
 
-from ..schemas.tests import SpiralImageSchema, SpiralPracticeTestResult, PatientTestResult
+from ..schemas.tests import SpiralImageSchema, SpiralPracticeTestResult, VoicePracticeTestResult, PatientTestResult
+
 
 
 router = APIRouter(prefix="/tests", tags=["Tests"])
@@ -38,3 +41,11 @@ def get_detailed_tests(user: CurrentDoctor, patient_id: int, session: Session = 
     """
     return get_patient_detaild_tests(user, patient_id, session)   
     
+
+@router.post("/voice/practice", response_model=VoicePracticeTestResult)
+def practice_voice_test(
+    user: CurrentPatient,
+    audio_file: UploadFile
+    ):
+    
+    return process_voice_as_practice(audio_file)

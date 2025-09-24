@@ -1,7 +1,13 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { LandingPage } from './features/home/landing-page/landing-page';
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: LandingPage,
+    title: 'ParkinsonCheck | Acompanhamento Inteligente de Parkinson',
+  },
   {
     path: 'auth',
     loadChildren: () =>
@@ -14,11 +20,6 @@ export const routes: Routes = [
         (r) => r.DASHBOARD_ROUTES
       ),
     canActivate: [authGuard],
-  },
-  {
-    path: '',
-    redirectTo: '/auth/login',
-    pathMatch: 'full',
   },
   {
     path: '**',
