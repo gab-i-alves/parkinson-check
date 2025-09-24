@@ -9,6 +9,7 @@ from .user_service import get_user_active_binds
 from ..models import User
 from http import HTTPStatus
 from ..models import Test
+from utils.converter import convert_webm_to_wav
 
 MODEL_SERVICE_URL = "http://spiral-classifier:8001/predict/spiral"
 MODEL_SERVICE_URL = "http://voice-classifier:8002/predict/voice"
@@ -99,38 +100,3 @@ def get_patient_tests(session: Session, current_user: User, patient_id: int) -> 
     
 def get_patient_detaild_tests():
     ...
-    
-def convert_webm_to_wav(upload_file: UploadFile) -> str:
-    """
-    Converte um arquivo WebM (upload do frontend) em WAV (16kHz mono)
-    usando ffmpeg. Retorna o caminho para o arquivo WAV temporário.
-    """
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_webm:
-        upload_file.file.seek(0)
-        temp_webm.write(upload_file.file.read())
-        temp_webm_path = temp_webm.name
-
-    temp_wav_path = temp_webm_path.replace(".webm", ".wav")
-
-    try:
-        command = [
-            "ffmpeg",
-            "-y", 
-            "-i", temp_webm_path,
-            "-ar", "16000",
-            "-ac", "1",   
-            temp_wav_path,
-        ]
-        result = subprocess.run(
-            command,
-            check=True,
-            capture_output=True,
-            text=True 
-        )
-        return temp_wav_path
-    except subprocess.CalledProcessError as e:
-        print(f"Erro do FFMPEG: {e.stderr}")
-        raise RuntimeError(f"Erro ao converter áudio: {e.stderr}")
-    finally:
-        if os.path.exists(temp_webm_path):
-            os.remove(temp_webm_path)
