@@ -1,6 +1,8 @@
-from fastapi import File, HTTPException, UploadFile
-from pydantic import BaseModel, model_validator
-from typing import Dict, Optional
+from fastapi import File, UploadFile
+from pydantic import BaseModel
+from typing import Dict, Literal, Optional
+from datetime import date
+from core.enums import TestStatus, TestType, SpiralMethods
 
 class SpiralImageSchema(BaseModel):
     image_content: bytes
@@ -30,3 +32,10 @@ class SpiralPracticeTestResult(BaseModel):
     majority_decision: str
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
+    
+# Schema não detalhado resultado do teste
+class PatientTestResult(BaseModel):
+    test_id: int
+    test_type: TestStatus
+    execution_date: date
+    classification: Literal["HEALTHY", "PARKINSON"]

@@ -53,7 +53,6 @@ def get_binded_patients(
     """
     Endpoint para o médico obter a lista de seus pacientes vinculados (status ACTIVE).
     """
-    patients_with_binds = patient_service.get_binded_patients(user, session)
+    patients_with_binds = patient_service.get_binded_patients(session, user)
     return patients_with_binds
-
     
