@@ -61,12 +61,12 @@ CREATE TABLE IF NOT EXISTS "test" (
 
 CREATE TABLE IF NOT EXISTS "voice_test" (
   "id" integer PRIMARY KEY REFERENCES "test" ("id"),
-  "record_duration" REAL NOT NULL
+  "record_duration" FLOAT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "spiral_test" (
   "id" integer PRIMARY KEY REFERENCES "test" ("id"),
-  "draw_duration" REAL NOT NULL,
+  "draw_duration" FLOAT NOT NULL,
   "method" spiral_methods_enum NOT NULL
 );
 
