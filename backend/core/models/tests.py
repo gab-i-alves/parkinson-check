@@ -18,7 +18,7 @@ class Test:
     status: Mapped[TestStatus] = mapped_column(
         "status", PG_ENUM(TestStatus, name="test_status_enum", create_type=True)
     )
-    score: Mapped[int] = mapped_column(nullable=False)
+    score: Mapped[float] = mapped_column(nullable=False)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"))
 
     __mapper_args__ = {
