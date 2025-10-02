@@ -31,7 +31,7 @@ export class AuthService {
    * Se o cookie for válido, o backend retornará os dados do usuário.
    */
   checkAuthStatus(): Observable<User | null> {
-    return this.http.get<User>(`${this.apiUrl}/users/me`).pipe(
+    return this.http.get<User>(`${this.apiUrl}/users/`).pipe(
       tap((user) => {
         this.currentUserSubject.next(user);
       }),
@@ -72,10 +72,10 @@ export class AuthService {
   }
 
   registerPatient(patientData: any): Observable<any> {
-    return this.http.post<any>('/api/register/patient', patientData);
+    return this.http.post<any>(`${this.apiUrl}/register/patient`, patientData);
   }
 
   registerDoctor(doctorData: any): Observable<any> {
-    return this.http.post<any>('/api/register/doctor', doctorData);
+    return this.http.post<any>(`${this.apiUrl}/register/doctor`, doctorData);
   }
 }
