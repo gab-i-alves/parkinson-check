@@ -9,7 +9,7 @@ import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { Doctor } from '../../../core/models/doctor.model';
 import { BindingRequest } from '../../../core/models/binding-request.model';
 import { PatientBindingRequest } from '../../../core/models/patient-binding-request.model';
-import { environment } from '../../../../environments/environment.prod';
+import { environment } from '../../../../environments/environment';
 
 const BASE_URL = `${environment.apiUrl}/users/doctors`;
 
