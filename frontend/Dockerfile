@@ -9,7 +9,7 @@ FROM nginx:alpine
 
 RUN rm -rf /usr/share/nginx/html/*
 
-COPY --from=build /app/dist/parkinson-check-app /usr/share/nginx/html/
+COPY --from=build /app/dist/parkinson-check-app/browser/ /usr/share/nginx/html/
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
