@@ -7,7 +7,7 @@
     "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "start:prod": "serve -s dist/parkinson-check"
+    "start:prod": "serve -s dist/parkinson-check-app"
   },
   "prettier": {
     "overrides": [
