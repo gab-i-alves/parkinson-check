@@ -6,7 +6,8 @@
     "start": "ng serve --host 0.0.0.0 --port 8080",
     "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start:prod": "serve -s dist/parkinson-check"
   },
   "prettier": {
     "overrides": [
@@ -29,6 +30,7 @@
     "@tailwindcss/postcss": "^4.1.11",
     "ngx-mask": "^20.0.0",
     "rxjs": "~7.8.0",
+    "serve": "^14.2.5",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
