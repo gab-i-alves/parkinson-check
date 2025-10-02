@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { User } from '../../../core/models/user.model';
 import { LoginForm } from '../../../core/models/login.model';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
