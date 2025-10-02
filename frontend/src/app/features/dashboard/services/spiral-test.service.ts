@@ -2,12 +2,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { SpiralTestResponse } from '../../../core/models/spiral-test-response.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpiralTestService {
-  private apiUrl = '/api/tests/spiral/practice';
+  private apiUrl = `${environment.apiUrl}/tests/spiral/practice`;
 
   constructor(private http: HttpClient) {}
 

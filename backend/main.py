@@ -5,13 +5,17 @@ from infra.db.connection import get_session
 
 app = FastAPI(title="ParkinsonCheck API")
 
-# Configuração CORS
+origins = [
+    "https://parkinson.gabi-alves.com",  # frontend on railway
+    "http://localhost:4200"              # local development
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"], 
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(api_router)

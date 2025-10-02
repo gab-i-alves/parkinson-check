@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject, Observable, catchError, throwError } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 export interface VoiceTestResponse {
   score: number;
@@ -14,7 +15,7 @@ export class VoiceTestService {
   private mediaRecorder: MediaRecorder | undefined;
   private audioChunks: Blob[] = [];
   private recordingSubject = new Subject<Blob>();
-  private apiUrl = '/api/tests/voice/practice';
+  private apiUrl = `${environment.apiUrl}/tests/voice/practice`;
 
   public get recording$(): Observable<Blob> {
     return this.recordingSubject.asObservable();
