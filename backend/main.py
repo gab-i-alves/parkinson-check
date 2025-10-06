@@ -7,6 +7,7 @@ app = FastAPI(title="ParkinsonCheck API")
 
 origins = []
 if settings.ENVIRONMENT == "production":
+    origins.append("https://parkinson.gabi-alves.com")
     origins.append("https://gabi-alves.com")
     origins.append("https://www.gabi-alves.com")
 else:
