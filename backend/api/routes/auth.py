@@ -11,7 +11,10 @@ router = APIRouter(prefix='/auth', tags=['Auth'])
 def login(response: Response, form: LoginFormRequest, session: Session = Depends(get_session)):
     token = auth_service.login(form, session)
 
+    print(f"AMBIENTE DETETADO: '{settings.ENVIRONMENT}'")
+
     if settings.ENVIRONMENT == "production":
+        print("A APLICAR CONFIGURAÇÕES DE PRODUÇÃO PARA O COOKIE.")
         # Configurações para produção (Railway)
         response.set_cookie(
             key="access_token",
@@ -22,6 +25,7 @@ def login(response: Response, form: LoginFormRequest, session: Session = Depends
             domain=".gabi-alves.com" # Permite que o cookie seja compartilhado entre os subdomínios
         )
     else:
+        print("A APLICAR CONFIGURAÇÕES DE DESENVOLVIMENTO PARA O COOKIE.")
         # Configurações para desenvolvimento (localhost)
         response.set_cookie(
             key="access_token",
