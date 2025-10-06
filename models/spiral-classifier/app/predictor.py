@@ -79,7 +79,17 @@ def predict_all_models(image_path, model_base_path="infra"):
     if not predictions:
         raise ValueError("No predictions were made.")
 
-    vote_count = Counter(predictions)
-    majority = vote_count.most_common(1)[0][0]
+    vote_count_counter = Counter(predictions)
+    
+    vote_count = {
+        "Healthy": vote_count_counter.get("Healthy", 0),
+        "Parkinson": vote_count_counter.get("Parkinson", 0)
+    }
+    
+    majority = max(vote_count, key=vote_count.get)
 
     return results, vote_count, majority
+    
+    # majority = vote_count.most_common(1)[0][0]
+
+    # return results, vote_count, majority

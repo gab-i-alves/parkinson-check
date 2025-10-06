@@ -17,7 +17,9 @@ export class SpiralTestService {
     formData.append('image', file, file.name);
 
     return this.http
-      .post<SpiralTestResponse>(this.apiUrl, formData)
+      .post<SpiralTestResponse>(this.apiUrl, formData, {
+        withCredentials: true,
+      })
       .pipe(catchError(this.handleError));
   }
 

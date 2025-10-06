@@ -63,7 +63,8 @@
             }
           },
           "options": {
-            "allowedHosts": ["parkinson.gabi-alves.com"]
+            "allowedHosts": ["parkinson.gabi-alves.com"],
+            "proxyConfig": "proxy.conf.json"
           },
           "defaultConfiguration": "development"
         },

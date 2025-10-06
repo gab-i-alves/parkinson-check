@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
-
+from infra.settings import settings
 from infra.db.connection import get_session
 from ..schemas.auth import LoginFormRequest
 from core.services import auth_service
@@ -10,13 +10,27 @@ router = APIRouter(prefix='/auth', tags=['Auth'])
 @router.post('/login')
 def login(response: Response, form: LoginFormRequest, session: Session = Depends(get_session)):
     token = auth_service.login(form, session)
-    response.set_cookie(
-        key="access_token",
-        value=f"Bearer {token.access_token}",
-        httponly=True,
-        secure=False, # true para https
-        samesite="strict"
-    )
+
+    if settings.ENVIRONMENT == "production":
+        # Configurações para produção (Railway)
+        response.set_cookie(
+            key="access_token",
+            value=f"Bearer {token.access_token}",
+            httponly=True,
+            secure=True,          # Obrigatório para samesite="none"
+            samesite="none",      # Permite o envio entre subdomínios
+            domain=".gabi-alves.com" # Permite que o cookie seja compartilhado entre os subdomínios
+        )
+    else:
+        # Configurações para desenvolvimento (localhost)
+        response.set_cookie(
+            key="access_token",
+            value=f"Bearer {token.access_token}",
+            httponly=True,
+            secure=False,
+            samesite="lax"       # "lax" é suficiente e seguro para localhost
+        )
+
     return token.user
 
 @router.post('/logout')
