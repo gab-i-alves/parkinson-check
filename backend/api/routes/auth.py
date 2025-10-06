@@ -22,7 +22,6 @@ def login(response: Response, form: LoginFormRequest, session: Session = Depends
             httponly=True,
             secure=True,          # Obrigatório para samesite="none"
             samesite="none",      # Permite o envio entre subdomínios
-            domain=".gabi-alves.com" # Permite que o cookie seja compartilhado entre os subdomínios
         )
     else:
         print("A APLICAR CONFIGURAÇÕES DE DESENVOLVIMENTO PARA O COOKIE.")
