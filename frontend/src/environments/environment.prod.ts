@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.gabi-alves.com', // Railway backend domain
+  apiUrl: 'https://api.gabi-alves.com/api', // Railway backend domain
 };
