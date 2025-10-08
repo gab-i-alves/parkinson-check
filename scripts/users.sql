@@ -2,6 +2,12 @@ CREATE TYPE user_type_enum AS ENUM ('PATIENT', 'DOCTOR');
 
 CREATE TYPE bind_enum AS ENUM ('PENDING', 'ACTIVE', 'REVERSED', 'REJECTED');
 
+CREATE TYPE test_status_enum AS ENUM ('DONE', 'VIEWED', 'NOTED');
+
+CREATE TYPE test_type_enum AS ENUM ('SPIRAL_TEST', 'VOICE_TEST');
+
+CREATE TYPE spiral_methods_enum AS ENUM ('WEBCAM', 'PAPER');
+
 CREATE TABLE IF NOT EXISTS "user" (
   "id" SERIAL PRIMARY KEY,
   "type" user_type_enum NOT NULL,
@@ -10,18 +16,18 @@ CREATE TABLE IF NOT EXISTS "user" (
   "hashed_password" varchar(255) NOT NULL,
   "cpf" char(11) UNIQUE NOT NULL,
   "birthdate" TIMESTAMP NOT NULL,
-  "address_id" integer NOT NULL,
+  "address_id" integer NOT NULL REFERENCES "address" ("id"),
   "is_active" boolean NOT NULL DEFAULT TRUE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS "patient" (
-  "id" integer PRIMARY KEY
+  "id" integer PRIMARY KEY  REFERENCES "user" ("id"),
 );
 
 CREATE TABLE IF NOT EXISTS "doctor" (
-  "id" integer PRIMARY KEY,
+  "id" integer PRIMARY KEY  REFERENCES "user" ("id"),
   "crm" char(8) UNIQUE NOT NULL,
   "expertise_area" varchar(50),
   "status_approval" boolean
@@ -45,12 +51,24 @@ CREATE TABLE IF NOT EXISTS "bind" (
     "patient_id" INTEGER NOT NULL REFERENCES "patient"(id)
 );
 
-ALTER TABLE "patient" ADD FOREIGN KEY ("id") REFERENCES "user" ("id");
-ALTER TABLE "doctor" ADD FOREIGN KEY ("id") REFERENCES "user" ("id");
+CREATE TABLE IF NOT EXISTS "test" (
+  "id" SERIAL PRIMARY KEY,
+  "patient_id" integer NOT NULL,
+  "execution_date" TIMESTAMP NOT NULL,
+  "status" test_status_enum NOT NULL,
+  "score" FLOAT NOT NULL
+);
 
-ALTER TABLE "user" ADD FOREIGN KEY ("address_id") REFERENCES "address" ("id");
+CREATE TABLE IF NOT EXISTS "voice_test" (
+  "id" integer PRIMARY KEY REFERENCES "test" ("id"),
+  "record_duration" FLOAT NOT NULL
+);
 
-
+CREATE TABLE IF NOT EXISTS "spiral_test" (
+  "id" integer PRIMARY KEY REFERENCES "test" ("id"),
+  "draw_duration" FLOAT NOT NULL,
+  "method" spiral_methods_enum NOT NULL
+);
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
