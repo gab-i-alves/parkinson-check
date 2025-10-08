@@ -1,6 +1,8 @@
-from fastapi import File, Form, UploadFile
-from pydantic import BaseModel, model_validator, Field
-from typing import Dict, Optional
+from fastapi import File, UploadFile
+from pydantic import BaseModel, Field
+from typing import Dict, Literal, Optional
+from datetime import date
+from core.enums import TestStatus, TestType, SpiralMethods
 
 class SpiralImageSchema(BaseModel):
     image_content: bytes
@@ -30,7 +32,40 @@ class SpiralPracticeTestResult(BaseModel):
     majority_decision: str
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
-
+    
 class VoicePracticeTestResult(BaseModel):
     score: float = Field(..., example=0.92)
     analysis: str = Field(..., example="A análise da sua voz indica A, B e C.")
+
+# Schema não detalhado resultado do teste
+class BasicTestReturn(BaseModel):
+    test_id: int
+    test_type: TestStatus
+    execution_date: date
+    classification: Literal["HEALTHY", "PARKINSON"]
+
+# Schemas detalhados, com base nos atributos dos modelos persistentes
+
+class BaseTest(BaseModel):
+    id: int
+    test_type: TestType
+    execution_date: date
+    status: TestStatus
+    score: float
+    patient_id: int
+    
+    model_config = {
+        "from_attributes": True
+    }
+
+class VoiceTest(BaseTest):
+    record_duration: float
+    
+class SpiralTest(BaseTest):
+    draw_duration: float
+    method: SpiralMethods
+    
+class DetaildTestsReturn(BaseModel):
+    voice_tests: list[VoiceTest]
+    spiral_tests: list[SpiralTest]
+    
