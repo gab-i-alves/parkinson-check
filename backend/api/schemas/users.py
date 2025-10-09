@@ -1,15 +1,18 @@
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
 from core.enums import UserType
+
+
 class UserSchema(BaseModel):
-    
     model_config = ConfigDict(
-        populate_by_name=True, # Permite o alias
+        populate_by_name=True,  # Permite o alias
     )
 
-    fullname: str = Field(..., alias='name')
-    birthdate: date = Field(..., alias='birthdate') # NÃO RETIRAR DAQUI
+    fullname: str = Field(..., alias="name")
+    birthdate: date = Field(..., alias="birthdate")  # NÃO RETIRAR DAQUI
     cpf: str
     email: EmailStr
     password: str
@@ -22,23 +25,27 @@ class UserSchema(BaseModel):
     city: str
     state: str
 
+
 class UserResponse(BaseModel):
     id: int
     name: str
     email: EmailStr
     role: UserType
 
+
 class DoctorSchema(UserSchema):
     crm: str
-    specialty: str = Field(..., alias='expertise_area')
-    
+    specialty: str = Field(..., alias="expertise_area")
+
+
 class GetDoctorsSchema(BaseModel):
     name: Optional[str] = None
     cpf: Optional[str] = None
     email: Optional[str] = None
-    crm: Optional[str] = None 
+    crm: Optional[str] = None
     specialty: Optional[str] = None
-    
+
+
 class DoctorListResponse(UserResponse):
     expertise_area: Optional[str] = None
     specialty: str
@@ -46,14 +53,12 @@ class DoctorListResponse(UserResponse):
     location: str
     bind_id: Optional[int] = None
 
+
 # TODO: ADICIONAR MAIS DADOS PARA O USUÁRIO COMO ALERGIAS, MEDICAMENTOS, ETC...
 class PatientSchema(UserSchema):
-    birthdate: date = Field(..., alias='birthdate')
-    
+    birthdate: date = Field(..., alias="birthdate")
+
+
 class PatientListResponse(UserResponse):
     location: str
     bind_id: Optional[int] = None
-    
-
-    
-

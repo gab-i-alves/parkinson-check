@@ -1,14 +1,17 @@
 from typing import TYPE_CHECKING
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from core.models.table_registry import table_registry
 
 if TYPE_CHECKING:
     from . import User
 
+
 @table_registry.mapped_as_dataclass
 class Address:
     __tablename__ = "address"
-    
+
     id: Mapped[int] = mapped_column(init=False, primary_key=True, autoincrement=True)
     cep: Mapped[str] = mapped_column(nullable=False)
     street: Mapped[str] = mapped_column(nullable=False)
