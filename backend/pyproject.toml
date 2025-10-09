@@ -1,0 +1,14 @@
+[tool.ruff]
+line-length = 92
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL']
+
+[tool.ruff.lint.pylint]
+max-args = 8
+max-positional-args = 8

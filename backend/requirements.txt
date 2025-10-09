@@ -9,3 +9,4 @@ opencv-python
 tensorflow==2.16.2
 joblib
 scikit-learn
+ruff

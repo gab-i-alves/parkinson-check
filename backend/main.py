@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from api.router import api_router
-from infra.settings import settings 
+from infra.settings import settings
 
 app = FastAPI(title="ParkinsonCheck API")
 
@@ -16,12 +17,13 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"], 
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(api_router)
 
+
 @app.get("/")
 def read_root():
-    return {"message": "Bem-vindo à API do ParkinsonCheck!"} 
+    return {"message": "Bem-vindo à API do ParkinsonCheck!"}
