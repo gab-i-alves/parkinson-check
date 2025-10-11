@@ -129,17 +129,17 @@ def unlink_binding(binding_id: int, user: User, session: Session) -> Bind:
 
 def get_binded_patients(session: Session, current_user: User) -> list[PatientListResponse]:
     """
-    Busca os médicos e os seus vínculos ATIVOS para um determinado paciente.
-    Retorna uma lista de tuplas (Doctor, Bind).
+    Com base em um usuário retorna os pacientes vinculados a ele.
+    Formato de lista (PatientListResponse)
     """
-    binded_doctor = get_binded_users(current_user, session)
+    binded_patients = get_binded_users(current_user, session)
 
-    doctor_list = []
+    patient_list = []
 
-    for item in binded_doctor:
+    for item in binded_patients:
         patient = item["user"]
         bind_id = item["bind_id"]
-        doctor_list.append(
+        patient_list.append(
             PatientListResponse(
                 id=patient.id,
                 name=patient.name,
@@ -149,4 +149,4 @@ def get_binded_patients(session: Session, current_user: User) -> list[PatientLis
                 bind_id=bind_id,
             )
         )
-    return doctor_list
+    return patient_list

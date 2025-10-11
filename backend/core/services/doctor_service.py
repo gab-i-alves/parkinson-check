@@ -130,14 +130,14 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListRe
 
 def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListResponse]:
     """
-    Busca os médicos e os seus vínculos ATIVOS para um determinado paciente.
-    Retorna uma lista de tuplas (Doctor, Bind).
+    Com base em um usuário retorna os médicos vinculados a ele.
+    Formato de lista (DoctorListResponse)
     """
-    binded_doctor = get_binded_users(current_user, session)
+    binded_doctors = get_binded_users(current_user, session)
 
     doctor_list = []
 
-    for item in binded_doctor:
+    for item in binded_doctors:
         doc = item["user"]
         bind_id = item["bind_id"]
         doctor_list.append(
