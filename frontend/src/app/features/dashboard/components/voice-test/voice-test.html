@@ -1,40 +1,38 @@
-<div class="mx-auto max-w-4xl space-y-8 p-4 sm:p-6 lg:p-8">
-  <header class="flex items-center justify-between pb-6">
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900">Teste da Voz</h1>
-      <p class="mt-2 text-lg text-gray-600">
-        Leia, em voz alta, o texto em destaque quando estiver pronto. Este teste
-        avalia características vocais que podem estar associadas à doença de
-        Parkinson.
+      <button
+        (click)="goBackToMethodSelection()"
+        class="mb-2 flex items-center space-x-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-4 w-4"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+          />
+        </svg>
+        <span>Voltar</span>
+      </button>
+      <h1 class="text-2xl font-bold text-gray-900">Teste de Voz</h1>
+      <p class="mt-1 text-sm text-gray-500">
+        Leia em voz alta o texto em destaque quando estiver pronto
       </p>
     </div>
-    <button
-      (click)="goBackToMethodSelection()"
-      class="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="h-4 w-4"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-        />
-      </svg>
-      <span>Voltar</span>
-    </button>
-  </header>
+  </div>
 
-  <div class="rounded-lg bg-indigo-50 p-6 shadow-sm">
-    <h2 class="text-xl font-semibold text-indigo-800">
+  <div class="rounded-lg bg-violet-50 p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-violet-900">
       Instruções Importantes
     </h2>
-    <ol type="1" class="mt-4 list-inside list-disc space-y-2 text-indigo-700">
+    <ol type="1" class="mt-4 list-inside list-disc space-y-2 text-violet-800">
       <li>
         <a>Certifique-se de estar em um ambiente silencioso.</a>
       </li>
@@ -99,7 +97,7 @@
           <audio #audioPlayer [src]="recordedAudioUrl()" class="hidden"></audio>
           <button
             (click)="playRecording()"
-            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-5 py-2 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-5 py-2 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
           >
             Ouvir Gravação
           </button>
