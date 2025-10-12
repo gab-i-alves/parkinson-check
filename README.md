@@ -67,7 +67,7 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento local:
     - **Front-end (Angular):** [http://localhost:4200](http://localhost:4200)
     - **Back-end (FastAPI Docs):** [http://localhost:8000/docs](http://localhost:8000/docs)
 
-## ParkinsonCheck
+## Roadmap do Produto
 
 ### Visão do Produto
 
