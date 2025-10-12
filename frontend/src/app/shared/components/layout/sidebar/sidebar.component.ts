@@ -33,7 +33,7 @@ export class SidebarComponent {
   readonly user = toSignal(this.userService.currentUser$, {
     initialValue: this.userService.getCurrentUser(),
   });
-  
+
   private patientLinks: NavLink[] = [
     {
       path: '/dashboard',
@@ -59,6 +59,12 @@ export class SidebarComponent {
       icon: 'users',
       disabled: false,
     },
+    {
+      path: '/dashboard/patient-requests',
+      label: 'Solicitações',
+      icon: 'clipboard',
+      disabled: false,
+    },
   ];
 
   private doctorLinks: NavLink[] = [
@@ -72,7 +78,7 @@ export class SidebarComponent {
       path: 'patients',
       label: 'Meus Pacientes',
       icon: 'users',
-      disabled: true,
+      disabled: false,
     },
     {
       path: 'binding-requests',
@@ -84,7 +90,7 @@ export class SidebarComponent {
       path: 'analytics',
       label: 'Análises',
       icon: 'chart',
-      disabled: true,
+      disabled: false,
     },
   ];
 

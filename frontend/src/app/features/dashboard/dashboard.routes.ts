@@ -30,11 +30,25 @@ export const DASHBOARD_ROUTES: Routes = [
           ),
       },
       {
+        path: 'patient-requests',
+        loadComponent: () =>
+          import(
+            './components/patient-binding-requests/patient-binding-requests.component'
+          ).then((c) => c.PatientBindingRequestsComponent),
+      },
+      {
         path: 'binding-requests',
         loadComponent: () =>
           import(
             './components/binding-requests/binding-requests.component'
           ).then((c) => c.BindingRequestsComponent),
+      },
+      {
+        path: 'patients',
+        loadComponent: () =>
+          import(
+            './components/my-patients/my-patients-list.component'
+          ).then((c) => c.MyPatientsListComponent),
       },
       {
         path: 'tests',

@@ -1,121 +1,19 @@
 <div class="space-y-6">
-  <header>
-    <h1 class="text-3xl font-bold text-gray-900">Meus Médicos</h1>
-  </header>
-  <div class="border-b border-gray-200">
-    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-      <button
-        (click)="selectTab('linked')"
-        [ngClass]="{
-          'border-primary text-primary': activeTab() === 'linked',
-          'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
-            activeTab() !== 'linked'
-        }"
-        class="whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium"
-      >
-        Médicos Vinculados
-      </button>
-      <button
-        (click)="selectTab('requests')"
-        [ngClass]="{
-          'border-primary text-primary': activeTab() === 'requests',
-          'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
-            activeTab() !== 'requests'
-        }"
-        class="whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium"
-      >
-        Solicitações
-      </button>
-      <button
-        (click)="selectTab('find')"
-        [ngClass]="{
-          'border-primary text-primary': activeTab() === 'find',
-          'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
-            activeTab() !== 'find'
-        }"
-        class="whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium"
-      >
-        Adicionar Médico
-      </button>
-    </nav>
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Meus Médicos</h1>
+      <p class="mt-1 text-sm text-gray-500">
+        Gerencie seus médicos vinculados
+      </p>
+    </div>
   </div>
 
-  @if (activeTab() === 'linked') {
   <div class="rounded-lg bg-white p-6 shadow-sm">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-      Profissionais Vinculados
-    </h2>
-    @if (linkedDoctors().length === 0) {
-    <p class="text-center text-gray-500 py-8">
-      Você ainda não possui médicos vinculados.
-    </p>
-    } @else {
-    <div class="space-y-4">
-      @for (doctor of linkedDoctors(); track doctor.id) {
-      <div
-        class="flex items-center justify-between rounded-md border border-gray-200 p-4"
-      >
-        <div>
-          <p class="font-semibold text-gray-900">{{ doctor.name }}</p>
-          <p class="text-sm text-gray-500">
-            {{ doctor.expertise_area }} - {{ doctor.crm }} -
-            {{ doctor.location }}
-          </p>
-        </div>
-        <div>
-          <button
-            (click)="initiateUnlink(doctor)"
-            class="rounded-md bg-red-100 px-3 py-1.5 text-sm font-medium text-red-800 hover:bg-red-200"
-          >
-            Desvincular
-          </button>
-        </div>
-      </div>
-      }
-    </div>
-    }
-  </div>
-  } @if (activeTab() === 'requests') {
-  <div class="rounded-lg bg-white p-6 shadow-sm">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-      Solicitações Enviadas
-    </h2>
-    @if (sentRequests().length === 0) {
-    <p class="text-center text-gray-500 py-8">Nenhuma solicitação pendente.</p>
-    } @else {
-    <div class="space-y-4">
-      @for (request of sentRequests(); track request.doctor.id) {
-      <div
-        class="flex items-center justify-between rounded-md border border-gray-200 p-4"
-      >
-        <div>
-          <p class="font-semibold text-gray-900">{{ request.doctor.name }}</p>
-          <p class="text-sm text-gray-500">
-            {{ request.doctor.expertise_area }}
-          </p>
-        </div>
-        <span
-          class="rounded-md bg-yellow-100 px-3 py-1.5 text-sm font-medium text-yellow-800"
-          >Pendente</span
-        >
-      </div>
-      }
-    </div>
-    }
-  </div>
-  } @if (activeTab() === 'find') {
-  <div class="rounded-lg bg-white p-6 shadow-sm">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-      Buscar por um Médico
-    </h2>
-
-    <div class="flex items-end space-x-4">
+    @if (linkedDoctors().length > 0) {
+    <div class="mb-6 flex items-end space-x-4">
       <div class="flex-grow">
-        <label
-          for="search-term"
-          class="block text-sm font-medium text-gray-700"
-        >
-          Nome do Médico
+        <label for="search" class="block text-sm font-medium text-gray-700">
+          Buscar Médico
         </label>
         <div class="relative mt-1">
           <div
@@ -135,124 +33,193 @@
           </div>
           <input
             type="text"
-            id="search-term"
-            [value]="searchTerm()"
-            (input)="onSearchTermChange($event)"
-            placeholder="Digite o nome..."
+            id="search"
+            [value]="searchQuery()"
+            (input)="onSearchChange($event)"
+            placeholder="Digite o nome do médico..."
             class="block w-full rounded-md border-gray-300 py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
           />
         </div>
       </div>
 
       <div class="flex-shrink-0">
-        <label
-          for="specialty-filter"
-          class="block text-sm font-medium text-gray-700"
-        >
-          Especialidade
+        <label for="sortByLinked" class="block text-sm font-medium text-gray-700">
+          Ordenar por
         </label>
         <select
-          id="specialty-filter"
-          [value]="specialty()"
-          (change)="specialty.set($any($event.target).value)"
+          id="sortByLinked"
+          [value]="sortBy()"
+          (change)="onSortChange($event)"
           class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
         >
-          <option value="">Todas</option>
-          <option value="Neurologia">Neurologia</option>
-          <option value="Geriatria">Geriatria</option>
-          <option value="Outra">Outra</option>
+          <option value="name">Nome</option>
+          <option value="expertise_area">Especialidade</option>
+          <option value="location">Localização</option>
         </select>
       </div>
 
       <div class="flex-shrink-0">
+        <label class="block text-sm font-medium text-gray-700">
+          Ordem
+        </label>
         <button
           type="button"
-          (click)="searchDoctors()"
-          class="mt-1 inline-flex items-center rounded-md border border-transparent bg-violet-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          (click)="toggleSortOrder()"
+          class="mt-1 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          title="{{ sortOrder() === 'asc' ? 'Crescente' : 'Decrescente' }}"
         >
-          Pesquisar
+          @if (sortOrder() === 'asc') {
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"
+            />
+          </svg>
+          } @else {
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
+            />
+          </svg>
+          }
         </button>
       </div>
     </div>
-    @if (isLoading()) {
-    <div class="flex flex-col justify-center items-center py-8">
+    }
+
+    @if (filteredDoctors().length === 0 && linkedDoctors().length === 0) {
+    <div class="py-12 text-center">
       <svg
-        class="animate-spin h-8 w-8 text-primary"
+        class="mx-auto h-12 w-12 text-gray-400"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
       >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        ></circle>
         <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+        />
       </svg>
-      <p class="mt-4 text-gray-500">Buscando...</p>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">
+        Nenhum médico vinculado
+      </h3>
+      <p class="mt-1 text-sm text-gray-500">
+        Você ainda não possui médicos vinculados. Busque por profissionais na aba "Solicitações".
+      </p>
     </div>
-    } @if (searchResults().length > 0 && !isLoading()) {
-    <div
-      class="mt-6 space-y-4 transition-opacity duration-500"
-      [ngClass]="{ 'opacity-100': !isLoading(), 'opacity-0': isLoading() }"
-    >
-      @for (doctor of searchResults(); track doctor.id) {
-      <div
-        class="flex items-center justify-between rounded-md border border-gray-200 p-4"
+    } @else if (filteredDoctors().length === 0 && linkedDoctors().length > 0) {
+    <div class="py-12 text-center">
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
       >
-        <div>
-          <p class="font-semibold text-gray-900">{{ doctor.name }}</p>
-          <p class="text-sm text-gray-500">
-            {{ doctor.expertise_area }} - {{ doctor.crm }} -
-            {{ doctor.location }}
-          </p>
-        </div>
-        <div class="flex items-center justify-end space-x-4">
-          <button
-            (click)="viewProfile(doctor)"
-            class="rounded-md bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm ring-1 ring-inset ring-primary hover:bg-gray-50"
-          >
-            Ver Perfil
-          </button>
-
-          <button
-            (click)="requestLink(doctor.id)"
-            [disabled]="
-              doctor.status === 'pending' || doctor.status === 'linked'
-            "
-            [ngClass]="{
-              'bg-violet-700 hover:bg-violet-800': doctor.status === 'unlinked',
-              'bg-gray-300 cursor-not-allowed': doctor.status !== 'unlinked'
-            }"
-            class="rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
-            [ngSwitch]="doctor.status"
-          >
-            <span *ngSwitchCase="'unlinked'">Solicitar Vínculo</span>
-            <span *ngSwitchCase="'pending'">Solicitação Pendente</span>
-            <span *ngSwitchCase="'linked'">Médico Vinculado</span>
-          </button>
-        </div>
-      </div>
-      }
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+        />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">
+        Nenhum médico encontrado
+      </h3>
+      <p class="mt-1 text-sm text-gray-500">
+        Tente ajustar a busca para encontrar o médico desejado.
+      </p>
+    </div>
+    } @else {
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              Médico
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              Especialidade
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              Localização
+            </th>
+            <th scope="col" class="relative px-6 py-3">
+              <span class="sr-only">Ações</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 bg-white">
+          @for (doctor of filteredDoctors(); track doctor.id) {
+          <tr class="hover:bg-gray-50">
+            <td class="whitespace-nowrap px-6 py-4">
+              <div class="flex items-center">
+                <div
+                  class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700"
+                >
+                  <span class="font-semibold">{{
+                    doctor.name.charAt(0).toUpperCase()
+                  }}</span>
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ doctor.name }}
+                  </div>
+                  <div class="text-sm text-gray-500">CRM: {{ doctor.crm }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="whitespace-nowrap px-6 py-4">
+              <div class="text-sm text-gray-900">{{ doctor.expertise_area }}</div>
+            </td>
+            <td class="whitespace-nowrap px-6 py-4">
+              <div class="text-sm text-gray-900">{{ doctor.location }}</div>
+            </td>
+            <td
+              class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
+            >
+              <button
+                (click)="initiateUnlink(doctor)"
+                class="text-red-600 hover:text-red-900"
+              >
+                Desvincular
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
     }
   </div>
-  }
 </div>
-
-<app-doctor-profile-modal
-  [isVisible]="isModalVisible()"
-  [doctor]="selectedDoctor()"
-  (close)="closeModal()"
-  (requestLink)="requestLink($event)"
-></app-doctor-profile-modal>
 
 @if (isUnlinkModalVisible() && doctorToUnlink(); as doctor) {
 <app-confirmation-modal

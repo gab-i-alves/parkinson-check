@@ -1,14 +1,9 @@
-import { Component, inject, signal, effect, Injector } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService } from '../../services/doctor.service';
-import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
 import { Doctor } from '../../../../core/models/doctor.model';
-import { PatientBindingRequest } from '../../../../core/models/patient-binding-request.model';
-import { firstValueFrom } from 'rxjs';
-
-type ActiveTab = 'linked' | 'requests' | 'find';
 
 @Component({
   selector: 'app-my-doctors',
@@ -16,78 +11,81 @@ type ActiveTab = 'linked' | 'requests' | 'find';
   imports: [
     CommonModule,
     FormsModule,
-    DoctorProfileModalComponent,
     ConfirmationModalComponent,
   ],
   templateUrl: './my-doctors.component.html',
 })
 export class MyDoctorsComponent {
   private medicService = inject(DoctorService);
-  private injector = inject(Injector);
 
-  activeTab = signal<ActiveTab>('linked');
-  searchTerm = signal<string>('');
-  specialty = signal<string>('');
-  searchResults = signal<Doctor[]>([]);
+  searchQuery = signal<string>('');
   isLoading = signal<boolean>(false);
-  hasActiveBinding = signal<boolean>(false);
-
-  isModalVisible = signal<boolean>(false);
-  selectedDoctor = signal<Doctor | null>(null);
+  sortBy = signal<'name' | 'expertise_area' | 'location'>('name');
+  sortOrder = signal<'asc' | 'desc'>('asc');
 
   isUnlinkModalVisible = signal<boolean>(false);
   doctorToUnlink = signal<Doctor | null>(null);
 
   linkedDoctors = signal<Doctor[]>([]);
-  sentRequests = signal<PatientBindingRequest[]>([]);
+
+  filteredDoctors = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const doctors = this.linkedDoctors();
+
+    if (!query) {
+      return this.sortDoctors(doctors);
+    }
+
+    const filtered = doctors.filter((doctor) =>
+      doctor.name.toLowerCase().includes(query) ||
+      doctor.expertise_area.toLowerCase().includes(query) ||
+      doctor.location.toLowerCase().includes(query)
+    );
+
+    return this.sortDoctors(filtered);
+  });
 
   ngOnInit(): void {
     this.loadLinkedDoctors();
-    this.loadSentRequests();
   }
 
-  selectTab(tab: ActiveTab): void {
-    this.activeTab.set(tab);
-  }
-
-  async searchDoctors(): Promise<void> {
-    this.isLoading.set(true);
-    this.searchResults.set([]);
-
-    const delayPromise = new Promise((resolve) => setTimeout(resolve, 500));
-
-    const searchPromise = firstValueFrom(
-      this.medicService.searchDoctors(this.searchTerm(), this.specialty())
-    );
-
-    try {
-      const [, results] = await Promise.all([delayPromise, searchPromise]);
-
-      if (results) {
-        const linkedIds = new Set(this.linkedDoctors().map((d) => d.id));
-        const pendingIds = new Set(this.sentRequests().map((r) => r.doctor.id));
-        const doctorsWithStatus = results.map((doctor) => {
-          let status: 'linked' | 'pending' | 'unlinked' = 'unlinked';
-          if (linkedIds.has(doctor.id)) {
-            status = 'linked';
-          } else if (pendingIds.has(doctor.id)) {
-            status = 'pending';
-          }
-          return { ...doctor, status };
-        });
-        this.searchResults.set(doctorsWithStatus);
-      }
-    } catch (err) {
-      console.error('Erro na busca:', err);
-      this.searchResults.set([]);
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
-
-  onSearchTermChange(event: Event): void {
+  onSearchChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.searchTerm.set(value);
+    this.searchQuery.set(value);
+  }
+
+  sortDoctors(doctors: Doctor[]): Doctor[] {
+    const sorted = [...doctors];
+    const order = this.sortOrder() === 'asc' ? 1 : -1;
+
+    sorted.sort((a, b) => {
+      let comparison = 0;
+
+      switch (this.sortBy()) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'expertise_area':
+          comparison = a.expertise_area.localeCompare(b.expertise_area);
+          break;
+        case 'location':
+          comparison = a.location.localeCompare(b.location);
+          break;
+      }
+
+      return comparison * order;
+    });
+
+    return sorted;
+  }
+
+  onSortChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as 'name' | 'expertise_area' | 'location';
+    this.sortBy.set(value);
+  }
+
+  toggleSortOrder(): void {
+    this.sortOrder.set(this.sortOrder() === 'asc' ? 'desc' : 'asc');
   }
 
   loadLinkedDoctors(): void {
@@ -97,67 +95,13 @@ export class MyDoctorsComponent {
         if (results != null) {
           const doctorsWithStatus = results.map((d) => ({
             ...d,
-            // status: 'unlinked' as const,
           }));
-          this.linkedDoctors.set(doctorsWithStatus);
+          const sortedDoctors = this.sortDoctors(doctorsWithStatus);
+          this.linkedDoctors.set(sortedDoctors);
         }
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
-    });
-  }
-
-  loadSentRequests(): void {
-    this.isLoading.set(true);
-    this.medicService.loadSentRequests().subscribe({
-      next: (results) => {
-        if (results != null) {
-          const requestsWithDoctors = results.map((d) => ({
-            ...d,
-            // status: 'unlinked' as const,
-          }));
-          console.log(requestsWithDoctors);
-          this.sentRequests.set(requestsWithDoctors);
-        }
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false),
-    });
-  }
-
-  viewProfile(doctor: Doctor): void {
-    this.selectedDoctor.set(doctor);
-    this.isModalVisible.set(true);
-  }
-
-  closeModal(): void {
-    this.isModalVisible.set(false);
-    this.selectedDoctor.set(null);
-  }
-
-  requestLink(doctorId: number): void {
-    const doctorInSearch = this.searchResults().find((d) => d.id === doctorId);
-    if (!doctorInSearch || doctorInSearch.status === 'pending') return;
-
-    this.medicService.requestBinding(doctorId).subscribe({
-      next: () => {
-        alert('Solicitação enviada com sucesso!');
-        this.searchResults.update((doctors) =>
-          doctors.map((d) =>
-            d.id === doctorId ? { ...d, status: 'pending' } : d
-          )
-        );
-        this.loadSentRequests();
-        this.closeModal();
-      },
-      error: (err) => {
-        alert(
-          `Erro ao enviar solicitação: ${
-            err.error.detail || 'Tente novamente.'
-          }`
-        );
-        this.closeModal();
-      },
     });
   }
 
@@ -179,16 +123,12 @@ export class MyDoctorsComponent {
 
     this.medicService.unlinkDoctor(doctorToUnlink.bindingId).subscribe({
       next: () => {
-        // ATUALIZAÇÃO DIRETA DO ESTADO - A MELHOR ABORDAGEM
         this.linkedDoctors.update((currentDoctors) =>
-          // Cria um NOVO array, filtrando o médico que foi removido.
           currentDoctors.filter((doctor) => doctor.id !== doctorToUnlink.id)
         );
 
-        // (Opcional) Mostre uma notificação "toast" aqui em vez de um alert.
         alert('Médico desvinculado com sucesso.');
 
-        // Limpa os sinais de controlo do modal
         this.isUnlinkModalVisible.set(false);
         this.doctorToUnlink.set(null);
       },
