@@ -7,7 +7,7 @@ from fastapi import HTTPException
 
 from api.schemas.users import DoctorSchema, GetDoctorsSchema
 from core.enums import BindEnum, UserType
-from core.models import Bind, Doctor, Patient
+from core.models import Bind, Doctor
 from core.services import doctor_service
 
 
@@ -34,12 +34,24 @@ class TestDoctorService:
             state="SP",
         )
 
-        with patch("core.services.doctor_service.user_service.get_user_by_email", return_value=None):
-            with patch("core.services.doctor_service.user_service.get_user_by_cpf", return_value=None):
-                with patch("core.services.doctor_service.get_doctor_by_crm", return_value=None):
-                    with patch("core.services.doctor_service.address_service.get_similar_address", return_value=sample_address):
-                        with patch("core.services.doctor_service.get_password_hash", return_value="hashed"):
-
+        with patch(
+            "core.services.doctor_service.user_service.get_user_by_email", return_value=None
+        ):
+            with patch(
+                "core.services.doctor_service.user_service.get_user_by_cpf",
+                return_value=None,
+            ):
+                with patch(
+                    "core.services.doctor_service.get_doctor_by_crm", return_value=None
+                ):
+                    with patch(
+                        "core.services.doctor_service.address_service.get_similar_address",
+                        return_value=sample_address,
+                    ):
+                        with patch(
+                            "core.services.doctor_service.get_password_hash",
+                            return_value="hashed",
+                        ):
                             # Act
                             result = doctor_service.create_doctor(doctor_data, mock_session)
 
@@ -69,8 +81,10 @@ class TestDoctorService:
             state="SP",
         )
 
-        with patch("core.services.doctor_service.user_service.get_user_by_email", return_value=sample_doctor):
-
+        with patch(
+            "core.services.doctor_service.user_service.get_user_by_email",
+            return_value=sample_doctor,
+        ):
             # Act & Assert
             with pytest.raises(HTTPException) as exc_info:
                 doctor_service.create_doctor(doctor_data, mock_session)
@@ -98,9 +112,13 @@ class TestDoctorService:
             state="SP",
         )
 
-        with patch("core.services.doctor_service.user_service.get_user_by_email", return_value=None):
-            with patch("core.services.doctor_service.user_service.get_user_by_cpf", return_value=sample_doctor):
-
+        with patch(
+            "core.services.doctor_service.user_service.get_user_by_email", return_value=None
+        ):
+            with patch(
+                "core.services.doctor_service.user_service.get_user_by_cpf",
+                return_value=sample_doctor,
+            ):
                 # Act & Assert
                 with pytest.raises(HTTPException) as exc_info:
                     doctor_service.create_doctor(doctor_data, mock_session)
@@ -128,10 +146,17 @@ class TestDoctorService:
             state="SP",
         )
 
-        with patch("core.services.doctor_service.user_service.get_user_by_email", return_value=None):
-            with patch("core.services.doctor_service.user_service.get_user_by_cpf", return_value=None):
-                with patch("core.services.doctor_service.get_doctor_by_crm", return_value=sample_doctor):
-
+        with patch(
+            "core.services.doctor_service.user_service.get_user_by_email", return_value=None
+        ):
+            with patch(
+                "core.services.doctor_service.user_service.get_user_by_cpf",
+                return_value=None,
+            ):
+                with patch(
+                    "core.services.doctor_service.get_doctor_by_crm",
+                    return_value=sample_doctor,
+                ):
                     # Act & Assert
                     with pytest.raises(HTTPException) as exc_info:
                         doctor_service.create_doctor(doctor_data, mock_session)
@@ -166,7 +191,9 @@ class TestDoctorService:
         # Assert
         assert result is None
 
-    def test_get_pending_binding_requests(self, mock_session, sample_doctor, sample_patient):
+    def test_get_pending_binding_requests(
+        self, mock_session, sample_doctor, sample_patient
+    ):
         """Testa busca de solicitações de vínculo pendentes."""
         # Arrange
         pending_bind = Bind(
@@ -198,7 +225,9 @@ class TestDoctorService:
         )
 
         mock_query = MagicMock()
-        mock_query.options.return_value.filter_by.return_value.all.return_value = [sample_doctor]
+        mock_query.options.return_value.filter_by.return_value.all.return_value = [
+            sample_doctor
+        ]
         mock_session.query.return_value = mock_query
 
         # Act
@@ -275,9 +304,7 @@ class TestDoctorService:
         """Testa busca de médicos vinculados a um paciente."""
         # Arrange
         with patch("core.services.doctor_service.get_binded_users") as mock_get_binded:
-            mock_get_binded.return_value = [
-                {"bind_id": 1, "user": sample_doctor}
-            ]
+            mock_get_binded.return_value = [{"bind_id": 1, "user": sample_doctor}]
 
             # Act
             result = doctor_service.get_binded_doctors(mock_session, sample_patient)
@@ -311,15 +338,31 @@ class TestDoctorService:
         mock_address = MagicMock()
         mock_address.id = 10
 
-        with patch("core.services.doctor_service.user_service.get_user_by_email", return_value=None):
-            with patch("core.services.doctor_service.user_service.get_user_by_cpf", return_value=None):
-                with patch("core.services.doctor_service.get_doctor_by_crm", return_value=None):
-                    with patch("core.services.doctor_service.address_service.get_similar_address", side_effect=[None, mock_address]):
-                        with patch("core.services.doctor_service.address_service.create_address"):
-                            with patch("core.services.doctor_service.get_password_hash", return_value="hashed"):
-
+        with patch(
+            "core.services.doctor_service.user_service.get_user_by_email", return_value=None
+        ):
+            with patch(
+                "core.services.doctor_service.user_service.get_user_by_cpf",
+                return_value=None,
+            ):
+                with patch(
+                    "core.services.doctor_service.get_doctor_by_crm", return_value=None
+                ):
+                    with patch(
+                        "core.services.doctor_service.address_service.get_similar_address",
+                        side_effect=[None, mock_address],
+                    ):
+                        with patch(
+                            "core.services.doctor_service.address_service.create_address"
+                        ):
+                            with patch(
+                                "core.services.doctor_service.get_password_hash",
+                                return_value="hashed",
+                            ):
                                 # Act
-                                result = doctor_service.create_doctor(doctor_data, mock_session)
+                                result = doctor_service.create_doctor(
+                                    doctor_data, mock_session
+                                )
 
                                 # Assert
                                 assert result == doctor_data

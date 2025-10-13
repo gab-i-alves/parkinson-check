@@ -8,6 +8,7 @@ indent-style = "space"
 [tool.ruff.lint]
 preview = true
 select = ['I', 'F', 'E', 'W', 'PL']
+exclude = ["tests/**"]
 
 [tool.ruff.lint.pylint]
 max-args = 8

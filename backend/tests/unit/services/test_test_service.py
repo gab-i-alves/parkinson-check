@@ -30,7 +30,9 @@ class TestTestService:
         }
 
         with patch("core.services.test_service.httpx.Client") as mock_client:
-            mock_client.return_value.__enter__.return_value.post.return_value = mock_response
+            mock_client.return_value.__enter__.return_value.post.return_value = (
+                mock_response
+            )
 
             # Act
             result = test_service.process_spiral_as_practice(schema)
@@ -95,13 +97,18 @@ class TestTestService:
             "confidence": 0.88,
         }
 
-        with patch("core.services.test_service.convert_webm_to_wav", return_value="/tmp/audio.wav"):
+        with patch(
+            "core.services.test_service.convert_webm_to_wav", return_value="/tmp/audio.wav"
+        ):
             with patch("builtins.open", mock_open(read_data=b"wav_content")):
                 with patch("core.services.test_service.httpx.Client") as mock_client:
-                    mock_client.return_value.__enter__.return_value.post.return_value = mock_response
-                    with patch("core.services.test_service.os.path.exists", return_value=True):
+                    mock_client.return_value.__enter__.return_value.post.return_value = (
+                        mock_response
+                    )
+                    with patch(
+                        "core.services.test_service.os.path.exists", return_value=True
+                    ):
                         with patch("core.services.test_service.os.remove") as mock_remove:
-
                             # Act
                             result = test_service.process_voice_as_practice(mock_audio)
 
@@ -119,21 +126,26 @@ class TestTestService:
         mock_response.json.return_value = {"detail": "Internal error"}
         mock_response.text = "Error"
 
-        with patch("core.services.test_service.convert_webm_to_wav", return_value="/tmp/audio.wav"):
+        with patch(
+            "core.services.test_service.convert_webm_to_wav", return_value="/tmp/audio.wav"
+        ):
             with patch("builtins.open", mock_open(read_data=b"wav_content")):
                 with patch("core.services.test_service.httpx.Client") as mock_client:
                     mock_post = mock_client.return_value.__enter__.return_value.post
                     mock_post.side_effect = httpx.HTTPStatusError(
                         "Error", request=MagicMock(), response=mock_response
                     )
-                    with patch("core.services.test_service.os.path.exists", return_value=True):
+                    with patch(
+                        "core.services.test_service.os.path.exists", return_value=True
+                    ):
                         with patch("core.services.test_service.os.remove"):
-
                             # Act & Assert
                             with pytest.raises(HTTPException) as exc_info:
                                 test_service.process_voice_as_practice(mock_audio)
 
-                            assert "Erro no serviço de análise de voz" in exc_info.value.detail
+                            assert (
+                                "Erro no serviço de análise de voz" in exc_info.value.detail
+                            )
 
     def test_get_patient_tests_success(self, mock_session, sample_doctor, sample_patient):
         """Testa busca de testes de um paciente com sucesso."""
@@ -161,7 +173,9 @@ class TestTestService:
         mock_session.query.side_effect = [mock_bind_query, mock_test_query]
 
         # Act
-        result = test_service.get_patient_tests(mock_session, sample_doctor, sample_patient.id)
+        result = test_service.get_patient_tests(
+            mock_session, sample_doctor, sample_patient.id
+        )
 
         # Assert
         assert len(result) == 1
@@ -181,7 +195,9 @@ class TestTestService:
         assert exc_info.value.status_code == HTTPStatus.NOT_FOUND
         assert "Paciente não encontrado." in exc_info.value.detail
 
-    def test_get_patient_tests_forbidden_access(self, mock_session, sample_doctor, sample_patient):
+    def test_get_patient_tests_forbidden_access(
+        self, mock_session, sample_doctor, sample_patient
+    ):
         """Testa busca de testes quando médico não tem acesso ao paciente."""
         # Arrange
         other_patient_id = 999
@@ -203,10 +219,14 @@ class TestTestService:
         assert exc_info.value.status_code == HTTPStatus.FORBIDDEN
         assert "O médico não tem acesso ao paciente informado." in exc_info.value.detail
 
-    def test_get_patient_detaild_tests_success(self, mock_session, sample_doctor, sample_patient):
+    def test_get_patient_detaild_tests_success(
+        self, mock_session, sample_doctor, sample_patient
+    ):
         """Testa busca detalhada de testes com sucesso."""
         from datetime import datetime
+
         from core.enums import SpiralMethods
+
         # Arrange
         active_bind = Bind(
             doctor_id=sample_doctor.id,
@@ -244,10 +264,16 @@ class TestTestService:
         mock_spiral_query = MagicMock()
         mock_spiral_query.filter.return_value.all.return_value = [spiral_test]
 
-        mock_session.query.side_effect = [mock_bind_query, mock_voice_query, mock_spiral_query]
+        mock_session.query.side_effect = [
+            mock_bind_query,
+            mock_voice_query,
+            mock_spiral_query,
+        ]
 
         # Act
-        result = test_service.get_patient_detaild_tests(mock_session, sample_doctor, sample_patient.id)
+        result = test_service.get_patient_detaild_tests(
+            mock_session, sample_doctor, sample_patient.id
+        )
 
         # Assert
         assert len(result.voice_tests) == 1
@@ -264,7 +290,9 @@ class TestTestService:
 
         # Act & Assert
         with pytest.raises(HTTPException) as exc_info:
-            test_service.get_patient_detaild_tests(mock_session, sample_doctor, patient_id=999)
+            test_service.get_patient_detaild_tests(
+                mock_session, sample_doctor, patient_id=999
+            )
 
         assert exc_info.value.status_code == HTTPStatus.NOT_FOUND
         assert "Paciente não encontrado." in exc_info.value.detail
@@ -275,16 +303,21 @@ class TestTestService:
         mock_audio = MagicMock(spec=UploadFile)
         temp_file = "/tmp/test_audio.wav"
 
-        with patch("core.services.test_service.convert_webm_to_wav", return_value=temp_file):
+        with patch(
+            "core.services.test_service.convert_webm_to_wav", return_value=temp_file
+        ):
             with patch("builtins.open", mock_open(read_data=b"wav_content")):
                 with patch("core.services.test_service.httpx.Client") as mock_client:
                     mock_response = MagicMock()
                     mock_response.json.return_value = {"prediction": "healthy"}
-                    mock_client.return_value.__enter__.return_value.post.return_value = mock_response
+                    mock_client.return_value.__enter__.return_value.post.return_value = (
+                        mock_response
+                    )
 
-                    with patch("core.services.test_service.os.path.exists", return_value=True):
+                    with patch(
+                        "core.services.test_service.os.path.exists", return_value=True
+                    ):
                         with patch("core.services.test_service.os.remove") as mock_remove:
-
                             # Act
                             test_service.process_voice_as_practice(mock_audio)
 
@@ -296,29 +329,37 @@ class TestTestService:
         # Arrange
         mock_audio = MagicMock(spec=UploadFile)
 
-        with patch("core.services.test_service.convert_webm_to_wav", return_value="/tmp/audio.wav"):
+        with patch(
+            "core.services.test_service.convert_webm_to_wav", return_value="/tmp/audio.wav"
+        ):
             with patch("builtins.open", mock_open(read_data=b"wav_content")):
                 with patch("core.services.test_service.httpx.Client") as mock_client:
                     mock_post = mock_client.return_value.__enter__.return_value.post
                     mock_post.side_effect = httpx.RequestError("Connection failed")
-                    with patch("core.services.test_service.os.path.exists", return_value=True):
+                    with patch(
+                        "core.services.test_service.os.path.exists", return_value=True
+                    ):
                         with patch("core.services.test_service.os.remove"):
-
                             # Act & Assert
                             with pytest.raises(HTTPException) as exc_info:
                                 test_service.process_voice_as_practice(mock_audio)
 
                             assert exc_info.value.status_code == 503
-                            assert "Não foi possível comunicar com o serviço" in exc_info.value.detail
+                            assert (
+                                "Não foi possível comunicar com o serviço"
+                                in exc_info.value.detail
+                            )
 
     def test_process_voice_as_practice_generic_error(self):
         """Testa processamento de voz quando há erro genérico."""
         # Arrange
         mock_audio = MagicMock(spec=UploadFile)
 
-        with patch("core.services.test_service.convert_webm_to_wav", side_effect=Exception("Unexpected error")):
+        with patch(
+            "core.services.test_service.convert_webm_to_wav",
+            side_effect=Exception("Unexpected error"),
+        ):
             with patch("core.services.test_service.os.path.exists", return_value=False):
-
                 # Act & Assert
                 with pytest.raises(HTTPException) as exc_info:
                     test_service.process_voice_as_practice(mock_audio)
@@ -326,7 +367,9 @@ class TestTestService:
                 assert exc_info.value.status_code == 500
                 assert "Erro no processamento do áudio" in exc_info.value.detail
 
-    def test_get_patient_detaild_tests_forbidden_access(self, mock_session, sample_doctor, sample_patient):
+    def test_get_patient_detaild_tests_forbidden_access(
+        self, mock_session, sample_doctor, sample_patient
+    ):
         """Testa busca detalhada quando médico não tem acesso ao paciente."""
         # Arrange
         other_patient_id = 999
@@ -343,7 +386,9 @@ class TestTestService:
 
         # Act & Assert
         with pytest.raises(HTTPException) as exc_info:
-            test_service.get_patient_detaild_tests(mock_session, sample_doctor, other_patient_id)
+            test_service.get_patient_detaild_tests(
+                mock_session, sample_doctor, other_patient_id
+            )
 
         assert exc_info.value.status_code == HTTPStatus.FORBIDDEN
         assert "O médico não tem acesso ao paciente informado." in exc_info.value.detail

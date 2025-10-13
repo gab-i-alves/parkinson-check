@@ -39,7 +39,9 @@ class TestAuthService:
                 assert result.user.id == sample_user.id
                 assert result.user.email == sample_user.email
                 assert result.user.name == sample_user.name
-                mock_verify.assert_called_once_with("senha_correta", sample_user.hashed_password)
+                mock_verify.assert_called_once_with(
+                    "senha_correta", sample_user.hashed_password
+                )
 
     def test_login_user_not_found(self, mock_session):
         """Testa falha de login quando usuário não existe."""
@@ -117,8 +119,9 @@ class TestAuthService:
         mock_session.query.return_value = mock_query
 
         with patch("core.services.auth_service.verify_password", return_value=True):
-            with patch("core.services.auth_service.create_access_token", return_value="token"):
-
+            with patch(
+                "core.services.auth_service.create_access_token", return_value="token"
+            ):
                 # Act
                 result = auth_service.login(login_form, mock_session)
 
