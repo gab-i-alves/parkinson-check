@@ -15,4 +15,4 @@ class TestType(Enum):
 
 class SpiralMethods(Enum):
     PAPER = 1
-    WEBCAN = 2
+    WEBCAM = 2

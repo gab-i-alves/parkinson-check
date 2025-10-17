@@ -1,11 +1,10 @@
 from datetime import date
 from typing import Dict, Literal, Optional
 
-from fastapi import File, UploadFile
+from fastapi import File, Form, UploadFile
 from pydantic import BaseModel, Field
 
 from core.enums import SpiralMethods, TestStatus, TestType
-
 
 class SpiralImageSchema(BaseModel):
     image_content: bytes
@@ -20,6 +19,28 @@ class SpiralImageSchema(BaseModel):
             image_content_type=image.content_type,
         )
 
+class ProcessSpiralSchema(BaseModel):
+    image: SpiralImageSchema
+    draw_duration: float
+    method: SpiralMethods
+    
+    @classmethod
+    def as_form(
+        cls,
+        draw_duration: float = Form(...),
+        method: int = Form(...),
+        image: UploadFile = File(...)
+    ):
+        return cls(
+            image=SpiralImageSchema(
+                image_content=image.file.read(),
+                image_filename=image.filename,
+                image_content_type=image.content_type
+            ),
+            draw_duration=draw_duration,
+            method=SpiralMethods(method)
+        )
+
 
 class ModelPrediction(BaseModel):
     prediction: str
@@ -31,13 +52,13 @@ class SpiralTestVoteCount(BaseModel):
     Parkinson: int
 
 
-class SpiralPracticeTestResult(BaseModel):
+class SpiralTestResult(BaseModel):
     majority_decision: str
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
 
 
-class VoicePracticeTestResult(BaseModel):
+class VoiceTestResult(BaseModel):
     score: float = Field(..., example=0.92)
     analysis: str = Field(..., example="A análise da sua voz indica A, B e C.")
 
@@ -64,15 +85,31 @@ class BaseTest(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class VoiceTest(BaseTest):
+class VoiceTestReturn(BaseTest):
     record_duration: float
 
 
-class SpiralTest(BaseTest):
+class ProcessVoiceSchema(BaseModel):
+    record_duration: float
+    audio_file: UploadFile   
+    
+    @classmethod
+    def as_form(
+        cls,
+        record_duration: float = Form(...),
+        audio_file: UploadFile = File(...)
+    ):
+        return cls(
+            record_duration=record_duration,
+            audio_file=audio_file
+        )
+
+
+class SpiralTestReturn(BaseTest):
     draw_duration: float
     method: SpiralMethods
 
 
 class DetaildTestsReturn(BaseModel):
-    voice_tests: list[VoiceTest]
-    spiral_tests: list[SpiralTest]
+    voice_tests: list[VoiceTestReturn]
+    spiral_tests: list[SpiralTestReturn]

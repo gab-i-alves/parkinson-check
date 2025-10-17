@@ -1,87 +1,53 @@
 import os
 from http import HTTPStatus
-
+from ..utils import ai
 import httpx
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
-
+from ..enums.test_enum import TestType, TestStatus
 from api.schemas.tests import (
     BasicTestReturn,
     DetaildTestsReturn,
     SpiralImageSchema,
-    SpiralPracticeTestResult,
-    VoicePracticeTestResult,
+    ProcessSpiralSchema,
+    ProcessVoiceSchema,
+    SpiralTestResult,
+    VoiceTestResult,
 )
 
 from ..models import SpiralTest, Test, User, VoiceTest
-from ..utils.converter import convert_webm_to_wav
 from .user_service import get_user_active_binds
 
-MODEL_SERVICE_URL = "http://spiral-classifier:8001/predict/spiral"
-MODEL_SERVICE_URL = "http://voice-classifier:8002/predict/voice"
+SPIRAL_MODEL_SERVICE_URL = "http://localhost:8001/predict/spiral"
+VOICE_MODEL_SERVICE_URL = "http://voice-classifier:8002/predict/voice"
+
+def process_spiral(schema: ProcessSpiralSchema, user: User, session: Session) -> SpiralTestResult:
+    model_result = ai.get_spiral_image_models_response(schema.image, SPIRAL_MODEL_SERVICE_URL)
+
+    score = model_result.vote_count.Healthy / model_result.vote_count.Parkinson
+    
+    spiral_test_db = SpiralTest(
+        test_type=TestType.SPIRAL_TEST,
+        status=TestStatus.DONE,
+        score=score, # TODO: DEFINIR COMO AVALIAR ISSO
+        patient_id=user.id,
+        draw_duration=schema.draw_duration,
+        method=schema.method
+    )
+    
+    session.add(spiral_test_db)
+    session.commit()
+    return model_result
+
+def process_voice(schema: ProcessVoiceSchema, user: User, session: Session) -> VoiceTestResult:
+    ...
+
+def process_spiral_as_practice(schema: SpiralImageSchema) -> SpiralTestResult:
+    return ai.get_spiral_image_models_response(schema, SPIRAL_MODEL_SERVICE_URL)
 
 
-def process_spiral_as_practice(schema: SpiralImageSchema) -> SpiralPracticeTestResult:
-    files = {
-        "image": (schema.image_filename, schema.image_content, schema.image_content_type)
-    }
-
-    try:
-        with httpx.Client() as client:
-            response = client.post(MODEL_SERVICE_URL, files=files, timeout=30.0)
-            response.raise_for_status()
-
-        return response.json()
-
-    except httpx.HTTPStatusError as e:
-        error_detail = e.response.json().get("detail", e.response.text)
-        raise HTTPException(
-            status_code=e.response.status_code,
-            detail=f"Erro no serviço de análise de imagem: {error_detail}",
-        )
-    except httpx.RequestError as e:
-        raise HTTPException(
-            status_code=HTTPStatus.SERVICE_UNAVAILABLE,
-            detail=f"Não foi possível comunicar com o serviço de análise de imagem: {e}",
-        )
-
-
-def process_voice_as_practice(audio_file: UploadFile) -> VoicePracticeTestResult:
-    """
-    Processa um arquivo de voz recebido do frontend:
-    - Converte .webm -> .wav
-    - Envia o WAV para o microserviço de análise (voice-classifier)
-    - Retorna o resultado
-    """
-    wav_path = ""
-    try:
-        wav_path = convert_webm_to_wav(audio_file)
-
-        with open(wav_path, "rb") as f:
-            files = {"audio": ("audio.wav", f, "audio/wav")}
-            with httpx.Client() as client:
-                response = client.post(MODEL_SERVICE_URL, files=files, timeout=30.0)
-                response.raise_for_status()
-
-        return response.json()
-
-    except httpx.HTTPStatusError as e:
-        error_detail = e.response.json().get("detail", e.response.text)
-        raise HTTPException(
-            status_code=e.response.status_code,
-            detail=f"Erro no serviço de análise de voz: {error_detail}",
-        )
-    except httpx.RequestError as e:
-        raise HTTPException(
-            status_code=503,
-            detail=f"Não foi possível comunicar com o serviço de análise de voz: {e}",
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro no processamento do áudio: {e}")
-    finally:
-        if wav_path and os.path.exists(wav_path):
-            os.remove(wav_path)
-
+def process_voice_as_practice(audio_file: UploadFile) -> VoiceTestResult:
+    return ai.get_voice_model_response(audio_file, VOICE_MODEL_SERVICE_URL)
 
 def get_patient_tests(
     session: Session, current_user: User, patient_id: int
