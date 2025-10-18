@@ -47,7 +47,7 @@ def get_voice_model_response(audio_file: UploadFile, service_url: str) -> VoiceT
             with httpx.Client() as client:
                 response = client.post(service_url, files=files, timeout=30.0)
                 response.raise_for_status()
-
+        
         return VoiceTestResult(**response.json())
 
     except httpx.HTTPStatusError as e:

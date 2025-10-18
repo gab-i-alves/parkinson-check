@@ -19,7 +19,7 @@ from ..models import SpiralTest, Test, User, VoiceTest
 from .user_service import get_user_active_binds
 
 SPIRAL_MODEL_SERVICE_URL = "http://localhost:8001/predict/spiral"
-VOICE_MODEL_SERVICE_URL = "http://voice-classifier:8002/predict/voice"
+VOICE_MODEL_SERVICE_URL = "http://localhost:8002/predict/voice"
 
 def process_spiral(schema: ProcessSpiralSchema, user: User, session: Session) -> SpiralTestResult:
     model_result = ai.get_spiral_image_models_response(schema.image, SPIRAL_MODEL_SERVICE_URL)
@@ -40,7 +40,20 @@ def process_spiral(schema: ProcessSpiralSchema, user: User, session: Session) ->
     return model_result
 
 def process_voice(schema: ProcessVoiceSchema, user: User, session: Session) -> VoiceTestResult:
-    ...
+    model_result = ai.get_voice_model_response(schema.audio_file, VOICE_MODEL_SERVICE_URL)
+    
+    voice_test_db = VoiceTest(
+        test_type=TestType.VOICE_TEST,
+        status=TestStatus.DONE,
+        score=model_result.score,
+        patient_id=user.id,
+        record_duration=schema.record_duration
+    )
+    
+    session.add(voice_test_db)
+    session.commit()
+    return model_result
+
 
 def process_spiral_as_practice(schema: SpiralImageSchema) -> SpiralTestResult:
     return ai.get_spiral_image_models_response(schema, SPIRAL_MODEL_SERVICE_URL)
