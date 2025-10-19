@@ -8,6 +8,17 @@ CREATE TYPE test_type_enum AS ENUM ('SPIRAL_TEST', 'VOICE_TEST');
 
 CREATE TYPE spiral_methods_enum AS ENUM ('WEBCAM', 'PAPER');
 
+CREATE TABLE IF NOT EXISTS "address" (
+  "id" SERIAL PRIMARY KEY,
+  "cep" char(8),
+  "street" varchar(100),
+  "number" varchar(10),
+  "complement" varchar(50),
+  "neighborhood" varchar(50),
+  "city" varchar(100),
+  "state" varchar(20)
+);
+
 CREATE TABLE IF NOT EXISTS "user" (
   "id" SERIAL PRIMARY KEY,
   "type" user_type_enum NOT NULL,
@@ -33,17 +44,6 @@ CREATE TABLE IF NOT EXISTS "doctor" (
   "status_approval" boolean
 );
 
-CREATE TABLE IF NOT EXISTS "address" (
-  "id" SERIAL PRIMARY KEY,
-  "cep" char(8),
-  "street" varchar(100),
-  "number" varchar(10),
-  "complement" varchar(50),
-  "neighborhood" varchar(50),
-  "city" varchar(100),
-  "state" varchar(20)
-);
-
 CREATE TABLE IF NOT EXISTS "bind" (
     "id" SERIAL PRIMARY KEY,
     "status" bind_enum NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS "test" (
   "patient_id" integer NOT NULL,
   "execution_date" TIMESTAMP NOT NULL,
   "status" test_status_enum NOT NULL,
-  "score" FLOAT NOT NULL
+  "score" FLOAT NOT NULL,
   "type" test_type_enum NOT NULL
 );
 
