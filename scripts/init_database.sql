@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS "user" (
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+
 CREATE TABLE IF NOT EXISTS "patient" (
   "id" integer PRIMARY KEY  REFERENCES "user" ("id")
 );
