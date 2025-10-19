@@ -21,7 +21,7 @@ def get_user_by_cpf(cpf: str, session: Session) -> User:
     return user
 
 
-def get_user_active_binds(user: User, session: Session) -> list[Bind] | None:
+def get_user_active_binds(session: Session, user: User) -> list[Bind] | None:
     binds = (
         session.query(Bind)
         .filter(
@@ -35,7 +35,7 @@ def get_user_active_binds(user: User, session: Session) -> list[Bind] | None:
 
 
 def get_binded_users(user: User, session: Session) -> list[dict[int, Patient | Doctor]]:
-    active_binds = get_user_active_binds(user, session)
+    active_binds = get_user_active_binds(session, user)
 
     if not active_binds:
         raise HTTPException(

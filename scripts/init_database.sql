@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS "doctor" (
   "status_approval" boolean
 );
 
-
 CREATE TABLE IF NOT EXISTS "bind" (
     "id" SERIAL PRIMARY KEY,
     "status" bind_enum NOT NULL,
@@ -58,7 +57,8 @@ CREATE TABLE IF NOT EXISTS "test" (
   "patient_id" integer NOT NULL,
   "execution_date" TIMESTAMP NOT NULL,
   "status" test_status_enum NOT NULL,
-  "score" FLOAT NOT NULL
+  "score" FLOAT NOT NULL,
+  "type" test_type_enum NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "voice_test" (
@@ -70,6 +70,24 @@ CREATE TABLE IF NOT EXISTS "spiral_test" (
   "id" integer PRIMARY KEY REFERENCES "test" ("id"),
   "draw_duration" FLOAT NOT NULL,
   "method" spiral_methods_enum NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "note" (
+  "id" SERIAL PRIMARY KEY,
+  "content" TEXT NOT NULL,
+  "patient_view" BOOLEAN NOT NULL,
+  "test_id" INTEGER NOT NULL REFERENCES "test" ("id"),
+  "associated_note_id" INTEGER REFERENCES "note" ("id") ON DELETE CASCADE,
+  "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id")
+);
+
+CREATE TABLE IF NOT EXISTS "note" (
+    "id" SERIAL PRIMARY KEY,
+    "content" TEXT NOT NULL,
+    "patient_view" BOOLEAN NOT NULL,
+    "test_id" INTEGER NOT NULL REFERENCES "test" ("id"),
+    "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
+    "parent_note_id" INTEGER DEFAULT NULL REFERENCES "note" ("id") ON DELETE CASCADE
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()

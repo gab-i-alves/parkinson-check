@@ -8,7 +8,7 @@ from fastapi import HTTPException
 from api.schemas.binding import RequestBinding
 from api.schemas.users import PatientSchema
 from core.enums import BindEnum, UserType
-from core.models import Bind, Doctor
+from core.models import Bind
 from core.services import patient_service
 
 
@@ -33,11 +33,22 @@ class TestPatientService:
             state="RJ",
         )
 
-        with patch("core.services.patient_service.user_service.get_user_by_email", return_value=None):
-            with patch("core.services.patient_service.user_service.get_user_by_cpf", return_value=None):
-                with patch("core.services.patient_service.address_service.get_similar_address", return_value=sample_address):
-                    with patch("core.services.patient_service.get_password_hash", return_value="hashed"):
-
+        with patch(
+            "core.services.patient_service.user_service.get_user_by_email",
+            return_value=None,
+        ):
+            with patch(
+                "core.services.patient_service.user_service.get_user_by_cpf",
+                return_value=None,
+            ):
+                with patch(
+                    "core.services.patient_service.address_service.get_similar_address",
+                    return_value=sample_address,
+                ):
+                    with patch(
+                        "core.services.patient_service.get_password_hash",
+                        return_value="hashed",
+                    ):
                         # Act
                         result = patient_service.create_patient(patient_data, mock_session)
 
@@ -65,8 +76,10 @@ class TestPatientService:
             state="SP",
         )
 
-        with patch("core.services.patient_service.user_service.get_user_by_email", return_value=sample_patient):
-
+        with patch(
+            "core.services.patient_service.user_service.get_user_by_email",
+            return_value=sample_patient,
+        ):
             # Act & Assert
             with pytest.raises(HTTPException) as exc_info:
                 patient_service.create_patient(patient_data, mock_session)
@@ -92,9 +105,14 @@ class TestPatientService:
             state="SP",
         )
 
-        with patch("core.services.patient_service.user_service.get_user_by_email", return_value=None):
-            with patch("core.services.patient_service.user_service.get_user_by_cpf", return_value=sample_patient):
-
+        with patch(
+            "core.services.patient_service.user_service.get_user_by_email",
+            return_value=None,
+        ):
+            with patch(
+                "core.services.patient_service.user_service.get_user_by_cpf",
+                return_value=sample_patient,
+            ):
                 # Act & Assert
                 with pytest.raises(HTTPException) as exc_info:
                     patient_service.create_patient(patient_data, mock_session)
@@ -113,7 +131,11 @@ class TestPatientService:
         mock_query_doctor = MagicMock()
         mock_query_doctor.filter.return_value.first.return_value = sample_doctor
 
-        mock_session.query.side_effect = [mock_query_bind, mock_query_bind, mock_query_doctor]
+        mock_session.query.side_effect = [
+            mock_query_bind,
+            mock_query_bind,
+            mock_query_doctor,
+        ]
 
         # Act
         result = patient_service.create_bind_request(request, sample_patient, mock_session)
@@ -123,7 +145,9 @@ class TestPatientService:
         mock_session.commit.assert_called_once()
         mock_session.refresh.assert_called_once()
 
-    def test_create_bind_request_already_active(self, mock_session, sample_patient, sample_doctor):
+    def test_create_bind_request_already_active(
+        self, mock_session, sample_patient, sample_doctor
+    ):
         """Testa criação de vínculo quando já existe um ativo."""
         # Arrange
         request = RequestBinding(doctor_id=sample_doctor.id)
@@ -145,7 +169,9 @@ class TestPatientService:
         assert exc_info.value.status_code == HTTPStatus.CONFLICT
         assert "Uma solicitação já está ativa ou pendente." in exc_info.value.detail
 
-    def test_create_bind_request_already_pending(self, mock_session, sample_patient, sample_doctor):
+    def test_create_bind_request_already_pending(
+        self, mock_session, sample_patient, sample_doctor
+    ):
         """Testa criação de vínculo quando já existe um pendente."""
         # Arrange
         request = RequestBinding(doctor_id=sample_doctor.id)
@@ -167,7 +193,9 @@ class TestPatientService:
         assert exc_info.value.status_code == HTTPStatus.CONFLICT
         assert "Uma solicitação já está ativa ou pendente." in exc_info.value.detail
 
-    def test_create_bind_request_reactivate_rejected(self, mock_session, sample_patient, sample_doctor):
+    def test_create_bind_request_reactivate_rejected(
+        self, mock_session, sample_patient, sample_doctor
+    ):
         """Testa reativação de vínculo rejeitado."""
         # Arrange
         request = RequestBinding(doctor_id=sample_doctor.id)
@@ -201,7 +229,11 @@ class TestPatientService:
         mock_query_doctor = MagicMock()
         mock_query_doctor.filter.return_value.first.return_value = None
 
-        mock_session.query.side_effect = [mock_query_bind, mock_query_bind, mock_query_doctor]
+        mock_session.query.side_effect = [
+            mock_query_bind,
+            mock_query_bind,
+            mock_query_doctor,
+        ]
 
         # Act & Assert
         with pytest.raises(HTTPException) as exc_info:
@@ -271,9 +303,7 @@ class TestPatientService:
         """Testa busca de pacientes vinculados a um médico."""
         # Arrange
         with patch("core.services.patient_service.get_binded_users") as mock_get_binded:
-            mock_get_binded.return_value = [
-                {"bind_id": 1, "user": sample_patient}
-            ]
+            mock_get_binded.return_value = [{"bind_id": 1, "user": sample_patient}]
 
             # Act
             result = patient_service.get_binded_patients(mock_session, sample_doctor)
@@ -305,14 +335,29 @@ class TestPatientService:
         mock_address = MagicMock()
         mock_address.id = 20
 
-        with patch("core.services.patient_service.user_service.get_user_by_email", return_value=None):
-            with patch("core.services.patient_service.user_service.get_user_by_cpf", return_value=None):
-                with patch("core.services.patient_service.address_service.get_similar_address", side_effect=[None, mock_address]):
-                    with patch("core.services.patient_service.address_service.create_address"):
-                        with patch("core.services.patient_service.get_password_hash", return_value="hashed"):
-
+        with patch(
+            "core.services.patient_service.user_service.get_user_by_email",
+            return_value=None,
+        ):
+            with patch(
+                "core.services.patient_service.user_service.get_user_by_cpf",
+                return_value=None,
+            ):
+                with patch(
+                    "core.services.patient_service.address_service.get_similar_address",
+                    side_effect=[None, mock_address],
+                ):
+                    with patch(
+                        "core.services.patient_service.address_service.create_address"
+                    ):
+                        with patch(
+                            "core.services.patient_service.get_password_hash",
+                            return_value="hashed",
+                        ):
                             # Act
-                            result = patient_service.create_patient(patient_data, mock_session)
+                            result = patient_service.create_patient(
+                                patient_data, mock_session
+                            )
 
                             # Assert
                             assert result == patient_data

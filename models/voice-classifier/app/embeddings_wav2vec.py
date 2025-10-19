@@ -3,12 +3,12 @@ import librosa
 import numpy as np
 import pandas as pd
 from transformers import Wav2Vec2Processor, Wav2Vec2Model
-from tqdm import tqdm
 import os
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
 model = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base-960h").to(DEVICE)
+
 
 def extract_wav2vec_embedding(file_path, sr=16000, duration=5.0):
     y, _ = librosa.load(file_path, sr=sr, mono=True)
@@ -49,7 +49,7 @@ def build_embeddings(base_path="data/raw/data_italian", sr=16000, duration=5.0):
                 rows.append(emb)
                 labels.append(label)
                 patients.append(patient)
-                groups.append(patient) 
+                groups.append(patient)
                 files.append(file)
             except Exception as e:
                 print(f"[WARN] erro em {file}: {e}")
@@ -62,4 +62,3 @@ def build_embeddings(base_path="data/raw/data_italian", sr=16000, duration=5.0):
     df["group"] = groups
     df["file"] = files
     return df
-
