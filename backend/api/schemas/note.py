@@ -6,16 +6,19 @@ from pydantic import BaseModel
 class CreateNoteSchema(BaseModel):
     content: str
     test_id: int
-    associated_note_id: Optional[int] = None
+    parent_note_id: Optional[int] 
     patient_view: bool
 
 
 class NoteSchema(BaseModel):
+    id: int
     content: str
     test_id: int
-    associated_note_id: Optional[int] = None
+    parent_note_id: Optional[int]
     patient_view: bool
     doctor_id: int
+    
+    model_config = {"from_attributes": True}
 
 
 class UpdateNoteSchema(BaseModel):
@@ -24,5 +27,7 @@ class UpdateNoteSchema(BaseModel):
 
 
 class NoteResponse(NoteSchema):
-    associated_note: Optional[list[NoteSchema]] = None
-    parent_note: Optional[NoteSchema] = None
+    linked_notes: Optional[list[NoteSchema]]
+    parent_note: Optional[NoteSchema]
+    
+    model_config = {"from_attributes": True}

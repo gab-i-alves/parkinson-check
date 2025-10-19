@@ -12,16 +12,28 @@ class Note:
 
     content: Mapped[str] = mapped_column()
     patient_view: Mapped[bool] = mapped_column()
-    test_id: Mapped[int] = mapped_column(ForeignKey("test.id"), init=False)
-    associated_note_id: Mapped[int] = mapped_column(
+    test_id: Mapped[int] = mapped_column(ForeignKey("test.id"))
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
+    
+    # Foreign key para a nota "pai"
+    parent_note_id: Mapped[int] = mapped_column(
         ForeignKey("note.id", ondelete="CASCADE"), nullable=True
     )
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
 
-    # Self-relationship: uma nota pode ter notas filhas
-    associated_notes: Mapped[list["Note"]] = relationship(
-        init=False, back_populates="parent_note", foreign_keys="Note.associated_note_id"
-    )
+    # Relação: nota pai (acessa a nota que é pai desta)
     parent_note: Mapped["Note"] = relationship(
-        init=False, back_populates="associated_notes", remote_side="Note.id"
+        "Note",
+        remote_side="Note.id",
+        foreign_keys=[parent_note_id],
+        back_populates="linked_notes",
+        init=False
+    )
+    
+    # Relação: notas filhas (acessa as notas que tem esta como pai)
+    linked_notes: Mapped[list["Note"]] = relationship(
+        "Note",
+        back_populates="parent_note",
+        foreign_keys="Note.parent_note_id",
+        init=False,
+        default_factory=list
     )

@@ -27,14 +27,15 @@ def create_note(note: NoteSchema, session: Session, user: User) -> NoteResponse:
 
     note_db = Note(
         content=note.content,
-        associated_note_id=note.associated_note_id,
+        test_id=note.test_id,
+        parent_note_id=note.parent_note_id,
         doctor_id=user.id,
         patient_view=note.patient_view,
     )
 
-    Session.add(note_db)
-    Session.commit()
-    Session.refresh(note_db)
+    session.add(note_db)
+    session.commit()
+    session.refresh(note_db)
 
     return note_db
 
@@ -48,13 +49,13 @@ def get_notes(test_id: int, session: Session, user: User) -> list[NoteResponse]:
             session.query(Note)
             .filter(
                 Note.test_id == test_id,
-                Note.patient_view is True,
+                Note.patient_view == True,
                 Note.doctor_id.in_(doctors_ids),
             )
             .all()
         )
 
-        return notes
+        return [NoteResponse.model_validate(note) for note in notes]
 
     elif user.user_type == UserType.DOCTOR:
         notes = (
@@ -63,7 +64,7 @@ def get_notes(test_id: int, session: Session, user: User) -> list[NoteResponse]:
             .all()
         )
 
-        return notes
+        return [NoteResponse.model_validate(note) for note in notes]
 
 
 def update_note(
