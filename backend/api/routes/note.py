@@ -15,7 +15,7 @@ router = APIRouter(prefix="/notes", tags=["notes"])
 
 CurrentPatient = Annotated[User, Depends(get_patient_user())]
 CurrentDoctor = Annotated[User, Depends(get_doctor_user())]
-CurrentUser = Annotated[User, Depends(get_current_user())]
+CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 @router.post("", status_code=HTTPStatus.CREATED, response_model=NoteResponse)

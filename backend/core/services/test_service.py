@@ -65,7 +65,7 @@ def process_voice_as_practice(audio_file: UploadFile) -> VoiceTestResult:
 def get_patient_tests(
     session: Session, current_user: User, patient_id: int
 ) -> list[BasicTestReturn]:
-    binds = get_user_active_binds(current_user, session)
+    binds = get_user_active_binds(session, current_user)
 
     if not binds:
         raise HTTPException(
@@ -104,7 +104,7 @@ def get_patient_tests(
 def get_patient_detaild_tests(
     session: Session, current_user: User, patient_id: int
 ) -> DetaildTestsReturn:
-    binds = get_user_active_binds(current_user, session)
+    binds = get_user_active_binds(session, current_user)
 
     if not binds:
         raise HTTPException(

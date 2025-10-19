@@ -68,7 +68,7 @@ def get_basic_tests_results(
     O médico que utiliza o endpoint só pode vizualizar os resultados de
     seus pacientes vinculados.
     """
-    return get_patient_tests(user, patient_id, session)
+    return get_patient_tests(session, user, patient_id)
 
 
 @router.get("/detail/{patient_id}", response_model=DetaildTestsReturn)
@@ -80,4 +80,4 @@ def get_detailed_tests_results(
     O médico que utiliza o endpoint só pode vizualizar os resultados de
     seus pacientes vinculados.
     """
-    return get_patient_detaild_tests(user, patient_id, session)
+    return get_patient_detaild_tests(session, user, patient_id)

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from typing import Dict, Literal, Optional
 
 from fastapi import File, Form, UploadFile
@@ -66,8 +66,8 @@ class VoiceTestResult(BaseModel):
 # Schema não detalhado resultado do teste
 class BasicTestReturn(BaseModel):
     test_id: int
-    test_type: TestStatus
-    execution_date: date
+    test_type: TestType
+    execution_date: datetime
     classification: Literal["HEALTHY", "PARKINSON"]
 
 
@@ -77,7 +77,7 @@ class BasicTestReturn(BaseModel):
 class BaseTest(BaseModel):
     id: int
     test_type: TestType
-    execution_date: date
+    execution_date: datetime
     status: TestStatus
     score: float
     patient_id: int
