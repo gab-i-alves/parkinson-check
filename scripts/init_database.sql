@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS "test" (
   "execution_date" TIMESTAMP NOT NULL,
   "status" test_status_enum NOT NULL,
   "score" FLOAT NOT NULL
+  "type" test_type_enum NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "voice_test" (
