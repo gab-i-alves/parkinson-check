@@ -80,6 +80,15 @@ CREATE TABLE IF NOT EXISTS "note" (
   "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id")
 );
 
+CREATE TABLE IF NOT EXISTS "note" (
+    "id" SERIAL PRIMARY KEY,
+    "content" TEXT NOT NULL,
+    "patient_view" BOOLEAN NOT NULL,
+    "test_id" INTEGER NOT NULL REFERENCES "test" ("id"),
+    "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
+    "parent_note_id" INTEGER DEFAULT NULL REFERENCES "note" ("id") ON DELETE CASCADE
+);
+
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
