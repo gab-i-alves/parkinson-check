@@ -18,8 +18,8 @@ from api.schemas.tests import (
 from ..models import SpiralTest, Test, User, VoiceTest
 from .user_service import get_user_active_binds
 
-SPIRAL_MODEL_SERVICE_URL = "http://localhost:8001/predict/spiral"
-VOICE_MODEL_SERVICE_URL = "http://localhost:8002/predict/voice"
+SPIRAL_MODEL_SERVICE_URL = "http://spiral-classifier:8001/predict/spiral"
+VOICE_MODEL_SERVICE_URL = "http://voice-classifier:8002/predict/voice"
 
 def process_spiral(schema: ProcessSpiralSchema, user: User, session: Session) -> SpiralTestResult:
     model_result = ai.get_spiral_image_models_response(schema.image, SPIRAL_MODEL_SERVICE_URL)
