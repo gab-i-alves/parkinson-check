@@ -8,6 +8,7 @@ artifacts_path = os.path.join(os.path.dirname(__file__), "..", "artifacts")
 model = joblib.load(os.path.join(artifacts_path, "svm_rbf_wav2vec.joblib"))
 label_encoder = joblib.load(os.path.join(artifacts_path, "label_encoder.joblib"))
 
+
 def predict_audio(file_path: str):
     """
     Prevê a probabilidade de Parkinson a partir de um arquivo de áudio
@@ -28,10 +29,7 @@ def predict_audio(file_path: str):
             f"O modelo classificou a amostra como '{prediction_label}'."
         )
 
-        return {
-            "score": float(probability_pd),
-            "analysis": analysis_text
-        }
+        return {"score": float(probability_pd), "analysis": analysis_text}
 
     except Exception as e:
         print(f"Erro durante a predição: {e}")

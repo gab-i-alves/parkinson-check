@@ -102,8 +102,8 @@ def sample_bind(sample_doctor, sample_patient):
 @pytest.fixture
 def sample_voice_test(sample_patient):
     """Fixture para criar um teste de voz de exemplo."""
-    from datetime import datetime
-    from core.enums import TestType, TestStatus
+    from core.enums import TestStatus, TestType
+
     # Create base Test attributes first
     test = VoiceTest(
         test_type=TestType.VOICE_TEST,
@@ -120,8 +120,8 @@ def sample_voice_test(sample_patient):
 @pytest.fixture
 def sample_spiral_test(sample_patient):
     """Fixture para criar um teste de espiral de exemplo."""
-    from datetime import datetime
-    from core.enums import TestType, TestStatus, SpiralMethods
+    from core.enums import SpiralMethods, TestStatus, TestType
+
     test = SpiralTest(
         test_type=TestType.SPIRAL_TEST,
         status=TestStatus.DONE,
@@ -138,13 +138,19 @@ def sample_spiral_test(sample_patient):
 @pytest.fixture
 def multiple_binds(sample_doctor, sample_patient):
     """Fixture para criar múltiplos binds com diferentes status."""
-    bind1 = Bind(doctor_id=sample_doctor.id, patient_id=sample_patient.id, status=BindEnum.ACTIVE)
+    bind1 = Bind(
+        doctor_id=sample_doctor.id, patient_id=sample_patient.id, status=BindEnum.ACTIVE
+    )
     bind1.id = 1
 
-    bind2 = Bind(doctor_id=sample_doctor.id, patient_id=sample_patient.id, status=BindEnum.PENDING)
+    bind2 = Bind(
+        doctor_id=sample_doctor.id, patient_id=sample_patient.id, status=BindEnum.PENDING
+    )
     bind2.id = 2
 
-    bind3 = Bind(doctor_id=sample_doctor.id, patient_id=sample_patient.id, status=BindEnum.REJECTED)
+    bind3 = Bind(
+        doctor_id=sample_doctor.id, patient_id=sample_patient.id, status=BindEnum.REJECTED
+    )
     bind3.id = 3
 
     return [bind1, bind2, bind3]
