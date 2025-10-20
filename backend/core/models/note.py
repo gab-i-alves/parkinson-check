@@ -1,8 +1,11 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, func
+from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from core.enums import NoteCategory
 from core.models.table_registry import table_registry
 
 if TYPE_CHECKING:
@@ -17,8 +20,15 @@ class Note:
 
     content: Mapped[str] = mapped_column()
     patient_view: Mapped[bool] = mapped_column()
+    category: Mapped[NoteCategory] = mapped_column(
+        PG_ENUM(NoteCategory, name="note_category_enum", create_type=True),
+        default=NoteCategory.OBSERVATION
+    )
     test_id: Mapped[int] = mapped_column(ForeignKey("test.id"))
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(init=False, default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(init=False, default=func.now(), onupdate=func.now())
 
     # Foreign key para a nota "pai"
     parent_note_id: Mapped[int] = mapped_column(
