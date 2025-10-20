@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { User } from '../../../core/models/user.model';
 import { LoginForm } from '../../../core/models/login.model';
+import { UserService } from '../../../core/services/user.service';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -12,6 +13,7 @@ import { environment } from '../../../../environments/environment';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private userService = inject(UserService);
 
   private apiUrl = environment.apiUrl;
 
@@ -31,12 +33,14 @@ export class AuthService {
    * Se o cookie for válido, o backend retornará os dados do usuário.
    */
   checkAuthStatus(): Observable<User | null> {
-    return this.http.get<User>(`${this.apiUrl}/users/`).pipe(
+    return this.http.get<User>(`${this.apiUrl}/users/me`).pipe(
       tap((user) => {
         this.currentUserSubject.next(user);
+        this.userService.setCurrentUser(user);
       }),
       catchError(() => {
         this.currentUserSubject.next(null);
+        this.userService.setCurrentUser(null);
         return of(null);
       })
     );
@@ -51,6 +55,9 @@ export class AuthService {
         // A resposta agora é o próprio usuário.
         // Armazenamos o usuário no nosso BehaviorSubject.
         this.currentUserSubject.next(user);
+
+        // Sincronizar com UserService (faz mapeamento de role número → string)
+        this.userService.setCurrentUser(user);
       })
     );
   }
@@ -62,10 +69,12 @@ export class AuthService {
     this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({
       next: () => {
         this.currentUserSubject.next(null);
+        this.userService.setCurrentUser(null);
         this.router.navigate(['/auth/login']);
       },
       error: () => {
         this.currentUserSubject.next(null);
+        this.userService.setCurrentUser(null);
         this.router.navigate(['/auth/login']);
       },
     });
