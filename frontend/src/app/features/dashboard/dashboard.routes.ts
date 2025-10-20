@@ -6,10 +6,11 @@ export const DASHBOARD_ROUTES: Routes = [
   {
     path: '',
     component: DashboardLayoutComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard(['paciente', 'medico'])],
     children: [
       {
         path: '',
+        canActivate: [authGuard(['paciente'])],
         loadComponent: () =>
           import(
             './components/patient-dashboard/patient-dashboard.component'
@@ -17,6 +18,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'doctor',
+        canActivate: [authGuard(['medico'])],
         loadComponent: () =>
           import(
             './components/doctor-dashboard/doctor-dashboard.component'
@@ -24,6 +26,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'my-doctors',
+        canActivate: [authGuard(['paciente'])],
         loadComponent: () =>
           import('./components/my-doctors/my-doctors.component').then(
             (c) => c.MyDoctorsComponent
@@ -31,6 +34,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'patient-requests',
+        canActivate: [authGuard(['paciente'])],
         loadComponent: () =>
           import(
             './components/patient-binding-requests/patient-binding-requests.component'
@@ -38,6 +42,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'binding-requests',
+        canActivate: [authGuard(['medico'])],
         loadComponent: () =>
           import(
             './components/binding-requests/binding-requests.component'
@@ -45,6 +50,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'patients',
+        canActivate: [authGuard(['medico'])],
         loadComponent: () =>
           import('./components/my-patients/my-patients-list.component').then(
             (c) => c.MyPatientsListComponent
@@ -52,6 +58,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'tests',
+        canActivate: [authGuard(['paciente'])],
         loadChildren: () =>
           import('./components/test-method-selection/test.routes').then(
             (r) => r.TEST_ROUTES
@@ -59,6 +66,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'clinical-test/patient-selection',
+        canActivate: [authGuard(['medico'])],
         loadComponent: () =>
           import(
             './components/patient-selector/patient-selector.component'
@@ -66,6 +74,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'clinical-test/type-selection/:patientId',
+        canActivate: [authGuard(['medico'])],
         loadComponent: () =>
           import(
             './components/clinical-test-type-selection/clinical-test-type-selection.component'
@@ -73,6 +82,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'clinical-test/spiral/:patientId',
+        canActivate: [authGuard(['medico'])],
         loadComponent: () =>
           import('./components/spiral-test-webcam/spiral-test-webcam').then(
             (c) => c.SpiralTestWebcam
@@ -80,6 +90,7 @@ export const DASHBOARD_ROUTES: Routes = [
       },
       {
         path: 'clinical-test/voice/:patientId',
+        canActivate: [authGuard(['medico'])],
         loadComponent: () =>
           import('./components/voice-test/voice-test').then(
             (c) => c.VoiceTest
