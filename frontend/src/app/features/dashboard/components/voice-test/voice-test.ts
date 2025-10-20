@@ -161,6 +161,7 @@ export class VoiceTest implements OnInit, OnDestroy {
                 testType: 'voice',
               },
             });
+            
           },
           error: (err) => {
             this.feedbackMessage.set(`Erro na análise: ${err.message}`);
