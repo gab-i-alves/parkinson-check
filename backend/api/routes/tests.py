@@ -10,6 +10,7 @@ from core.services.test_service import (
     get_patient_test_statistics,
     get_patient_test_timeline,
     get_patient_tests,
+    get_test_detail,
     process_clinical_spiral,
     process_clinical_voice,
     process_spiral,
@@ -31,7 +32,9 @@ from ..schemas.tests import (
     ProcessSpiralSchema,
     ProcessVoiceSchema,
     SpiralImageSchema,
+    SpiralTestDetail,
     SpiralTestResult,
+    VoiceTestDetail,
     VoiceTestResult,
 )
 
@@ -169,3 +172,17 @@ def get_patient_timeline(
     Útil para visualizações e gráficos de progressão.
     """
     return get_patient_test_timeline(session, user, patient_id)
+
+
+@router.get("/test/{test_id}")
+def get_test_details(
+    user: CurrentDoctor, test_id: int, session: Session = Depends(get_session)
+):
+    """
+    Retorna os detalhes completos de um teste individual.
+    Inclui informações do teste, paciente e classificação.
+
+    O médico só pode visualizar testes de seus pacientes vinculados.
+    Retorna SpiralTestDetail ou VoiceTestDetail dependendo do tipo do teste.
+    """
+    return get_test_detail(session, user, test_id)

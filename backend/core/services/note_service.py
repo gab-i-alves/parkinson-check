@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from api.schemas.note import NoteResponse, NoteSchema, UpdateNoteSchema
 from core.models import Note, Test, User
@@ -37,7 +37,15 @@ def create_note(note: NoteSchema, session: Session, user: User) -> NoteResponse:
     session.commit()
     session.refresh(note_db)
 
-    return note_db
+    # Carregar o relacionamento doctor antes de retornar
+    note_with_doctor = (
+        session.query(Note)
+        .options(joinedload(Note.doctor))
+        .filter(Note.id == note_db.id)
+        .first()
+    )
+
+    return note_with_doctor
 
 
 def get_notes(test_id: int, session: Session, user: User) -> list[NoteResponse]:
@@ -47,6 +55,7 @@ def get_notes(test_id: int, session: Session, user: User) -> list[NoteResponse]:
         doctors_ids = [doctor.id for doctor in doctors]
         notes = (
             session.query(Note)
+            .options(joinedload(Note.doctor))
             .filter(
                 Note.test_id == test_id,
                 Note.patient_view == True,
@@ -58,9 +67,22 @@ def get_notes(test_id: int, session: Session, user: User) -> list[NoteResponse]:
         return [NoteResponse.model_validate(note) for note in notes]
 
     elif user.user_type == UserType.DOCTOR:
+        # Verificar se o teste existe e pegar o patient_id
+        test: Test | None = session.query(Test).filter(Test.id == test_id).first()
+
+        if not test:
+            raise HTTPException(HTTPStatus.NOT_FOUND, detail="Teste não encontrado.")
+
+        # Verificar se o médico tem acesso ao paciente
+        patients = patient_service.get_binded_patients(session, user)
+        if test.patient_id not in [patient.id for patient in patients]:
+            raise HTTPException(HTTPStatus.FORBIDDEN, detail="Acesso negado ao teste deste paciente.")
+
+        # Buscar todas as notas de TODOS os médicos para este teste
         notes = (
             session.query(Note)
-            .filter(Note.doctor_id == user.id, Note.test_id == test_id)
+            .options(joinedload(Note.doctor))
+            .filter(Note.test_id == test_id)
             .all()
         )
 
@@ -87,7 +109,15 @@ def update_note(
     session.commit()
     session.refresh(db_note)
 
-    return db_note
+    # Carregar o relacionamento doctor antes de retornar
+    note_with_doctor = (
+        session.query(Note)
+        .options(joinedload(Note.doctor))
+        .filter(Note.id == note_id)
+        .first()
+    )
+
+    return note_with_doctor
 
 
 def delete_note(note_id: int, user: User, session: Session):

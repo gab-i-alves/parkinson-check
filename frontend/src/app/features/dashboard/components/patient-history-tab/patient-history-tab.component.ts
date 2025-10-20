@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   PatientTimeline,
   TestType,
@@ -25,6 +26,8 @@ export class PatientHistoryTabComponent implements OnChanges {
   readonly pageSize = signal<number>(10);
 
   readonly Math = Math;
+
+  constructor(private router: Router) {}
 
   readonly filteredTests = computed(() => {
     if (!this.timeline) return [];
@@ -104,5 +107,9 @@ export class PatientHistoryTabComponent implements OnChanges {
   onFilterClassificationChange(value: FilterClassification): void {
     this.filterClassification.set(value);
     this.currentPage.set(1);
+  }
+
+  viewTestDetails(testId: number): void {
+    this.router.navigate(['/dashboard/test', testId]);
   }
 }
