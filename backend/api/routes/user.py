@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from api.schemas.users import (
     DoctorListResponse,
     GetDoctorsSchema,
+    PatientDashboardResponse,
     PatientListResponse,
     UserResponse,
 )
@@ -58,3 +59,13 @@ def get_binded_patients(user: CurrentDoctor, session: Session = Depends(get_sess
     """
     patients_with_binds = patient_service.get_binded_patients(session, user)
     return patients_with_binds
+
+
+@router.get("/linked_patients/dashboard", response_model=list[PatientDashboardResponse])
+def get_patients_dashboard(user: CurrentDoctor, session: Session = Depends(get_session)):
+    """
+    Endpoint para o médico obter dados completos dos pacientes vinculados para o dashboard.
+    Inclui idade, status calculado, informações de testes, etc.
+    """
+    dashboard_data = patient_service.get_patients_dashboard_data(session, user)
+    return dashboard_data

@@ -62,3 +62,15 @@ class PatientSchema(UserSchema):
 class PatientListResponse(UserResponse):
     location: str
     bind_id: Optional[int] = None
+
+class PatientDashboardResponse(BaseModel):
+    id: int
+    name: str
+    cpf: str
+    email: EmailStr
+    age: int
+    status: str  # "stable" | "attention" | "critical"
+    last_test_date: Optional[str] = None
+    last_test_type: Optional[str] = None  # "spiral" | "voice"
+    tests_count: int
+    bind_id: int

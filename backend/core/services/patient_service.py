@@ -1,17 +1,18 @@
+from datetime import date
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from sqlalchemy import or_
+from sqlalchemy import or_, func, desc
 from sqlalchemy.orm import Session
 
 from api.schemas.binding import RequestBinding
-from api.schemas.users import PatientListResponse, PatientSchema
-from core.models import Bind, Doctor, Patient, User
+from api.schemas.users import PatientDashboardResponse, PatientListResponse, PatientSchema
+from core.models import Bind, Doctor, Patient, Test, User
 from core.security.security import get_password_hash
 from core.services import address_service, user_service
 from core.services.user_service import get_binded_users
 
-from ..enums import BindEnum, UserType
+from ..enums import BindEnum, TestType, UserType
 
 
 def create_patient(patient: PatientSchema, session: Session):
@@ -150,3 +151,91 @@ def get_binded_patients(session: Session, current_user: User) -> list[PatientLis
             )
         )
     return patient_list
+
+
+def calculate_age(birthdate: date) -> int:
+    """Calcula idade a partir da data de nascimento"""
+    today = date.today()
+    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+    return age
+
+
+def calculate_patient_status(recent_scores: list[float]) -> str:
+    """
+    Calcula o status do paciente baseado nos scores recentes.
+    - stable: média >= 0.7
+    - attention: 0.4 <= média < 0.7
+    - critical: média < 0.4
+    """
+    if not recent_scores:
+        return "stable"
+
+    avg_score = sum(recent_scores) / len(recent_scores)
+
+    if avg_score >= 0.7:
+        return "stable"
+    elif avg_score >= 0.4:
+        return "attention"
+    else:
+        return "critical"
+
+
+def get_patients_dashboard_data(
+    session: Session, current_user: User
+) -> list[PatientDashboardResponse]:
+    """
+    Retorna dados completos dos pacientes vinculados para o dashboard do médico.
+    Inclui informações de testes, idade, status, etc.
+    """
+    binded_patients = get_binded_users(current_user, session)
+
+    dashboard_data = []
+
+    for item in binded_patients:
+        patient = item["user"]
+        bind_id = item["bind_id"]
+
+        # Calcula idade
+        age = calculate_age(patient.birthdate)
+
+        # Busca todos os testes do paciente
+        all_tests = (
+            session.query(Test)
+            .filter(Test.patient_id == patient.id)
+            .order_by(desc(Test.execution_date))
+            .all()
+        )
+
+        tests_count = len(all_tests)
+
+        # Busca último teste
+        last_test = all_tests[0] if all_tests else None
+        last_test_date = last_test.execution_date.isoformat() if last_test else None
+        last_test_type = None
+
+        if last_test:
+            if last_test.test_type == TestType.SPIRAL_TEST:
+                last_test_type = "spiral"
+            elif last_test.test_type == TestType.VOICE_TEST:
+                last_test_type = "voice"
+
+        # Calcula status baseado nos últimos 5 testes
+        recent_scores = [test.score for test in all_tests[:5]]
+        status = calculate_patient_status(recent_scores)
+
+        dashboard_data.append(
+            PatientDashboardResponse(
+                id=patient.id,
+                name=patient.name,
+                cpf=patient.cpf,
+                email=patient.email,
+                age=age,
+                status=status,
+                last_test_date=last_test_date,
+                last_test_type=last_test_type,
+                tests_count=tests_count,
+                bind_id=bind_id,
+            )
+        )
+
+    return dashboard_data
