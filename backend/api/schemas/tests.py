@@ -191,3 +191,53 @@ class ClinicalVoiceTestResult(BaseModel):
     score: float = Field(..., example=0.92)
     analysis: str = Field(..., example="A análise da voz indica A, B e C.")
     execution_date: datetime = Field(..., description="Data e hora de execução do teste")
+
+
+# Schemas para perfil e estatísticas do paciente
+
+
+class PatientTestStatistics(BaseModel):
+    """Estatísticas agregadas dos testes de um paciente"""
+
+    total_tests: int = Field(..., description="Total de testes realizados")
+    total_spiral_tests: int = Field(..., description="Total de testes de espiral")
+    total_voice_tests: int = Field(..., description="Total de testes de voz")
+    avg_spiral_score: Optional[float] = Field(None, description="Score médio de testes de espiral")
+    avg_voice_score: Optional[float] = Field(None, description="Score médio de testes de voz")
+    last_test_date: Optional[datetime] = Field(None, description="Data do último teste")
+    days_since_last_test: Optional[int] = Field(None, description="Dias desde o último teste")
+    first_test_date: Optional[datetime] = Field(None, description="Data do primeiro teste")
+    trend: Literal["improving", "stable", "worsening"] = Field(..., description="Tendência geral")
+    trend_percentage: float = Field(..., description="Percentual de mudança na tendência")
+    best_spiral_score: Optional[float] = Field(None, description="Melhor score em teste de espiral")
+    worst_spiral_score: Optional[float] = Field(None, description="Pior score em teste de espiral")
+    best_voice_score: Optional[float] = Field(None, description="Melhor score em teste de voz")
+    worst_voice_score: Optional[float] = Field(None, description="Pior score em teste de voz")
+    healthy_classification_count: int = Field(..., description="Testes classificados como HEALTHY")
+    parkinson_classification_count: int = Field(..., description="Testes classificados como PARKINSON")
+    avg_test_interval_days: Optional[float] = Field(None, description="Intervalo médio entre testes em dias")
+
+
+class TimelineTestItem(BaseModel):
+    """Item individual de teste para timeline"""
+
+    test_id: int
+    test_type: TestType
+    execution_date: datetime
+    score: float
+    classification: Literal["HEALTHY", "PARKINSON"]
+    status: TestStatus
+    # Campos específicos de espiral
+    draw_duration: Optional[float] = None
+    method: Optional[SpiralMethods] = None
+    majority_decision: Optional[str] = None
+    # Campos específicos de voz
+    record_duration: Optional[float] = None
+    analysis: Optional[str] = None
+
+
+class PatientTestTimeline(BaseModel):
+    """Timeline completa de testes de um paciente"""
+
+    tests: list[TimelineTestItem] = Field(..., description="Lista de testes ordenados cronologicamente")
+    total_count: int = Field(..., description="Total de testes")

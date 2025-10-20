@@ -6,7 +6,13 @@ from sqlalchemy import or_, func, desc
 from sqlalchemy.orm import Session
 
 from api.schemas.binding import RequestBinding
-from api.schemas.users import PatientDashboardResponse, PatientListResponse, PatientSchema
+from api.schemas.users import (
+    AddressResponse,
+    PatientDashboardResponse,
+    PatientFullProfileResponse,
+    PatientListResponse,
+    PatientSchema,
+)
 from core.models import Bind, Doctor, Patient, Test, User
 from core.security.security import get_password_hash
 from core.services import address_service, user_service
@@ -239,3 +245,72 @@ def get_patients_dashboard_data(
         )
 
     return dashboard_data
+
+
+def get_patient_full_profile(
+    session: Session, doctor: User, patient_id: int
+) -> PatientFullProfileResponse:
+    """
+    Retorna perfil completo do paciente incluindo endereço e informações pessoais.
+    Validação: médico deve ter vínculo ativo com o paciente.
+    """
+    from core.services.user_service import get_user_active_binds
+
+    # Valida vínculo
+    binds = get_user_active_binds(session, doctor)
+    if not binds or patient_id not in [bind.patient_id for bind in binds]:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="Você não tem acesso a este paciente.",
+        )
+
+    # Busca paciente com endereço
+    patient = (
+        session.query(Patient)
+        .filter(Patient.id == patient_id)
+        .first()
+    )
+
+    if not patient:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Paciente não encontrado.",
+        )
+
+    # Calcula idade
+    age = calculate_age(patient.birthdate)
+
+    # Busca testes para calcular status
+    recent_tests = (
+        session.query(Test)
+        .filter(Test.patient_id == patient_id)
+        .order_by(desc(Test.execution_date))
+        .limit(5)
+        .all()
+    )
+    recent_scores = [test.score for test in recent_tests]
+    status = calculate_patient_status(recent_scores)
+
+    # Busca bind para pegar data de criação
+    bind = next((b for b in binds if b.patient_id == patient_id), None)
+
+    return PatientFullProfileResponse(
+        id=patient.id,
+        name=patient.name,
+        cpf=patient.cpf,
+        email=patient.email,
+        birthdate=patient.birthdate,
+        age=age,
+        address=AddressResponse(
+            street=patient.address.street,
+            number=patient.address.number,
+            complement=patient.address.complement,
+            neighborhood=patient.address.neighborhood,
+            city=patient.address.city,
+            state=patient.address.state,
+            cep=patient.address.cep,
+        ),
+        status=status,
+        bind_id=bind.id if bind else 0,
+        created_at=None,  # TODO: Adicionar data de criação no modelo Bind
+    )

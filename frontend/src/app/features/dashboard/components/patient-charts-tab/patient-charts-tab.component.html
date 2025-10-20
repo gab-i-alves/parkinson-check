@@ -1,0 +1,189 @@
+<div class="space-y-6">
+  @if (!timeline || !statistics) {
+  <div class="text-center py-8">
+    <p class="text-gray-500">Carregando dados para gráficos...</p>
+  </div>
+  } @else if (timeline.total_count === 0) {
+  <div class="text-center py-12">
+    <svg
+      class="mx-auto h-12 w-12 text-gray-400"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+      />
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">
+      Sem dados para visualização
+    </h3>
+    <p class="mt-1 text-sm text-gray-500">
+      É necessário ter pelo menos 1 teste para gerar gráficos.
+    </p>
+  </div>
+  } @else {
+  <div class="bg-gray-50 rounded-lg p-4">
+    <label
+      for="chartFilter"
+      class="block text-sm font-medium text-gray-700 mb-2"
+    >
+      Filtrar por tipo de teste
+    </label>
+    <select
+      id="chartFilter"
+      [ngModel]="selectedTestType()"
+      (ngModelChange)="selectedTestType.set($event)"
+      class="block w-full md:w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+    >
+      <option value="all">Todos os testes</option>
+      <option value="spiral">Apenas Espiral</option>
+      <option value="voice">Apenas Voz</option>
+    </select>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      Progressão de Scores ao Longo do Tempo
+    </h3>
+
+    @if (filteredChartData().length > 0) {
+    <div class="relative h-64 border-l-2 border-b-2 border-gray-300">
+      <div
+        class="absolute left-0 top-0 bottom-0 -ml-12 flex flex-col justify-between text-xs text-gray-600"
+      >
+        <span>{{ getMaxScore().toFixed(2) }}</span>
+        <span>{{ ((getMaxScore() + getMinScore()) / 2).toFixed(2) }}</span>
+        <span>{{ getMinScore().toFixed(2) }}</span>
+      </div>
+
+      <div class="relative h-full w-full">
+        @for (point of filteredChartData(); track $index) {
+        <div
+          class="absolute w-3 h-3 rounded-full transform -translate-x-1/2 -translate-y-1/2"
+          [ngClass]="{
+            'bg-blue-500': point.type === 'spiral',
+            'bg-purple-500': point.type === 'voice'
+          }"
+          [style.left.%]="
+            ($index / (filteredChartData().length - 1 || 1)) * 100
+          "
+          [style.bottom.%]="getScorePercentage(point.score)"
+        ></div>
+        }
+
+        <svg class="absolute inset-0 w-full h-full pointer-events-none">
+          @for (point of filteredChartData(); track $index; let isLast = $last)
+          { @if (!isLast) {
+          <line
+            [attr.x1]="
+              ($index / (filteredChartData().length - 1 || 1)) * 100 + '%'
+            "
+            [attr.y1]="100 - getScorePercentage(point.score) + '%'"
+            [attr.x2]="
+              (($index + 1) / (filteredChartData().length - 1 || 1)) * 100 + '%'
+            "
+            [attr.y2]="
+              100 -
+              getScorePercentage(filteredChartData()[$index + 1].score) +
+              '%'
+            "
+            [attr.stroke]="point.type === 'spiral' ? '#3b82f6' : '#a855f7'"
+            stroke-width="2"
+            opacity="0.5"
+          />
+          } }
+        </svg>
+      </div>
+
+      <div class="mt-2 flex justify-between text-xs text-gray-600">
+        <span>{{ filteredChartData()[0].date || "" }}</span>
+        <span>{{
+          filteredChartData()[filteredChartData().length - 1].date || ""
+        }}</span>
+      </div>
+    </div>
+
+    <div class="mt-4 flex justify-center space-x-6">
+      <div class="flex items-center">
+        <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+        <span class="text-sm text-gray-700">Teste de Espiral</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+        <span class="text-sm text-gray-700">Teste de Voz</span>
+      </div>
+    </div>
+    } @else {
+    <p class="text-center text-gray-500 py-8">
+      Nenhum dado disponível para o filtro selecionado.
+    </p>
+    }
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      Distribuição de Classificações
+    </h3>
+
+    <div class="space-y-4">
+      <div>
+        <div
+          class="flex justify-between text-sm font-medium text-gray-700 mb-1"
+        >
+          <span>Saudável (HEALTHY)</span>
+          <span>{{ statistics.healthy_classification_count }} testes</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-8 overflow-hidden">
+          <div
+            class="bg-green-500 h-8 rounded-full flex items-center justify-end pr-2 text-white text-sm font-semibold transition-all duration-500"
+            [style.width.%]="
+              (statistics.healthy_classification_count /
+                statistics.total_tests) *
+              100
+            "
+          >
+            {{
+              (
+                (statistics.healthy_classification_count /
+                  statistics.total_tests) *
+                100
+              ).toFixed(1)
+            }}%
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div
+          class="flex justify-between text-sm font-medium text-gray-700 mb-1"
+        >
+          <span>Parkinson (PARKINSON)</span>
+          <span>{{ statistics.parkinson_classification_count }} testes</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-8 overflow-hidden">
+          <div
+            class="bg-red-500 h-8 rounded-full flex items-center justify-end pr-2 text-white text-sm font-semibold transition-all duration-500"
+            [style.width.%]="
+              (statistics.parkinson_classification_count /
+                statistics.total_tests) *
+              100
+            "
+          >
+            {{
+              (
+                (statistics.parkinson_classification_count /
+                  statistics.total_tests) *
+                100
+              ).toFixed(1)
+            }}%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

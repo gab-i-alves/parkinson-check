@@ -1,0 +1,108 @@
+<div class="space-y-6">
+  <!-- Informações Pessoais -->
+  <div class="bg-gray-50 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      Informações Pessoais
+    </h3>
+    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Nome Completo</dt>
+        <dd class="mt-1 text-sm text-gray-900">{{ profile.name }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">CPF</dt>
+        <dd class="mt-1 text-sm text-gray-900">{{ profile.cpf }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Email</dt>
+        <dd class="mt-1 text-sm text-gray-900">{{ profile.email }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Idade</dt>
+        <dd class="mt-1 text-sm text-gray-900">{{ profile.age }} anos</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Data de Nascimento</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          {{ formatDate(profile.birthdate) }}
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Status Atual</dt>
+        <dd class="mt-1">
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+            [ngClass]="{
+              'bg-green-100 text-green-800': profile.status === 'stable',
+              'bg-yellow-100 text-yellow-800': profile.status === 'attention',
+              'bg-red-100 text-red-800': profile.status === 'critical'
+            }"
+          >
+            {{
+              profile.status === 'stable'
+                ? 'Estável'
+                : profile.status === 'attention'
+                ? 'Atenção'
+                : 'Crítico'
+            }}
+          </span>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Endereço -->
+  <div class="bg-gray-50 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Endereço</h3>
+    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="md:col-span-2">
+        <dt class="text-sm font-medium text-gray-500">Logradouro</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          {{ profile.address.street }}, {{ profile.address.number }}
+          @if (profile.address.complement) {
+          <span>- {{ profile.address.complement }}</span>
+          }
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Bairro</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          {{ profile.address.neighborhood }}
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">CEP</dt>
+        <dd class="mt-1 text-sm text-gray-900">{{ profile.address.cep }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Cidade</dt>
+        <dd class="mt-1 text-sm text-gray-900">{{ profile.address.city }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Estado</dt>
+        <dd class="mt-1 text-sm text-gray-900">{{ profile.address.state }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Informações de Vínculo -->
+  <div class="bg-blue-50 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+      Informações de Vínculo
+    </h3>
+    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">ID do Vínculo</dt>
+        <dd class="mt-1 text-sm text-gray-900">#{{ profile.bind_id }}</dd>
+      </div>
+      @if (profile.created_at) {
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Vinculado desde</dt>
+        <dd class="mt-1 text-sm text-gray-900">
+          {{ formatDate(profile.created_at) }}
+        </dd>
+      </div>
+      }
+    </dl>
+  </div>
+</div>
