@@ -105,7 +105,7 @@ export class SidebarComponent {
   readonly notificationCount = signal<number>(3);
 
   logout(): void {
+    // authService.logout() already handles navigation to /auth/login
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
   }
 }

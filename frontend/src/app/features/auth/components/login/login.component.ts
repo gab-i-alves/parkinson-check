@@ -85,20 +85,15 @@ export class LoginComponent implements OnInit {
     console.log('Dados do formulário:', credentials);
 
     this.authService.login(credentials).subscribe({
-      next: (user) => {
-        console.log('Login bem-sucedido. Resposta da API:', user);
+      next: () => {
+        console.log('Login bem-sucedido.');
 
-        const roleMap: { [key: number]: UserRole } = {
-          1: 'paciente',
-          2: 'medico',
-          3: 'admin',
-        };
+        // UserService já foi atualizado pelo AuthService com role mapeado
+        const currentUser = this.userService.getCurrentUser();
 
-        const userRole: UserRole = roleMap[user.role as any] || 'paciente';
+        console.log('Usuário sincronizado no UserService:', currentUser);
 
-        console.log(`Papel mapeado: ${user.role} -> ${userRole}`);
-
-        if (userRole === 'medico') {
+        if (currentUser?.role === 'medico') {
           this.router.navigate(['/dashboard/doctor']);
         } else {
           this.router.navigate(['/dashboard']);

@@ -6,14 +6,16 @@ import {
   ElementRef,
   signal,
   ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { finalize, Subscription } from 'rxjs';
 import {
   VoiceTestService,
   VoiceTestResponse,
 } from '../../services/voice-test.service';
+import { ClinicalTestService } from '../../services/clinical-test.service';
 import { CommonModule, DecimalPipe } from '@angular/common';
 
 @Component({
@@ -30,6 +32,7 @@ export class VoiceTest implements OnInit, OnDestroy {
 
   private recordedAudioBlob: Blob | undefined;
   private recordingSubscription: Subscription | undefined;
+  private recordStartTime: number = 0;
 
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
   @ViewChild('audioVisualizer')
@@ -39,6 +42,12 @@ export class VoiceTest implements OnInit, OnDestroy {
   private analyser: AnalyserNode | undefined;
   private animationFrameId: number | undefined;
 
+  // Context detection
+  private route = inject(ActivatedRoute);
+  private clinicalTestService = inject(ClinicalTestService);
+  private patientId: string | null = null;
+  private isClinicalMode = false;
+
   constructor(
     private voiceTestService: VoiceTestService,
     private sanitizer: DomSanitizer,
@@ -46,6 +55,16 @@ export class VoiceTest implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Detect context: clinical test (with patientId) vs practice test
+    this.patientId = this.route.snapshot.paramMap.get('patientId');
+    this.isClinicalMode = !!this.patientId;
+
+    if (this.isClinicalMode) {
+      console.log(
+        `Modo clínico ativado para paciente ID: ${this.patientId}`
+      );
+    }
+
     this.recordingSubscription = this.voiceTestService.recording$.subscribe(
       (blob) => {
         if (blob.size === 0) {
@@ -73,6 +92,7 @@ export class VoiceTest implements OnInit, OnDestroy {
     this.recordedAudioBlob = undefined;
     this.analysisResults.set(null);
     this.feedbackMessage.set(null);
+    this.recordStartTime = Date.now();
 
     this.voiceTestService.startRecording().then((stream) => {
       if (stream) {
@@ -122,19 +142,39 @@ export class VoiceTest implements OnInit, OnDestroy {
       type: 'audio/webm',
     });
 
-    this.voiceTestService
-      .uploadVoiceSample(audioFile)
-      .pipe(finalize(() => this.feedbackMessage.set(null)))
-      .subscribe({
-        next: (response) => {
-          this.analysisResults.set(response);
-          this.recordedAudioUrl.set(undefined);
-        },
-        error: (err) => {
-          this.feedbackMessage.set(`Erro na análise: ${err.message}`);
-          console.error(err);
-        },
-      });
+    if (this.isClinicalMode && this.patientId) {
+      // Clinical mode: use ClinicalTestService
+      const recordDuration = Math.floor((Date.now() - this.recordStartTime) / 1000);
+
+      this.clinicalTestService
+        .processVoiceTest(Number(this.patientId), audioFile, recordDuration)
+        .pipe(finalize(() => this.feedbackMessage.set(null)))
+        .subscribe({
+          next: (response) => {
+            this.analysisResults.set(response);
+            this.recordedAudioUrl.set(undefined);
+          },
+          error: (err) => {
+            this.feedbackMessage.set(`Erro na análise: ${err.message}`);
+            console.error(err);
+          },
+        });
+    } else {
+      // Practice mode: use VoiceTestService
+      this.voiceTestService
+        .uploadVoiceSample(audioFile)
+        .pipe(finalize(() => this.feedbackMessage.set(null)))
+        .subscribe({
+          next: (response) => {
+            this.analysisResults.set(response);
+            this.recordedAudioUrl.set(undefined);
+          },
+          error: (err) => {
+            this.feedbackMessage.set(`Erro na análise: ${err.message}`);
+            console.error(err);
+          },
+        });
+    }
   }
 
   private initVisualizer(stream: MediaStream): void {
@@ -184,6 +224,12 @@ export class VoiceTest implements OnInit, OnDestroy {
   }
 
   goBackToMethodSelection(): void {
-    this.router.navigate(['/dashboard/tests']);
+    if (this.isClinicalMode) {
+      // Clinical mode: go back to doctor dashboard
+      this.router.navigate(['/dashboard/doctor']);
+    } else {
+      // Practice mode: go back to test selection
+      this.router.navigate(['/dashboard/tests']);
+    }
   }
 }
