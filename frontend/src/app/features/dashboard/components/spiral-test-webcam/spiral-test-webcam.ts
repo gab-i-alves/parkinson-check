@@ -255,6 +255,16 @@ export class SpiralTestWebcam implements AfterViewInit, OnDestroy, OnInit {
           this.feedbackMessage.set('Análise concluída com sucesso!');
           this.analysisResults.set(response);
           this.stopCamera();
+
+          // Navegar para resultado clínico se estiver em modo clínico
+          if (this.isClinicalMode) {
+            this.router.navigate(['/dashboard/clinical-test/result'], {
+              state: {
+                result: response,
+                testType: 'spiral',
+              },
+            });
+          }
         } catch (error) {
           console.error('Erro ao enviar imagem:', error);
           this.uploadStatus.set('error');

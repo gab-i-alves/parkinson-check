@@ -96,6 +96,14 @@ export const DASHBOARD_ROUTES: Routes = [
             (c) => c.VoiceTest
           ),
       },
+      {
+        path: 'clinical-test/result',
+        canActivate: [authGuard(['medico'])],
+        loadComponent: () =>
+          import(
+            './components/clinical-test-result/clinical-test-result.component'
+          ).then((c) => c.ClinicalTestResultComponent),
+      },
     ],
   },
 ];

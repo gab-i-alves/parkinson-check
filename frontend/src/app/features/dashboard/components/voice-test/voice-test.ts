@@ -153,6 +153,15 @@ export class VoiceTest implements OnInit, OnDestroy {
           next: (response) => {
             this.analysisResults.set(response);
             this.recordedAudioUrl.set(undefined);
+
+            // Navegar para resultado clínico
+            this.router.navigate(['/dashboard/clinical-test/result'], {
+              state: {
+                result: response,
+                testType: 'voice',
+              },
+            });
+            
           },
           error: (err) => {
             this.feedbackMessage.set(`Erro na análise: ${err.message}`);
