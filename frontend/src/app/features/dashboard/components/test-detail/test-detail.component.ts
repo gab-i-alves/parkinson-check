@@ -20,6 +20,11 @@ import {
   CreateNoteRequest,
   UpdateNoteRequest,
 } from '../../../../core/models/note.model';
+import {
+  NoteCategory,
+  NoteCategoryLabels,
+  NoteCategoryColors,
+} from '../../../../core/enums/note-category.enum';
 import { UserService } from '../../../../core/services/user.service';
 
 @Component({
@@ -65,16 +70,24 @@ export class TestDetailComponent implements OnInit {
   noteForm!: FormGroup;
   editForm!: FormGroup;
 
+  // Enum e labels para o template
+  readonly NoteCategory = NoteCategory;
+  readonly NoteCategoryLabels = NoteCategoryLabels;
+  readonly NoteCategoryColors = NoteCategoryColors;
+  readonly categories = Object.values(NoteCategory);
+
   ngOnInit(): void {
     // Inicializar formulários
     this.noteForm = this.fb.group({
-      content: ['', [Validators.required, Validators.minLength(1)]],
+      content: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(5000)]],
       patient_view: [false],
+      category: [NoteCategory.OBSERVATION, [Validators.required]],
     });
 
     this.editForm = this.fb.group({
-      content: ['', [Validators.required, Validators.minLength(1)]],
+      content: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(5000)]],
       patient_view: [false],
+      category: [NoteCategory.OBSERVATION, [Validators.required]],
     });
 
     // Pegar ID do usuário atual
@@ -146,7 +159,7 @@ export class TestDetailComponent implements OnInit {
   toggleAddNote(): void {
     this.isAddingNote.set(!this.isAddingNote());
     if (!this.isAddingNote()) {
-      this.noteForm.reset({ patient_view: false });
+      this.noteForm.reset({ patient_view: false, category: NoteCategory.OBSERVATION });
     }
   }
 
@@ -160,12 +173,13 @@ export class TestDetailComponent implements OnInit {
       test_id: this.testId()!,
       parent_note_id: null,
       patient_view: this.noteForm.value.patient_view,
+      category: this.noteForm.value.category,
     };
 
     this.noteService.createNote(request).subscribe({
       next: (note) => {
         this.notes.set([note, ...this.notes()]);
-        this.noteForm.reset({ patient_view: false });
+        this.noteForm.reset({ patient_view: false, category: NoteCategory.OBSERVATION });
         this.isAddingNote.set(false);
       },
       error: (err) => {
@@ -180,6 +194,7 @@ export class TestDetailComponent implements OnInit {
     this.editForm.patchValue({
       content: note.content,
       patient_view: note.patient_view,
+      category: note.category,
     });
   }
 
@@ -196,6 +211,7 @@ export class TestDetailComponent implements OnInit {
     const request: UpdateNoteRequest = {
       content: this.editForm.value.content,
       patient_view: this.editForm.value.patient_view,
+      category: this.editForm.value.category,
     };
 
     this.noteService.updateNote(noteId, request).subscribe({

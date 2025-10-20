@@ -174,8 +174,36 @@
                   formControlName="content"
                   rows="4"
                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  placeholder="Digite sua anotação aqui..."
+                  placeholder="Digite sua anotação aqui (mínimo 10 caracteres)..."
                 ></textarea>
+                @if (noteForm.get('content')?.errors && noteForm.get('content')?.touched) {
+                  <p class="mt-1 text-sm text-red-600">
+                    @if (noteForm.get('content')?.errors?.['minlength']) {
+                      A anotação deve ter pelo menos 10 caracteres.
+                    }
+                    @if (noteForm.get('content')?.errors?.['maxlength']) {
+                      A anotação não pode exceder 5000 caracteres.
+                    }
+                  </p>
+                }
+              </div>
+
+              <div>
+                <label
+                  for="noteCategory"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Categoria
+                </label>
+                <select
+                  id="noteCategory"
+                  formControlName="category"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                >
+                  @for (cat of categories; track cat) {
+                    <option [value]="cat">{{ NoteCategoryLabels[cat] }}</option>
+                  }
+                </select>
               </div>
 
               <div class="flex items-center">
