@@ -80,8 +80,8 @@ export class ClinicalTestResultComponent implements OnInit {
   viewPatientHistory(): void {
     const res = this.result();
     if (res) {
-      // TODO: Navegar para histórico do paciente
-      this.router.navigate(['/dashboard/patients']);
+      // Navegar para perfil completo do paciente
+      this.router.navigate(['/dashboard/patient', res.patient_id]);
     }
   }
 
