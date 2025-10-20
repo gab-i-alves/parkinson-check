@@ -26,6 +26,7 @@ import {
   NoteCategoryColors,
 } from '../../../../core/enums/note-category.enum';
 import { UserService } from '../../../../core/services/user.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-test-detail',
@@ -39,6 +40,7 @@ export class TestDetailComponent implements OnInit {
   private testDetailService = inject(TestDetailService);
   private noteService = inject(NoteService);
   private userService = inject(UserService);
+  private notificationService = inject(NotificationService);
   private fb = inject(FormBuilder);
 
   readonly testId = signal<number | null>(null);
@@ -165,6 +167,7 @@ export class TestDetailComponent implements OnInit {
 
   addNote(): void {
     if (this.noteForm.invalid || !this.testId()) {
+      this.notificationService.warning('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
@@ -181,10 +184,11 @@ export class TestDetailComponent implements OnInit {
         this.notes.set([note, ...this.notes()]);
         this.noteForm.reset({ patient_view: false, category: NoteCategory.OBSERVATION });
         this.isAddingNote.set(false);
+        this.notificationService.success('Anotação criada com sucesso!');
       },
       error: (err) => {
         console.error('Erro ao criar nota:', err);
-        alert('Erro ao criar nota. Tente novamente.');
+        this.notificationService.error('Erro ao criar anotação. Tente novamente.');
       },
     });
   }
@@ -205,6 +209,7 @@ export class TestDetailComponent implements OnInit {
 
   saveEdit(noteId: number): void {
     if (this.editForm.invalid) {
+      this.notificationService.warning('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
@@ -222,16 +227,17 @@ export class TestDetailComponent implements OnInit {
         this.notes.set(updatedNotes);
         this.editingNoteId.set(null);
         this.editForm.reset();
+        this.notificationService.success('Anotação atualizada com sucesso!');
       },
       error: (err) => {
         console.error('Erro ao atualizar nota:', err);
-        alert('Erro ao atualizar nota. Tente novamente.');
+        this.notificationService.error('Erro ao atualizar anotação. Tente novamente.');
       },
     });
   }
 
   deleteNote(noteId: number): void {
-    if (!confirm('Tem certeza que deseja deletar esta nota?')) {
+    if (!confirm('Tem certeza que deseja deletar esta anotação?')) {
       return;
     }
 
@@ -239,10 +245,11 @@ export class TestDetailComponent implements OnInit {
       next: () => {
         const filteredNotes = this.notes().filter((note) => note.id !== noteId);
         this.notes.set(filteredNotes);
+        this.notificationService.success('Anotação deletada com sucesso!');
       },
       error: (err) => {
         console.error('Erro ao deletar nota:', err);
-        alert('Erro ao deletar nota. Tente novamente.');
+        this.notificationService.error('Erro ao deletar anotação. Tente novamente.');
       },
     });
   }
