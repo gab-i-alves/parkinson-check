@@ -46,15 +46,43 @@ export const DASHBOARD_ROUTES: Routes = [
       {
         path: 'patients',
         loadComponent: () =>
-          import(
-            './components/my-patients/my-patients-list.component'
-          ).then((c) => c.MyPatientsListComponent),
+          import('./components/my-patients/my-patients-list.component').then(
+            (c) => c.MyPatientsListComponent
+          ),
       },
       {
         path: 'tests',
         loadChildren: () =>
           import('./components/test-method-selection/test.routes').then(
             (r) => r.TEST_ROUTES
+          ),
+      },
+      {
+        path: 'clinical-test/patient-selection',
+        loadComponent: () =>
+          import(
+            './components/patient-selector/patient-selector.component'
+          ).then((c) => c.PatientSelectorComponent),
+      },
+      {
+        path: 'clinical-test/type-selection/:patientId',
+        loadComponent: () =>
+          import(
+            './components/clinical-test-type-selection/clinical-test-type-selection.component'
+          ).then((c) => c.ClinicalTestTypeSelectionComponent),
+      },
+      {
+        path: 'clinical-test/spiral/:patientId',
+        loadComponent: () =>
+          import('./components/spiral-test-webcam/spiral-test-webcam').then(
+            (c) => c.SpiralTestWebcam
+          ),
+      },
+      {
+        path: 'clinical-test/voice/:patientId',
+        loadComponent: () =>
+          import('./components/voice-test/voice-test').then(
+            (c) => c.VoiceTest
           ),
       },
     ],
