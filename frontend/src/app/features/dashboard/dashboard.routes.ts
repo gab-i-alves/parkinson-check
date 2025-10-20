@@ -120,6 +120,14 @@ export const DASHBOARD_ROUTES: Routes = [
             (c) => c.TestDetailComponent
           ),
       },
+      {
+        path: 'my-test/:testId',
+        canActivate: [authGuard(['paciente'])],
+        loadComponent: () =>
+          import('./components/patient-test-detail/patient-test-detail.component').then(
+            (c) => c.PatientTestDetailComponent
+          ),
+      },
     ],
   },
 ];

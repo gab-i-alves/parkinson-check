@@ -1,0 +1,211 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-6">
+      <button
+        (click)="goBack()"
+        class="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+      >
+        <svg
+          class="w-5 h-5 mr-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        Voltar
+      </button>
+    </div>
+
+    @if (isLoading()) {
+    <div class="flex justify-center items-center py-12">
+      <div class="text-center">
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+        ></div>
+        <p class="mt-4 text-gray-600">Carregando detalhes do teste...</p>
+      </div>
+    </div>
+    } @if (errorMessage()) {
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg
+            class="h-5 w-5 text-red-400"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-red-700">{{ errorMessage() }}</p>
+        </div>
+      </div>
+    </div>
+    } @if (testDetail() && !isLoading()) {
+    <div class="space-y-6">
+      <!-- Informações do Teste -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-200">
+          <h2 class="text-2xl font-bold text-gray-900">Detalhes do Teste</h2>
+        </div>
+        <div class="px-6 py-5">
+          <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Tipo de Teste</dt>
+              <dd class="mt-1 text-lg text-gray-900">
+                {{ getTestTypeLabel(testDetail()!.test_type) }}
+              </dd>
+            </div>
+
+            <div>
+              <dt class="text-sm font-medium text-gray-500">
+                Data de Execução
+              </dt>
+              <dd class="mt-1 text-lg text-gray-900">
+                {{ formatDate(testDetail()!.execution_date) }}
+              </dd>
+            </div>
+
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Score</dt>
+              <dd class="mt-1 text-lg text-gray-900">
+                {{ testDetail()!.score.toFixed(2) }}
+              </dd>
+            </div>
+
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Classificação</dt>
+              <dd class="mt-1">
+                <span
+                  class="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
+                  [class]="getClassificationColor(testDetail()!.classification)"
+                >
+                  {{ testDetail()!.classification }}
+                </span>
+              </dd>
+            </div>
+
+            @if (spiralTestDetail()) {
+            <div>
+              <dt class="text-sm font-medium text-gray-500">
+                Duração do Desenho
+              </dt>
+              <dd class="mt-1 text-lg text-gray-900">
+                {{ spiralTestDetail()!.draw_duration }}s
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Método</dt>
+              <dd class="mt-1 text-lg text-gray-900">
+                {{ spiralTestDetail()!.method }}
+              </dd>
+            </div>
+            } @if (voiceTestDetail()) {
+            <div>
+              <dt class="text-sm font-medium text-gray-500">
+                Duração da Gravação
+              </dt>
+              <dd class="mt-1 text-lg text-gray-900">
+                {{ voiceTestDetail()!.record_duration }}s
+              </dd>
+            </div>
+            }
+          </dl>
+        </div>
+      </div>
+
+      <!-- Anotações Médicas -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-200">
+          <h3 class="text-xl font-bold text-gray-900">Anotações Médicas</h3>
+          <p class="mt-1 text-sm text-gray-600">
+            Anotações compartilhadas pelos seus médicos sobre este teste
+          </p>
+        </div>
+
+        <div class="px-6 py-5">
+          @if (notes().length === 0) {
+          <div class="text-center py-8">
+            <svg
+              class="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">
+              Nenhuma anotação compartilhada
+            </h3>
+            <p class="mt-1 text-sm text-gray-500">
+              Seu médico ainda não adicionou anotações visíveis para este teste.
+            </p>
+          </div>
+          } @else {
+          <div class="space-y-4">
+            @for (note of notes(); track note.id) {
+            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+              <div class="flex justify-between items-start">
+                <div class="flex-1">
+                  <div class="flex items-center flex-wrap gap-2 mb-2">
+                    <span class="text-sm font-medium text-gray-900">
+                      Dr(a). {{ note.doctor.name }}
+                    </span>
+                    <span class="text-sm text-gray-500">
+                      (CRM: {{ note.doctor.crm }})
+                    </span>
+
+                    <!-- Badge de Categoria -->
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
+                      [class]="NoteCategoryColors[note.category].bg + ' ' + NoteCategoryColors[note.category].text + ' ' + NoteCategoryColors[note.category].border"
+                    >
+                      {{ NoteCategoryLabels[note.category] }}
+                    </span>
+
+                    @if (isNoteEdited(note)) {
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
+                      [title]="'Editado em ' + formatDate(note.updated_at)"
+                    >
+                      Editado
+                    </span>
+                    }
+                  </div>
+
+                  <!-- Timestamp -->
+                  <div class="text-xs text-gray-500 mb-2">
+                    Criado em {{ formatDate(note.created_at) }}
+                  </div>
+
+                  <p class="text-gray-700 whitespace-pre-wrap">
+                    {{ note.content }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

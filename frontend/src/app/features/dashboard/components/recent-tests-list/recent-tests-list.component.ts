@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
-interface RecentTest {
-  id: string;
-  type: 'Espiral' | 'Voz';
-  date: string;
-  score: number;
-}
+import { TimelineTestItem, TestType } from '../../../../core/models/patient-timeline.model';
 
 @Component({
   selector: 'app-recent-tests-list',
@@ -17,5 +11,24 @@ interface RecentTest {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentTestsListComponent {
-  tests = input.required<RecentTest[]>();
+  tests = input.required<TimelineTestItem[]>();
+
+  getTestTypeLabel(type: TestType): string {
+    return type === 'SPIRAL_TEST' ? 'Espiral' : 'Voz';
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
+
+  getClassificationColor(classification: string): string {
+    return classification === 'HEALTHY'
+      ? 'text-green-600 bg-green-50'
+      : 'text-red-600 bg-red-50';
+  }
 }
