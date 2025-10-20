@@ -3,13 +3,16 @@ import {
   Component,
   ElementRef,
   OnDestroy,
+  OnInit,
   ViewChild,
   signal,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { SpiralTestService } from '../../services/spiral-test.service';
+import { ClinicalTestService } from '../../services/clinical-test.service';
 import { SpiralTestResponse } from '../../../../core/models/spiral-test-response.model';
 
 declare const Hands: any;
@@ -21,7 +24,7 @@ declare const Camera: any;
   imports: [CommonModule],
   templateUrl: './spiral-test-webcam.html',
 })
-export class SpiralTestWebcam implements AfterViewInit, OnDestroy {
+export class SpiralTestWebcam implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
@@ -31,6 +34,13 @@ export class SpiralTestWebcam implements AfterViewInit, OnDestroy {
 
   private isDrawing = false;
   private userDrawing: { x: number; y: number }[][] = [];
+  private drawStartTime: number = 0;
+
+  // Context detection
+  private route = inject(ActivatedRoute);
+  private clinicalTestService = inject(ClinicalTestService);
+  private patientId: string | null = null;
+  private isClinicalMode = false;
 
   getModelKeys(results: SpiralTestResponse | null): string[] {
     if (!results) {
@@ -49,6 +59,18 @@ export class SpiralTestWebcam implements AfterViewInit, OnDestroy {
     private spiralTestService: SpiralTestService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    // Detect context: clinical test (with patientId) vs practice test
+    this.patientId = this.route.snapshot.paramMap.get('patientId');
+    this.isClinicalMode = !!this.patientId;
+
+    if (this.isClinicalMode) {
+      console.log(
+        `Modo clínico ativado para paciente ID: ${this.patientId}`
+      );
+    }
+  }
 
   ngAfterViewInit(): void {
     this.canvasContext = this.canvasElement.nativeElement.getContext('2d')!;
@@ -159,6 +181,7 @@ export class SpiralTestWebcam implements AfterViewInit, OnDestroy {
   startDrawing(): void {
     this.isDrawing = true;
     this.userDrawing.push([]);
+    this.drawStartTime = Date.now();
     this.feedbackMessage.set('Desenhe a espiral seguindo o modelo.');
   }
 
@@ -206,9 +229,28 @@ export class SpiralTestWebcam implements AfterViewInit, OnDestroy {
       if (blob) {
         const file = new File([blob], 'spiral.png', { type: 'image/png' });
         try {
-          const response = await lastValueFrom(
-            this.spiralTestService.uploadSpiralImage(file)
-          );
+          let response: any;
+
+          if (this.isClinicalMode && this.patientId) {
+            // Clinical mode: use ClinicalTestService
+            const drawDuration = Math.floor((Date.now() - this.drawStartTime) / 1000);
+            const method = 2; // WEBCAM method
+
+            response = await lastValueFrom(
+              this.clinicalTestService.processSpiralTest(
+                Number(this.patientId),
+                file,
+                drawDuration,
+                method
+              )
+            );
+          } else {
+            // Practice mode: use SpiralTestService
+            response = await lastValueFrom(
+              this.spiralTestService.uploadSpiralImage(file)
+            );
+          }
+
           this.uploadStatus.set('success');
           this.feedbackMessage.set('Análise concluída com sucesso!');
           this.analysisResults.set(response);
@@ -227,7 +269,13 @@ export class SpiralTestWebcam implements AfterViewInit, OnDestroy {
   }
 
   goBackToMethodSelection(): void {
-    this.router.navigate(['/dashboard/tests']);
+    if (this.isClinicalMode) {
+      // Clinical mode: go back to doctor dashboard
+      this.router.navigate(['/dashboard/doctor']);
+    } else {
+      // Practice mode: go back to test selection
+      this.router.navigate(['/dashboard/tests']);
+    }
   }
 
   drawGuideSpiral(forUpload = false): void {
