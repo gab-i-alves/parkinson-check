@@ -74,3 +74,27 @@ class PatientDashboardResponse(BaseModel):
     last_test_type: Optional[str] = None  # "spiral" | "voice"
     tests_count: int
     bind_id: int
+
+
+class AddressResponse(BaseModel):
+    street: str
+    number: str
+    complement: Optional[str] = None
+    neighborhood: str
+    city: str
+    state: str
+    cep: str
+
+
+class PatientFullProfileResponse(BaseModel):
+    """Schema completo do perfil do paciente para visualização detalhada"""
+    id: int
+    name: str
+    cpf: str
+    email: EmailStr
+    birthdate: date
+    age: int
+    address: AddressResponse
+    status: str  # "stable" | "attention" | "critical"
+    bind_id: int
+    created_at: Optional[str] = None  # Data de criação do vínculo

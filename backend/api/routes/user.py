@@ -7,6 +7,7 @@ from api.schemas.users import (
     DoctorListResponse,
     GetDoctorsSchema,
     PatientDashboardResponse,
+    PatientFullProfileResponse,
     PatientListResponse,
     UserResponse,
 )
@@ -69,3 +70,14 @@ def get_patients_dashboard(user: CurrentDoctor, session: Session = Depends(get_s
     """
     dashboard_data = patient_service.get_patients_dashboard_data(session, user)
     return dashboard_data
+
+
+@router.get("/patient/{patient_id}/profile", response_model=PatientFullProfileResponse)
+def get_patient_full_profile(
+    user: CurrentDoctor, patient_id: int, session: Session = Depends(get_session)
+):
+    """
+    Endpoint para o médico obter perfil completo de um paciente vinculado.
+    Inclui dados pessoais, endereço, idade, status, etc.
+    """
+    return patient_service.get_patient_full_profile(session, user, patient_id)
