@@ -73,15 +73,6 @@ CREATE TABLE IF NOT EXISTS "spiral_test" (
 );
 
 CREATE TABLE IF NOT EXISTS "note" (
-  "id" SERIAL PRIMARY KEY,
-  "content" TEXT NOT NULL,
-  "patient_view" BOOLEAN NOT NULL,
-  "test_id" INTEGER NOT NULL REFERENCES "test" ("id"),
-  "associated_note_id" INTEGER REFERENCES "note" ("id") ON DELETE CASCADE,
-  "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id")
-);
-
-CREATE TABLE IF NOT EXISTS "note" (
     "id" SERIAL PRIMARY KEY,
     "content" TEXT NOT NULL,
     "patient_view" BOOLEAN NOT NULL,

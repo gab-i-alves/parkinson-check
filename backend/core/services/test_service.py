@@ -17,8 +17,10 @@ from api.schemas.tests import (
     ProcessSpiralSchema,
     ProcessVoiceSchema,
     SpiralImageSchema,
+    SpiralTestDetail,
     SpiralTestResult,
     TimelineTestItem,
+    VoiceTestDetail,
     VoiceTestResult,
 )
 
@@ -496,3 +498,109 @@ def get_patient_test_timeline(
         timeline_items.append(TimelineTestItem(**item_data))
 
     return PatientTestTimeline(tests=timeline_items, total_count=len(timeline_items))
+
+
+def get_test_detail(
+    session: Session, doctor: User, test_id: int
+) -> SpiralTestDetail | VoiceTestDetail:
+    """
+    Busca os detalhes completos de um teste individual.
+    Retorna informações do teste e do paciente.
+
+    Args:
+        session: Sessão do banco de dados
+        doctor: Médico logado
+        test_id: ID do teste a ser buscado
+
+    Returns:
+        SpiralTestDetail ou VoiceTestDetail com informações completas
+
+    Raises:
+        HTTPException: Se teste não existe ou médico não tem acesso
+    """
+    from sqlalchemy.orm import joinedload
+
+    # Buscar o teste com joinedload do patient
+    test = (
+        session.query(Test)
+        .options(joinedload(Test.patient))
+        .filter(Test.id == test_id)
+        .first()
+    )
+
+    if not test:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Teste não encontrado."
+        )
+
+    # Validar se o médico tem acesso ao paciente
+    binds = get_user_active_binds(session, doctor)
+    if not binds or test.patient_id not in [bind.patient_id for bind in binds]:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="Você não tem acesso a este teste."
+        )
+
+    # Calcular classificação
+    classification = "HEALTHY" if test.score < 0.80 else "PARKINSON"
+
+    # Buscar dados específicos por tipo e retornar
+    if test.test_type == TestType.SPIRAL_TEST:
+        spiral_test = (
+            session.query(SpiralTest)
+            .options(joinedload(SpiralTest.patient))
+            .filter(SpiralTest.id == test_id)
+            .first()
+        )
+
+        if not spiral_test:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Detalhes do teste de espiral não encontrados."
+            )
+
+        return SpiralTestDetail(
+            id=spiral_test.id,
+            test_type=spiral_test.test_type,
+            execution_date=spiral_test.execution_date,
+            status=spiral_test.status,
+            score=spiral_test.score,
+            patient_id=spiral_test.patient_id,
+            draw_duration=spiral_test.draw_duration,
+            method=spiral_test.method,
+            patient=spiral_test.patient,
+            classification=classification
+        )
+
+    elif test.test_type == TestType.VOICE_TEST:
+        voice_test = (
+            session.query(VoiceTest)
+            .options(joinedload(VoiceTest.patient))
+            .filter(VoiceTest.id == test_id)
+            .first()
+        )
+
+        if not voice_test:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail="Detalhes do teste de voz não encontrados."
+            )
+
+        return VoiceTestDetail(
+            id=voice_test.id,
+            test_type=voice_test.test_type,
+            execution_date=voice_test.execution_date,
+            status=voice_test.status,
+            score=voice_test.score,
+            patient_id=voice_test.patient_id,
+            record_duration=voice_test.record_duration,
+            patient=voice_test.patient,
+            classification=classification
+        )
+
+    else:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Tipo de teste desconhecido."
+        )

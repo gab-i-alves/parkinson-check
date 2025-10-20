@@ -115,6 +115,33 @@ class DetaildTestsReturn(BaseModel):
     spiral_tests: list[SpiralTestReturn]
 
 
+# Schemas para detalhes de um teste individual
+
+
+class PatientInfo(BaseModel):
+    """Informações básicas do paciente"""
+    id: int
+    name: str
+
+    model_config = {"from_attributes": True}
+
+
+class VoiceTestDetail(VoiceTestReturn):
+    """Detalhes completos de um teste de voz individual"""
+    patient: PatientInfo
+    classification: Literal["HEALTHY", "PARKINSON"]
+
+    model_config = {"from_attributes": True}
+
+
+class SpiralTestDetail(SpiralTestReturn):
+    """Detalhes completos de um teste de espiral individual"""
+    patient: PatientInfo
+    classification: Literal["HEALTHY", "PARKINSON"]
+
+    model_config = {"from_attributes": True}
+
+
 # Schemas para testes clínicos (iniciados pelo médico)
 
 

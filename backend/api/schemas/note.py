@@ -26,8 +26,18 @@ class UpdateNoteSchema(BaseModel):
     patient_view: bool
 
 
+class DoctorInfo(BaseModel):
+    """Informações básicas do médico criador da nota"""
+    id: int
+    name: str
+    crm: str
+
+    model_config = {"from_attributes": True}
+
+
 class NoteResponse(NoteSchema):
     linked_notes: Optional[list[NoteSchema]]
     parent_note: Optional[NoteSchema]
-    
+    doctor: DoctorInfo
+
     model_config = {"from_attributes": True}

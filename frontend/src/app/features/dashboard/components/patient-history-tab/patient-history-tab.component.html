@@ -107,6 +107,12 @@
           >
             Detalhes
           </th>
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Ações
+          </th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
@@ -135,6 +141,14 @@
             } @else if (test.test_type === 'VOICE_TEST') {
             <span>Duração: {{ test.record_duration }}s</span>
             }
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <button
+              (click)="viewTestDetails(test.test_id)"
+              class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Ver Detalhes
+            </button>
           </td>
         </tr>
         }

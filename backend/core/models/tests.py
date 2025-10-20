@@ -1,11 +1,15 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.enums import SpiralMethods, TestStatus, TestType
 from core.models.table_registry import table_registry
+
+if TYPE_CHECKING:
+    from core.models.users import Patient
 
 
 @table_registry.mapped_as_dataclass
@@ -22,6 +26,13 @@ class Test:
     )
     score: Mapped[float] = mapped_column(nullable=False)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"))
+
+    # Relação com paciente
+    patient: Mapped["Patient"] = relationship(
+        "Patient",
+        foreign_keys=[patient_id],
+        init=False
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": "user",
