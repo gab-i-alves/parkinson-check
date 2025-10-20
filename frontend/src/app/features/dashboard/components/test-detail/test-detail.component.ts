@@ -259,6 +259,11 @@ export class TestDetailComponent implements OnInit {
     return note.doctor_id === this.currentUserId();
   }
 
+  isNoteEdited(note: Note): boolean {
+    // Verifica se a nota foi editada comparando timestamps
+    return new Date(note.updated_at).getTime() > new Date(note.created_at).getTime();
+  }
+
   goBack(): void {
     this.router.navigate(['/dashboard/patients']);
   }
