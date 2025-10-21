@@ -20,19 +20,19 @@ class Note:
 
     content: Mapped[str] = mapped_column()
     patient_view: Mapped[bool] = mapped_column()
+    test_id: Mapped[int] = mapped_column(ForeignKey("test.id"))
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
     category: Mapped[NoteCategory] = mapped_column(
         PG_ENUM(NoteCategory, name="note_category_enum", create_type=True),
         default=NoteCategory.OBSERVATION
     )
-    test_id: Mapped[int] = mapped_column(ForeignKey("test.id"))
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(init=False, default=func.now())
     updated_at: Mapped[datetime] = mapped_column(init=False, default=func.now(), onupdate=func.now())
 
     # Foreign key para a nota "pai"
     parent_note_id: Mapped[int] = mapped_column(
-        ForeignKey("note.id", ondelete="CASCADE"), nullable=True
+        ForeignKey("note.id", ondelete="CASCADE"), nullable=True, default=None
     )
 
     # Relação: médico que criou a nota
