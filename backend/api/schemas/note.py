@@ -1,13 +1,17 @@
+from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from core.enums import NoteCategory
 
 
 class CreateNoteSchema(BaseModel):
-    content: str
+    content: str = Field(..., min_length=10, max_length=5000)
     test_id: int
-    parent_note_id: Optional[int] 
-    patient_view: bool
+    parent_note_id: Optional[int] = None
+    patient_view: bool = False
+    category: NoteCategory = NoteCategory.OBSERVATION
 
 
 class NoteSchema(BaseModel):
@@ -16,14 +20,18 @@ class NoteSchema(BaseModel):
     test_id: int
     parent_note_id: Optional[int]
     patient_view: bool
+    category: NoteCategory
     doctor_id: int
-    
+    created_at: datetime
+    updated_at: datetime
+
     model_config = {"from_attributes": True}
 
 
 class UpdateNoteSchema(BaseModel):
-    content: str
+    content: str = Field(..., min_length=10, max_length=5000)
     patient_view: bool
+    category: NoteCategory
 
 
 class DoctorInfo(BaseModel):

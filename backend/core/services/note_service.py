@@ -11,9 +11,14 @@ from ..enums.user_enum import UserType
 
 
 def create_note(note: NoteSchema, session: Session, user: User) -> NoteResponse:
-    if note.content is None:
+    if note.content is None or len(note.content.strip()) < 10:
         raise HTTPException(
-            HTTPStatus.BAD_REQUEST, detail="O conteúdo da nota não pode estar vazio."
+            HTTPStatus.BAD_REQUEST, detail="O conteúdo da nota deve ter no mínimo 10 caracteres."
+        )
+
+    if len(note.content) > 5000:
+        raise HTTPException(
+            HTTPStatus.BAD_REQUEST, detail="O conteúdo da nota não pode exceder 5000 caracteres."
         )
 
     test: Test | None = session.query(Test).filter(Test.id == note.test_id).first()
@@ -31,6 +36,7 @@ def create_note(note: NoteSchema, session: Session, user: User) -> NoteResponse:
         parent_note_id=note.parent_note_id,
         doctor_id=user.id,
         patient_view=note.patient_view,
+        category=note.category,
     )
 
     session.add(note_db)
@@ -61,6 +67,7 @@ def get_notes(test_id: int, session: Session, user: User) -> list[NoteResponse]:
                 Note.patient_view == True,
                 Note.doctor_id.in_(doctors_ids),
             )
+            .order_by(Note.created_at.desc())
             .all()
         )
 
@@ -83,6 +90,7 @@ def get_notes(test_id: int, session: Session, user: User) -> list[NoteResponse]:
             session.query(Note)
             .options(joinedload(Note.doctor))
             .filter(Note.test_id == test_id)
+            .order_by(Note.created_at.desc())
             .all()
         )
 
@@ -104,6 +112,7 @@ def update_note(
 
     db_note.content = note_data.content
     db_note.patient_view = note_data.patient_view
+    db_note.category = note_data.category
 
     session.add(db_note)
     session.commit()

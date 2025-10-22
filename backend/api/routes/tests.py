@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from core.models.users import User
 from core.security.security import get_doctor_user, get_patient_user
 from core.services.test_service import (
+    get_my_test_detail,
+    get_my_tests_timeline,
     get_patient_detaild_tests,
     get_patient_test_statistics,
     get_patient_test_timeline,
@@ -186,3 +188,35 @@ def get_test_details(
     Retorna SpiralTestDetail ou VoiceTestDetail dependendo do tipo do teste.
     """
     return get_test_detail(session, user, test_id)
+
+
+# Endpoints para pacientes visualizarem seus próprios testes
+
+
+@router.get("/my-tests/timeline", response_model=PatientTestTimeline)
+def get_my_timeline(
+    user: CurrentPatient, session: Session = Depends(get_session)
+):
+    """
+    Retorna timeline completa de testes do próprio paciente ordenada cronologicamente.
+    Útil para visualizações e gráficos de progressão do paciente.
+
+    Requer autenticação de paciente.
+    """
+    return get_my_tests_timeline(session, user)
+
+
+@router.get("/my-tests/{test_id}")
+def get_my_test_details(
+    user: CurrentPatient, test_id: int, session: Session = Depends(get_session)
+):
+    """
+    Retorna os detalhes completos de um teste do próprio paciente.
+    Inclui informações do teste e classificação.
+
+    O paciente só pode visualizar seus próprios testes.
+    Retorna SpiralTestDetail ou VoiceTestDetail dependendo do tipo do teste.
+
+    Requer autenticação de paciente.
+    """
+    return get_my_test_detail(session, user, test_id)

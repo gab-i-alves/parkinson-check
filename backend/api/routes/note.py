@@ -24,8 +24,9 @@ def add_test_note(
 ):
     """
     Adiciona uma nota para um teste ou atrela uma nota a uma pré-existente
-    (associated_note_id). O controle de vizualização do paciente é feito
-    pela flag "patient_view".
+    (parent_note_id). O controle de visualização do paciente é feito
+    pela flag "patient_view". A categoria da nota pode ser: OBSERVATION,
+    RECOMMENDATION ou ALERT.
     """
     return create_note(note, session, user)
 

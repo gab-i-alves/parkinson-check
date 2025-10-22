@@ -1,20 +1,15 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { RecentTestsListComponent } from '../recent-tests-list/recent-tests-list.component';
+import { TestDetailService } from '../../services/test-detail.service';
+import { TimelineTestItem } from '../../../../core/models/patient-timeline.model';
 
 interface SummaryStat {
   label: string;
   value: string;
   icon: string;
-}
-
-interface RecentTest {
-  id: string;
-  type: 'Espiral' | 'Voz';
-  date: string;
-  score: number;
 }
 
 @Component({
@@ -28,22 +23,88 @@ interface RecentTest {
   templateUrl: './patient-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PatientDashboardComponent {
+export class PatientDashboardComponent implements OnInit {
+  private testDetailService = inject(TestDetailService);
+
   readonly isLoading = signal<boolean>(true);
+  readonly summaryStats = signal<SummaryStat[]>([]);
+  readonly recentTests = signal<TimelineTestItem[]>([]);
 
-  readonly summaryStats = signal<SummaryStat[]>([
-    { label: 'Testes Realizados', value: '12', icon: 'clipboard' },
-    { label: 'Pontuação Média (Espiral)', value: '86/100', icon: 'spiral' },
-    { label: 'Pontuação Média (Voz)', value: '78/100', icon: 'voice' },
-    { label: 'Consistência dos Testes', value: '92%', icon: 'chart' },
-  ]);
+  ngOnInit(): void {
+    this.loadTestsData();
+  }
 
-  readonly recentTests = signal<RecentTest[]>([
-    { id: '1', type: 'Voz', date: '2025-08-05', score: 82 },
-    { id: '2', type: 'Espiral', date: '2025-08-04', score: 88 },
-  ]);
+  private loadTestsData(): void {
+    this.testDetailService.getMyTestsTimeline().subscribe({
+      next: (timeline) => {
+        const tests = timeline.tests;
 
-  constructor() {
-    setTimeout(() => this.isLoading.set(false), 1000);
+        // Calculate statistics
+        const totalTests = tests.length;
+        const spiralTests = tests.filter(t => t.test_type === 'SPIRAL_TEST');
+        const voiceTests = tests.filter(t => t.test_type === 'VOICE_TEST');
+
+        const avgSpiralScore = spiralTests.length > 0
+          ? spiralTests.reduce((sum, t) => sum + t.score, 0) / spiralTests.length
+          : 0;
+
+        const avgVoiceScore = voiceTests.length > 0
+          ? voiceTests.reduce((sum, t) => sum + t.score, 0) / voiceTests.length
+          : 0;
+
+        // Calculate consistency (variance-based metric)
+        const consistency = totalTests > 1 ? this.calculateConsistency(tests) : 100;
+
+        // Update summary stats
+        this.summaryStats.set([
+          {
+            label: 'Testes Realizados',
+            value: totalTests.toString(),
+            icon: 'clipboard'
+          },
+          {
+            label: 'Pontuação Média (Espiral)',
+            value: spiralTests.length > 0
+              ? `${(avgSpiralScore * 100).toFixed(0)}/100`
+              : 'N/A',
+            icon: 'spiral'
+          },
+          {
+            label: 'Pontuação Média (Voz)',
+            value: voiceTests.length > 0
+              ? `${(avgVoiceScore * 100).toFixed(0)}/100`
+              : 'N/A',
+            icon: 'voice'
+          },
+          {
+            label: 'Consistência dos Testes',
+            value: `${consistency.toFixed(0)}%`,
+            icon: 'chart'
+          },
+        ]);
+
+        // Set recent tests (already ordered by date DESC from backend)
+        this.recentTests.set(tests.slice(0, 5));
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar testes:', err);
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  private calculateConsistency(tests: TimelineTestItem[]): number {
+    if (tests.length < 2) return 100;
+
+    const scores = tests.map(t => t.score);
+    const mean = scores.reduce((sum, s) => sum + s, 0) / scores.length;
+    const variance = scores.reduce((sum, s) => sum + Math.pow(s - mean, 2), 0) / scores.length;
+    const stdDev = Math.sqrt(variance);
+
+    // Convert to percentage (lower variance = higher consistency)
+    // Assuming max stdDev of 0.5 maps to 0% consistency
+    const consistency = Math.max(0, 100 - (stdDev * 200));
+    return consistency;
   }
 }

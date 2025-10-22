@@ -8,6 +8,8 @@ CREATE TYPE test_type_enum AS ENUM ('SPIRAL_TEST', 'VOICE_TEST');
 
 CREATE TYPE spiral_methods_enum AS ENUM ('WEBCAM', 'PAPER');
 
+CREATE TYPE note_category_enum AS ENUM ('OBSERVATION', 'RECOMMENDATION', 'ALERT');
+
 CREATE TABLE IF NOT EXISTS "address" (
   "id" SERIAL PRIMARY KEY,
   "cep" char(8),
@@ -76,9 +78,12 @@ CREATE TABLE IF NOT EXISTS "note" (
     "id" SERIAL PRIMARY KEY,
     "content" TEXT NOT NULL,
     "patient_view" BOOLEAN NOT NULL,
+    "category" note_category_enum NOT NULL DEFAULT 'OBSERVATION',
     "test_id" INTEGER NOT NULL REFERENCES "test" ("id"),
     "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
-    "parent_note_id" INTEGER DEFAULT NULL REFERENCES "note" ("id") ON DELETE CASCADE
+    "parent_note_id" INTEGER DEFAULT NULL REFERENCES "note" ("id") ON DELETE CASCADE,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -93,5 +98,12 @@ DROP TRIGGER IF EXISTS update_table_updated_at on "user";
 
 CREATE TRIGGER update_table_updated_at
 BEFORE UPDATE ON "user"
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_note_updated_at ON "note";
+
+CREATE TRIGGER update_note_updated_at
+BEFORE UPDATE ON "note"
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
