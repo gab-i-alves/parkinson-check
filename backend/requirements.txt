@@ -14,3 +14,4 @@ pytest
 pytest-mock
 pytest-cov
 faker
+fastapi-mail
