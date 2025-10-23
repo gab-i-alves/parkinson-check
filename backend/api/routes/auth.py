@@ -49,8 +49,8 @@ def logout(response: Response):
 
 
 @router.post("/forgot-password")
-def forgot_password(request: ForgotPasswordRequest, session: Session = Depends(get_session)):
-    auth_service.request_password_reset(request.email, session)
+async def forgot_password(request: ForgotPasswordRequest, session: Session = Depends(get_session)):
+    await auth_service.request_password_reset(request.email, session)
     return {"message": "Se o email existir, você receberá instruções para a redefinição"}
 
 @router.post("/reset-password")

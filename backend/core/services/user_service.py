@@ -4,7 +4,6 @@ from fastapi import HTTPException
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from backend.core.security.security import get_password_hash
 from core.models import Bind, Doctor, Patient, User
 
 from ..enums.bind_enum import BindEnum
@@ -75,6 +74,8 @@ def get_user_by_reset_token(token: str, session: Session) -> User:
     return user
 
 def update_password(user: User, new_password: str, session: Session):
+    from core.security.security import get_password_hash
+
     db_user = session.query(User).filter(User.id == user.id).first()
 
     db_user.hashed_password = get_password_hash(new_password)

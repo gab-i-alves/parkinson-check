@@ -6,6 +6,7 @@ import { User } from '../../../core/models/user.model';
 import { LoginForm } from '../../../core/models/login.model';
 import { UserService } from '../../../core/services/user.service';
 import { environment } from '../../../../environments/environment';
+import { ForgotPasswordRequest, ResetPasswordRequest } from '../../../core/models/reset-password-request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -86,5 +87,13 @@ export class AuthService {
 
   registerDoctor(doctorData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register/doctor`, doctorData);
+  }
+
+  forgotPassword(email: ForgotPasswordRequest): Observable<any> {
+    return this.http.post<ForgotPasswordRequest>(`${this.apiUrl}/auth/forgot-password`, email)
+  }
+
+  resetPassword(request: ResetPasswordRequest): Observable<any> {
+    return this.http.post<ResetPasswordRequest>(`${this.apiUrl}/auth/reset-password`, request)
   }
 }
