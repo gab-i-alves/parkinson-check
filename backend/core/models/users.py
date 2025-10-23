@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey
@@ -27,6 +27,8 @@ class User:
     )
     address_id: Mapped[int] = mapped_column(ForeignKey("address.id"))
     address: Mapped["Address"] = relationship(init=False, back_populates="users")
+    reset_token: Mapped[str | None] = mapped_column(nullable=True)
+    reset_token_expiry: Mapped[datetime | None] = mapped_column(nullable=True)
 
     __mapper_args__ = {
         "polymorphic_identity": "user",
