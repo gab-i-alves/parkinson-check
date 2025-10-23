@@ -61,7 +61,8 @@ def get_binded_users(user: User, session: Session) -> list[dict[int, Patient | D
 def set_reset_token(user: User, reset_token: str, token_expiry: str, session: Session): 
      db_user = session.query(User).filter(User.id == user.id).first()
 
-
+     db_user.reset_token = reset_token
+     db_user.reset_token_expiry = token_expiry
 
      session.add(db_user)
      session.commit()
