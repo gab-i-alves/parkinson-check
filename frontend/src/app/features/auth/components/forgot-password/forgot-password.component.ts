@@ -1,9 +1,15 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '../../services/auth.services';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../../core/services/user.service';
-import { ForgotPasswordRequest} from '../../../../core/models/reset-password-request.model';
+import { ForgotPasswordRequest } from '../../../../core/models/reset-password-request.model';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -21,16 +27,14 @@ export class ForgotPassword {
 
   buttonTouched = false;
 
-    constructor(
+  constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private userService: UserService
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.forgotPasswordForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
@@ -44,17 +48,17 @@ export class ForgotPassword {
     this.isLoading = true;
     this.forgotPasswordForm.disable();
 
-    let email = this.forgotPasswordForm.value.email!
+    let email = this.forgotPasswordForm.value.email!;
     const request: ForgotPasswordRequest = {
       email: this.forgotPasswordForm.value.email!,
     };
 
     console.log('Email:', email);
 
-      this.authService.forgotPassword(request).subscribe({
+    this.authService.forgotPassword(request).subscribe({
       next: () => {
         console.log('Um email foi enviado para redefinição de senha.');
-        alert('Um email foi enviado para redefinição de senha.')
+        alert('Um email foi enviado para redefinição de senha.');
       },
       error: (err: any) => {
         console.error('Erro ao enviar solicitação:', err);
