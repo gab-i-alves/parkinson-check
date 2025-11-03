@@ -20,16 +20,28 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(reqWithCredentials).pipe(
     catchError((error: HttpErrorResponse) => {
+      const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password'];
+      
+      // Checar as rotas publicas antes de interceptar
+
+      
+
       // Executa tratamento de erro dentro do contexto de injeção
       runInInjectionContext(injector, () => {
         const router = inject(Router);
         const userService = inject(UserService);
 
+      // Se a URL atual deve ser publica, não redirecione.
+      const isPublicRoute = publicRoutes.some(route => router.url.startsWith(route));
+
         if (error.status === 401) {
           // Token expirado ou inválido - limpar sessão e redirecionar
-          console.warn('Sessão expirada. Redirecionando para login...');
           userService.setCurrentUser(null);
-          router.navigate(['/auth/login']);
+          if (!isPublicRoute) {
+            console.warn('Sessão expirada. Redirecionando para login...');
+            router.navigate(['/auth/login']);
+          }
+
         } else if (error.status === 403) {
           // Sem permissão - redirecionar para dashboard apropriado
           const currentUser = userService.getCurrentUser();
