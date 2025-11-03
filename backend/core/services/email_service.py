@@ -1,36 +1,33 @@
-from pathlib import Path
 from fastapi import BackgroundTasks
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from jinja2 import Environment, FileSystemLoader
 
-from infra.settings import Settings
-
-TEMPLATE_PATH = Path(__file__).parent.parent / "utils" / "email_templates"
+from infra.settings import settings
 
 env = Environment(
-    loader=FileSystemLoader(TEMPLATE_PATH),
+    loader=FileSystemLoader(settings.EMAIL_TEMPLATES_PATH),
     autoescape=True
 )
 
 conf = ConnectionConfig(
-    MAIL_USERNAME=Settings().SMTP_USER,
-    MAIL_PASSWORD=Settings().SMTP_PASSWORD,
-    MAIL_PORT=Settings().SMTP_PORT,
-    MAIL_SERVER=Settings().SMTP_HOST,
+    MAIL_USERNAME=settings.SMTP_USER,
+    MAIL_PASSWORD=settings.SMTP_PASSWORD,
+    MAIL_PORT=settings.SMTP_PORT,
+    MAIL_SERVER=settings.SMTP_HOST,
     USE_CREDENTIALS=True,
-    TEMPLATE_FOLDER=TEMPLATE_PATH,
+    TEMPLATE_FOLDER=settings.EMAIL_TEMPLATES_PATH,
     MAIL_STARTTLS=True,
     MAIL_SSL_TLS=False,
-    MAIL_FROM=Settings().SMTP_USER
+    MAIL_FROM=settings.SMTP_USER
 )
 
         
 
-async def send_password_reset_email_background(background_tasks: BackgroundTasks, email_to: str, token: dict):
+async def send_password_reset_email_background(background_tasks: BackgroundTasks, email_to: str, token: str):
         background_tasks.add_task(send_password_reset_email, email_to, token)
 
-async def send_password_reset_email(email_to: str, token: dict):
-    context = {"token": token,} # Adicione o contexto real aqui
+async def send_password_reset_email(email_to: str, token: str):
+    context = {"token": token}
 
     template = env.get_template('password_reset.html')
     html_body = template.render(context)

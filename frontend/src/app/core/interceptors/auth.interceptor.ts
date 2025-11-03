@@ -20,7 +20,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(reqWithCredentials).pipe(
     catchError((error: HttpErrorResponse) => {
-      const publicRoutes = ['/auth/login', '/auth/register', '/auth/forget-password', '/auth/reset-password'];
+      const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password'];
       
       // Checar as rotas publicas antes de interceptar
 

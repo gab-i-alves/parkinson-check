@@ -3,12 +3,12 @@
 -- Description: Adiciona campos referentes ao token de redefinição de senha
 
 -- Adiciona a coluna 'reset_token' (string, permite nulo)
-ALTER TABLE "user" 
+ALTER TABLE "user"
 ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255) NULL;
 
--- Adiciona a coluna 'reset_token_expiry' (timestamp, permite nulo)
+-- Adiciona a coluna 'reset_token_expiry' (timestamp with timezone, permite nulo)
 ALTER TABLE "user"
-ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP WITHOUT TIME ZONE NULL;
+ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP WITH TIME ZONE NULL;
 
 
 -- Verificar que a migration foi aplicada

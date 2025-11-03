@@ -46,11 +46,15 @@ def reset_password(token: str, new_password: str, session: Session):
             HTTPStatus.NOT_FOUND, detail="O token de redefinição não existe"
         )
 
-    if user.reset_token_expiry < datetime.now():
+    # Ensure both datetimes are timezone-aware for comparison
+    expiry = user.reset_token_expiry
+    if expiry.tzinfo is None:
+        expiry = expiry.replace(tzinfo=timezone.utc)
+
+    if expiry < datetime.now(tz=timezone.utc):
         raise HTTPException(
             HTTPStatus.FORBIDDEN, detail="O token de redefinição expirou, tente novamente"
         )
-    
-    if not get_password_hash(new_password) == user.hashed_password:
-        update_password(user, new_password, session)
+
+    update_password(user, new_password, session)
 

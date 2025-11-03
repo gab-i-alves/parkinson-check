@@ -19,6 +19,10 @@ class Settings(BaseSettings):
 
     BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
     MODEL_PATH: str = os.path.join(BASE_DIR, "models", "rf_model.pkl")
+    EMAIL_TEMPLATES_PATH: str = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "core", "utils", "email_templates"
+    )
 
 
 settings = Settings()

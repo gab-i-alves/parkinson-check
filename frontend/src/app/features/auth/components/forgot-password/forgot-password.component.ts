@@ -24,6 +24,7 @@ export class ForgotPassword {
 
   isLoading = false;
   apiError: string | null = null;
+  successMessage: string | null = null;
 
   buttonTouched = false;
 
@@ -45,6 +46,7 @@ export class ForgotPassword {
     }
 
     this.apiError = null;
+    this.successMessage = null;
     this.isLoading = true;
     this.forgotPasswordForm.disable();
 
@@ -58,7 +60,7 @@ export class ForgotPassword {
     this.authService.forgotPassword(request).subscribe({
       next: () => {
         console.log('Um email foi enviado para redefinição de senha.');
-        alert('Um email foi enviado para redefinição de senha.');
+        this.successMessage = 'Um email foi enviado para redefinição de senha. Verifique sua caixa de entrada.';
       },
       error: (err: any) => {
         console.error('Erro ao enviar solicitação:', err);
