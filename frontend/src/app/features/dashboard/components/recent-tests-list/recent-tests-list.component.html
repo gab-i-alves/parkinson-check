@@ -66,13 +66,15 @@
               </svg>
               <p>
                 Realizado em
-                <time [attr.datetime]="test.execution_date">{{ formatDate(test.execution_date) }}</time>
+                <time [attr.datetime]="test.execution_date">{{
+                  formatDate(test.execution_date)
+                }}</time>
               </p>
               <p class="ml-4 pl-4 border-l border-gray-200">
                 Pontuação:
-                <span class="font-semibold text-gray-800">{{
-                  (test.score * 100).toFixed(0)
-                }}/100</span>
+                <span class="font-semibold text-gray-800"
+                  >{{ (test.score * 100).toFixed(0) }}/100</span
+                >
               </p>
             </div>
           </div>
@@ -120,7 +122,7 @@
     <div class="mt-6">
       <a
         routerLink="/dashboard/tests"
-        class="inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-dark"
+        class="inline-flex items-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-700"
       >
         <svg
           class="-ml-0.5 mr-1.5 h-5 w-5"
