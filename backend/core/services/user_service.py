@@ -55,5 +55,6 @@ def get_binded_users(user: User, session: Session) -> list[dict[int, Patient | D
     result: list[dict[int, Patient | Doctor]] = [
         {"bind_id": bind_id, "user": users_dict[user_id]}
         for bind_id, user_id in bind_user_pairs
+        if user_id in users_dict  # ← Ignora binds com usuários inexistentes
     ]
     return result

@@ -145,7 +145,6 @@ export class RegisterComponent implements OnInit {
       'Dados do Cadastro (Paciente):',
       this.patientRegisterForm.value
     );
-
     this.authService.registerPatient(this.patientRegisterForm.value).subscribe({
       next: (response: any) => {
         console.log('Cadastro de paciente bem-sucedido!', response);
