@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 from core.enums import SpiralMethods, TestStatus, TestType
 
+
 class SpiralImageSchema(BaseModel):
     image_content: bytes
     image_filename: str
@@ -19,26 +20,27 @@ class SpiralImageSchema(BaseModel):
             image_content_type=image.content_type,
         )
 
+
 class ProcessSpiralSchema(BaseModel):
     image: SpiralImageSchema
     draw_duration: float
     method: SpiralMethods
-    
+
     @classmethod
     def as_form(
         cls,
         draw_duration: float = Form(...),
         method: int = Form(...),
-        image: UploadFile = File(...)
+        image: UploadFile = File(...),
     ):
         return cls(
             image=SpiralImageSchema(
                 image_content=image.file.read(),
                 image_filename=image.filename,
-                image_content_type=image.content_type
+                image_content_type=image.content_type,
             ),
             draw_duration=draw_duration,
-            method=SpiralMethods(method)
+            method=SpiralMethods(method),
         )
 
 
@@ -91,18 +93,13 @@ class VoiceTestReturn(BaseTest):
 
 class ProcessVoiceSchema(BaseModel):
     record_duration: float
-    audio_file: UploadFile   
-    
+    audio_file: UploadFile
+
     @classmethod
     def as_form(
-        cls,
-        record_duration: float = Form(...),
-        audio_file: UploadFile = File(...)
+        cls, record_duration: float = Form(...), audio_file: UploadFile = File(...)
     ):
-        return cls(
-            record_duration=record_duration,
-            audio_file=audio_file
-        )
+        return cls(record_duration=record_duration, audio_file=audio_file)
 
 
 class SpiralTestReturn(BaseTest):
@@ -120,6 +117,7 @@ class DetaildTestsReturn(BaseModel):
 
 class PatientInfo(BaseModel):
     """Informações básicas do paciente"""
+
     id: int
     name: str
 
@@ -128,6 +126,7 @@ class PatientInfo(BaseModel):
 
 class VoiceTestDetail(VoiceTestReturn):
     """Detalhes completos de um teste de voz individual"""
+
     patient: PatientInfo
     classification: Literal["HEALTHY", "PARKINSON"]
 
@@ -136,6 +135,7 @@ class VoiceTestDetail(VoiceTestReturn):
 
 class SpiralTestDetail(SpiralTestReturn):
     """Detalhes completos de um teste de espiral individual"""
+
     patient: PatientInfo
     classification: Literal["HEALTHY", "PARKINSON"]
 
@@ -229,20 +229,42 @@ class PatientTestStatistics(BaseModel):
     total_tests: int = Field(..., description="Total de testes realizados")
     total_spiral_tests: int = Field(..., description="Total de testes de espiral")
     total_voice_tests: int = Field(..., description="Total de testes de voz")
-    avg_spiral_score: Optional[float] = Field(None, description="Score médio de testes de espiral")
-    avg_voice_score: Optional[float] = Field(None, description="Score médio de testes de voz")
+    avg_spiral_score: Optional[float] = Field(
+        None, description="Score médio de testes de espiral"
+    )
+    avg_voice_score: Optional[float] = Field(
+        None, description="Score médio de testes de voz"
+    )
     last_test_date: Optional[datetime] = Field(None, description="Data do último teste")
-    days_since_last_test: Optional[int] = Field(None, description="Dias desde o último teste")
+    days_since_last_test: Optional[int] = Field(
+        None, description="Dias desde o último teste"
+    )
     first_test_date: Optional[datetime] = Field(None, description="Data do primeiro teste")
-    trend: Literal["improving", "stable", "worsening"] = Field(..., description="Tendência geral")
+    trend: Literal["improving", "stable", "worsening"] = Field(
+        ..., description="Tendência geral"
+    )
     trend_percentage: float = Field(..., description="Percentual de mudança na tendência")
-    best_spiral_score: Optional[float] = Field(None, description="Melhor score em teste de espiral")
-    worst_spiral_score: Optional[float] = Field(None, description="Pior score em teste de espiral")
-    best_voice_score: Optional[float] = Field(None, description="Melhor score em teste de voz")
-    worst_voice_score: Optional[float] = Field(None, description="Pior score em teste de voz")
-    healthy_classification_count: int = Field(..., description="Testes classificados como HEALTHY")
-    parkinson_classification_count: int = Field(..., description="Testes classificados como PARKINSON")
-    avg_test_interval_days: Optional[float] = Field(None, description="Intervalo médio entre testes em dias")
+    best_spiral_score: Optional[float] = Field(
+        None, description="Melhor score em teste de espiral"
+    )
+    worst_spiral_score: Optional[float] = Field(
+        None, description="Pior score em teste de espiral"
+    )
+    best_voice_score: Optional[float] = Field(
+        None, description="Melhor score em teste de voz"
+    )
+    worst_voice_score: Optional[float] = Field(
+        None, description="Pior score em teste de voz"
+    )
+    healthy_classification_count: int = Field(
+        ..., description="Testes classificados como HEALTHY"
+    )
+    parkinson_classification_count: int = Field(
+        ..., description="Testes classificados como PARKINSON"
+    )
+    avg_test_interval_days: Optional[float] = Field(
+        None, description="Intervalo médio entre testes em dias"
+    )
 
 
 class TimelineTestItem(BaseModel):
@@ -266,5 +288,7 @@ class TimelineTestItem(BaseModel):
 class PatientTestTimeline(BaseModel):
     """Timeline completa de testes de um paciente"""
 
-    tests: list[TimelineTestItem] = Field(..., description="Lista de testes ordenados cronologicamente")
+    tests: list[TimelineTestItem] = Field(
+        ..., description="Lista de testes ordenados cronologicamente"
+    )
     total_count: int = Field(..., description="Total de testes")

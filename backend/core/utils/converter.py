@@ -29,12 +29,7 @@ def convert_webm_to_wav(upload_file: UploadFile) -> str:
             "1",
             temp_wav_path,
         ]
-        subprocess.run(
-            command,
-            check=True,
-            capture_output=True,
-            text=True
-        )
+        subprocess.run(command, check=True, capture_output=True, text=True)
         return temp_wav_path
     except subprocess.CalledProcessError as e:
         print(f"Erro do FFMPEG: {e.stderr}")

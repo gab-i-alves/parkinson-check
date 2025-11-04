@@ -36,6 +36,7 @@ class UpdateNoteSchema(BaseModel):
 
 class DoctorInfo(BaseModel):
     """Informações básicas do médico criador da nota"""
+
     id: int
     name: str
     crm: str

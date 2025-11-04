@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, TIMESTAMP
+from sqlalchemy import TIMESTAMP, ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -9,7 +9,7 @@ from core.enums import BindEnum, UserType
 from core.models.table_registry import table_registry
 
 if TYPE_CHECKING:
-    from . import Address
+    from . import Address, Notification
 
 
 @table_registry.mapped_as_dataclass
@@ -30,6 +30,10 @@ class User:
     reset_token: Mapped[str | None] = mapped_column(init=False, nullable=True, default=None)
     reset_token_expiry: Mapped[datetime | None] = mapped_column(
         TIMESTAMP(timezone=True), init=False, nullable=True, default=None
+    )
+
+    notifications: Mapped[list["Notification"]] = relationship(
+        init=False, back_populates="user", cascade="all, delete-orphan"
     )
 
     __mapper_args__ = {

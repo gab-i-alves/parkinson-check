@@ -63,6 +63,7 @@ class PatientListResponse(UserResponse):
     location: str
     bind_id: Optional[int] = None
 
+
 class PatientDashboardResponse(BaseModel):
     id: int
     name: str
@@ -88,6 +89,7 @@ class AddressResponse(BaseModel):
 
 class PatientFullProfileResponse(BaseModel):
     """Schema completo do perfil do paciente para visualização detalhada"""
+
     id: int
     name: str
     cpf: str

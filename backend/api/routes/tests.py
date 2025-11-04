@@ -34,9 +34,7 @@ from ..schemas.tests import (
     ProcessSpiralSchema,
     ProcessVoiceSchema,
     SpiralImageSchema,
-    SpiralTestDetail,
     SpiralTestResult,
-    VoiceTestDetail,
     VoiceTestResult,
 )
 
@@ -72,6 +70,7 @@ def process_voice_test(
     """
     model_result, _ = process_voice(schema, user, session)
     return model_result
+
 
 @router.post("/spiral/practice", response_model=SpiralTestResult)
 def practice_spiral_test(
@@ -194,9 +193,7 @@ def get_test_details(
 
 
 @router.get("/my-tests/timeline", response_model=PatientTestTimeline)
-def get_my_timeline(
-    user: CurrentPatient, session: Session = Depends(get_session)
-):
+def get_my_timeline(user: CurrentPatient, session: Session = Depends(get_session)):
     """
     Retorna timeline completa de testes do próprio paciente ordenada cronologicamente.
     Útil para visualizações e gráficos de progressão do paciente.

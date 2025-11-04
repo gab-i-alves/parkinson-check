@@ -8,8 +8,8 @@ from api.schemas.users import DoctorListResponse, DoctorSchema, GetDoctorsSchema
 from core.models import Bind, Doctor, Patient, User
 from core.security.security import get_password_hash
 
-from ..enums import BindEnum, UserType
-from . import address_service, user_service
+from ..enums import BindEnum, UserType, NotificationType
+from . import address_service, user_service, notification_service
 from .user_service import get_binded_users
 
 
@@ -161,15 +161,37 @@ def activate_or_reject_binding_request(
     session: Session,
     new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED],
 ) -> Bind:
-    bind_to_reject = session.query(Bind).filter_by(id=binding_id, doctor_id=user.id).first()
+    binding = session.query(Bind).filter_by(id=binding_id, doctor_id=user.id).first()
 
-    if not bind_to_reject:
+    if not binding:
         return HTTPException(HTTPStatus.NOT_FOUND, detail="Solicitação não encontrada")
 
-    bind_to_reject.status = new_status
+    binding.status = new_status
 
-    session.add(bind_to_reject)
+    if new_status == BindEnum.ACTIVE:
+        # --- INÍCIO DA NOTIFICAÇÃO DE ACEITE ---
+        notification_service.create_notification(
+            db=session,
+            user_id=binding.patient_id,  # Notifica o PACIENTE
+            message=f"O médico {user.name} aceitou sua solicitação de vínculo.",
+            type=NotificationType.BIND_ACCEPTED,
+            related_entity_id=binding.id
+        )
+        # --- FIM DA NOTIFICAÇÃO DE ACEITE ---
+        
+    elif new_status == BindEnum.REJECTED:
+        # --- (Opcional) NOTIFICAÇÃO DE REJEIÇÃO ---
+        notification_service.create_notification(
+            db=session,
+            user_id=binding.patient_id, # Notifica o PACIENTE
+            message=f"O médico {user.name} rejeitou sua solicitação de vínculo.",
+            type=NotificationType.BIND_REJECTED,
+            related_entity_id=binding.id
+        )
+        # --- FIM DA NOTIFICAÇÃO ---
+
+    session.add(binding)
     session.commit()
-    session.refresh(bind_to_reject)
+    session.refresh(binding)
 
-    return bind_to_reject
+    return binding

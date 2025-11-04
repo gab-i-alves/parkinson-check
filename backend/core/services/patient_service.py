@@ -2,7 +2,7 @@ from datetime import date
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from sqlalchemy import or_, func, desc
+from sqlalchemy import desc, or_
 from sqlalchemy.orm import Session
 
 from api.schemas.binding import RequestBinding
@@ -15,10 +15,10 @@ from api.schemas.users import (
 )
 from core.models import Bind, Doctor, Patient, Test, User
 from core.security.security import get_password_hash
-from core.services import address_service, user_service
+from core.services import address_service, user_service, notification_service
 from core.services.user_service import get_binded_users
 
-from ..enums import BindEnum, TestType, UserType
+from ..enums import BindEnum, TestType, UserType, NotificationType
 
 
 def create_patient(patient: PatientSchema, session: Session):
@@ -106,6 +106,19 @@ def create_bind_request(request: RequestBinding, user: User, session: Session) -
         )
 
     session.add(db_bind)
+    session.flush()
+    
+    try:      
+        notification_service.create_notification(
+            session,
+            user,
+            message=f"O paciente {user.name} enviou uma solicitação de vinculo.",
+            type=NotificationType.BIND_REQUEST,
+            bind_id=db_bind.id
+        )
+    except Exception as e:
+        raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, detail=f"Erro ao criar notificação: {e}")
+    
     session.commit()
     session.refresh(db_bind)
     return db_bind
@@ -162,7 +175,11 @@ def get_binded_patients(session: Session, current_user: User) -> list[PatientLis
 def calculate_age(birthdate: date) -> int:
     """Calcula idade a partir da data de nascimento"""
     today = date.today()
-    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+    age = (
+        today.year
+        - birthdate.year
+        - ((today.month, today.day) < (birthdate.month, birthdate.day))
+    )
     return age
 
 
@@ -265,11 +282,7 @@ def get_patient_full_profile(
         )
 
     # Busca paciente com endereço
-    patient = (
-        session.query(Patient)
-        .filter(Patient.id == patient_id)
-        .first()
-    )
+    patient = session.query(Patient).filter(Patient.id == patient_id).first()
 
     if not patient:
         raise HTTPException(

@@ -1,10 +1,8 @@
-import os
 from http import HTTPStatus
-from ..utils import ai
-import httpx
+
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
-from ..enums.test_enum import TestType, TestStatus
+
 from api.schemas.tests import (
     BasicTestReturn,
     ClinicalProcessSpiralSchema,
@@ -24,11 +22,14 @@ from api.schemas.tests import (
     VoiceTestResult,
 )
 
+from ..enums.test_enum import TestStatus, TestType
 from ..models import SpiralTest, Test, User, VoiceTest
+from ..utils import ai
 from .user_service import get_user_active_binds
 
 SPIRAL_MODEL_SERVICE_URL = "http://spiral-classifier:8001/predict/spiral"
 VOICE_MODEL_SERVICE_URL = "http://voice-classifier:8002/predict/voice"
+
 
 def process_spiral(
     schema: ProcessSpiralSchema, user: User, session: Session
@@ -60,6 +61,7 @@ def process_spiral(
 
     return model_result, spiral_test_db.id
 
+
 def process_voice(
     schema: ProcessVoiceSchema, user: User, session: Session
 ) -> tuple[VoiceTestResult, int]:
@@ -69,9 +71,7 @@ def process_voice(
     Returns:
         tuple: (VoiceTestResult, test_id)
     """
-    model_result = ai.get_voice_model_response(
-        schema.audio_file, VOICE_MODEL_SERVICE_URL
-    )
+    model_result = ai.get_voice_model_response(schema.audio_file, VOICE_MODEL_SERVICE_URL)
 
     voice_test_db = VoiceTest(
         test_type=TestType.VOICE_TEST,
@@ -94,6 +94,7 @@ def process_spiral_as_practice(schema: SpiralImageSchema) -> SpiralTestResult:
 
 def process_voice_as_practice(audio_file: UploadFile) -> VoiceTestResult:
     return ai.get_voice_model_response(audio_file, VOICE_MODEL_SERVICE_URL)
+
 
 def get_patient_tests(
     session: Session, current_user: User, patient_id: int
@@ -314,7 +315,6 @@ def get_patient_test_statistics(
     Inclui tendência calculada por regressão linear simples.
     """
     from datetime import datetime
-    from sqlalchemy import desc
 
     # Valida vínculo
     binds = get_user_active_binds(session, doctor)
@@ -362,7 +362,9 @@ def get_patient_test_statistics(
     total_spiral = len(spiral_tests)
     total_voice = len(voice_tests)
 
-    avg_spiral = sum(t.score for t in spiral_tests) / total_spiral if total_spiral > 0 else None
+    avg_spiral = (
+        sum(t.score for t in spiral_tests) / total_spiral if total_spiral > 0 else None
+    )
     avg_voice = sum(t.score for t in voice_tests) / total_voice if total_voice > 0 else None
 
     # Último teste
@@ -384,9 +386,9 @@ def get_patient_test_statistics(
         sum_x = sum(x)
         sum_y = sum(y)
         sum_xy = sum(x[i] * y[i] for i in range(n))
-        sum_x2 = sum(xi ** 2 for xi in x)
+        sum_x2 = sum(xi**2 for xi in x)
 
-        slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x ** 2)
+        slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x**2)
 
         if slope > 0.01:
             trend = "improving"
@@ -530,16 +532,14 @@ def get_test_detail(
 
     if not test:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="Teste não encontrado."
+            status_code=HTTPStatus.NOT_FOUND, detail="Teste não encontrado."
         )
 
     # Validar se o médico tem acesso ao paciente
     binds = get_user_active_binds(session, doctor)
     if not binds or test.patient_id not in [bind.patient_id for bind in binds]:
         raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail="Você não tem acesso a este teste."
+            status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
         )
 
     # Calcular classificação
@@ -557,7 +557,7 @@ def get_test_detail(
         if not spiral_test:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail="Detalhes do teste de espiral não encontrados."
+                detail="Detalhes do teste de espiral não encontrados.",
             )
 
         return SpiralTestDetail(
@@ -570,7 +570,7 @@ def get_test_detail(
             draw_duration=spiral_test.draw_duration,
             method=spiral_test.method,
             patient=spiral_test.patient,
-            classification=classification
+            classification=classification,
         )
 
     elif test.test_type == TestType.VOICE_TEST:
@@ -584,7 +584,7 @@ def get_test_detail(
         if not voice_test:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail="Detalhes do teste de voz não encontrados."
+                detail="Detalhes do teste de voz não encontrados.",
             )
 
         return VoiceTestDetail(
@@ -596,22 +596,19 @@ def get_test_detail(
             patient_id=voice_test.patient_id,
             record_duration=voice_test.record_duration,
             patient=voice_test.patient,
-            classification=classification
+            classification=classification,
         )
 
     else:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail="Tipo de teste desconhecido."
+            status_code=HTTPStatus.BAD_REQUEST, detail="Tipo de teste desconhecido."
         )
 
 
 # Funções para pacientes visualizarem seus próprios testes
 
 
-def get_my_tests_timeline(
-    session: Session, patient: User
-) -> PatientTestTimeline:
+def get_my_tests_timeline(session: Session, patient: User) -> PatientTestTimeline:
     """
     Retorna timeline completa de testes do próprio paciente ordenada cronologicamente.
     Paciente visualiza seus próprios testes sem necessidade de validação de vínculos.
@@ -681,23 +678,17 @@ def get_my_test_detail(
     from sqlalchemy.orm import joinedload
 
     # Buscar o teste
-    test = (
-        session.query(Test)
-        .filter(Test.id == test_id)
-        .first()
-    )
+    test = session.query(Test).filter(Test.id == test_id).first()
 
     if not test:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="Teste não encontrado."
+            status_code=HTTPStatus.NOT_FOUND, detail="Teste não encontrado."
         )
 
     # Validar se o teste pertence ao paciente
     if test.patient_id != patient.id:
         raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail="Você não tem acesso a este teste."
+            status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
         )
 
     # Calcular classificação
@@ -715,7 +706,7 @@ def get_my_test_detail(
         if not spiral_test:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail="Detalhes do teste de espiral não encontrados."
+                detail="Detalhes do teste de espiral não encontrados.",
             )
 
         return SpiralTestDetail(
@@ -728,7 +719,7 @@ def get_my_test_detail(
             draw_duration=spiral_test.draw_duration,
             method=spiral_test.method,
             patient=spiral_test.patient,
-            classification=classification
+            classification=classification,
         )
 
     elif test.test_type == TestType.VOICE_TEST:
@@ -742,7 +733,7 @@ def get_my_test_detail(
         if not voice_test:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail="Detalhes do teste de voz não encontrados."
+                detail="Detalhes do teste de voz não encontrados.",
             )
 
         return VoiceTestDetail(
@@ -754,11 +745,10 @@ def get_my_test_detail(
             patient_id=voice_test.patient_id,
             record_duration=voice_test.record_duration,
             patient=voice_test.patient,
-            classification=classification
+            classification=classification,
         )
 
     else:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail="Tipo de teste desconhecido."
+            status_code=HTTPStatus.BAD_REQUEST, detail="Tipo de teste desconhecido."
         )
