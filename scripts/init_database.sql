@@ -1,14 +1,16 @@
-CREATE TYPE IF NOT EXISTS user_type_enum AS ENUM ('PATIENT', 'DOCTOR');
+CREATE TYPE user_type_enum AS ENUM ('PATIENT', 'DOCTOR');
 
-CREATE TYPE IF NOT EXISTS bind_enum AS ENUM ('PENDING', 'ACTIVE', 'REVERSED', 'REJECTED');
+CREATE TYPE bind_enum AS ENUM ('PENDING', 'ACTIVE', 'REVERSED', 'REJECTED');
 
-CREATE TYPE IF NOT EXISTS test_status_enum AS ENUM ('DONE', 'VIEWED', 'NOTED');
+CREATE TYPE test_status_enum AS ENUM ('DONE', 'VIEWED', 'NOTED');
 
-CREATE TYPE IF NOT EXISTS test_type_enum AS ENUM ('SPIRAL_TEST', 'VOICE_TEST');
+CREATE TYPE test_type_enum AS ENUM ('SPIRAL_TEST', 'VOICE_TEST');
 
-CREATE TYPE IF NOT EXISTS spiral_methods_enum AS ENUM ('WEBCAM', 'PAPER');
+CREATE TYPE spiral_methods_enum AS ENUM ('WEBCAM', 'PAPER');
 
-CREATE TYPE IF NOT EXISTS note_category_enum AS ENUM ('OBSERVATION', 'RECOMMENDATION', 'ALERT');
+CREATE TYPE note_category_enum AS ENUM ('OBSERVATION', 'RECOMMENDATION', 'ALERT');
+
+CREATE TYPE notification_type_enum AS ENUM ('BIND_REQUEST', 'BIND_ACCEPTED', 'BIND_REJECTED');
 
 CREATE TABLE IF NOT EXISTS "address" (
   "id" SERIAL PRIMARY KEY,
@@ -33,6 +35,8 @@ CREATE TABLE IF NOT EXISTS "user" (
   "is_active" boolean NOT NULL DEFAULT TRUE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "reset_token" varchar(255) DEFAULT NULL,
+  "reset_token_expiry" TIMESTAMPTZ DEFAULT NULL
 );
 
 
@@ -75,15 +79,25 @@ CREATE TABLE IF NOT EXISTS "spiral_test" (
 );
 
 CREATE TABLE IF NOT EXISTS "note" (
-    "id" SERIAL PRIMARY KEY,
-    "content" TEXT NOT NULL,
-    "patient_view" BOOLEAN NOT NULL,
-    "category" note_category_enum NOT NULL DEFAULT 'OBSERVATION',
-    "test_id" INTEGER NOT NULL REFERENCES "test" ("id"),
-    "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
-    "parent_note_id" INTEGER DEFAULT NULL REFERENCES "note" ("id") ON DELETE CASCADE,
-    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "id" SERIAL PRIMARY KEY,
+  "content" TEXT NOT NULL,
+  "patient_view" BOOLEAN NOT NULL,
+  "category" note_category_enum NOT NULL DEFAULT 'OBSERVATION',
+  "test_id" INTEGER NOT NULL REFERENCES "test" ("id"),
+  "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
+  "parent_note_id" INTEGER DEFAULT NULL REFERENCES "note" ("id") ON DELETE CASCADE,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "notification" (
+  "id" SERIAL PRIMARY KEY,
+  "user_id" INTEGER NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+  "message" VARCHAR(255) NOT NULL,
+  "type" notification_type_enum NOT NULL,
+  "bind_id" INTEGER DEFAULT NULL,
+  "read" BOOLEAN NOT NULL DEFAULT FALSE,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
