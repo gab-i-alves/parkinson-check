@@ -110,3 +110,40 @@ class PatientFullProfileResponse(BaseModel):
     status: str  # "stable" | "attention" | "critical"
     bind_id: int
     created_at: Optional[str] = None  # Data de criação do vínculo
+
+
+class AdminSchema(UserSchema):
+    is_superuser: bool = True
+
+
+class AdminResponse(UserResponse):
+    is_superuser: bool
+
+
+class UserListResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    cpf: str
+    role: UserType
+    status: bool
+    location: str
+    createdAt: str
+
+
+class UserFilterSchema(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    cpf: Optional[str] = None
+    role: Optional[UserType] = None
+    status: Optional[bool] = None
+
+
+class UpdateUserSchema(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    cpf: Optional[str] = None
+
+
+class ChangeUserStatusSchema(BaseModel):
+    status: bool
