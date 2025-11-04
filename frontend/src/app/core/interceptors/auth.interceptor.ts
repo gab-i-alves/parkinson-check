@@ -6,17 +6,22 @@ import { UserService } from '../services/user.service';
 
 /**
  * HTTP Interceptor que:
- * 1. Adiciona withCredentials: true em todas as requisições (para cookies HttpOnly)
+ * 1. Adiciona withCredentials: true apenas para requisições internas (para cookies HttpOnly)
  * 2. Trata erros 401 (não autenticado) redirecionando para login
  * 3. Trata erros 403 (sem permissão) exibindo mensagem e redirecionando
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const injector = inject(EnvironmentInjector);
 
-  // Adiciona withCredentials para todas as requisições
-  const reqWithCredentials = req.clone({
-    withCredentials: true,
-  });
+  // Detecta se é uma requisição externa (APIs de terceiros como ViaCEP)
+  const isExternalRequest = req.url.startsWith('http://') || req.url.startsWith('https://');
+
+  // Adiciona withCredentials apenas para requisições internas (API do backend)
+  const reqWithCredentials = isExternalRequest
+    ? req
+    : req.clone({
+        withCredentials: true,
+      });
 
   return next(reqWithCredentials).pipe(
     catchError((error: HttpErrorResponse) => {
