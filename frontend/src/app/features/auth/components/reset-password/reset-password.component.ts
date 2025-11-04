@@ -29,6 +29,8 @@ export class ResetPassword {
   apiError: string | null = null;
 
   buttonTouched = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -99,5 +101,13 @@ export class ResetPassword {
         this.router.navigate(['/auth/forgot-password']);
       },
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

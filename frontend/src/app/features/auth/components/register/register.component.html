@@ -1,62 +1,97 @@
-<div class="w-full max-w-xl mx-auto">
-  <div class="rounded-lg bg-white p-6 shadow-sm md:p-8">
-    <div class="text-center">
+<div class="min-h-screen flex items-center justify-center px-6 py-12 bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div
+      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
+    ></div>
+    <div
+      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
+    ></div>
+    <div
+      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
+    ></div>
+  </div>
+
+  <div class="w-full max-w-2xl relative">
+    <!-- Card principal -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative">
+      <!-- Back button icon -->
       <a
         routerLink="/"
-        class="inline-flex items-center justify-center space-x-3"
+        class="absolute top-6 left-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        aria-label="Voltar para página inicial"
       >
-        <div
-          class="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-700"
-        >
-          <span class="text-2xl font-bold text-white">P</span>
-        </div>
-        <h1 class="text-3xl font-bold text-gray-800">ParkinsonCheck</h1>
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
       </a>
-      <h2 class="mt-4 text-2xl font-semibold text-gray-900">Crie sua conta</h2>
-      <p class="mt-2 text-base text-gray-600">
-        Escolha seu perfil para iniciar o cadastro.
-      </p>
+
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <a
+          routerLink="/"
+          class="inline-flex items-center justify-center space-x-3 group"
+        >
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-700 shadow-lg group-hover:bg-violet-800 transition-colors"
+          >
+            <span class="text-2xl font-bold text-white">P</span>
+          </div>
+          <div class="text-left">
+            <h1 class="text-2xl font-bold text-gray-900">ParkinsonCheck</h1>
+            <p class="text-xs text-gray-600">Monitoramento Inteligente</p>
+          </div>
+        </a>
+        <h2 class="mt-6 text-lg font-semibold text-gray-900">
+          Crie sua conta
+        </h2>
+        <p class="mt-1 text-sm text-gray-600">
+          Escolha seu perfil para iniciar o cadastro
+        </p>
+      </div>
+
+      <!-- Tabs de perfil -->
+      <div class="flex bg-gray-100 rounded-lg p-1 mb-8">
+        <button
+          (click)="selectTab('paciente')"
+          [ngClass]="{
+            'bg-white shadow-sm text-violet-700 font-semibold': activeTab === 'paciente',
+            'text-gray-600 hover:text-gray-900': activeTab !== 'paciente'
+          }"
+          class="flex-1 py-2.5 px-3 text-sm rounded-md transition-all duration-200 focus:outline-none"
+        >
+          Sou Paciente
+        </button>
+        <button
+          (click)="selectTab('medico')"
+          [ngClass]="{
+            'bg-white shadow-sm text-violet-700 font-semibold': activeTab === 'medico',
+            'text-gray-600 hover:text-gray-900': activeTab !== 'medico'
+          }"
+          class="flex-1 py-2.5 px-3 text-sm rounded-md transition-all duration-200 focus:outline-none"
+        >
+          Sou Médico
+        </button>
+      </div>
+
+      <!-- Forms content -->
+      <div *ngIf="activeTab === 'paciente'" class="relative">
+        <app-patient-register-form
+          [patientForm]="patientRegisterForm"
+          [isLoading]="isLoading"
+          [apiError]="apiError"
+          (formSubmit)="onPatientSubmit()"
+        ></app-patient-register-form>
+      </div>
+
+      <div *ngIf="activeTab === 'medico'" class="relative">
+        <app-doctor-register-form
+          [doctorForm]="doctorRegisterForm"
+          [isLoading]="isLoading"
+          [apiError]="apiError"
+          (formSubmit)="onDoctorSubmit()"
+        ></app-doctor-register-form>
+      </div>
     </div>
-
-    <div class="mt-8 flex border-b border-gray-200">
-      <button
-        (click)="selectTab('paciente')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'paciente',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'paciente'
-        }"
-        class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
-      >
-        Sou Paciente
-      </button>
-      <button
-        (click)="selectTab('medico')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'medico',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'medico'
-        }"
-        class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
-      >
-        Sou Médico
-      </button>
-    </div>
-
-    <app-patient-register-form
-      *ngIf="activeTab === 'paciente'"
-      [patientForm]="patientRegisterForm"
-      [isLoading]="isLoading"
-      [apiError]="apiError"
-      (formSubmit)="onPatientSubmit()"
-    ></app-patient-register-form>
-
-    <app-doctor-register-form
-      *ngIf="activeTab === 'medico'"
-      [doctorForm]="doctorRegisterForm"
-      [isLoading]="isLoading"
-      [apiError]="apiError"
-      (formSubmit)="onDoctorSubmit()"
-    ></app-doctor-register-form>
   </div>
 </div>

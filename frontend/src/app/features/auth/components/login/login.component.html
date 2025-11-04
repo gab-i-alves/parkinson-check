@@ -1,155 +1,243 @@
-<div class="w-full max-w-xl mx-auto">
-  <div class="rounded-lg bg-white p-6 shadow-sm md:p-8">
-    <div class="text-center">
+<div class="min-h-screen flex items-center justify-center px-6 py-12 bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div
+      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
+    ></div>
+    <div
+      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
+    ></div>
+    <div
+      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
+    ></div>
+  </div>
+
+  <div class="w-full max-w-md relative">
+    <!-- Card principal -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative">
+      <!-- Back button icon -->
       <a
         routerLink="/"
-        class="inline-flex items-center justify-center space-x-3"
+        class="absolute top-6 left-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        aria-label="Voltar para página inicial"
       >
-        <div
-          class="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-700"
-        >
-          <span class="text-2xl font-bold text-white">P</span>
-        </div>
-        <h1 class="text-3xl font-bold text-gray-800">ParkinsonCheck</h1>
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
       </a>
-      <h2 class="mt-4 text-xl text-gray-600">
-        Acesse sua conta para continuar
-      </h2>
-    </div>
 
-    <div class="mt-8 flex border-b border-gray-200">
-      <button
-        (click)="selectTab('paciente')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'paciente',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'paciente'
-        }"
-        class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
-      >
-        Paciente
-      </button>
-      <button
-        (click)="selectTab('medico')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'medico',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'medico'
-        }"
-        class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
-      >
-        Médico
-      </button>
-      <button
-        (click)="selectTab('admin')"
-        [ngClass]="{
-          'border-violet-600 text-violet-600': activeTab === 'admin',
-          'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700':
-            activeTab !== 'admin'
-        }"
-        class="flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 focus:outline-none"
-      >
-        Admin
-      </button>
-    </div>
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <a
+          routerLink="/"
+          class="inline-flex items-center justify-center space-x-3 group"
+        >
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-700 shadow-lg group-hover:bg-violet-800 transition-colors"
+          >
+            <span class="text-2xl font-bold text-white">P</span>
+          </div>
+          <div class="text-left">
+            <h1 class="text-2xl font-bold text-gray-900">ParkinsonCheck</h1>
+            <p class="text-xs text-gray-600">Monitoramento Inteligente</p>
+          </div>
+        </a>
+        <h2 class="mt-6 text-lg font-semibold text-gray-900">
+          Acesse sua conta
+        </h2>
+        <p class="mt-1 text-sm text-gray-600">
+          Selecione seu perfil e faça login
+        </p>
+      </div>
 
-    <div class="mt-8">
+      <!-- Tabs de perfil -->
+      <div class="flex bg-gray-100 rounded-lg p-1 mb-6">
+        <button
+          (click)="selectTab('paciente')"
+          [ngClass]="{
+            'bg-white shadow-sm text-violet-700 font-semibold': activeTab === 'paciente',
+            'text-gray-600 hover:text-gray-900': activeTab !== 'paciente'
+          }"
+          class="flex-1 py-2.5 px-3 text-sm rounded-md transition-all duration-200 focus:outline-none"
+        >
+          Paciente
+        </button>
+        <button
+          (click)="selectTab('medico')"
+          [ngClass]="{
+            'bg-white shadow-sm text-violet-700 font-semibold': activeTab === 'medico',
+            'text-gray-600 hover:text-gray-900': activeTab !== 'medico'
+          }"
+          class="flex-1 py-2.5 px-3 text-sm rounded-md transition-all duration-200 focus:outline-none"
+        >
+          Médico
+        </button>
+        <button
+          (click)="selectTab('admin')"
+          [ngClass]="{
+            'bg-white shadow-sm text-violet-700 font-semibold': activeTab === 'admin',
+            'text-gray-600 hover:text-gray-900': activeTab !== 'admin'
+          }"
+          class="flex-1 py-2.5 px-3 text-sm rounded-md transition-all duration-200 focus:outline-none"
+        >
+          Admin
+        </button>
+      </div>
+
+      <!-- Form -->
       <form
         #loginFormElement="ngForm"
         [formGroup]="loginForm"
         (ngSubmit)="onSubmit()"
-        class="space-y-6"
+        class="space-y-5"
         novalidate
       >
-        <div *ngIf="apiError" class="rounded-md bg-red-50 p-4">
-          <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
-        </div>
-
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700"
-            >E-mail</label
-          >
-          <div class="mt-1">
-            <input
-              id="email"
-              type="email"
-              formControlName="email"
-              required
-              [placeholder]="emailPlaceholder"
-              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-            />
-            <div
-              *ngIf="
-                loginForm.get('email')?.invalid &&
-                (loginForm.get('email')?.touched || buttonTouched)
-              "
-              class="mt-1 text-xs text-red-600"
-            >
-              <span *ngIf="loginForm.get('email')?.errors?.['required']"
-                >Campo obrigatório.</span
-              >
-              <span *ngIf="loginForm.get('email')?.errors?.['email']"
-                >Por favor, insira um e-mail válido.</span
-              >
-            </div>
+        <!-- Error banner -->
+        <div *ngIf="apiError" class="bg-red-50/80 border border-red-200 rounded-xl p-4">
+          <div class="flex items-start">
+            <svg class="h-5 w-5 text-red-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
           </div>
         </div>
+
+        <!-- Email -->
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700"
-            >Senha</label
+          <label for="email" class="block text-sm font-medium text-gray-900 mb-2">
+            E-mail
+          </label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            required
+            [placeholder]="emailPlaceholder"
+            class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          />
+          <div
+            *ngIf="
+              loginForm.get('email')?.invalid &&
+              (loginForm.get('email')?.touched || buttonTouched)
+            "
+            class="mt-2 text-xs text-red-600 flex items-center"
           >
-          <div class="mt-1">
+            <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">
+              Campo obrigatório.
+            </span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">
+              Por favor, insira um e-mail válido.
+            </span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-900 mb-2">
+            Senha
+          </label>
+          <div class="relative">
             <input
               id="password"
-              type="password"
+              [type]="showPassword ? 'text' : 'password'"
               formControlName="password"
               required
-              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
               placeholder="Digite sua senha"
+              class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-11 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
             />
-            <div
-              *ngIf="
-                loginForm.get('password')?.invalid &&
-                (loginForm.get('password')?.touched || buttonTouched)
-              "
-              class="mt-1 text-xs text-red-600"
+            <button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 transition-colors"
+              aria-label="Toggle password visibility"
             >
-              <span *ngIf="loginForm.get('password')?.errors?.['required']"
-                >Campo obrigatório.</span
+              <svg
+                *ngIf="!showPassword"
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-              <span *ngIf="loginForm.get('password')?.errors?.['minlength']"
-                >Sua senha tem pelo menos 8 caracteres.</span
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              <svg
+                *ngIf="showPassword"
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-            </div>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            *ngIf="
+              loginForm.get('password')?.invalid &&
+              (loginForm.get('password')?.touched || buttonTouched)
+            "
+            class="mt-2 text-xs text-red-600 flex items-center"
+          >
+            <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <span *ngIf="loginForm.get('password')?.errors?.['required']">
+              Campo obrigatório.
+            </span>
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">
+              Sua senha tem pelo menos 8 caracteres.
+            </span>
           </div>
         </div>
 
-        <div class="w-full flex items-center justify-between my-6">
-          <div class="flex items-center mr-4">
+        <!-- Remember me & Forgot password -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
             <input
               id="remember"
               type="checkbox"
               formControlName="remember"
-              class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+              class="h-4 w-4 rounded border-gray-300 text-violet-700 focus:ring-violet-500 focus:ring-offset-0"
             />
-            <label for="remember" class="ml-2 block text-sm text-gray-900"
-              >Manter conectado</label
-            >
+            <label for="remember" class="ml-2 block text-sm text-gray-700">
+              Manter conectado
+            </label>
           </div>
           <div class="text-sm">
             <a
               routerLink="/auth/forgot-password"
-              class="font-medium text-violet-600 hover:text-violet-500"
-              >Esqueceu sua senha?</a
+              class="font-medium text-violet-700 hover:text-violet-800 transition-colors"
             >
+              Esqueceu sua senha?
+            </a>
           </div>
         </div>
 
+        <!-- Submit button -->
         <div (mouseenter)="buttonTouched = true">
           <button
             type="submit"
             [disabled]="loginForm.invalid || isLoading"
-            class="flex w-full justify-center rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+            class="flex w-full items-center justify-center rounded-xl bg-violet-700 py-3.5 px-4 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <svg
               *ngIf="isLoading"
@@ -172,30 +260,23 @@
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span *ngIf="!isLoading">Entrar</span>
+            <span>{{ isLoading ? 'Entrando...' : 'Entrar' }}</span>
           </button>
         </div>
       </form>
     </div>
-  </div>
 
-  <div class="mt-6 text-center text-sm text-gray-600">
-    <div class="relative my-4">
-      <div class="absolute inset-0 flex items-center">
-        <div class="w-full border-t border-gray-300"></div>
-      </div>
-      <div class="relative flex justify-center text-sm">
-        <span class="bg-gray-100 px-2 text-gray-500">ou</span>
-      </div>
+    <!-- Footer links -->
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-700">
+        Ainda não possui uma conta?
+        <a
+          routerLink="/auth/register"
+          class="font-semibold text-violet-700 hover:text-violet-800 transition-colors"
+        >
+          Cadastre-se agora
+        </a>
+      </p>
     </div>
-    <p>
-      Ainda não possui uma conta?
-      <a
-        routerLink="/auth/register"
-        class="font-medium text-violet-600 hover:text-violet-500"
-      >
-        Cadastre-se agora
-      </a>
-    </p>
   </div>
 </div>
