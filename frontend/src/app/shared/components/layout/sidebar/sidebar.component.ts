@@ -104,6 +104,15 @@ export class SidebarComponent {
 
   readonly notificationCount = signal<number>(3);
 
+  formatUserRole(role: string): string {
+    const roleMap: Record<string, string> = {
+      'paciente': 'Paciente',
+      'medico': 'Médico',
+      'admin': 'Administrador'
+    };
+    return roleMap[role] || role;
+  }
+
   logout(): void {
     // authService.logout() already handles navigation to /auth/login
     this.authService.logout();

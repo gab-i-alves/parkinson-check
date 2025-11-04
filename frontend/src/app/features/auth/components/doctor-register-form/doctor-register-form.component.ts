@@ -20,17 +20,78 @@ export class DoctorRegisterFormComponent {
   @ViewChild('apiErrorDiv') apiErrorDiv: ElementRef | undefined;
   buttonTouched = false;
 
+  // Multi-step state
+  currentStep = 1;
+  totalSteps = 4;
+
+  // Password visibility
+  showPassword = false;
+  showConfirmPassword = false;
 
   // DECISÃO DE ARQUITETURA: Uso de @Output para comunicar com o pai.
   // Em vez de conter a lógica de submissão, ele emite um evento.
   // Isso desacopla o componente da lógica de negócio (ex: chamadas de API).
   @Output() formSubmit = new EventEmitter<void>();
 
+  // Navegação entre steps
+  nextStep(): void {
+    if (this.validateCurrentStep()) {
+      this.currentStep++;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      this.buttonTouched = true;
+    }
+  }
+
+  previousStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // Valida apenas os campos do step atual
+  validateCurrentStep(): boolean {
+    const fieldsToValidate = this.getFieldsForCurrentStep();
+    let isValid = true;
+
+    fieldsToValidate.forEach(fieldName => {
+      const control = this.doctorForm.get(fieldName);
+      if (control) {
+        control.markAsTouched();
+        if (control.invalid) {
+          isValid = false;
+        }
+      }
+    });
+
+    return isValid;
+  }
+
+  // Retorna os campos que devem ser validados no step atual
+  getFieldsForCurrentStep(): string[] {
+    switch (this.currentStep) {
+      case 1: // Dados Pessoais
+        return ['name', 'cpf', 'birthdate'];
+      case 2: // Dados Profissionais
+        return ['crm', 'expertise_area'];
+      case 3: // Endereço
+        return ['cep', 'street', 'number', 'neighborhood', 'city', 'state'];
+      case 4: // Segurança & Documentação
+        return ['email', 'password', 'confirmPassword'];
+      default:
+        return [];
+    }
+  }
+
   // Propaga o evento de submissão para o componente pai.
   onSubmit(): void {
-    this.formSubmit.emit();
-
-    this.scrollToError()
+    if (this.validateCurrentStep()) {
+      this.formSubmit.emit();
+      this.scrollToError();
+    } else {
+      this.buttonTouched = true;
+    }
   }
 
   scrollToError() {
@@ -38,6 +99,14 @@ export class DoctorRegisterFormComponent {
       if (this.apiErrorDiv) {
         this.apiErrorDiv.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-    }, 100); 
+    }, 100);
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

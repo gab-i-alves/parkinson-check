@@ -1,321 +1,721 @@
+<!-- Progress indicator -->
+<div class="mb-8">
+  <div class="flex items-center justify-center space-x-2">
+    <div
+      *ngFor="let step of [1, 2, 3]; let i = index"
+      class="flex items-center"
+    >
+      <div
+        [ngClass]="{
+          'bg-violet-700 text-white': currentStep === step,
+          'bg-violet-100 text-violet-700': currentStep > step,
+          'bg-gray-200 text-gray-500': currentStep < step
+        }"
+        class="flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm transition-all duration-200"
+      >
+        <svg
+          *ngIf="currentStep > step"
+          class="w-5 h-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="currentStep <= step">{{ step }}</span>
+      </div>
+      <div
+        *ngIf="i < 2"
+        [ngClass]="{
+          'bg-violet-100': currentStep > step,
+          'bg-gray-200': currentStep <= step
+        }"
+        class="w-12 h-1 mx-2 transition-all duration-200"
+      ></div>
+    </div>
+  </div>
+
+  <!-- Step labels -->
+  <div class="mt-3 flex justify-center">
+    <p class="text-xs text-gray-600">
+      <span *ngIf="currentStep === 1">Dados Pessoais</span>
+      <span *ngIf="currentStep === 2">Endereço</span>
+      <span *ngIf="currentStep === 3">Segurança</span>
+    </p>
+  </div>
+</div>
+
+<!-- Form -->
 <form
   [formGroup]="patientForm"
   (ngSubmit)="onSubmit()"
-  class="mt-8 space-y-8"
+  class="space-y-6"
   novalidate
 >
-  <div *ngIf="apiError" #apiErrorDiv class="rounded-md bg-red-50 p-4" tabindex="-1">
-    <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
+  <!-- Error banner -->
+  <div
+    *ngIf="apiError"
+    #apiErrorDiv
+    class="bg-red-50/80 border border-red-200 rounded-xl p-4"
+  >
+    <div class="flex items-start">
+      <svg
+        class="h-5 w-5 text-red-600 mt-0.5 mr-3"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
+    </div>
   </div>
 
-  <section>
-    <h3 class="text-lg font-semibold text-gray-800">Dados Pessoais</h3>
-    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-      <div class="sm:col-span-2">
-        <label for="name" class="block text-sm font-medium text-gray-700"
-          >Nome Completo*</label
+  <!-- Step 1: Dados Pessoais -->
+  <div *ngIf="currentStep === 1" class="space-y-5">
+    <div>
+      <label for="name" class="block text-sm font-medium text-gray-900 mb-2">
+        Nome Completo
+      </label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Digite seu nome completo"
+        class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+      />
+      <div
+        *ngIf="
+          patientForm.get('name')?.invalid &&
+          (patientForm.get('name')?.touched || buttonTouched)
+        "
+        class="mt-2 text-xs text-red-600 flex items-center"
+      >
+        <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="patientForm.get('name')?.errors?.['required']"
+          >Campo obrigatório.</span
         >
-        <input
-          id="name"
-          name="name"
-          formControlName="name"
-          type="text"
-          required
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-          placeholder="Digite seu nome completo"
-        />
-        <div
-          *ngIf="
-            patientForm.get('name')?.invalid &&
-            (patientForm.get('name')?.touched || buttonTouched)
-          "
-          class="mt-1 text-xs text-red-600"
+        <span *ngIf="patientForm.get('name')?.errors?.['minlength']"
+          >Nome deve ter pelo menos 3 caracteres.</span
         >
-          <span *ngIf="patientForm.get('name')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
-          <span *ngIf="patientForm.get('name')?.errors?.['minlength']"
-            >O nome deve ter pelo menos 3 caracteres.</span
-          >
-        </div>
       </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
-        <label for="cpf" class="block text-sm font-medium text-gray-700"
-          >CPF*</label
-        >
+        <label for="cpf" class="block text-sm font-medium text-gray-900 mb-2">
+          CPF *
+        </label>
         <input
           id="cpf"
-          name="cpf"
           type="text"
           formControlName="cpf"
           mask="000.000.000-00"
-          required
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
           placeholder="000.000.000-00"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
         />
         <div
           *ngIf="
-            patientForm.get('cpf')?.invalid && 
+            patientForm.get('cpf')?.invalid &&
             (patientForm.get('cpf')?.touched || buttonTouched)
           "
-          class="mt-1 text-xs text-red-600"
+          class="mt-2 text-xs text-red-600 flex items-center"
         >
+          <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
           <span *ngIf="patientForm.get('cpf')?.errors?.['required']"
             >Campo obrigatório.</span
           >
-          <span *ngIf="patientForm.get('cpf')?.errors?.['cpfInvalid']"
-            >O CPF informado é inválido.</span
+          <span *ngIf="patientForm.get('cpf')?.errors?.['invalidCpf']"
+            >CPF inválido.</span
           >
         </div>
       </div>
+
       <div>
-        <label for="birthdate" class="block text-sm font-medium text-gray-700"
-          >Data de Nascimento*</label
+        <label
+          for="birthdate"
+          class="block text-sm font-medium text-gray-900 mb-2"
         >
+          Data de Nascimento *
+        </label>
         <input
           id="birthdate"
-          name="birthdate"
-          formControlName="birthdate"
           type="date"
-          required
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          formControlName="birthdate"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
         />
         <div
           *ngIf="
             patientForm.get('birthdate')?.invalid &&
             (patientForm.get('birthdate')?.touched || buttonTouched)
           "
-          class="mt-1 text-xs text-red-600"
+          class="mt-2 text-xs text-red-600 flex items-center"
         >
+          <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
           <span *ngIf="patientForm.get('birthdate')?.errors?.['required']"
             >Campo obrigatório.</span
           >
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <section>
-    <h3 class="text-lg font-semibold text-gray-800">Endereço</h3>
-    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-      <div class="sm:col-span-2">
-        <label for="cep" class="block text-sm font-medium text-gray-700"
-          >CEP*</label
-        >
+  <!-- Step 2: Endereço -->
+  <div *ngIf="currentStep === 2" class="space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <label for="cep" class="block text-sm font-medium text-gray-900 mb-2">
+          CEP *
+        </label>
         <input
-          type="text"
           id="cep"
-          mask="00000-000"
+          type="text"
           formControlName="cep"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          mask="00000-000"
           placeholder="00000-000"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
         />
         <div
           *ngIf="
             patientForm.get('cep')?.invalid &&
             (patientForm.get('cep')?.touched || buttonTouched)
           "
-          class="mt-1 text-xs text-red-600"
+          class="mt-2 text-xs text-red-600 flex items-center"
         >
-          <span *ngIf="patientForm.get('cep')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
+          <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Campo obrigatório.</span>
         </div>
       </div>
 
-      <div class="sm:col-span-4">
-        <label for="street" class="block text-sm font-medium text-gray-700"
-          >Rua*</label
+      <div>
+        <label
+          for="street"
+          class="block text-sm font-medium text-gray-900 mb-2"
         >
+          Rua *
+        </label>
         <input
-          type="text"
           id="street"
+          type="text"
           formControlName="street"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          placeholder="Nome da rua"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
         />
-      </div>
-
-      <div class="sm:col-span-2">
-        <label for="number" class="block text-sm font-medium text-gray-700"
-          >Número*</label
+        <div
+          *ngIf="
+            patientForm.get('street')?.invalid &&
+            (patientForm.get('street')?.touched || buttonTouched)
+          "
+          class="mt-2 text-xs text-red-600 flex items-center"
         >
+          <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Campo obrigatório.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <label
+          for="number"
+          class="block text-sm font-medium text-gray-900 mb-2"
+        >
+          Número *
+        </label>
         <input
-          type="text"
           id="number"
-          formControlName="number"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-        />
-      </div>
-      <div class="sm:col-span-4">
-        <label for="complement" class="block text-sm font-medium text-gray-700"
-          >Complemento</label
-        >
-        <input
           type="text"
-          id="complement"
-          formControlName="complement"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+          formControlName="number"
+          placeholder="Nº"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
         />
+        <div
+          *ngIf="
+            patientForm.get('number')?.invalid &&
+            (patientForm.get('number')?.touched || buttonTouched)
+          "
+          class="mt-2 text-xs text-red-600 flex items-center"
+        >
+          <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Campo obrigatório.</span>
+        </div>
       </div>
 
-      <div class="sm:col-span-2">
+      <div>
+        <label
+          for="complement"
+          class="block text-sm font-medium text-gray-900 mb-2"
+        >
+          Complemento
+        </label>
+        <input
+          id="complement"
+          type="text"
+          formControlName="complement"
+          placeholder="Apto, bloco, etc (opcional)"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div>
         <label
           for="neighborhood"
-          class="block text-sm font-medium text-gray-700"
-          >Bairro*</label
+          class="block text-sm font-medium text-gray-900 mb-2"
         >
+          Bairro *
+        </label>
         <input
-          type="text"
           id="neighborhood"
+          type="text"
           formControlName="neighborhood"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-        />
-      </div>
-      <div class="sm:col-span-2">
-        <label for="city" class="block text-sm font-medium text-gray-700"
-          >Cidade*</label
-        >
-        <input
-          type="text"
-          id="city"
-          formControlName="city"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-        />
-      </div>
-      <div class="sm:col-span-2">
-        <label for="state" class="block text-sm font-medium text-gray-700"
-          >Estado*</label
-        >
-        <input
-          type="text"
-          id="state"
-          formControlName="state"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-        />
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h3 class="text-lg font-semibold text-gray-800">Segurança</h3>
-    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-      <div class="sm:col-span-2">
-        <label for="email" class="block text-sm font-medium text-gray-700"
-          >E-mail*</label
-        >
-        <input
-          id="email"
-          name="email"
-          type="email"
-          formControlName="email"
-          required
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-          placeholder="Digite seu e-mail"
+          placeholder="Bairro"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
         />
         <div
           *ngIf="
-            patientForm.get('email')?.invalid &&
-            (patientForm.get('email')?.touched || buttonTouched)
+            patientForm.get('neighborhood')?.invalid &&
+            (patientForm.get('neighborhood')?.touched || buttonTouched)
           "
-          class="mt-1 text-xs text-red-600"
+          class="mt-2 text-xs text-red-600 flex items-center"
         >
-          <span *ngIf="patientForm.get('email')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
-          <span *ngIf="patientForm.get('email')?.errors?.['email']"
-            >Por favor, insira um e-mail válido.</span
-          >
+          <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Campo obrigatório.</span>
         </div>
       </div>
+
       <div>
-        <label for="password" class="block text-sm font-medium text-gray-700"
-          >Senha*</label
+        <label for="city" class="block text-sm font-medium text-gray-900 mb-2">
+          Cidade *
+        </label>
+        <input
+          id="city"
+          type="text"
+          formControlName="city"
+          placeholder="Cidade"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+        />
+        <div
+          *ngIf="
+            patientForm.get('city')?.invalid &&
+            (patientForm.get('city')?.touched || buttonTouched)
+          "
+          class="mt-2 text-xs text-red-600 flex items-center"
         >
+          <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Campo obrigatório.</span>
+        </div>
+      </div>
+
+      <div>
+        <label for="state" class="block text-sm font-medium text-gray-900 mb-2">
+          Estado *
+        </label>
+        <input
+          id="state"
+          type="text"
+          formControlName="state"
+          placeholder="UF"
+          maxlength="2"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm uppercase"
+        />
+        <div
+          *ngIf="
+            patientForm.get('state')?.invalid &&
+            (patientForm.get('state')?.touched || buttonTouched)
+          "
+          class="mt-2 text-xs text-red-600 flex items-center"
+        >
+          <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Campo obrigatório.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Segurança -->
+  <div *ngIf="currentStep === 3" class="space-y-5">
+    <div>
+      <label for="email" class="block text-sm font-medium text-gray-900 mb-2">
+        E-mail *
+      </label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="seu@email.com"
+        class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+      />
+      <div
+        *ngIf="
+          patientForm.get('email')?.invalid &&
+          (patientForm.get('email')?.touched || buttonTouched)
+        "
+        class="mt-2 text-xs text-red-600 flex items-center"
+      >
+        <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="patientForm.get('email')?.errors?.['required']"
+          >Campo obrigatório.</span
+        >
+        <span *ngIf="patientForm.get('email')?.errors?.['email']"
+          >E-mail inválido.</span
+        >
+      </div>
+    </div>
+
+    <div>
+      <label
+        for="password"
+        class="block text-sm font-medium text-gray-900 mb-2"
+      >
+        Senha *
+      </label>
+      <div class="relative">
         <input
           id="password"
-          name="password"
-          type="password"
+          [type]="showPassword ? 'text' : 'password'"
           formControlName="password"
-          required
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-          placeholder="Digite sua senha"
+          placeholder="Crie uma senha forte"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-11 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
         />
-        <div class="mt-2 text-xs">
-          <p 
+        <button
+          type="button"
+          (click)="togglePasswordVisibility()"
+          class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 transition-colors"
+          aria-label="Toggle password visibility"
+        >
+          <svg
+            *ngIf="!showPassword"
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
+          </svg>
+          <svg
+            *ngIf="showPassword"
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Password strength indicators -->
+      <div class="mt-3 space-y-2">
+        <div class="flex items-center text-xs">
+          <svg
             [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['minlength']"
             [class.text-gray-400]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['minlength']"
+            class="h-4 w-4 mr-2"
+            fill="currentColor"
+            viewBox="0 0 20 20"
           >
-            &#x2713; Mínimo de 8 caracteres
-          </p>
-          <p 
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span
+            [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['minlength']"
+            [class.text-gray-600]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['minlength']"
+          >
+            Mínimo de 8 caracteres
+          </span>
+        </div>
+        <div class="flex items-center text-xs">
+          <svg
             [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['strong']"
             [class.text-gray-400]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['strong']"
+            class="h-4 w-4 mr-2"
+            fill="currentColor"
+            viewBox="0 0 20 20"
           >
-            &#x2713; Letras maiúsculas, minúsculas e números
-          </p>
-        </div>
-        <div
-          *ngIf="
-            patientForm.get('password')?.invalid &&
-            (patientForm.get('password')?.touched || buttonTouched)
-          "
-          class="mt-1 text-xs text-red-600"
-        >
-          <span *ngIf="patientForm.get('password')?.errors?.['required']"
-            >Campo obrigatório.</span
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span
+            [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['strong']"
+            [class.text-gray-600]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['strong']"
           >
+            Letras maiúsculas, minúsculas e números
+          </span>
         </div>
       </div>
-      <div>
-        <label
-          for="confirmPassword"
-          class="block text-sm font-medium text-gray-700"
-          >Confirme sua Senha*</label
+
+      <div
+        *ngIf="
+          patientForm.get('password')?.invalid &&
+          (patientForm.get('password')?.touched || buttonTouched)
+        "
+        class="mt-2 text-xs text-red-600 flex items-center"
+      >
+        <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="patientForm.get('password')?.errors?.['required']"
+          >Campo obrigatório.</span
         >
-        <input
-          type="password"
-          id="confirmPassword"
-          formControlName="confirmPassword"
-          class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
-          placeholder="Digite sua senha novamente"
-        />
-        <div
-          *ngIf="
-            patientForm.get('confirmPassword')?.invalid &&
-            (patientForm.get('confirmPassword')?.touched || buttonTouched)
-          "
-          class="mt-1 text-xs text-red-600"
-        >
-          <span *ngIf="patientForm.get('confirmPassword')?.errors?.['required']"
-            >Campo obrigatório.</span
-          >
-          <span *ngIf="patientForm.get('confirmPassword')?.errors?.['mismatch']"
-            >As senhas não coincidem.</span
-          >
-        </div>
       </div>
     </div>
-  </section>
 
+    <div>
+      <label
+        for="confirmPassword"
+        class="block text-sm font-medium text-gray-900 mb-2"
+      >
+        Confirme sua Senha *
+      </label>
+      <div class="relative">
+        <input
+          id="confirmPassword"
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          formControlName="confirmPassword"
+          placeholder="Digite sua senha novamente"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-11 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+        />
+        <button
+          type="button"
+          (click)="toggleConfirmPasswordVisibility()"
+          class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 transition-colors"
+          aria-label="Toggle confirm password visibility"
+        >
+          <svg
+            *ngIf="!showConfirmPassword"
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
+          </svg>
+          <svg
+            *ngIf="showConfirmPassword"
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        *ngIf="
+          patientForm.get('confirmPassword')?.invalid &&
+          (patientForm.get('confirmPassword')?.touched || buttonTouched)
+        "
+        class="mt-2 text-xs text-red-600 flex items-center"
+      >
+        <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="patientForm.get('confirmPassword')?.errors?.['required']"
+          >Campo obrigatório.</span
+        >
+        <span *ngIf="patientForm.get('confirmPassword')?.errors?.['mismatch']"
+          >As senhas não coincidem.</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation buttons -->
   <div
-    class="flex items-center justify-end space-x-4 border-t border-gray-200 pt-6"
+    class="flex items-center justify-between pt-6 border-t border-gray-200"
+    (mouseenter)="buttonTouched = true"
   >
-    <a
-      routerLink="/auth/login"
-      class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+    <button
+      *ngIf="currentStep > 1"
+      type="button"
+      (click)="previousStep()"
+      class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
     >
-      Já tenho conta
-    </a>
-    <button (mouseenter)="buttonTouched = true"
+      <svg
+        class="w-5 h-5 mr-2"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 19l-7-7 7-7"
+        />
+      </svg>
+      Voltar
+    </button>
+
+    <div *ngIf="currentStep === 1"></div>
+
+    <button
+      *ngIf="currentStep < totalSteps"
+      type="button"
+      (click)="nextStep()"
+      class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-white bg-violet-700 rounded-lg shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+    >
+      Próximo
+      <svg
+        class="w-5 h-5 ml-2"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        />
+      </svg>
+    </button>
+
+    <button
+      *ngIf="currentStep === totalSteps"
       type="submit"
       [disabled]="patientForm.invalid || isLoading"
-      class="rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+      class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-violet-700 rounded-lg shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
     >
       <svg
         *ngIf="isLoading"
         class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-      ></svg>
-      <span *ngIf="!isLoading">Criar Conta de Paciente</span>
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      <span>{{ isLoading ? "Cadastrando..." : "Criar Conta" }}</span>
     </button>
   </div>
 </form>

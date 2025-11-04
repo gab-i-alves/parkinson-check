@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
   apiError: string | null = null;
 
   buttonTouched = false;
+  showPassword = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -65,6 +66,10 @@ export class LoginComponent implements OnInit {
     this.activeTab = role;
     this.loginForm.reset({ remember: false });
     this.apiError = null;
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   onSubmit(): void {

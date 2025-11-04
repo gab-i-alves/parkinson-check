@@ -1,7 +1,7 @@
-from datetime import date
+from datetime import date, datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, TIMESTAMP
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -27,6 +27,10 @@ class User:
     )
     address_id: Mapped[int] = mapped_column(ForeignKey("address.id"))
     address: Mapped["Address"] = relationship(init=False, back_populates="users")
+    reset_token: Mapped[str | None] = mapped_column(init=False, nullable=True, default=None)
+    reset_token_expiry: Mapped[datetime | None] = mapped_column(
+        TIMESTAMP(timezone=True), init=False, nullable=True, default=None
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": "user",

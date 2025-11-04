@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from sqlalchemy.orm import Session
 
 from core.services import auth_service
 from infra.db.connection import get_session
 from infra.settings import settings
 
-from ..schemas.auth import LoginFormRequest
+from ..schemas.auth import ForgotPasswordRequest, LoginFormRequest, ResetPasswordRequest
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -46,3 +46,14 @@ def login(
 def logout(response: Response):
     response.delete_cookie(key="access_token")
     return {"message": "Logout successful"}
+
+
+@router.post("/forgot-password")
+async def forgot_password(request: ForgotPasswordRequest, background_tasks: BackgroundTasks, session: Session = Depends(get_session)):
+    await auth_service.request_password_reset(request.email, background_tasks, session)
+    return {"message": "Se o email existir, você receberá instruções para a redefinição"}
+
+@router.post("/reset-password")
+def reset_password(request: ResetPasswordRequest, session: Session = Depends(get_session)):
+    auth_service.reset_password(request.token, request.new_password, session)
+    return {"message": "Senha redefinida com sucesso"}
