@@ -98,3 +98,9 @@ class PatientFullProfileResponse(BaseModel):
     status: str  # "stable" | "attention" | "critical"
     bind_id: int
     created_at: Optional[str] = None  # Data de criação do vínculo
+
+class AdminSchema(UserSchema):
+    is_superuser: bool = True
+
+class AdminResponse(UserResponse):
+    is_superuser: bool

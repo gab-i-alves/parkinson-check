@@ -40,6 +40,11 @@ CREATE TABLE IF NOT EXISTS "patient" (
   "id" integer PRIMARY KEY  REFERENCES "user" ("id")
 );
 
+CREATE TABLE IF NOT EXISTS "admin" (
+  "id" integer PRIMARY KEY REFERENCES "user" ("id"),
+  "is_superuser" boolean NOT NULL DEFAULT TRUE
+);
+
 CREATE TABLE IF NOT EXISTS "doctor" (
   "id" integer PRIMARY KEY  REFERENCES "user" ("id"),
   "crm" char(8) UNIQUE NOT NULL,

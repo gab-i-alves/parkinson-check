@@ -72,3 +72,14 @@ class Bind:
     patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"), nullable=False)
     # medic: Mapped["Doctor"] = relationship("Doctor")
     # patient: Mapped["Patient"] = relationship("Patient")
+
+@table_registry.mapped_as_dataclass
+class Admin(User):
+    __tablename__ = "admin"
+
+    id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True, init=False)
+    is_superuser: Mapped[bool] = mapped_column(default=True, nullable=False)
+
+    __mapper_args__ = {
+        "polymorphic_identity": UserType.ADMIN,
+    }
