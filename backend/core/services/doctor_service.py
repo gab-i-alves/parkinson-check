@@ -63,13 +63,17 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     return doctor
 
 
-# USAR APENAS PARA MEDICOS
+# USAR APENAS PARA MEDICOS - Retorna solicitações RECEBIDAS pelo médico
 def get_pending_binding_requests(
     user: User, session: Session
 ) -> list[tuple[Bind, Patient]] | None:
     bindings_with_patients = (
         session.query(Bind, Patient)
-        .filter(Bind.doctor_id == user.id, Bind.status == BindEnum.PENDING)
+        .filter(
+            Bind.doctor_id == user.id,
+            Bind.status == BindEnum.PENDING,
+            Bind.created_by_type == UserType.PATIENT
+        )
         .join(Patient, Bind.patient_id == Patient.id)
         .all()
     )
@@ -77,13 +81,17 @@ def get_pending_binding_requests(
     return bindings_with_patients
 
 
-# USAR APENAS PARA PACIENTES
+# USAR APENAS PARA PACIENTES - Retorna solicitações ENVIADAS pelo paciente
 def get_sent_binding_requests(
     user: User, session: Session
 ) -> list[tuple[Bind, Doctor]] | None:
     bindings_with_doctors = (
         session.query(Bind, Doctor)
-        .filter(Bind.patient_id == user.id, Bind.status == BindEnum.PENDING)
+        .filter(
+            Bind.patient_id == user.id,
+            Bind.status == BindEnum.PENDING,
+            Bind.created_by_type == UserType.PATIENT
+        )
         .join(Doctor, Bind.doctor_id == Doctor.id)
         .all()
     )
@@ -118,7 +126,7 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListRe
                 id=doc.id,
                 name=doc.name,
                 email=doc.email,
-                crm="CRM-" + doc.crm,
+                crm=doc.crm,
                 specialty=doc.expertise_area,
                 location=f"{doc.address.city}, {doc.address.state}",
                 role=UserType.DOCTOR,
@@ -145,7 +153,7 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListR
                 id=doc.id,
                 name=doc.name,
                 email=doc.email,
-                crm="CRM-" + doc.crm,
+                crm=doc.crm,
                 specialty=doc.expertise_area,
                 location=f"{doc.address.city}, {doc.address.state}",
                 role=UserType.DOCTOR,
@@ -173,3 +181,42 @@ def activate_or_reject_binding_request(
     session.refresh(bind_to_reject)
 
     return bind_to_reject
+
+
+def get_sent_requests_to_patients(user: User, session: Session) -> list[tuple[Bind, Patient]] | None:
+    """
+    Retorna solicitações de vínculo ENVIADAS pelo médico para pacientes (status PENDING).
+    """
+    bindings_with_patients = (
+        session.query(Bind, Patient)
+        .filter(
+            Bind.doctor_id == user.id,
+            Bind.status == BindEnum.PENDING,
+            Bind.created_by_type == UserType.DOCTOR
+        )
+        .join(Patient, Bind.patient_id == Patient.id)
+        .all()
+    )
+    return bindings_with_patients
+
+
+def unlink_patient(binding_id: int, user: User, session: Session) -> Bind:
+    """
+    Médico desfaz um vínculo ativo com um paciente.
+    """
+    bind_to_unlink = session.query(Bind).filter_by(id=binding_id).first()
+
+    if not bind_to_unlink:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Vínculo não encontrado."
+        )
+
+    if bind_to_unlink.doctor_id != user.id:
+        raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Ação não permitida.")
+
+    bind_to_unlink.status = BindEnum.REVERSED
+    session.add(bind_to_unlink)
+    session.commit()
+    session.refresh(bind_to_unlink)
+
+    return bind_to_unlink

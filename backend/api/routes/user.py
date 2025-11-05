@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from api.schemas.users import (
     DoctorListResponse,
     GetDoctorsSchema,
+    GetPatientsSchema,
     PatientDashboardResponse,
     PatientFullProfileResponse,
     PatientListResponse,
@@ -42,6 +43,20 @@ def get_doctors(
 ):
     doctors = doctor_service.get_doctors(session, parameters)
     return doctors
+
+
+@router.get("/patients", response_model=list[PatientListResponse])
+def get_patients(
+    user: CurrentDoctor,
+    parameters: GetPatientsSchema = Depends(),
+    session: Session = Depends(get_session),
+):
+    """
+    Endpoint para o médico buscar pacientes disponíveis no sistema.
+    Retorna todos os pacientes exceto os já vinculados ao médico atual.
+    """
+    patients = patient_service.get_patients(session, user, parameters)
+    return patients
 
 
 @router.get("/linked_doctors", response_model=list[DoctorListResponse] | None)

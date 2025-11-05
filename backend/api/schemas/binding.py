@@ -4,7 +4,8 @@ from core.enums.bind_enum import BindEnum
 
 
 class RequestBinding(BaseModel):
-    doctor_id: int
+    doctor_id: int | None = None
+    patient_id: int | None = None
 
 
 class Bind(BaseModel):
@@ -37,3 +38,16 @@ class BindindRequestResponse(BaseModel):
 class SentBindindRequestResponse(BaseModel):
     id: int
     doctor: BindingDoctor
+
+
+class ReceivedBindingRequestResponse(BaseModel):
+    """Solicitação recebida pelo paciente (enviada por médico)"""
+    id: int
+    doctor: BindingDoctor
+    status: BindEnum
+
+
+class SentBindingRequestByDoctorResponse(BaseModel):
+    """Solicitação enviada pelo médico para paciente"""
+    id: int
+    patient: BindingPatient

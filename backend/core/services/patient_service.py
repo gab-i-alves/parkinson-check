@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from api.schemas.binding import RequestBinding
 from api.schemas.users import (
     AddressResponse,
+    GetPatientsSchema,
     PatientDashboardResponse,
     PatientFullProfileResponse,
     PatientListResponse,
@@ -66,11 +67,51 @@ def create_patient(patient: PatientSchema, session: Session):
 
 
 def create_bind_request(request: RequestBinding, user: User, session: Session) -> Bind:
+    """
+    Cria uma solicitação de vínculo. Funciona bidirecional:
+    - Se user é PACIENTE: request.doctor_id deve estar preenchido
+    - Se user é MÉDICO: request.patient_id deve estar preenchido
+    """
+    # Determina se user é paciente ou médico e valida os campos
+    if user.user_type == UserType.PATIENT:
+        if not request.doctor_id:
+            raise HTTPException(
+                HTTPStatus.BAD_REQUEST, detail="doctor_id é obrigatório para pacientes."
+            )
+        doctor_id = request.doctor_id
+        patient_id = user.id
+
+        # Valida se o médico existe
+        doctor = session.query(Doctor).filter(Doctor.id == doctor_id).first()
+        if not doctor:
+            raise HTTPException(
+                HTTPStatus.NOT_FOUND, detail="O médico do ID informado não existe."
+            )
+    elif user.user_type == UserType.DOCTOR:
+        if not request.patient_id:
+            raise HTTPException(
+                HTTPStatus.BAD_REQUEST, detail="patient_id é obrigatório para médicos."
+            )
+        doctor_id = user.id
+        patient_id = request.patient_id
+
+        # Valida se o paciente existe
+        patient = session.query(Patient).filter(Patient.id == patient_id).first()
+        if not patient:
+            raise HTTPException(
+                HTTPStatus.NOT_FOUND, detail="O paciente do ID informado não existe."
+            )
+    else:
+        raise HTTPException(
+            HTTPStatus.FORBIDDEN, detail="Tipo de usuário inválido."
+        )
+
+    # Verifica se já existe vínculo ativo ou pendente
     active_or_pending_bind = (
         session.query(Bind)
         .filter(
-            Bind.doctor_id == request.doctor_id,
-            Bind.patient_id == user.id,
+            Bind.doctor_id == doctor_id,
+            Bind.patient_id == patient_id,
             or_(Bind.status == BindEnum.PENDING, Bind.status == BindEnum.ACTIVE),
         )
         .first()
@@ -81,11 +122,12 @@ def create_bind_request(request: RequestBinding, user: User, session: Session) -
             HTTPStatus.CONFLICT, detail="Uma solicitação já está ativa ou pendente."
         )
 
+    # Verifica se existe vínculo inativo (REJECTED ou REVERSED) para reutilizar
     inactive_bind = (
         session.query(Bind)
         .filter(
-            Bind.doctor_id == request.doctor_id,
-            Bind.patient_id == user.id,
+            Bind.doctor_id == doctor_id,
+            Bind.patient_id == patient_id,
             or_(Bind.status == BindEnum.REJECTED, Bind.status == BindEnum.REVERSED),
         )
         .first()
@@ -93,16 +135,14 @@ def create_bind_request(request: RequestBinding, user: User, session: Session) -
 
     if inactive_bind:
         inactive_bind.status = BindEnum.PENDING
+        inactive_bind.created_by_type = user.user_type
         db_bind = inactive_bind
     else:
-        doctor = session.query(Doctor).filter(Doctor.id == request.doctor_id).first()
-        if not doctor:
-            raise HTTPException(
-                HTTPStatus.NOT_FOUND, detail="O médico do ID informado não existe."
-            )
-
         db_bind = Bind(
-            doctor_id=request.doctor_id, patient_id=user.id, status=BindEnum.PENDING
+            doctor_id=doctor_id,
+            patient_id=patient_id,
+            status=BindEnum.PENDING,
+            created_by_type=user.user_type
         )
 
     session.add(db_bind)
@@ -314,3 +354,117 @@ def get_patient_full_profile(
         bind_id=bind.id if bind else 0,
         created_at=None,  # TODO: Adicionar data de criação no modelo Bind
     )
+
+
+def get_patients(session: Session, doctor: User, parameters: GetPatientsSchema) -> list[PatientListResponse]:
+    """
+    Busca todos os pacientes do sistema, excluindo os já vinculados ao médico atual.
+    Médicos podem usar filtros: name, cpf, email.
+    """
+    from sqlalchemy.orm import joinedload
+    from core.services.user_service import get_user_active_binds
+
+    # Busca vínculos ativos do médico para excluir pacientes já vinculados
+    active_binds = get_user_active_binds(session, doctor)
+    linked_patient_ids = [bind.patient_id for bind in active_binds] if active_binds else []
+
+    # Query base de pacientes
+    patient_query = session.query(Patient).options(joinedload(Patient.address))
+
+    # Excluir pacientes já vinculados
+    if linked_patient_ids:
+        patient_query = patient_query.filter(Patient.id.not_in(linked_patient_ids))
+
+    # Aplicar filtros opcionais
+    filters = parameters.model_dump(exclude_none=True)
+    patient_query = patient_query.filter_by(**filters)
+
+    patients = patient_query.all()
+
+    if not patients:
+        raise HTTPException(
+            HTTPStatus.NOT_FOUND,
+            detail="Não foram encontrados pacientes com os parâmetros fornecidos",
+        )
+
+    patient_list = []
+
+    for patient in patients:
+        patient_list.append(
+            PatientListResponse(
+                id=patient.id,
+                name=patient.name,
+                email=patient.email,
+                location=f"{patient.address.city}, {patient.address.state}",
+                role=UserType.PATIENT,
+            )
+        )
+
+    return patient_list
+
+
+def get_pending_requests_from_doctors(user: User, session: Session) -> list[tuple[Bind, Doctor]] | None:
+    """
+    Retorna solicitações de vínculo pendentes RECEBIDAS pelo paciente (enviadas por médicos).
+    """
+    bindings_with_doctors = (
+        session.query(Bind, Doctor)
+        .filter(
+            Bind.patient_id == user.id,
+            Bind.status == BindEnum.PENDING,
+            Bind.created_by_type == UserType.DOCTOR
+        )
+        .join(Doctor, Bind.doctor_id == Doctor.id)
+        .all()
+    )
+    return bindings_with_doctors
+
+
+def accept_doctor_request(user: User, binding_id: int, session: Session) -> Bind:
+    """
+    Paciente aceita uma solicitação de vínculo de um médico.
+    """
+    bind_to_accept = session.query(Bind).filter_by(id=binding_id, patient_id=user.id).first()
+
+    if not bind_to_accept:
+        raise HTTPException(
+            HTTPStatus.NOT_FOUND, detail="Solicitação não encontrada"
+        )
+
+    if bind_to_accept.status != BindEnum.PENDING:
+        raise HTTPException(
+            HTTPStatus.BAD_REQUEST, detail="Solicitação não está pendente"
+        )
+
+    bind_to_accept.status = BindEnum.ACTIVE
+
+    session.add(bind_to_accept)
+    session.commit()
+    session.refresh(bind_to_accept)
+
+    return bind_to_accept
+
+
+def reject_doctor_request(user: User, binding_id: int, session: Session) -> Bind:
+    """
+    Paciente rejeita uma solicitação de vínculo de um médico.
+    """
+    bind_to_reject = session.query(Bind).filter_by(id=binding_id, patient_id=user.id).first()
+
+    if not bind_to_reject:
+        raise HTTPException(
+            HTTPStatus.NOT_FOUND, detail="Solicitação não encontrada"
+        )
+
+    if bind_to_reject.status != BindEnum.PENDING:
+        raise HTTPException(
+            HTTPStatus.BAD_REQUEST, detail="Solicitação não está pendente"
+        )
+
+    bind_to_reject.status = BindEnum.REJECTED
+
+    session.add(bind_to_reject)
+    session.commit()
+    session.refresh(bind_to_reject)
+
+    return bind_to_reject

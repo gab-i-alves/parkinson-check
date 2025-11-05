@@ -1,2 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
 @use "tailwindcss";
+
+/* Animation for feedback modal */
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce-small {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+.animate-bounce-small {
+  animation: bounce-small 0.6s ease-in-out;
+}
