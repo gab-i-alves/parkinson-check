@@ -6,7 +6,7 @@ export const DASHBOARD_ROUTES: Routes = [
   {
     path: '',
     component: DashboardLayoutComponent,
-    canActivate: [authGuard(['paciente', 'medico'])],
+    canActivate: [authGuard(['paciente', 'medico', 'admin'])],
     children: [
       {
         path: '',
@@ -126,6 +126,14 @@ export const DASHBOARD_ROUTES: Routes = [
         loadComponent: () =>
           import('./components/patient-test-detail/patient-test-detail.component').then(
             (c) => c.PatientTestDetailComponent
+          ),
+      },
+      {
+        path: 'admin',
+        canActivate: [authGuard(['admin'])],
+        loadComponent: () =>
+          import('./components/admin-dashboard/admin-dashboard.component').then(
+            (c) => c.AdminDashboardComponent
           ),
       },
     ],

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from core.enums.user_enum import UserType
 from core.security.security import get_admin_user
 from infra.db.connection import get_session
 from core.models import User, Doctor, Patient 
@@ -12,7 +13,7 @@ async def get_dashboard_stats(
     current_admin: User = Depends(get_admin_user())
 ):
     # Retornar estatísticas do dashboard
-    total_users = session.query(User).count()
+    total_users = session.query(User).filter(User.user_type != UserType.ADMIN).count()
     total_doctors = session.query(Doctor).count()
     total_patients = session.query(Patient).count()
     pending_doctors = session.query(Doctor).filter(
