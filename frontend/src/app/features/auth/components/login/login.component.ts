@@ -147,6 +147,8 @@ export class LoginComponent implements OnInit {
         setTimeout(() => {
           if (currentUser?.role === 'medico') {
             this.router.navigate(['/dashboard/doctor']);
+          } else if (currentUser?.role === 'admin') {
+            this.router.navigate(['/dashboard/admin']);
           } else {
             this.router.navigate(['/dashboard']);
           }
