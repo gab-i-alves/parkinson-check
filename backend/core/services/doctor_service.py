@@ -62,35 +62,6 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     session.refresh(db_doctor)
     return doctor
 
-
-# USAR APENAS PARA MEDICOS
-def get_pending_binding_requests(
-    user: User, session: Session
-) -> list[tuple[Bind, Patient]] | None:
-    bindings_with_patients = (
-        session.query(Bind, Patient)
-        .filter(Bind.doctor_id == user.id, Bind.status == BindEnum.PENDING)
-        .join(Patient, Bind.patient_id == Patient.id)
-        .all()
-    )
-
-    return bindings_with_patients
-
-
-# USAR APENAS PARA PACIENTES
-def get_sent_binding_requests(
-    user: User, session: Session
-) -> list[tuple[Bind, Doctor]] | None:
-    bindings_with_doctors = (
-        session.query(Bind, Doctor)
-        .filter(Bind.patient_id == user.id, Bind.status == BindEnum.PENDING)
-        .join(Doctor, Bind.doctor_id == Doctor.id)
-        .all()
-    )
-
-    return bindings_with_doctors
-
-
 def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
     doctor = session.query(Doctor).filter(Doctor.crm == crm).first()
 
@@ -153,45 +124,3 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListR
             )
         )
     return doctor_list
-
-
-def activate_or_reject_binding_request(
-    user: User,
-    binding_id: int,
-    session: Session,
-    new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED],
-) -> Bind:
-    binding = session.query(Bind).filter_by(id=binding_id, doctor_id=user.id).first()
-
-    if not binding:
-        return HTTPException(HTTPStatus.NOT_FOUND, detail="Solicitação não encontrada")
-
-    binding.status = new_status
-
-    if new_status == BindEnum.ACTIVE:
-        # --- INÍCIO DA NOTIFICAÇÃO DE ACEITE ---
-        notification_service.create_notification(
-            db=session,
-            user_id=binding.patient_id,  # Notifica o PACIENTE
-            message=f"O médico {user.name} aceitou sua solicitação de vínculo.",
-            type=NotificationType.BIND_ACCEPTED,
-            related_entity_id=binding.id
-        )
-        # --- FIM DA NOTIFICAÇÃO DE ACEITE ---
-        
-    elif new_status == BindEnum.REJECTED:
-        # --- (Opcional) NOTIFICAÇÃO DE REJEIÇÃO ---
-        notification_service.create_notification(
-            db=session,
-            user_id=binding.patient_id, # Notifica o PACIENTE
-            message=f"O médico {user.name} rejeitou sua solicitação de vínculo.",
-            type=NotificationType.BIND_REJECTED,
-            related_entity_id=binding.id
-        )
-        # --- FIM DA NOTIFICAÇÃO ---
-
-    session.add(binding)
-    session.commit()
-    session.refresh(binding)
-
-    return binding

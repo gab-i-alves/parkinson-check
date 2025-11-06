@@ -13,13 +13,12 @@ from api.schemas.users import (
     PatientListResponse,
     PatientSchema,
 )
-from core.models import Bind, Doctor, Patient, Test, User
+from core.models import Patient, Test, User
 from core.security.security import get_password_hash
-from core.services import address_service, user_service, notification_service
+from core.services import address_service, user_service
 from core.services.user_service import get_binded_users
 
-from ..enums import BindEnum, TestType, UserType, NotificationType
-
+from ..enums import TestType, UserType
 
 def create_patient(patient: PatientSchema, session: Session):
     if user_service.get_user_by_email(patient.email, session) is not None:
@@ -63,89 +62,6 @@ def create_patient(patient: PatientSchema, session: Session):
     session.commit()
     session.refresh(db_patient)
     return patient
-
-
-def create_bind_request(request: RequestBinding, user: User, session: Session) -> Bind:
-    active_or_pending_bind = (
-        session.query(Bind)
-        .filter(
-            Bind.doctor_id == request.doctor_id,
-            Bind.patient_id == user.id,
-            or_(Bind.status == BindEnum.PENDING, Bind.status == BindEnum.ACTIVE),
-        )
-        .first()
-    )
-
-    if active_or_pending_bind:
-        raise HTTPException(
-            HTTPStatus.CONFLICT, detail="Uma solicitação já está ativa ou pendente."
-        )
-
-    inactive_bind = (
-        session.query(Bind)
-        .filter(
-            Bind.doctor_id == request.doctor_id,
-            Bind.patient_id == user.id,
-            or_(Bind.status == BindEnum.REJECTED, Bind.status == BindEnum.REVERSED),
-        )
-        .first()
-    )
-
-    if inactive_bind:
-        inactive_bind.status = BindEnum.PENDING
-        db_bind = inactive_bind
-    else:
-        doctor = session.query(Doctor).filter(Doctor.id == request.doctor_id).first()
-        if not doctor:
-            raise HTTPException(
-                HTTPStatus.NOT_FOUND, detail="O médico do ID informado não existe."
-            )
-
-        db_bind = Bind(
-            doctor_id=request.doctor_id, patient_id=user.id, status=BindEnum.PENDING
-        )
-
-    session.add(db_bind)
-    session.flush()
-    
-    try:      
-        notification_service.create_notification(
-            session,
-            user,
-            message=f"O paciente {user.name} enviou uma solicitação de vinculo.",
-            type=NotificationType.BIND_REQUEST,
-            bind_id=db_bind.id
-        )
-    except Exception as e:
-        raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, detail=f"Erro ao criar notificação: {e}")
-    
-    session.commit()
-    session.refresh(db_bind)
-    return db_bind
-
-
-def unlink_binding(binding_id: int, user: User, session: Session) -> Bind:
-    """
-    Altera o status de um link para REVERSED, desvinculando o paciente.
-    """
-
-    bind_to_unlink = session.query(Bind).filter_by(id=binding_id).first()
-
-    if not bind_to_unlink:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Vínculo não encontrado."
-        )
-
-    if bind_to_unlink.patient_id != user.id:
-        raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Ação não permitida.")
-
-    bind_to_unlink.status = BindEnum.REVERSED
-    session.add(bind_to_unlink)
-    session.commit()
-    session.refresh(bind_to_unlink)
-
-    return bind_to_unlink
-
 
 def get_binded_patients(session: Session, current_user: User) -> list[PatientListResponse]:
     """

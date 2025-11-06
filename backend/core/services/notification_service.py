@@ -17,7 +17,6 @@ def create_notification(session: Session, user: User, message: str, type: Notifi
     )
     
     session.add(db_notification)
-    session.flush()
 
 
 def get_all_user_notifications(user: User, session: Session):

@@ -10,7 +10,7 @@ CREATE TYPE spiral_methods_enum AS ENUM ('WEBCAM', 'PAPER');
 
 CREATE TYPE note_category_enum AS ENUM ('OBSERVATION', 'RECOMMENDATION', 'ALERT');
 
-CREATE TYPE notification_type_enum AS ENUM ('BIND_REQUEST', 'BIND_ACCEPTED', 'BIND_REJECTED');
+CREATE TYPE notification_type_enum AS ENUM ('BIND_REQUEST', 'BIND_ACCEPTED', 'BIND_REJECTED', 'BIND_REVERSED');
 
 CREATE TABLE IF NOT EXISTS "address" (
   "id" SERIAL PRIMARY KEY,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "address" (
 
 CREATE TABLE IF NOT EXISTS "user" (
   "id" SERIAL PRIMARY KEY,
-  "type" user_type_enum NOT NULL,
+  "type" user_type_enum NOT NULL
   "name" varchar(50) NOT NULL,
   "email" varchar(255) UNIQUE NOT NULL,
   "hashed_password" varchar(255) NOT NULL,
