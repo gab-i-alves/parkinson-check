@@ -163,4 +163,113 @@ export class DoctorService {
       this.getHttpOptions()
     );
   }
+
+  /**
+   * Médico busca todos os pacientes disponíveis no sistema (exceto já vinculados).
+   */
+  searchPatients(term: string, cpf: string): Observable<any[] | null> {
+    let params = new HttpParams();
+
+    if (term) {
+      params = params.append('name', term);
+    }
+    if (cpf) {
+      params = params.append('cpf', cpf);
+    }
+
+    return this.http
+      .get<any[]>('/api/users/patients', {
+        ...this.getHttpOptions(),
+        params: params,
+      })
+      .pipe(
+        map((resp: HttpResponse<any[]>) => {
+          if (resp.status === 200 && resp.body) {
+            return resp.body;
+          }
+          return null;
+        }),
+        catchError((err) => {
+          console.error('Erro ao buscar pacientes:', err);
+          return throwError(() => err);
+        })
+      );
+  }
+
+  /**
+   * Médico solicita vínculo com um paciente.
+   */
+  requestBindingWithPatient(patientId: number): Observable<any> {
+    return this.http.post(
+      '/api/bindings/request',
+      { patient_id: patientId },
+      this.getHttpOptions()
+    );
+  }
+
+  /**
+   * Médico busca solicitações enviadas para pacientes (pendentes).
+   */
+  getSentRequestsToPatients(): Observable<any[] | null> {
+    return this.http
+      .get<any[]>('/api/bindings/requests/sent-by-doctor', this.getHttpOptions())
+      .pipe(
+        map((resp: HttpResponse<any[]>) => {
+          if (resp.status === 200) {
+            return resp.body;
+          }
+          return null;
+        }),
+        catchError((err) => throwError(() => err))
+      );
+  }
+
+  /**
+   * Médico desvincular paciente.
+   */
+  unlinkPatient(bindingId: number): Observable<any> {
+    return this.http.delete<void>(
+      `/api/bindings/${bindingId}`,
+      this.getHttpOptions()
+    );
+  }
+
+  /**
+   * Paciente busca solicitações recebidas de médicos (pendentes).
+   */
+  getReceivedRequestsFromDoctors(): Observable<any[] | null> {
+    return this.http
+      .get<any[]>('/api/bindings/requests/received', this.getHttpOptions())
+      .pipe(
+        map((resp: HttpResponse<any[]>) => {
+          if (resp.status === 200) {
+            return resp.body;
+          }
+          return null;
+        }),
+        catchError((err) => throwError(() => err))
+      );
+  }
+
+  /**
+   * Paciente aceita solicitação de vínculo de um médico.
+   */
+  acceptDoctorRequest(bindingId: number): Observable<any> {
+    return this.http.post(
+      `/api/bindings/${bindingId}/accept-by-patient`,
+      {},
+      this.getHttpOptions()
+    );
+  }
+
+  /**
+   * Paciente rejeita solicitação de vínculo de um médico.
+   */
+  rejectDoctorRequest(bindingId: number): Observable<any> {
+    return this.http.post(
+      `/api/bindings/${bindingId}/reject-by-patient`,
+      {},
+      this.getHttpOptions()
+    );
+  }
 }

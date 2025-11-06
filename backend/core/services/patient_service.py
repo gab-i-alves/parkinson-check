@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from api.schemas.binding import RequestBinding
 from api.schemas.users import (
     AddressResponse,
+    GetPatientsSchema,
     PatientDashboardResponse,
     PatientFullProfileResponse,
     PatientListResponse,
@@ -243,3 +244,51 @@ def get_patient_full_profile(
         bind_id=bind.id if bind else 0,
         created_at=None,  # TODO: Adicionar data de criação no modelo Bind
     )
+
+
+def get_patients(session: Session, doctor: User, parameters: GetPatientsSchema) -> list[PatientListResponse]:
+    """
+    Busca todos os pacientes do sistema, excluindo os já vinculados ao médico atual.
+    Médicos podem usar filtros: name, cpf, email.
+    """
+    from sqlalchemy.orm import joinedload
+    from core.services.user_service import get_user_active_binds
+
+    # Busca vínculos ativos do médico para excluir pacientes já vinculados
+    active_binds = get_user_active_binds(session, doctor)
+    linked_patient_ids = [bind.patient_id for bind in active_binds] if active_binds else []
+
+    # Query base de pacientes
+    patient_query = session.query(Patient).options(joinedload(Patient.address))
+
+    # Excluir pacientes já vinculados
+    if linked_patient_ids:
+        patient_query = patient_query.filter(Patient.id.not_in(linked_patient_ids))
+
+    # Aplicar filtros opcionais
+    filters = parameters.model_dump(exclude_none=True)
+    patient_query = patient_query.filter_by(**filters)
+
+    patients = patient_query.all()
+
+    if not patients:
+        raise HTTPException(
+            HTTPStatus.NOT_FOUND,
+            detail="Não foram encontrados pacientes com os parâmetros fornecidos",
+        )
+
+    patient_list = []
+
+    for patient in patients:
+        patient_list.append(
+            PatientListResponse(
+                id=patient.id,
+                name=patient.name,
+                email=patient.email,
+                location=f"{patient.address.city}, {patient.address.state}",
+                role=UserType.PATIENT,
+            )
+        )
+
+    return patient_list
+

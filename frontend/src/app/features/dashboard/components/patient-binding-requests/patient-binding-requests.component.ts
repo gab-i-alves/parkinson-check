@@ -6,6 +6,7 @@ import { DoctorProfileModalComponent } from '../../../../shared/components/docto
 import { Doctor } from '../../../../core/models/doctor.model';
 import { PatientBindingRequest } from '../../../../core/models/patient-binding-request.model';
 import { firstValueFrom } from 'rxjs';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-patient-binding-requests',
@@ -19,6 +20,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class PatientBindingRequestsComponent {
   private medicService = inject(DoctorService);
+  private notificationService = inject(NotificationService);
 
   searchTerm = signal<string>('');
   specialty = signal<string>('');
@@ -32,10 +34,13 @@ export class PatientBindingRequestsComponent {
 
   linkedDoctors = signal<Doctor[]>([]);
   sentRequests = signal<PatientBindingRequest[]>([]);
+  receivedRequests = signal<any[]>([]);
+  activeTab = signal<'sent' | 'received'>('sent');
 
   ngOnInit(): void {
     this.loadLinkedDoctors();
     this.loadSentRequests();
+    this.loadReceivedRequests();
   }
 
   async searchDoctors(): Promise<void> {
@@ -151,6 +156,54 @@ export class PatientBindingRequestsComponent {
     });
   }
 
+  loadReceivedRequests(): void {
+    this.isLoading.set(true);
+    this.medicService.getReceivedRequestsFromDoctors().subscribe({
+      next: (results) => {
+        if (results != null) {
+          this.receivedRequests.set(results);
+        }
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false),
+    });
+  }
+
+  setActiveTab(tab: 'sent' | 'received'): void {
+    this.activeTab.set(tab);
+  }
+
+  acceptRequest(requestId: number): void {
+    this.medicService.acceptDoctorRequest(requestId).subscribe({
+      next: () => {
+        this.notificationService.success('Solicitação aceita com sucesso', 3000);
+        this.loadReceivedRequests();
+        this.loadLinkedDoctors();
+      },
+      error: (err) => {
+        this.notificationService.error(
+          `Erro ao aceitar solicitação: ${err.error?.detail || 'Tente novamente'}`,
+          5000
+        );
+      },
+    });
+  }
+
+  rejectRequest(requestId: number): void {
+    this.medicService.rejectDoctorRequest(requestId).subscribe({
+      next: () => {
+        this.notificationService.success('Solicitação recusada', 3000);
+        this.loadReceivedRequests();
+      },
+      error: (err) => {
+        this.notificationService.error(
+          `Erro ao recusar solicitação: ${err.error?.detail || 'Tente novamente'}`,
+          5000
+        );
+      },
+    });
+  }
+
   viewProfile(doctor: Doctor): void {
     this.selectedDoctor.set(doctor);
     this.isModalVisible.set(true);
@@ -167,7 +220,7 @@ export class PatientBindingRequestsComponent {
 
     this.medicService.requestBinding(doctorId).subscribe({
       next: () => {
-        alert('Solicitação enviada com sucesso!');
+        this.notificationService.success('Solicitação enviada com sucesso', 3000);
         this.searchResults.update((doctors) =>
           doctors.map((d) =>
             d.id === doctorId ? { ...d, status: 'pending' } : d
@@ -177,10 +230,9 @@ export class PatientBindingRequestsComponent {
         this.closeModal();
       },
       error: (err) => {
-        alert(
-          `Erro ao enviar solicitação: ${
-            err.error.detail || 'Tente novamente.'
-          }`
+        this.notificationService.error(
+          `Erro ao enviar solicitação: ${err.error?.detail || 'Tente novamente'}`,
+          5000
         );
         this.closeModal();
       },

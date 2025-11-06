@@ -4,7 +4,9 @@ import { DoctorService } from '../../services/doctor.service';
 import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
 import { BindingRequest } from '../../../../core/models/binding-request.model';
 import { Patient, PatientStatus } from '../../../../core/models/patient.model';
+import { PatientProfileModalComponent, PatientProfile } from '../../../../shared/components/patient-profile-modal/patient-profile-modal.component';
 import { firstValueFrom } from 'rxjs';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 interface PatientWithBinding extends Patient {
   bindingStatus?: 'none' | 'pending' | 'linked';
@@ -13,16 +15,23 @@ interface PatientWithBinding extends Patient {
 @Component({
   selector: 'app-binding-requests',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PatientProfileModalComponent],
   templateUrl: './binding-requests.component.html',
 })
 export class BindingRequestsComponent implements OnInit {
   private medicService = inject(DoctorService);
   private dashboardService = inject(DoctorDashboardService);
+  private notificationService = inject(NotificationService);
 
-  // Solicitações pendentes
-  requests = signal<BindingRequest[]>([]);
+  // Solicitações
+  requests = signal<BindingRequest[]>([]);  // Recebidas de pacientes
+  sentRequests = signal<any[]>([]);  // Enviadas para pacientes
+  activeTab = signal<'received' | 'sent'>('received');
   isLoading = signal<boolean>(true);
+
+  // Modal de perfil
+  isPatientProfileModalVisible = signal<boolean>(false);
+  selectedPatient = signal<PatientProfile | null>(null);
 
   // Busca de pacientes
   searchTerm = signal<string>('');
@@ -34,6 +43,7 @@ export class BindingRequestsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadRequests();
+    this.loadSentRequests();
   }
 
   loadRequests(): void {
@@ -47,23 +57,46 @@ export class BindingRequestsComponent implements OnInit {
     });
   }
 
+  loadSentRequests(): void {
+    this.medicService.getSentRequestsToPatients().subscribe({
+      next: (data) => {
+        if (data != null) this.sentRequests.set(data);
+      },
+      error: (err) => console.error('Erro ao carregar solicitações enviadas:', err),
+    });
+  }
+
+  setActiveTab(tab: 'received' | 'sent'): void {
+    this.activeTab.set(tab);
+  }
+
   acceptRequest(id: number): void {
     this.medicService.acceptBindingRequest(id).subscribe({
       next: () => {
-        alert('Solicitação aceita!');
+        this.notificationService.success('Solicitação aceita com sucesso', 3000);
         this.requests.update((reqs) => reqs.filter((r) => r.id !== id));
       },
-      error: (err) => alert(`Erro ao aceitar: ${err.error.detail}`),
+      error: (err) => {
+        this.notificationService.error(
+          `Erro ao aceitar solicitação: ${err.error?.detail || 'Tente novamente'}`,
+          5000
+        );
+      },
     });
   }
 
   rejectRequest(id: number): void {
     this.medicService.rejectBindingRequest(id).subscribe({
       next: () => {
-        alert('Solicitação recusada.');
+        this.notificationService.success('Solicitação recusada', 3000);
         this.requests.update((reqs) => reqs.filter((r) => r.id !== id));
       },
-      error: (err) => alert(`Erro ao recusar: ${err.error.detail}`),
+      error: (err) => {
+        this.notificationService.error(
+          `Erro ao recusar solicitação: ${err.error?.detail || 'Tente novamente'}`,
+          5000
+        );
+      },
     });
   }
 
@@ -78,23 +111,27 @@ export class BindingRequestsComponent implements OnInit {
 
     const delayPromise = new Promise((resolve) => setTimeout(resolve, 500));
 
-    const filters = {
-      status: this.statusFilter() as PatientStatus | undefined,
-    };
-
     const searchPromise = firstValueFrom(
-      this.dashboardService.searchPatients(this.searchTerm(), filters)
+      this.medicService.searchPatients(this.searchTerm(), '')
     );
 
     try {
       const [, results] = await Promise.all([delayPromise, searchPromise]);
 
       if (results) {
-        // Adiciona status de vínculo aos pacientes
-        // TODO: Implementar lógica real quando backend estiver pronto
-        const patientsWithBinding: PatientWithBinding[] = results.map((patient) => ({
-          ...patient,
-          bindingStatus: 'none' as const, // Por enquanto todos como 'none'
+        // Mapeia os resultados do backend para o formato esperado
+        const patientsWithBinding: PatientWithBinding[] = results.map((patient: any) => ({
+          id: patient.id,
+          name: patient.name,
+          email: patient.email,
+          cpf: '',
+          age: 0,
+          status: 'stable' as PatientStatus,
+          lastTestDate: '',
+          lastTestType: undefined,
+          testsCount: 0,
+          location: patient.location,
+          bindingStatus: 'none' as const,
         }));
 
         const sortedPatients = this.sortPatients(patientsWithBinding);
@@ -149,15 +186,25 @@ export class BindingRequestsComponent implements OnInit {
   }
 
   sendInvite(patientId: string): void {
-    // TODO: Implementar quando backend estiver pronto
-    alert(`Convite enviado para o paciente ${patientId}!`);
+    const numericId = typeof patientId === 'string' ? parseInt(patientId, 10) : patientId;
 
-    // Atualiza o status do paciente na lista
-    this.searchResults.update((patients) =>
-      patients.map((p) =>
-        p.id === patientId ? { ...p, bindingStatus: 'pending' as const } : p
-      )
-    );
+    this.medicService.requestBindingWithPatient(numericId).subscribe({
+      next: () => {
+        this.notificationService.success('Convite enviado com sucesso', 3000);
+        // Atualiza o status do paciente na lista
+        this.searchResults.update((patients) =>
+          patients.map((p) =>
+            p.id === patientId ? { ...p, bindingStatus: 'pending' as const } : p
+          )
+        );
+      },
+      error: (err) => {
+        this.notificationService.error(
+          `Erro ao enviar convite: ${err.error?.detail || 'Tente novamente'}`,
+          5000
+        );
+      },
+    });
   }
 
   getStatusLabel(status: PatientStatus): string {
@@ -176,5 +223,22 @@ export class BindingRequestsComponent implements OnInit {
       critical: 'bg-red-100 text-red-800',
     };
     return classes[status];
+  }
+
+  viewPatientProfile(request: BindingRequest): void {
+    const patientProfile: PatientProfile = {
+      id: request.patient.id.toString(),
+      name: request.patient.name,
+      age: 0, // Não disponível nas solicitações
+      email: request.patient.email,
+      status: 'pending',
+    };
+    this.selectedPatient.set(patientProfile);
+    this.isPatientProfileModalVisible.set(true);
+  }
+
+  closePatientProfile(): void {
+    this.isPatientProfileModalVisible.set(false);
+    this.selectedPatient.set(null);
   }
 }

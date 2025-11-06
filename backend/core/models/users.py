@@ -72,11 +72,15 @@ class Bind:
     __tablename__ = "bind"
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True, autoincrement=True)
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"), nullable=False)
     status: Mapped[BindEnum] = mapped_column(
         "status", PG_ENUM(BindEnum, name="bind_enum", create_type=True)
     )
-
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
-    patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"), nullable=False)
+    created_by_type: Mapped[UserType] = mapped_column(
+        PG_ENUM(UserType, name="user_type_enum", create_type=False),
+        nullable=False,
+        default=UserType.PATIENT
+    )
     # medic: Mapped["Doctor"] = relationship("Doctor")
     # patient: Mapped["Patient"] = relationship("Patient")
