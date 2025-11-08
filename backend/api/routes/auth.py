@@ -49,9 +49,14 @@ def logout(response: Response):
 
 
 @router.post("/forgot-password")
-async def forgot_password(request: ForgotPasswordRequest, background_tasks: BackgroundTasks, session: Session = Depends(get_session)):
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    background_tasks: BackgroundTasks,
+    session: Session = Depends(get_session),
+):
     await auth_service.request_password_reset(request.email, background_tasks, session)
     return {"message": "Se o email existir, você receberá instruções para a redefinição"}
+
 
 @router.post("/reset-password")
 def reset_password(request: ResetPasswordRequest, session: Session = Depends(get_session)):

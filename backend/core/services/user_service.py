@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from core.models import Bind, Doctor, Patient, User
 
 from ..enums.bind_enum import BindEnum
+from core.security.security import get_password_hash
 
 
 def get_user_by_email(email: str, session: Session) -> User:
@@ -59,25 +60,25 @@ def get_binded_users(user: User, session: Session) -> list[dict[int, Patient | D
     ]
     return result
 
-def set_reset_token(user: User, reset_token: str, token_expiry: str, session: Session): 
-     db_user = session.query(User).filter(User.id == user.id).first()
 
-     db_user.reset_token = reset_token
-     db_user.reset_token_expiry = token_expiry
+def set_reset_token(user: User, reset_token: str, token_expiry: str, session: Session):
+    db_user = session.query(User).filter(User.id == user.id).first()
 
-     session.add(db_user)
-     session.commit()
-     session.refresh(db_user)
+    db_user.reset_token = reset_token
+    db_user.reset_token_expiry = token_expiry
 
-     
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+
+
 def get_user_by_reset_token(token: str, session: Session) -> User:
     user = session.query(User).filter(User.reset_token == token).first()
 
     return user
 
-def update_password(user: User, new_password: str, session: Session):
-    from core.security.security import get_password_hash
 
+def update_password(user: User, new_password: str, session: Session):
     db_user = session.query(User).filter(User.id == user.id).first()
 
     db_user.hashed_password = get_password_hash(new_password)

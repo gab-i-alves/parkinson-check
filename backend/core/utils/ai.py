@@ -1,13 +1,17 @@
-from http import HTTPStatus
-from fastapi import HTTPException, UploadFile
-import httpx
-from pydantic import BaseModel
 import os
+from http import HTTPStatus
+
+import httpx
+from fastapi import HTTPException, UploadFile
+
 from api.schemas.tests import SpiralImageSchema, SpiralTestResult, VoiceTestResult
+
 from .converter import convert_webm_to_wav
 
 
-def get_spiral_image_models_response(schema: SpiralImageSchema, service_url: str) -> SpiralTestResult: 
+def get_spiral_image_models_response(
+    schema: SpiralImageSchema, service_url: str
+) -> SpiralTestResult:
     files = {
         "image": (schema.image_filename, schema.image_content, schema.image_content_type)
     }
@@ -30,7 +34,8 @@ def get_spiral_image_models_response(schema: SpiralImageSchema, service_url: str
             status_code=HTTPStatus.SERVICE_UNAVAILABLE,
             detail=f"Não foi possível comunicar com o serviço de análise de imagem: {e}",
         )
-    
+
+
 def get_voice_model_response(audio_file: UploadFile, service_url: str) -> VoiceTestResult:
     """
     Processa um arquivo de voz recebido do frontend:
@@ -47,7 +52,7 @@ def get_voice_model_response(audio_file: UploadFile, service_url: str) -> VoiceT
             with httpx.Client() as client:
                 response = client.post(service_url, files=files, timeout=30.0)
                 response.raise_for_status()
-        
+
         return VoiceTestResult(**response.json())
 
     except httpx.HTTPStatusError as e:

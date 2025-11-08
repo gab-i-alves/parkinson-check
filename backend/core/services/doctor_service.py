@@ -1,14 +1,13 @@
 from http import HTTPStatus
-from typing import Literal
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from api.schemas.users import DoctorListResponse, DoctorSchema, GetDoctorsSchema
-from core.models import Bind, Doctor, Patient, User
+from core.models import Doctor, User
 from core.security.security import get_password_hash
 
-from ..enums import BindEnum, UserType
+from ..enums import UserType
 from . import address_service, user_service
 from .user_service import get_binded_users
 
@@ -61,42 +60,6 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     session.commit()
     session.refresh(db_doctor)
     return doctor
-
-
-# USAR APENAS PARA MEDICOS - Retorna solicitações RECEBIDAS pelo médico
-def get_pending_binding_requests(
-    user: User, session: Session
-) -> list[tuple[Bind, Patient]] | None:
-    bindings_with_patients = (
-        session.query(Bind, Patient)
-        .filter(
-            Bind.doctor_id == user.id,
-            Bind.status == BindEnum.PENDING,
-            Bind.created_by_type == UserType.PATIENT
-        )
-        .join(Patient, Bind.patient_id == Patient.id)
-        .all()
-    )
-
-    return bindings_with_patients
-
-
-# USAR APENAS PARA PACIENTES - Retorna solicitações ENVIADAS pelo paciente
-def get_sent_binding_requests(
-    user: User, session: Session
-) -> list[tuple[Bind, Doctor]] | None:
-    bindings_with_doctors = (
-        session.query(Bind, Doctor)
-        .filter(
-            Bind.patient_id == user.id,
-            Bind.status == BindEnum.PENDING,
-            Bind.created_by_type == UserType.PATIENT
-        )
-        .join(Doctor, Bind.doctor_id == Doctor.id)
-        .all()
-    )
-
-    return bindings_with_doctors
 
 
 def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
@@ -161,62 +124,3 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListR
             )
         )
     return doctor_list
-
-
-def activate_or_reject_binding_request(
-    user: User,
-    binding_id: int,
-    session: Session,
-    new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED],
-) -> Bind:
-    bind_to_reject = session.query(Bind).filter_by(id=binding_id, doctor_id=user.id).first()
-
-    if not bind_to_reject:
-        return HTTPException(HTTPStatus.NOT_FOUND, detail="Solicitação não encontrada")
-
-    bind_to_reject.status = new_status
-
-    session.add(bind_to_reject)
-    session.commit()
-    session.refresh(bind_to_reject)
-
-    return bind_to_reject
-
-
-def get_sent_requests_to_patients(user: User, session: Session) -> list[tuple[Bind, Patient]] | None:
-    """
-    Retorna solicitações de vínculo ENVIADAS pelo médico para pacientes (status PENDING).
-    """
-    bindings_with_patients = (
-        session.query(Bind, Patient)
-        .filter(
-            Bind.doctor_id == user.id,
-            Bind.status == BindEnum.PENDING,
-            Bind.created_by_type == UserType.DOCTOR
-        )
-        .join(Patient, Bind.patient_id == Patient.id)
-        .all()
-    )
-    return bindings_with_patients
-
-
-def unlink_patient(binding_id: int, user: User, session: Session) -> Bind:
-    """
-    Médico desfaz um vínculo ativo com um paciente.
-    """
-    bind_to_unlink = session.query(Bind).filter_by(id=binding_id).first()
-
-    if not bind_to_unlink:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Vínculo não encontrado."
-        )
-
-    if bind_to_unlink.doctor_id != user.id:
-        raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Ação não permitida.")
-
-    bind_to_unlink.status = BindEnum.REVERSED
-    session.add(bind_to_unlink)
-    session.commit()
-    session.refresh(bind_to_unlink)
-
-    return bind_to_unlink

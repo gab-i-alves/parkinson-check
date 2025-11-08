@@ -12,16 +12,18 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     ENVIRONMENT: str
-    SMTP_HOST:str
-    SMTP_PORT:str
-    SMTP_USER:str
-    SMTP_PASSWORD:str
+    SMTP_HOST: str
+    SMTP_PORT: str
+    SMTP_USER: str
+    SMTP_PASSWORD: str
 
     BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
     MODEL_PATH: str = os.path.join(BASE_DIR, "models", "rf_model.pkl")
     EMAIL_TEMPLATES_PATH: str = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "core", "utils", "email_templates"
+        "core",
+        "utils",
+        "email_templates",
     )
 
 

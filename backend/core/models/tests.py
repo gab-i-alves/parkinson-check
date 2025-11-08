@@ -29,9 +29,7 @@ class Test:
 
     # Relação com paciente
     patient: Mapped["Patient"] = relationship(
-        "Patient",
-        foreign_keys=[patient_id],
-        init=False
+        "Patient", foreign_keys=[patient_id], init=False
     )
 
     __mapper_args__ = {

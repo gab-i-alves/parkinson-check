@@ -13,12 +13,14 @@ from ..enums.user_enum import UserType
 def create_note(note: NoteSchema, session: Session, user: User) -> NoteResponse:
     if note.content is None or len(note.content.strip()) < 10:
         raise HTTPException(
-            HTTPStatus.BAD_REQUEST, detail="O conteúdo da nota deve ter no mínimo 10 caracteres."
+            HTTPStatus.BAD_REQUEST,
+            detail="O conteúdo da nota deve ter no mínimo 10 caracteres.",
         )
 
     if len(note.content) > 5000:
         raise HTTPException(
-            HTTPStatus.BAD_REQUEST, detail="O conteúdo da nota não pode exceder 5000 caracteres."
+            HTTPStatus.BAD_REQUEST,
+            detail="O conteúdo da nota não pode exceder 5000 caracteres.",
         )
 
     test: Test | None = session.query(Test).filter(Test.id == note.test_id).first()
@@ -83,7 +85,9 @@ def get_notes(test_id: int, session: Session, user: User) -> list[NoteResponse]:
         # Verificar se o médico tem acesso ao paciente
         patients = patient_service.get_binded_patients(session, user)
         if test.patient_id not in [patient.id for patient in patients]:
-            raise HTTPException(HTTPStatus.FORBIDDEN, detail="Acesso negado ao teste deste paciente.")
+            raise HTTPException(
+                HTTPStatus.FORBIDDEN, detail="Acesso negado ao teste deste paciente."
+            )
 
         # Buscar todas as notas de TODOS os médicos para este teste
         notes = (
