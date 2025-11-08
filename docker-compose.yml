@@ -44,7 +44,8 @@ services:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./scripts/init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
+      - ./scripts/init_database.sql:/docker-entrypoint-initdb.d/01_init_database.sql
+      - ./scripts/populate_mock_data.sql:/docker-entrypoint-initdb.d/02_populate_mock_data.sql
     ports:
       - "5432:5432"
     environment:
