@@ -33,19 +33,21 @@
         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
       />
     </svg>
-    <p class="text-gray-600 text-lg">Você ainda não possui testes clínicos realizados</p>
-    <p class="text-gray-500 text-sm mt-2">Consulte seu médico para realizar testes clínicos</p>
+    <p class="text-gray-600 text-lg">
+      Você ainda não possui testes clínicos realizados
+    </p>
+    <p class="text-gray-500 text-sm mt-2">
+      Consulte seu médico para realizar testes clínicos
+    </p>
   </div>
   } @else {
   <section>
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-      Visão Geral dos Resultados
-    </h2>
-
     <!-- Grid de Cards de Estatísticas -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
       <!-- Card: Total de Testes -->
-      <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 shadow">
+      <div
+        class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 shadow"
+      >
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-blue-600">Total de Testes</p>
@@ -74,7 +76,9 @@
       </div>
 
       <!-- Card: Último Teste -->
-      <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 shadow">
+      <div
+        class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 shadow"
+      >
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-orange-600">Último Teste</p>
@@ -104,7 +108,9 @@
       </div>
 
       <!-- Card: Tendência -->
-      <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-6 shadow">
+      <div
+        class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-6 shadow"
+      >
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-indigo-600">Tendência Geral</p>
@@ -136,12 +142,12 @@
       </div>
 
       <!-- Card: Intervalo Médio -->
-      <div class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg p-6 shadow">
+      <div
+        class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg p-6 shadow"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-pink-600">
-              Intervalo Médio
-            </p>
+            <p class="text-sm font-medium text-pink-600">Intervalo Médio</p>
             <p class="text-3xl font-bold text-pink-900 mt-2">
               @if (statistics()!.avg_test_interval_days !== null) {
               {{ statistics()!.avg_test_interval_days!.toFixed(0) }}
@@ -172,8 +178,12 @@
     <!-- Scores Médios -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <!-- Score Médio Espiral -->
-      <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 shadow">
-        <h3 class="text-lg font-semibold text-purple-900 mb-4">Testes de Espiral</h3>
+      <div
+        class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 shadow"
+      >
+        <h3 class="text-lg font-semibold text-purple-900 mb-4">
+          Testes de Espiral
+        </h3>
         <div class="space-y-3">
           <div>
             <p class="text-sm text-purple-600">Score Médio</p>
@@ -184,18 +194,24 @@
           <div class="flex justify-between text-sm">
             <div>
               <p class="text-purple-600">Melhor</p>
-              <p class="font-semibold text-purple-900">{{ formatScore(statistics()!.best_spiral_score) }}</p>
+              <p class="font-semibold text-purple-900">
+                {{ formatScore(statistics()!.best_spiral_score) }}
+              </p>
             </div>
             <div>
               <p class="text-purple-600">Pior</p>
-              <p class="font-semibold text-purple-900">{{ formatScore(statistics()!.worst_spiral_score) }}</p>
+              <p class="font-semibold text-purple-900">
+                {{ formatScore(statistics()!.worst_spiral_score) }}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Score Médio Voz -->
-      <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 shadow">
+      <div
+        class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 shadow"
+      >
         <h3 class="text-lg font-semibold text-green-900 mb-4">Testes de Voz</h3>
         <div class="space-y-3">
           <div>
@@ -207,11 +223,15 @@
           <div class="flex justify-between text-sm">
             <div>
               <p class="text-green-600">Melhor</p>
-              <p class="font-semibold text-green-900">{{ formatScore(statistics()!.best_voice_score) }}</p>
+              <p class="font-semibold text-green-900">
+                {{ formatScore(statistics()!.best_voice_score) }}
+              </p>
             </div>
             <div>
               <p class="text-green-600">Pior</p>
-              <p class="font-semibold text-green-900">{{ formatScore(statistics()!.worst_voice_score) }}</p>
+              <p class="font-semibold text-green-900">
+                {{ formatScore(statistics()!.worst_voice_score) }}
+              </p>
             </div>
           </div>
         </div>
@@ -236,9 +256,11 @@
               @if (statistics()!.total_tests > 0) {
               <p class="text-xs text-green-700 mt-1">
                 {{
-                  ((statistics()!.healthy_classification_count /
-                    statistics()!.total_tests) *
-                    100).toFixed(1)
+                  (
+                    (statistics()!.healthy_classification_count /
+                      statistics()!.total_tests) *
+                    100
+                  ).toFixed(1)
                 }}% do total
               </p>
               }
@@ -259,9 +281,11 @@
               @if (statistics()!.total_tests > 0) {
               <p class="text-xs text-red-700 mt-1">
                 {{
-                  ((statistics()!.parkinson_classification_count /
-                    statistics()!.total_tests) *
-                    100).toFixed(1)
+                  (
+                    (statistics()!.parkinson_classification_count /
+                      statistics()!.total_tests) *
+                    100
+                  ).toFixed(1)
                 }}% do total
               </p>
               }
@@ -274,35 +298,17 @@
 
     <!-- Informações Adicionais -->
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-      <h4 class="text-sm font-semibold text-blue-900 mb-2">
-        Informações
-      </h4>
+      <h4 class="text-sm font-semibold text-blue-900 mb-2">Informações</h4>
       <ul class="text-sm text-blue-800 space-y-1">
         <li>
           • Primeiro teste realizado em:
           <strong>{{ formatDate(statistics()!.first_test_date) }}</strong>
         </li>
-        <li>
-          • Score abaixo de 0.80 indica resultado saudável
-        </li>
-        <li>
-          • Score acima de 0.80 indica possível presença de Parkinson
-        </li>
+        <li>• Score abaixo de 0.80 indica resultado saudável</li>
+        <li>• Score acima de 0.80 indica possível presença de Parkinson</li>
       </ul>
     </div>
   </section>
   }
-
-  <section>
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-xl font-semibold text-gray-800">Testes Recentes</h2>
-      <a
-        routerLink="/dashboard/results"
-        class="text-sm font-medium text-blue-600 hover:text-blue-700"
-        >Ver todos →</a
-      >
-    </div>
-    <app-recent-tests-list [tests]="recentTests()" />
-  </section>
 </div>
 }

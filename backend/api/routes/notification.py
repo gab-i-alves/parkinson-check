@@ -22,7 +22,7 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 @router.get("", response_model=list[NotificationResponse])
 def get_user_notifications(user: CurrentUser, session: Session = Depends(get_session)):
-    """(Critério 3) Rota para o centro de notificações."""
+    """(CritÃ©rio 3) Rota para o centro de notificaÃ§Ãµes."""
     notifications = get_all_user_notifications(user=user, session=session)
     return notifications
 
@@ -31,7 +31,7 @@ def get_user_notifications(user: CurrentUser, session: Session = Depends(get_ses
 def get_my_unread_notifications_count(
     user: CurrentUser, session: Session = Depends(get_session)
 ):
-    """(Critério 1 e 2) Rota para o alerta de notificação."""
+    """(Critï¿½rio 1 e 2) Rota para o alerta de notificaï¿½ï¿½o."""
     count = get_unread_notifications_count(user=user, session=session)
     return UnreadNotificationCountResponse(count=count)
 
@@ -40,11 +40,11 @@ def get_my_unread_notifications_count(
 def mark_as_read(
     notification_id: int, user: CurrentUser, session: Session = Depends(get_session)
 ):
-    """(Critério 3) Marca uma notificação como lida."""
+    """(Critï¿½rio 3) Marca uma notificaï¿½ï¿½o como lida."""
     mark_notification_as_read(user=user, session=session, notification_id=notification_id)
 
 
 @router.post("/read-all", status_code=HTTPStatus.NO_CONTENT)
 def mark_all_as_read(user: CurrentUser, session: Session = Depends(get_session)):
-    """(Critério 3) Marca todas as notificações como lidas."""
+    """(Critï¿½rio 3) Marca todas as notificaï¿½ï¿½es como lidas."""
     mark_all_notifications_as_read(user=user, session=session)

@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RecentTestsListComponent } from '../recent-tests-list/recent-tests-list.component';
@@ -8,11 +14,7 @@ import { TimelineTestItem } from '../../../../core/models/patient-timeline.model
 
 @Component({
   selector: 'app-patient-dashboard',
-  imports: [
-    CommonModule,
-    RouterLink,
-    RecentTestsListComponent,
-  ],
+  imports: [CommonModule],
   templateUrl: './patient-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
