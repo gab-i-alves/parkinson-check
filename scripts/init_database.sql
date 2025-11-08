@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS "user" (
   "cpf" char(11) UNIQUE NOT NULL,
   "birthdate" TIMESTAMP NOT NULL,
   "address_id" integer NOT NULL REFERENCES "address" ("id"),
-  "reset_token" varchar(255),
-  "reset_token_expiry" TIMESTAMPTZ,
+  "reset_token" varchar(255) DEFAULT NULL,
+  "reset_token_expiry" TIMESTAMPTZ DEFAULT NULL,
   "is_active" boolean NOT NULL DEFAULT TRUE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()

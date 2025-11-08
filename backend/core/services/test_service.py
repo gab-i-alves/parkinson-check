@@ -352,7 +352,9 @@ def get_my_tests_statistics(session: Session, patient: User) -> PatientTestStati
     total_spiral = len(spiral_tests)
     total_voice = len(voice_tests)
 
-    avg_spiral = sum(t.score for t in spiral_tests) / total_spiral if total_spiral > 0 else None
+    avg_spiral = (
+        sum(t.score for t in spiral_tests) / total_spiral if total_spiral > 0 else None
+    )
     avg_voice = sum(t.score for t in voice_tests) / total_voice if total_voice > 0 else None
 
     # Último teste
@@ -374,9 +376,9 @@ def get_my_tests_statistics(session: Session, patient: User) -> PatientTestStati
         sum_x = sum(x)
         sum_y = sum(y)
         sum_xy = sum(x[i] * y[i] for i in range(n))
-        sum_x2 = sum(xi ** 2 for xi in x)
+        sum_x2 = sum(xi**2 for xi in x)
 
-        slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x ** 2)
+        slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x**2)
 
         if slope > 0.01:
             trend = "improving"

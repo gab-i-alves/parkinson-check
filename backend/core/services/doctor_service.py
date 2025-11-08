@@ -1,14 +1,15 @@
 from http import HTTPStatus
+from typing import Literal
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from api.schemas.users import DoctorListResponse, DoctorSchema, GetDoctorsSchema
-from core.models import Doctor, User
+from core.models import Bind, Doctor, User
 from core.security.security import get_password_hash
 
-from ..enums import UserType
-from . import address_service, user_service
+from ..enums import BindEnum, UserType, NotificationType
+from . import address_service, user_service, notification_service
 from .user_service import get_binded_users
 
 
@@ -124,3 +125,45 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListR
             )
         )
     return doctor_list
+
+
+def activate_or_reject_binding_request(
+    user: User,
+    binding_id: int,
+    session: Session,
+    new_status: Literal[BindEnum.ACTIVE, BindEnum.REJECTED],
+) -> Bind:
+    binding = session.query(Bind).filter_by(id=binding_id, doctor_id=user.id).first()
+
+    if not binding:
+        return HTTPException(HTTPStatus.NOT_FOUND, detail="Solicitação não encontrada")
+
+    binding.status = new_status
+
+    if new_status == BindEnum.ACTIVE:
+        # --- INÍCIO DA NOTIFICAÇÃO DE ACEITE ---
+        notification_service.create_notification(
+            session=session,
+            user_id=binding.patient_id,  # Notifica o PACIENTE
+            message=f"O médico {user.name} aceitou sua solicitação de vínculo.",
+            type=NotificationType.BIND_ACCEPTED,
+            bind_id=binding.id
+        )
+        # --- FIM DA NOTIFICAÇÃO DE ACEITE ---
+
+    elif new_status == BindEnum.REJECTED:
+        # --- (Opcional) NOTIFICAÇÃO DE REJEIÇÃO ---
+        notification_service.create_notification(
+            session=session,
+            user_id=binding.patient_id, # Notifica o PACIENTE
+            message=f"O médico {user.name} rejeitou sua solicitação de vínculo.",
+            type=NotificationType.BIND_REJECTED,
+            bind_id=binding.id
+        )
+        # --- FIM DA NOTIFICAÇÃO ---
+
+    session.add(binding)
+    session.commit()
+    session.refresh(binding)
+
+    return binding
