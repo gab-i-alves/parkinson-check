@@ -233,7 +233,7 @@ def reject_bind_request(user: User, session: Session, bind_id: int):
         user_to_alert = bind_to_reject.doctor_id
 
     notification_service.create_notification(
-        db=session,
+        session=session,
         user_id=user_to_alert,
         message=f"O {user_type} {user.name} rejeitou sua solicitação de vínculo.",
         type=NotificationType.BIND_REJECTED,
