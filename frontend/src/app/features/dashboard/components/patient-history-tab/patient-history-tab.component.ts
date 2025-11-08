@@ -79,6 +79,10 @@ export class PatientHistoryTabComponent implements OnChanges {
     return type === 'SPIRAL_TEST' ? 'Espiral' : 'Voz';
   }
 
+  getClassificationLabel(classification: string): string {
+    return classification === 'HEALTHY' ? 'Saudável' : 'Parkinson';
+  }
+
   getClassificationColor(classification: string): string {
     return classification === 'HEALTHY' ? 'text-green-600' : 'text-red-600';
   }

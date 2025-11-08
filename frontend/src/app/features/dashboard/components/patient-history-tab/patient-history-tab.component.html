@@ -132,7 +132,7 @@
               class="inline-flex rounded-full px-2 py-1 text-xs font-semibold"
               [ngClass]="getClassificationBgColor(test.classification) + ' ' + getClassificationColor(test.classification)"
             >
-              {{ test.classification }}
+              {{ getClassificationLabel(test.classification) }}
             </span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -17,6 +17,10 @@ export class RecentTestsListComponent {
     return type === 'SPIRAL_TEST' ? 'Espiral' : 'Voz';
   }
 
+  getClassificationLabel(classification: string): string {
+    return classification === 'HEALTHY' ? 'Saudável' : 'Parkinson';
+  }
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
