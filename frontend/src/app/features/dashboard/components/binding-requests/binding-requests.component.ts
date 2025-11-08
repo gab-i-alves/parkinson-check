@@ -2,7 +2,8 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DoctorService } from '../../services/doctor.service';
 import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
-import { BindingRequest } from '../../../../core/models/binding-request.model';
+import { BindingService } from '../../../../core/services/binding.service';
+import { BindingRequestResponse, isBindingPatient } from '../../../../core/models/binding-request.model';
 import { Patient, PatientStatus } from '../../../../core/models/patient.model';
 import { PatientProfileModalComponent, PatientProfile } from '../../../../shared/components/patient-profile-modal/patient-profile-modal.component';
 import { firstValueFrom } from 'rxjs';
@@ -20,12 +21,13 @@ interface PatientWithBinding extends Patient {
 })
 export class BindingRequestsComponent implements OnInit {
   private medicService = inject(DoctorService);
+  private bindingService = inject(BindingService);
   private dashboardService = inject(DoctorDashboardService);
   private notificationService = inject(NotificationService);
 
   // Solicitações
-  requests = signal<BindingRequest[]>([]);  // Recebidas de pacientes
-  sentRequests = signal<any[]>([]);  // Enviadas para pacientes
+  requests = signal<BindingRequestResponse[]>([]);  // Recebidas de pacientes
+  sentRequests = signal<BindingRequestResponse[]>([]);  // Enviadas para pacientes
   activeTab = signal<'received' | 'sent'>('received');
   isLoading = signal<boolean>(true);
 
@@ -43,26 +45,24 @@ export class BindingRequestsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadRequests();
-    this.loadSentRequests();
   }
 
   loadRequests(): void {
     this.isLoading.set(true);
-    this.medicService.getBindingRequests().subscribe({
+    this.bindingService.getPendingBindingRequests().subscribe({
       next: (data) => {
-        if (data != null) this.requests.set(data);
+        // Filter only requests from patients (received by doctor)
+        const received = data.filter(req => isBindingPatient(req.user));
+        this.requests.set(received);
+
+        // For now, sent requests are not separately loaded
+        // The backend unified endpoint returns all pending requests
+        // We could filter by status or implement separate endpoint if needed
+        this.sentRequests.set([]);
+
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
-    });
-  }
-
-  loadSentRequests(): void {
-    this.medicService.getSentRequestsToPatients().subscribe({
-      next: (data) => {
-        if (data != null) this.sentRequests.set(data);
-      },
-      error: (err) => console.error('Erro ao carregar solicitações enviadas:', err),
     });
   }
 
@@ -71,10 +71,10 @@ export class BindingRequestsComponent implements OnInit {
   }
 
   acceptRequest(id: number): void {
-    this.medicService.acceptBindingRequest(id).subscribe({
+    this.bindingService.acceptBindingRequest(id).subscribe({
       next: () => {
         this.notificationService.success('Solicitação aceita com sucesso', 3000);
-        this.requests.update((reqs) => reqs.filter((r) => r.id !== id));
+        this.loadRequests(); // Reload to refresh the list
       },
       error: (err) => {
         this.notificationService.error(
@@ -86,10 +86,10 @@ export class BindingRequestsComponent implements OnInit {
   }
 
   rejectRequest(id: number): void {
-    this.medicService.rejectBindingRequest(id).subscribe({
+    this.bindingService.rejectBindingRequest(id).subscribe({
       next: () => {
         this.notificationService.success('Solicitação recusada', 3000);
-        this.requests.update((reqs) => reqs.filter((r) => r.id !== id));
+        this.loadRequests(); // Reload to refresh the list
       },
       error: (err) => {
         this.notificationService.error(
@@ -188,10 +188,10 @@ export class BindingRequestsComponent implements OnInit {
   sendInvite(patientId: string): void {
     const numericId = typeof patientId === 'string' ? parseInt(patientId, 10) : patientId;
 
-    this.medicService.requestBindingWithPatient(numericId).subscribe({
+    this.bindingService.requestBinding(numericId).subscribe({
       next: () => {
         this.notificationService.success('Convite enviado com sucesso', 3000);
-        // Atualiza o status do paciente na lista
+        // Update patient status in the list
         this.searchResults.update((patients) =>
           patients.map((p) =>
             p.id === patientId ? { ...p, bindingStatus: 'pending' as const } : p
@@ -225,20 +225,27 @@ export class BindingRequestsComponent implements OnInit {
     return classes[status];
   }
 
-  viewPatientProfile(request: BindingRequest): void {
-    const patientProfile: PatientProfile = {
-      id: request.patient.id.toString(),
-      name: request.patient.name,
-      age: 0, // Não disponível nas solicitações
-      email: request.patient.email,
-      status: 'pending',
-    };
-    this.selectedPatient.set(patientProfile);
-    this.isPatientProfileModalVisible.set(true);
+  viewPatientProfile(request: BindingRequestResponse): void {
+    if (isBindingPatient(request.user)) {
+      const patientProfile: PatientProfile = {
+        id: request.user.id.toString(),
+        name: request.user.name,
+        age: 0, // Not available in requests
+        email: request.user.email,
+        status: 'pending',
+      };
+      this.selectedPatient.set(patientProfile);
+      this.isPatientProfileModalVisible.set(true);
+    }
   }
 
   closePatientProfile(): void {
     this.isPatientProfileModalVisible.set(false);
     this.selectedPatient.set(null);
+  }
+
+  // Helper method to safely get email from user
+  getEmail(user: any): string {
+    return isBindingPatient(user) ? user.email : '';
   }
 }

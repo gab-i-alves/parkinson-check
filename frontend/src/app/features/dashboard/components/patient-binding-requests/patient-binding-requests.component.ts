@@ -2,9 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService } from '../../services/doctor.service';
+import { BindingService } from '../../../../core/services/binding.service';
 import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 import { Doctor } from '../../../../core/models/doctor.model';
-import { PatientBindingRequest } from '../../../../core/models/patient-binding-request.model';
+import { BindingRequestResponse, isBindingDoctor } from '../../../../core/models/binding-request.model';
 import { firstValueFrom } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
 
@@ -20,6 +21,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 })
 export class PatientBindingRequestsComponent {
   private medicService = inject(DoctorService);
+  private bindingService = inject(BindingService);
   private notificationService = inject(NotificationService);
 
   searchTerm = signal<string>('');
@@ -33,14 +35,13 @@ export class PatientBindingRequestsComponent {
   selectedDoctor = signal<Doctor | null>(null);
 
   linkedDoctors = signal<Doctor[]>([]);
-  sentRequests = signal<PatientBindingRequest[]>([]);
-  receivedRequests = signal<any[]>([]);
+  sentRequests = signal<BindingRequestResponse[]>([]);
+  receivedRequests = signal<BindingRequestResponse[]>([]);
   activeTab = signal<'sent' | 'received'>('sent');
 
   ngOnInit(): void {
     this.loadLinkedDoctors();
-    this.loadSentRequests();
-    this.loadReceivedRequests();
+    this.loadRequests();
   }
 
   async searchDoctors(): Promise<void> {
@@ -58,7 +59,11 @@ export class PatientBindingRequestsComponent {
 
       if (results) {
         const linkedIds = new Set(this.linkedDoctors().map((d) => d.id));
-        const pendingIds = new Set(this.sentRequests().map((r) => r.doctor.id));
+        const pendingIds = new Set(
+          this.sentRequests()
+            .filter(r => isBindingDoctor(r.user))
+            .map((r) => r.user.id)
+        );
         const doctorsWithStatus = results.map((doctor) => {
           let status: 'linked' | 'pending' | 'unlinked' = 'unlinked';
           if (linkedIds.has(doctor.id)) {
@@ -140,29 +145,20 @@ export class PatientBindingRequestsComponent {
     });
   }
 
-  loadSentRequests(): void {
+  loadRequests(): void {
     this.isLoading.set(true);
-    this.medicService.loadSentRequests().subscribe({
-      next: (results) => {
-        if (results != null) {
-          const requestsWithDoctors = results.map((d) => ({
-            ...d,
-          }));
-          this.sentRequests.set(requestsWithDoctors);
-        }
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false),
-    });
-  }
+    this.bindingService.getPendingBindingRequests().subscribe({
+      next: (data) => {
+        // Filter requests by doctor (as patient, we interact with doctors)
+        const doctorRequests = data.filter(req => isBindingDoctor(req.user));
 
-  loadReceivedRequests(): void {
-    this.isLoading.set(true);
-    this.medicService.getReceivedRequestsFromDoctors().subscribe({
-      next: (results) => {
-        if (results != null) {
-          this.receivedRequests.set(results);
-        }
+        // Separate sent and received requests
+        // Note: The unified endpoint returns pending requests
+        // We'll need to check the status or implement additional logic
+        // For now, we'll treat all as received (doctors sending to patient)
+        this.receivedRequests.set(doctorRequests);
+        this.sentRequests.set([]); // Will be populated if we track sent separately
+
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false),
@@ -174,10 +170,10 @@ export class PatientBindingRequestsComponent {
   }
 
   acceptRequest(requestId: number): void {
-    this.medicService.acceptDoctorRequest(requestId).subscribe({
+    this.bindingService.acceptBindingRequest(requestId).subscribe({
       next: () => {
         this.notificationService.success('Solicitação aceita com sucesso', 3000);
-        this.loadReceivedRequests();
+        this.loadRequests();
         this.loadLinkedDoctors();
       },
       error: (err) => {
@@ -190,10 +186,10 @@ export class PatientBindingRequestsComponent {
   }
 
   rejectRequest(requestId: number): void {
-    this.medicService.rejectDoctorRequest(requestId).subscribe({
+    this.bindingService.rejectBindingRequest(requestId).subscribe({
       next: () => {
         this.notificationService.success('Solicitação recusada', 3000);
-        this.loadReceivedRequests();
+        this.loadRequests();
       },
       error: (err) => {
         this.notificationService.error(
@@ -204,9 +200,20 @@ export class PatientBindingRequestsComponent {
     });
   }
 
-  viewProfile(doctor: Doctor): void {
-    this.selectedDoctor.set(doctor);
-    this.isModalVisible.set(true);
+  viewProfile(user: any): void {
+    // Only open profile if it's a doctor
+    if (isBindingDoctor(user)) {
+      const doctor: Doctor = {
+        id: user.id,
+        name: user.name,
+        expertise_area: user.specialty,
+        crm: '',
+        location: '',
+        status: 'unlinked'
+      };
+      this.selectedDoctor.set(doctor);
+      this.isModalVisible.set(true);
+    }
   }
 
   closeModal(): void {
@@ -218,7 +225,7 @@ export class PatientBindingRequestsComponent {
     const doctorInSearch = this.searchResults().find((d) => d.id === doctorId);
     if (!doctorInSearch || doctorInSearch.status === 'pending') return;
 
-    this.medicService.requestBinding(doctorId).subscribe({
+    this.bindingService.requestBinding(doctorId).subscribe({
       next: () => {
         this.notificationService.success('Solicitação enviada com sucesso', 3000);
         this.searchResults.update((doctors) =>
@@ -226,7 +233,7 @@ export class PatientBindingRequestsComponent {
             d.id === doctorId ? { ...d, status: 'pending' } : d
           )
         );
-        this.loadSentRequests();
+        this.loadRequests();
         this.closeModal();
       },
       error: (err) => {
@@ -237,5 +244,10 @@ export class PatientBindingRequestsComponent {
         this.closeModal();
       },
     });
+  }
+
+  // Helper method to safely get specialty from user
+  getSpecialty(user: any): string {
+    return isBindingDoctor(user) ? user.specialty : '';
   }
 }

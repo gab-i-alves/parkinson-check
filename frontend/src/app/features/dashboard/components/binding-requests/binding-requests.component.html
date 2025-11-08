@@ -361,14 +361,14 @@
                   class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700"
                 >
                   <span class="font-semibold">{{
-                    req.patient.name.charAt(0).toUpperCase()
+                    req.user.name.charAt(0).toUpperCase()
                   }}</span>
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
-                    {{ req.patient.name }}
+                    {{ req.user.name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ req.patient.email }}</div>
+                  <div class="text-sm text-gray-500">{{ getEmail(req.user) }}</div>
                 </div>
               </div>
             </td>
@@ -477,18 +477,18 @@
                   class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700"
                 >
                   <span class="font-semibold">{{
-                    request.patient.name.charAt(0).toUpperCase()
+                    request.user.name.charAt(0).toUpperCase()
                   }}</span>
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
-                    {{ request.patient.name }}
+                    {{ request.user.name }}
                   </div>
                 </div>
               </div>
             </td>
             <td class="whitespace-nowrap px-6 py-4">
-              <div class="text-sm text-gray-900">{{ request.patient.email }}</div>
+              <div class="text-sm text-gray-900">{{ getEmail(request.user) }}</div>
             </td>
             <td class="whitespace-nowrap px-6 py-4">
               <span

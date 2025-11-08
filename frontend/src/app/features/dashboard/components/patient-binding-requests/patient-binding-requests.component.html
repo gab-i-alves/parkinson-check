@@ -352,7 +352,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 bg-white">
-          @for (request of sentRequests(); track request.doctor.id) {
+          @for (request of sentRequests(); track request.id) {
           <tr class="hover:bg-gray-50">
             <td class="whitespace-nowrap px-6 py-4">
               <div class="flex items-center">
@@ -360,19 +360,19 @@
                   class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700"
                 >
                   <span class="font-semibold">{{
-                    request.doctor.name.charAt(0).toUpperCase()
+                    request.user.name.charAt(0).toUpperCase()
                   }}</span>
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
-                    {{ request.doctor.name }}
+                    {{ request.user.name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ request.doctor.expertise_area }}</div>
+                  <div class="text-sm text-gray-500">{{ getSpecialty(request.user) }}</div>
                 </div>
               </div>
             </td>
             <td class="whitespace-nowrap px-6 py-4">
-              <div class="text-sm text-gray-900">{{ request.doctor.expertise_area }}</div>
+              <div class="text-sm text-gray-900">{{ getSpecialty(request.user) }}</div>
             </td>
             <td class="whitespace-nowrap px-6 py-4">
               <span
@@ -448,24 +448,24 @@
                   class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700"
                 >
                   <span class="font-semibold">{{
-                    request.doctor.name.charAt(0).toUpperCase()
+                    request.user.name.charAt(0).toUpperCase()
                   }}</span>
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
-                    {{ request.doctor.name }}
+                    {{ request.user.name }}
                   </div>
-                  <div class="text-sm text-gray-500">{{ request.doctor.specialty }}</div>
+                  <div class="text-sm text-gray-500">{{ getSpecialty(request.user) }}</div>
                 </div>
               </div>
             </td>
             <td class="whitespace-nowrap px-6 py-4">
-              <div class="text-sm text-gray-900">{{ request.doctor.specialty }}</div>
+              <div class="text-sm text-gray-900">{{ getSpecialty(request.user) }}</div>
             </td>
             <td class="whitespace-nowrap px-6 py-4">
               <div class="flex space-x-2">
                 <button
-                  (click)="viewProfile(request.doctor)"
+                  (click)="viewProfile(request.user)"
                   class="inline-flex items-center px-3 py-1.5 border border-violet-300 text-xs font-medium rounded text-violet-700 bg-white hover:bg-violet-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
                 >
                   Ver Perfil
