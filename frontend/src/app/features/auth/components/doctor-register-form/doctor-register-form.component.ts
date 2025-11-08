@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, ElementRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -7,7 +14,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 @Component({
   selector: 'app-doctor-register-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgxMaskDirective],
+  imports: [CommonModule, ReactiveFormsModule, NgxMaskDirective],
   templateUrl: './doctor-register-form.component.html',
 })
 export class DoctorRegisterFormComponent {
@@ -55,7 +62,7 @@ export class DoctorRegisterFormComponent {
     const fieldsToValidate = this.getFieldsForCurrentStep();
     let isValid = true;
 
-    fieldsToValidate.forEach(fieldName => {
+    fieldsToValidate.forEach((fieldName) => {
       const control = this.doctorForm.get(fieldName);
       if (control) {
         control.markAsTouched();
@@ -97,7 +104,10 @@ export class DoctorRegisterFormComponent {
   scrollToError() {
     setTimeout(() => {
       if (this.apiErrorDiv) {
-        this.apiErrorDiv.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        this.apiErrorDiv.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
       }
     }, 100);
   }
