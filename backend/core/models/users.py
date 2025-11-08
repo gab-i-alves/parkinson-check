@@ -79,8 +79,5 @@ class Bind:
     )
     created_by_type: Mapped[UserType] = mapped_column(
         PG_ENUM(UserType, name="user_type_enum", create_type=False),
-        nullable=False,
-        default=UserType.PATIENT
+        nullable=False
     )
-    # medic: Mapped["Doctor"] = relationship("Doctor")
-    # patient: Mapped["Patient"] = relationship("Patient")

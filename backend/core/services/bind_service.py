@@ -125,11 +125,11 @@ def send_bind_request(user: User, session: Session, user_to_bind: int) -> Bind:
 
         if user.user_type == UserType.DOCTOR:
             db_bind = Bind(
-                doctor_id=user.id, patient_id=user_to_bind, status=BindEnum.PENDING
+                doctor_id=user.id, patient_id=user_to_bind, status=BindEnum.PENDING, created_by_type=UserType.DOCTOR
             )
         else:
             db_bind = Bind(
-                doctor_id=user_to_bind, patient_id=user.id, status=BindEnum.PENDING
+                doctor_id=user_to_bind, patient_id=user.id, status=BindEnum.PENDING, created_by_type=UserType.PATIENT
             )
 
     session.add(db_bind)
@@ -162,6 +162,13 @@ def accept_bind_request(user: User, session: Session, bind_id: int) -> Bind:
 
     if user.id not in [bind_to_accept.doctor_id, bind_to_accept.patient_id]:
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Ação não permitida.")
+
+    # Validar que o usuário NÃO foi quem criou a solicitação
+    if user.user_type == bind_to_accept.created_by_type:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="Você não pode aceitar uma solicitação criada por você."
+        )
 
     if bind_to_accept.status != BindEnum.PENDING:
         raise HTTPException(
@@ -202,6 +209,13 @@ def reject_bind_request(user: User, session: Session, bind_id: int):
 
     if user.id not in [bind_to_reject.doctor_id, bind_to_reject.patient_id]:
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Ação não permitida.")
+
+    # Validar que o usuário NÃO foi quem criou a solicitação
+    if user.user_type == bind_to_reject.created_by_type:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="Você não pode rejeitar uma solicitação criada por você."
+        )
 
     if bind_to_reject.status != BindEnum.PENDING:
         raise HTTPException(
