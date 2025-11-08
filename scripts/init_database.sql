@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "address" (
 
 CREATE TABLE IF NOT EXISTS "user" (
   "id" SERIAL PRIMARY KEY,
-  "type" user_type_enum NOT NULL
+  "type" user_type_enum NOT NULL,
   "name" varchar(50) NOT NULL,
   "email" varchar(255) UNIQUE NOT NULL,
   "hashed_password" varchar(255) NOT NULL,
@@ -37,8 +37,6 @@ CREATE TABLE IF NOT EXISTS "user" (
   "is_active" boolean NOT NULL DEFAULT TRUE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
-  "reset_token" varchar(255) DEFAULT NULL,
-  "reset_token_expiry" TIMESTAMPTZ DEFAULT NULL
 );
 
 
