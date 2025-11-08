@@ -49,6 +49,14 @@ export const DASHBOARD_ROUTES: Routes = [
           ).then((c) => c.PatientBindingRequestsComponent),
       },
       {
+        path: 'notifications',
+        canActivate: [authGuard(['paciente', 'medico'])],
+        loadComponent: () =>
+          import(
+            '../../shared/components/notification-center/notification-center.component'
+          ).then((c) => c.NotificationCenterComponent),
+      },
+      {
         path: 'binding-requests',
         canActivate: [authGuard(['medico'])],
         loadComponent: () =>
