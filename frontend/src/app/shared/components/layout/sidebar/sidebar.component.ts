@@ -51,7 +51,7 @@ export class SidebarComponent {
       path: '/dashboard/results',
       label: 'Meus Resultados',
       icon: 'chart',
-      disabled: true,
+      disabled: false,
     },
     {
       path: '/dashboard/my-doctors',

@@ -7,6 +7,7 @@ from core.models.users import User
 from core.security.security import get_doctor_user, get_patient_user
 from core.services.test_service import (
     get_my_test_detail,
+    get_my_tests_statistics,
     get_my_tests_timeline,
     get_patient_detaild_tests,
     get_patient_test_statistics,
@@ -204,6 +205,19 @@ def get_my_timeline(
     Requer autenticação de paciente.
     """
     return get_my_tests_timeline(session, user)
+
+
+@router.get("/my-tests/statistics", response_model=PatientTestStatistics)
+def get_my_statistics(
+    user: CurrentPatient, session: Session = Depends(get_session)
+):
+    """
+    Retorna estatísticas agregadas dos testes do próprio paciente.
+    Inclui tendência, scores médios, melhores/piores resultados, etc.
+
+    Requer autenticação de paciente.
+    """
+    return get_my_tests_statistics(session, user)
 
 
 @router.get("/my-tests/{test_id}")

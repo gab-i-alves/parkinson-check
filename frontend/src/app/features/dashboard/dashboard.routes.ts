@@ -33,6 +33,14 @@ export const DASHBOARD_ROUTES: Routes = [
           ),
       },
       {
+        path: 'results',
+        canActivate: [authGuard(['paciente'])],
+        loadComponent: () =>
+          import('./components/patient-results/patient-results.component').then(
+            (c) => c.PatientResultsComponent
+          ),
+      },
+      {
         path: 'patient-requests',
         canActivate: [authGuard(['paciente'])],
         loadComponent: () =>
