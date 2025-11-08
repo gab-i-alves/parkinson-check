@@ -307,6 +307,132 @@ def process_clinical_voice(
 # Funções para estatísticas e timeline do paciente
 
 
+def get_my_tests_statistics(session: Session, patient: User) -> PatientTestStatistics:
+    """
+    Retorna estatísticas agregadas dos testes do próprio paciente.
+    Inclui tendência calculada por regressão linear simples.
+    """
+    from datetime import datetime
+
+    # Busca todos os testes ordenados cronologicamente
+    all_tests = (
+        session.query(Test)
+        .filter(Test.patient_id == patient.id)
+        .order_by(Test.execution_date)
+        .all()
+    )
+
+    if not all_tests:
+        return PatientTestStatistics(
+            total_tests=0,
+            total_spiral_tests=0,
+            total_voice_tests=0,
+            avg_spiral_score=None,
+            avg_voice_score=None,
+            last_test_date=None,
+            days_since_last_test=None,
+            first_test_date=None,
+            trend="stable",
+            trend_percentage=0.0,
+            best_spiral_score=None,
+            worst_spiral_score=None,
+            best_voice_score=None,
+            worst_voice_score=None,
+            healthy_classification_count=0,
+            parkinson_classification_count=0,
+            avg_test_interval_days=None,
+        )
+
+    # Separar por tipo
+    spiral_tests = [t for t in all_tests if t.test_type == TestType.SPIRAL_TEST]
+    voice_tests = [t for t in all_tests if t.test_type == TestType.VOICE_TEST]
+
+    # Calcular estatísticas básicas
+    total_tests = len(all_tests)
+    total_spiral = len(spiral_tests)
+    total_voice = len(voice_tests)
+
+    avg_spiral = (
+        sum(t.score for t in spiral_tests) / total_spiral if total_spiral > 0 else None
+    )
+    avg_voice = sum(t.score for t in voice_tests) / total_voice if total_voice > 0 else None
+
+    # Último teste
+    last_test = all_tests[-1]
+    last_test_date = last_test.execution_date
+    days_since_last = (datetime.now() - last_test_date).days
+
+    # Primeiro teste
+    first_test_date = all_tests[0].execution_date
+
+    # Calcular tendência (regressão linear simples - sem numpy)
+    scores = [t.score for t in all_tests]
+    if len(scores) >= 2:
+        n = len(scores)
+        x = list(range(n))
+        y = scores
+
+        # Cálculo manual de regressão linear: y = mx + b
+        sum_x = sum(x)
+        sum_y = sum(y)
+        sum_xy = sum(x[i] * y[i] for i in range(n))
+        sum_x2 = sum(xi**2 for xi in x)
+
+        slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x**2)
+
+        if slope > 0.01:
+            trend = "improving"
+        elif slope < -0.01:
+            trend = "worsening"
+        else:
+            trend = "stable"
+
+        trend_percentage = (slope * n) * 100 if n > 1 else 0.0
+    else:
+        trend = "stable"
+        trend_percentage = 0.0
+
+    # Melhores e piores scores
+    best_spiral = max((t.score for t in spiral_tests), default=None)
+    worst_spiral = min((t.score for t in spiral_tests), default=None)
+    best_voice = max((t.score for t in voice_tests), default=None)
+    worst_voice = min((t.score for t in voice_tests), default=None)
+
+    # Classificações
+    healthy_count = sum(1 for t in all_tests if t.score < 0.80)
+    parkinson_count = sum(1 for t in all_tests if t.score >= 0.80)
+
+    # Intervalo médio entre testes
+    if len(all_tests) >= 2:
+        intervals = []
+        for i in range(1, len(all_tests)):
+            interval = (all_tests[i].execution_date - all_tests[i - 1].execution_date).days
+            intervals.append(interval)
+        avg_interval = sum(intervals) / len(intervals)
+    else:
+        avg_interval = None
+
+    return PatientTestStatistics(
+        total_tests=total_tests,
+        total_spiral_tests=total_spiral,
+        total_voice_tests=total_voice,
+        avg_spiral_score=avg_spiral,
+        avg_voice_score=avg_voice,
+        last_test_date=last_test_date,
+        days_since_last_test=days_since_last,
+        first_test_date=first_test_date,
+        trend=trend,
+        trend_percentage=trend_percentage,
+        best_spiral_score=best_spiral,
+        worst_spiral_score=worst_spiral,
+        best_voice_score=best_voice,
+        worst_voice_score=worst_voice,
+        healthy_classification_count=healthy_count,
+        parkinson_classification_count=parkinson_count,
+        avg_test_interval_days=avg_interval,
+    )
+
+
 def get_patient_test_statistics(
     session: Session, doctor: User, patient_id: int
 ) -> PatientTestStatistics:

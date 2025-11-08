@@ -7,6 +7,14 @@ services:
       - ./backend:/app:z
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
     depends_on:
       - db
       - spiral-classifier
@@ -36,7 +44,8 @@ services:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./scripts/init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
+      - ./scripts/init_database.sql:/docker-entrypoint-initdb.d/01_init_database.sql
+      - ./scripts/populate_mock_data.sql:/docker-entrypoint-initdb.d/02_populate_mock_data.sql
     ports:
       - "5432:5432"
     environment:

@@ -33,12 +33,28 @@ export const DASHBOARD_ROUTES: Routes = [
           ),
       },
       {
+        path: 'results',
+        canActivate: [authGuard(['paciente'])],
+        loadComponent: () =>
+          import('./components/patient-results/patient-results.component').then(
+            (c) => c.PatientResultsComponent
+          ),
+      },
+      {
         path: 'patient-requests',
         canActivate: [authGuard(['paciente'])],
         loadComponent: () =>
           import(
             './components/patient-binding-requests/patient-binding-requests.component'
           ).then((c) => c.PatientBindingRequestsComponent),
+      },
+      {
+        path: 'notifications',
+        canActivate: [authGuard(['paciente', 'medico'])],
+        loadComponent: () =>
+          import(
+            '../../shared/components/notification-center/notification-center.component'
+          ).then((c) => c.NotificationCenterComponent),
       },
       {
         path: 'binding-requests',

@@ -1,0 +1,93 @@
+<div class="max-w-7xl mx-auto p-6">
+  @if (isLoading()) {
+  <div class="flex items-center justify-center h-64">
+    <div class="text-center">
+      <div
+        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+      ></div>
+      <p class="text-gray-600 mt-4">Carregando seus resultados...</p>
+    </div>
+  </div>
+  } @else if (errorMessage()) {
+  <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+    <svg
+      class="w-12 h-12 text-red-500 mx-auto mb-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <p class="text-red-800 font-semibold">{{ errorMessage() }}</p>
+    <button
+      (click)="goBack()"
+      class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+    >
+      Voltar ao Dashboard
+    </button>
+  </div>
+  } @else {
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Meus Resultados</h1>
+          <p class="text-gray-600">Acompanhe a evolução dos seus testes clínicos</p>
+        </div>
+        <button
+          (click)="goBack()"
+          class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          ← Voltar
+        </button>
+      </div>
+    </div>
+
+    <!-- Navegação de Tabs -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px" aria-label="Tabs">
+          <button
+            (click)="selectTab('charts')"
+            [class.border-blue-500]="activeTab() === 'charts'"
+            [class.text-blue-600]="activeTab() === 'charts'"
+            [class.border-transparent]="activeTab() !== 'charts'"
+            [class.text-gray-500]="activeTab() !== 'charts'"
+            class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
+          >
+            Gráficos
+          </button>
+          <button
+            (click)="selectTab('history')"
+            [class.border-blue-500]="activeTab() === 'history'"
+            [class.text-blue-600]="activeTab() === 'history'"
+            [class.border-transparent]="activeTab() !== 'history'"
+            [class.text-gray-500]="activeTab() !== 'history'"
+            class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
+          >
+            Histórico
+          </button>
+        </nav>
+      </div>
+
+      <!-- Conteúdo das Tabs -->
+      <div class="p-6">
+        @switch (activeTab()) { @case ('charts') {
+        <app-patient-results-charts-tab
+          [timeline]="timeline()"
+          [statistics]="statistics()"
+        />
+        } @case ('history') {
+        <app-patient-results-history-tab [timeline]="timeline()" />
+        } }
+      </div>
+    </div>
+  </div>
+  }
+</div>

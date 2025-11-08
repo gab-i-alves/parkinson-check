@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from api.schemas.users import DoctorListResponse, DoctorSchema, GetDoctorsSchema
-from core.models import Bind, Doctor, Patient, User
+from core.models import Bind, Doctor, User
 from core.security.security import get_password_hash
 
 from ..enums import BindEnum, UserType, NotificationType
@@ -63,34 +63,6 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     return doctor
 
 
-# USAR APENAS PARA MEDICOS
-def get_pending_binding_requests(
-    user: User, session: Session
-) -> list[tuple[Bind, Patient]] | None:
-    bindings_with_patients = (
-        session.query(Bind, Patient)
-        .filter(Bind.doctor_id == user.id, Bind.status == BindEnum.PENDING)
-        .join(Patient, Bind.patient_id == Patient.id)
-        .all()
-    )
-
-    return bindings_with_patients
-
-
-# USAR APENAS PARA PACIENTES
-def get_sent_binding_requests(
-    user: User, session: Session
-) -> list[tuple[Bind, Doctor]] | None:
-    bindings_with_doctors = (
-        session.query(Bind, Doctor)
-        .filter(Bind.patient_id == user.id, Bind.status == BindEnum.PENDING)
-        .join(Doctor, Bind.doctor_id == Doctor.id)
-        .all()
-    )
-
-    return bindings_with_doctors
-
-
 def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
     doctor = session.query(Doctor).filter(Doctor.crm == crm).first()
 
@@ -118,7 +90,7 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListRe
                 id=doc.id,
                 name=doc.name,
                 email=doc.email,
-                crm="CRM-" + doc.crm,
+                crm=doc.crm,
                 specialty=doc.expertise_area,
                 location=f"{doc.address.city}, {doc.address.state}",
                 role=UserType.DOCTOR,
@@ -145,7 +117,7 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListR
                 id=doc.id,
                 name=doc.name,
                 email=doc.email,
-                crm="CRM-" + doc.crm,
+                crm=doc.crm,
                 specialty=doc.expertise_area,
                 location=f"{doc.address.city}, {doc.address.state}",
                 role=UserType.DOCTOR,
@@ -171,22 +143,22 @@ def activate_or_reject_binding_request(
     if new_status == BindEnum.ACTIVE:
         # --- INÍCIO DA NOTIFICAÇÃO DE ACEITE ---
         notification_service.create_notification(
-            db=session,
+            session=session,
             user_id=binding.patient_id,  # Notifica o PACIENTE
             message=f"O médico {user.name} aceitou sua solicitação de vínculo.",
             type=NotificationType.BIND_ACCEPTED,
-            related_entity_id=binding.id
+            bind_id=binding.id
         )
         # --- FIM DA NOTIFICAÇÃO DE ACEITE ---
-        
+
     elif new_status == BindEnum.REJECTED:
         # --- (Opcional) NOTIFICAÇÃO DE REJEIÇÃO ---
         notification_service.create_notification(
-            db=session,
+            session=session,
             user_id=binding.patient_id, # Notifica o PACIENTE
             message=f"O médico {user.name} rejeitou sua solicitação de vínculo.",
             type=NotificationType.BIND_REJECTED,
-            related_entity_id=binding.id
+            bind_id=binding.id
         )
         # --- FIM DA NOTIFICAÇÃO ---
 

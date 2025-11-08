@@ -46,6 +46,12 @@ class GetDoctorsSchema(BaseModel):
     specialty: Optional[str] = None
 
 
+class GetPatientsSchema(BaseModel):
+    name: Optional[str] = None
+    cpf: Optional[str] = None
+    email: Optional[str] = None
+
+
 class DoctorListResponse(UserResponse):
     expertise_area: Optional[str] = None
     specialty: str

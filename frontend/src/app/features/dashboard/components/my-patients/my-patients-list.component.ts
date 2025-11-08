@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
+import { DoctorService } from '../../services/doctor.service';
+import { BindingService } from '../../../../core/services/binding.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { CpfPipe } from '../../../../shared/pipes/cpf.pipe';
 import {
   Patient,
   PatientFilters,
@@ -13,11 +17,14 @@ import {
 @Component({
   selector: 'app-my-patients-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, CpfPipe],
   templateUrl: './my-patients-list.component.html',
 })
 export class MyPatientsListComponent implements OnInit {
   private dashboardService = inject(DoctorDashboardService);
+  private doctorService = inject(DoctorService);
+  private bindingService = inject(BindingService);
+  private notificationService = inject(NotificationService);
 
   patients = signal<Patient[]>([]);
   isLoading = signal<boolean>(false);
@@ -193,5 +200,29 @@ export class MyPatientsListComponent implements OnInit {
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR');
+  }
+
+  unlinkPatient(patient: Patient): void {
+    if (!patient.bindingId) {
+      this.notificationService.warning('ID de vínculo não encontrado', 3000);
+      return;
+    }
+
+    if (!confirm(`Tem certeza que deseja desvincular o paciente ${patient.name}?`)) {
+      return;
+    }
+
+    this.bindingService.unlinkBinding(patient.bindingId).subscribe({
+      next: () => {
+        this.notificationService.success('Paciente desvinculado com sucesso', 3000);
+        this.loadPatients();
+      },
+      error: (err: any) => {
+        this.notificationService.error(
+          `Erro ao desvincular paciente: ${err.error?.detail || 'Tente novamente'}`,
+          5000
+        );
+      },
+    });
   }
 }

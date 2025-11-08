@@ -4,7 +4,7 @@ from core.enums.bind_enum import BindEnum
 
 
 class RequestBinding(BaseModel):
-    doctor_id: int
+    user_id: int
 
 
 class Bind(BaseModel):
@@ -28,12 +28,7 @@ class BindingDoctor(BaseModel):
     specialty: str
 
 
-class BindindRequestResponse(BaseModel):
+class BindingRequestResponse(BaseModel):
     id: int
-    patient: BindingPatient
+    user: BindingPatient | BindingDoctor
     status: BindEnum
-
-
-class SentBindindRequestResponse(BaseModel):
-    id: int
-    doctor: BindingDoctor
