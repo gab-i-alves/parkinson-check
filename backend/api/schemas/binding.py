@@ -32,8 +32,3 @@ class BindingRequestResponse(BaseModel):
     id: int
     user: BindingPatient | BindingDoctor
     status: BindEnum
-
-
-class SentBindingRequestResponse(BaseModel):
-    id: int
-    user: BindingPatient | BindingDoctor
