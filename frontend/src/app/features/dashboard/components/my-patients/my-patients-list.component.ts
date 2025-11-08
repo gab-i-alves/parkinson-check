@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
 import { DoctorService } from '../../services/doctor.service';
+import { BindingService } from '../../../../core/services/binding.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CpfPipe } from '../../../../shared/pipes/cpf.pipe';
 import {
@@ -22,6 +23,7 @@ import {
 export class MyPatientsListComponent implements OnInit {
   private dashboardService = inject(DoctorDashboardService);
   private doctorService = inject(DoctorService);
+  private bindingService = inject(BindingService);
   private notificationService = inject(NotificationService);
 
   patients = signal<Patient[]>([]);
@@ -210,12 +212,12 @@ export class MyPatientsListComponent implements OnInit {
       return;
     }
 
-    this.doctorService.unlinkPatient(patient.bindingId).subscribe({
+    this.bindingService.unlinkBinding(patient.bindingId).subscribe({
       next: () => {
         this.notificationService.success('Paciente desvinculado com sucesso', 3000);
         this.loadPatients();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.notificationService.error(
           `Erro ao desvincular paciente: ${err.error?.detail || 'Tente novamente'}`,
           5000

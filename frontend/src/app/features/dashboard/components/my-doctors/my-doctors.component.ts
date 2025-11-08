@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService } from '../../services/doctor.service';
+import { BindingService } from '../../../../core/services/binding.service';
 import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
 import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 import { Doctor } from '../../../../core/models/doctor.model';
@@ -20,6 +21,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 })
 export class MyDoctorsComponent implements OnInit {
   private medicService = inject(DoctorService);
+  private bindingService = inject(BindingService);
   private notificationService = inject(NotificationService);
 
   doctors = signal<Doctor[]>([]);
@@ -229,7 +231,7 @@ export class MyDoctorsComponent implements OnInit {
       return;
     }
 
-    this.medicService.unlinkDoctor(doctorToUnlink.bindingId).subscribe({
+    this.bindingService.unlinkBinding(doctorToUnlink.bindingId).subscribe({
       next: () => {
         // Remove from allDoctors array
         this.allDoctors = this.allDoctors.filter((doctor) => doctor.id !== doctorToUnlink.id);
@@ -242,7 +244,7 @@ export class MyDoctorsComponent implements OnInit {
         this.isUnlinkModalVisible.set(false);
         this.doctorToUnlink.set(null);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.notificationService.error('Ocorreu um erro ao desvincular o médico', 5000);
         console.error(err);
         this.isUnlinkModalVisible.set(false);
