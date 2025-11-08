@@ -1,16 +1,16 @@
+from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from http import HTTPStatus
 
 from core.models import User
 from core.security.security import get_current_user
 from core.services.notification_service import (
     get_all_user_notifications,
     get_unread_notifications_count,
+    mark_all_notifications_as_read,
     mark_notification_as_read,
-    mark_all_notifications_as_read
 )
 from infra.db.connection import get_session
 

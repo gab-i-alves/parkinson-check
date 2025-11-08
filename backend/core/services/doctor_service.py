@@ -1,15 +1,14 @@
 from http import HTTPStatus
-from typing import Literal
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from api.schemas.users import DoctorListResponse, DoctorSchema, GetDoctorsSchema
-from core.models import Bind, Doctor, Patient, User
+from core.models import Doctor, User
 from core.security.security import get_password_hash
 
-from ..enums import BindEnum, UserType, NotificationType
-from . import address_service, user_service, notification_service
+from ..enums import UserType
+from . import address_service, user_service
 from .user_service import get_binded_users
 
 
@@ -61,6 +60,7 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     session.commit()
     session.refresh(db_doctor)
     return doctor
+
 
 def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
     doctor = session.query(Doctor).filter(Doctor.crm == crm).first()

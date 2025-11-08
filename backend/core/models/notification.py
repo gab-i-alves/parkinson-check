@@ -22,7 +22,7 @@ class Notification:
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
 
     message: Mapped[str] = mapped_column(String(255), nullable=False)
-    
+
     type: Mapped[NotificationType] = mapped_column(
         PG_ENUM(NotificationType, name="notification_type_enum", create_type=True),
         nullable=False,
@@ -30,7 +30,7 @@ class Notification:
 
     # ID da entidade relacionada (ex: o ID do Bind) para criar links
     bind_id: Mapped[int | None] = mapped_column(nullable=True, default=None)
-    
+
     read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(init=False, server_default=func.now())

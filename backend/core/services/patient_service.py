@@ -2,10 +2,9 @@ from datetime import date
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from sqlalchemy import desc, or_
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from api.schemas.binding import RequestBinding
 from api.schemas.users import (
     AddressResponse,
     PatientDashboardResponse,
@@ -19,6 +18,7 @@ from core.services import address_service, user_service
 from core.services.user_service import get_binded_users
 
 from ..enums import TestType, UserType
+
 
 def create_patient(patient: PatientSchema, session: Session):
     if user_service.get_user_by_email(patient.email, session) is not None:
@@ -62,6 +62,7 @@ def create_patient(patient: PatientSchema, session: Session):
     session.commit()
     session.refresh(db_patient)
     return patient
+
 
 def get_binded_patients(session: Session, current_user: User) -> list[PatientListResponse]:
     """

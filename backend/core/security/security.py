@@ -8,10 +8,9 @@ from sqlalchemy.orm import Session
 
 from api.schemas.token import TokenResponse
 from core.models import Doctor, Patient, User
-from core.services import user_service
 from infra.db.connection import get_session
 from infra.settings import Settings
-
+    
 SETTINGS = Settings()
 
 pwd_context = PasswordHash.recommended()
@@ -72,6 +71,8 @@ def verify_password(plain_password: str, hashed_password: str):
 
 
 def get_user_from_token(token: str, session: Session):
+    from core.services import user_service  # Import local para evitar circular
+    
     CREDENTIAL_EXCEPTION = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,
         detail="Could not validate credentials",

@@ -3,19 +3,17 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from core.models import Notification, User
 from core.enums import NotificationType
+from core.models import Notification, User
 
 
-def create_notification(session: Session, user: User, message: str, type: NotificationType, bind_id: int):
+def create_notification(
+    session: Session, user_id: int, message: str, type: NotificationType, bind_id: int
+):
     db_notification = Notification(
-        user_id=user.id,
-        message=message,
-        type=type,
-        bind_id=bind_id,
-        read=False
+        user_id=user_id, message=message, type=type, bind_id=bind_id, read=False
     )
-    
+
     session.add(db_notification)
 
 
