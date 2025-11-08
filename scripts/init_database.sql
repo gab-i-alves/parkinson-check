@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS "user" (
   "cpf" char(11) UNIQUE NOT NULL,
   "birthdate" TIMESTAMP NOT NULL,
   "address_id" integer NOT NULL REFERENCES "address" ("id"),
+  "reset_token" varchar(255),
+  "reset_token_expiry" TIMESTAMPTZ,
   "is_active" boolean NOT NULL DEFAULT TRUE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -51,7 +53,8 @@ CREATE TABLE IF NOT EXISTS "bind" (
     "id" SERIAL PRIMARY KEY,
     "status" bind_enum NOT NULL,
     "doctor_id" INTEGER NOT NULL REFERENCES "doctor"(id),
-    "patient_id" INTEGER NOT NULL REFERENCES "patient"(id)
+    "patient_id" INTEGER NOT NULL REFERENCES "patient"(id),
+    "created_by_type" user_type_enum NOT NULL DEFAULT 'PATIENT'
 );
 
 CREATE TABLE IF NOT EXISTS "test" (
