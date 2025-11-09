@@ -130,14 +130,15 @@
         @switch (activeTab()) { @case ('profile') {
         <app-patient-profile-tab [profile]="patientProfile" />
         } @case ('history') {
-        <app-patient-history-tab
+        <app-history-tab
           [timeline]="timeline()"
           [patientId]="patientId()!"
+          [isPatientView]="false"
         />
         } @case ('statistics') {
-        <app-patient-statistics-tab [statistics]="statistics()" />
+        <app-statistics-tab [statistics]="statistics()" />
         } @case ('charts') {
-        <app-patient-charts-tab
+        <app-charts-tab
           [timeline]="timeline()"
           [statistics]="statistics()"
         />

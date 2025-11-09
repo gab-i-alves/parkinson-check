@@ -6,9 +6,9 @@ import { PatientFullProfile } from '../../../../../core/models/patient-full-prof
 import { PatientStatistics } from '../../../../../core/models/patient-statistics.model';
 import { PatientTimeline } from '../../../../../core/models/patient-timeline.model';
 import { PatientProfileTabComponent } from '../patient-profile-tab/patient-profile-tab.component';
-import { PatientHistoryTabComponent } from '../patient-history-tab/patient-history-tab.component';
-import { PatientStatisticsTabComponent } from '../patient-statistics-tab/patient-statistics-tab.component';
-import { PatientChartsTabComponent } from '../patient-charts-tab/patient-charts-tab.component';
+import { HistoryTabComponent } from '../../../shared/components/history-tab/history-tab.component';
+import { StatisticsTabComponent } from '../../../shared/components/statistics-tab/patient-statistics-tab.component';
+import { ChartsTabComponent } from '../../../shared/components/charts-tab/charts-tab.component';
 
 type TabType = 'profile' | 'history' | 'statistics' | 'charts';
 
@@ -18,9 +18,9 @@ type TabType = 'profile' | 'history' | 'statistics' | 'charts';
   imports: [
     CommonModule,
     PatientProfileTabComponent,
-    PatientHistoryTabComponent,
-    PatientStatisticsTabComponent,
-    PatientChartsTabComponent,
+    HistoryTabComponent,
+    StatisticsTabComponent,
+    ChartsTabComponent,
   ],
   templateUrl: './patient-detail.component.html',
 })
