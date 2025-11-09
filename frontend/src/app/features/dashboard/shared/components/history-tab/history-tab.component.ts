@@ -107,4 +107,12 @@ export class HistoryTabComponent implements OnChanges {
       : ['/dashboard/doctor/test', testId];
     this.router.navigate(route);
   }
+
+  isSpiralTest(testType: TestType | any): boolean {
+    return testType === 'SPIRAL_TEST' || testType === 1;
+  }
+
+  isVoiceTest(testType: TestType | any): boolean {
+    return testType === 'VOICE_TEST' || testType === 2;
+  }
 }
