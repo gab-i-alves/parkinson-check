@@ -45,7 +45,7 @@ export class ClinicalTestTypeSelectionComponent implements OnInit {
   selectSpiralTest(): void {
     const patientId = this.patientId();
     if (patientId) {
-      this.router.navigate(['/dashboard/tests/clinical/spiral', patientId]);
+      this.router.navigate(['/dashboard/doctor/clinical-test/spiral-method-selection', patientId]);
     }
   }
 
