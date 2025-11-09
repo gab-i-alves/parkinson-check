@@ -127,8 +127,8 @@ def get_patient_tests(
             test_id=test.id,
             test_type=test.test_type,
             execution_date=test.execution_date,
-            classification="HEALTHY" if test.score < 0.80 else "PARKINSON",
-            # NECESSARIA VALIDAÇÃO TEÓRICA!!!!!!
+            classification="HEALTHY" if test.score >= 0.80 else "PARKINSON",
+            # Score >= 0.80 (80% ou mais) = SAUDÁVEL | Score < 0.80 = PARKINSON
         )
         test_results.append(patient_test)
 
@@ -398,9 +398,9 @@ def get_my_tests_statistics(session: Session, patient: User) -> PatientTestStati
     best_voice = max((t.score for t in voice_tests), default=None)
     worst_voice = min((t.score for t in voice_tests), default=None)
 
-    # Classificações
-    healthy_count = sum(1 for t in all_tests if t.score < 0.80)
-    parkinson_count = sum(1 for t in all_tests if t.score >= 0.80)
+    # Classificações (Score >= 0.80 = SAUDÁVEL | Score < 0.80 = PARKINSON)
+    healthy_count = sum(1 for t in all_tests if t.score >= 0.80)
+    parkinson_count = sum(1 for t in all_tests if t.score < 0.80)
 
     # Intervalo médio entre testes
     if len(all_tests) >= 2:
@@ -534,9 +534,9 @@ def get_patient_test_statistics(
     best_voice = max((t.score for t in voice_tests), default=None)
     worst_voice = min((t.score for t in voice_tests), default=None)
 
-    # Classificações
-    healthy_count = sum(1 for t in all_tests if t.score < 0.80)
-    parkinson_count = sum(1 for t in all_tests if t.score >= 0.80)
+    # Classificações (Score >= 0.80 = SAUDÁVEL | Score < 0.80 = PARKINSON)
+    healthy_count = sum(1 for t in all_tests if t.score >= 0.80)
+    parkinson_count = sum(1 for t in all_tests if t.score < 0.80)
 
     # Intervalo médio entre testes
     if len(all_tests) >= 2:
@@ -597,7 +597,7 @@ def get_patient_test_timeline(
     timeline_items = []
 
     for test in all_tests:
-        classification = "HEALTHY" if test.score < 0.80 else "PARKINSON"
+        classification = "HEALTHY" if test.score >= 0.80 else "PARKINSON"
 
         # Campos base
         item_data = {
@@ -668,8 +668,8 @@ def get_test_detail(
             status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
         )
 
-    # Calcular classificação
-    classification = "HEALTHY" if test.score < 0.80 else "PARKINSON"
+    # Calcular classificação (Score >= 0.80 = SAUDÁVEL | Score < 0.80 = PARKINSON)
+    classification = "HEALTHY" if test.score >= 0.80 else "PARKINSON"
 
     # Buscar dados específicos por tipo e retornar
     if test.test_type == TestType.SPIRAL_TEST:
@@ -752,7 +752,7 @@ def get_my_tests_timeline(session: Session, patient: User) -> PatientTestTimelin
     timeline_items = []
 
     for test in all_tests:
-        classification = "HEALTHY" if test.score < 0.80 else "PARKINSON"
+        classification = "HEALTHY" if test.score >= 0.80 else "PARKINSON"
 
         # Campos base
         item_data = {
@@ -817,8 +817,8 @@ def get_my_test_detail(
             status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
         )
 
-    # Calcular classificação
-    classification = "HEALTHY" if test.score < 0.80 else "PARKINSON"
+    # Calcular classificação (Score >= 0.80 = SAUDÁVEL | Score < 0.80 = PARKINSON)
+    classification = "HEALTHY" if test.score >= 0.80 else "PARKINSON"
 
     # Buscar dados específicos por tipo e retornar
     if test.test_type == TestType.SPIRAL_TEST:
