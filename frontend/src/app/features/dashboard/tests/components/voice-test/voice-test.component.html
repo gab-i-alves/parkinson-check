@@ -178,34 +178,6 @@
         </p>
       </div>
     </div>
-    } @if (analysisResults()) {
-    <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8"
-    >
-      <h3 class="text-lg font-bold text-gray-900 mb-4">Resultado da Análise</h3>
-      <div class="space-y-4">
-        <div class="bg-violet-50/50 border border-violet-200 rounded-lg p-4">
-          <p class="text-sm font-medium text-violet-700">Pontuação (Score):</p>
-          <p class="text-3xl font-bold text-gray-900 mt-2">
-            {{ analysisResults()?.score | number : "1.2-2" }}
-          </p>
-        </div>
-        <div>
-          <p class="text-sm font-medium text-gray-900 mb-2">Análise:</p>
-          <p class="text-sm text-gray-700 leading-relaxed">
-            {{ analysisResults()?.analysis }}
-          </p>
-        </div>
-      </div>
-      <div class="mt-8 flex justify-end">
-        <button
-          (click)="goBackToMethodSelection()"
-          class="inline-flex items-center rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
-        >
-          Finalizar Teste
-        </button>
-      </div>
-    </div>
     }
   </div>
 </div>

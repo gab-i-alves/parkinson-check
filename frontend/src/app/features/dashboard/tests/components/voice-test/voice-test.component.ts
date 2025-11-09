@@ -175,8 +175,14 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
         .pipe(finalize(() => this.feedbackMessage.set(null)))
         .subscribe({
           next: (response) => {
-            this.analysisResults.set(response);
-            this.recordedAudioUrl.set(undefined);
+            // Navegar para página de resultado
+            this.router.navigate(['/dashboard/tests/result'], {
+              state: {
+                result: response,
+                testType: 'voice',
+                isPracticeMode: true,
+              },
+            });
           },
           error: (err) => {
             this.feedbackMessage.set(`Erro na análise: ${err.message}`);
