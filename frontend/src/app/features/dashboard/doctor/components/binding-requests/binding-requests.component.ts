@@ -8,6 +8,7 @@ import { Patient, PatientStatus } from '../../../../../core/models/patient.model
 import { PatientProfileModalComponent, PatientProfile } from '../../../../../shared/components/patient-profile-modal/patient-profile-modal.component';
 import { firstValueFrom } from 'rxjs';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
 
 interface PatientWithBinding extends Patient {
   bindingStatus?: 'none' | 'pending' | 'linked';
@@ -16,7 +17,7 @@ interface PatientWithBinding extends Patient {
 @Component({
   selector: 'app-binding-requests',
   standalone: true,
-  imports: [CommonModule, PatientProfileModalComponent],
+  imports: [CommonModule, PatientProfileModalComponent, CpfPipe],
   templateUrl: './binding-requests.component.html',
 })
 export class BindingRequestsComponent implements OnInit {
@@ -112,7 +113,7 @@ export class BindingRequestsComponent implements OnInit {
     const delayPromise = new Promise((resolve) => setTimeout(resolve, 500));
 
     const searchPromise = firstValueFrom(
-      this.medicService.searchPatients(this.searchTerm(), '')
+      this.medicService.searchPatients(this.searchTerm(), '', this.statusFilter())
     );
 
     try {
@@ -124,9 +125,9 @@ export class BindingRequestsComponent implements OnInit {
           id: patient.id,
           name: patient.name,
           email: patient.email,
-          cpf: '',
-          age: 0,
-          status: 'stable' as PatientStatus,
+          cpf: patient.cpf || '',
+          age: patient.age || 0,
+          status: patient.status as PatientStatus || 'stable',
           lastTestDate: '',
           lastTestType: undefined,
           testsCount: 0,
@@ -230,7 +231,6 @@ export class BindingRequestsComponent implements OnInit {
       const patientProfile: PatientProfile = {
         id: request.user.id.toString(),
         name: request.user.name,
-        age: 0, // Not available in requests
         email: request.user.email,
         status: 'pending',
       };
