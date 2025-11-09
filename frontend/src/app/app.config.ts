@@ -10,6 +10,7 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { provideNgxMask } from 'ngx-mask';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
@@ -21,5 +22,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideNgxMask(),
+    provideCharts(withDefaultRegisterables()),
   ],
 };
