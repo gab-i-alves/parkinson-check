@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { SpiralTestService } from '../../../services/spiral-test.service';
+import { ClinicalTestService } from '../../../services/clinical-test.service';
 import { SpiralTestResponse } from '../../../../../core/models/spiral-test-response.model';
 import { ImagePreviewModalComponent } from '../../../../../shared/components/image-preview-modal/image-preview-modal.component';
 
@@ -13,7 +14,7 @@ import { ImagePreviewModalComponent } from '../../../../../shared/components/ima
   templateUrl: './spiral-test-paper.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpiralTestPaperComponent {
+export class SpiralTestPaperComponent implements OnInit {
   readonly selectedFile = signal<File | null>(null);
   readonly imagePreviewUrl = signal<string | ArrayBuffer | null>(null);
   readonly uploadStatus = signal<'idle' | 'uploading' | 'success' | 'error'>(
@@ -23,10 +24,25 @@ export class SpiralTestPaperComponent {
   readonly analysisResults = signal<SpiralTestResponse | null>(null);
   readonly showPreviewModal = signal<boolean>(false);
 
+  private patientId: string | null = null;
+  private isClinicalMode = false;
+
   constructor(
     private spiralTestService: SpiralTestService,
-    private router: Router
+    private clinicalTestService: ClinicalTestService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit(): void {
+    // Detect context: clinical test (with patientId) vs practice test
+    this.patientId = this.route.snapshot.paramMap.get('patientId');
+    this.isClinicalMode = !!this.patientId;
+
+    if (this.isClinicalMode) {
+      console.log(`Modo clínico ativado para paciente ID: ${this.patientId}`);
+    }
+  }
 
   getModelKeys(results: SpiralTestResponse | null): string[] {
     if (!results) {
@@ -78,21 +94,48 @@ export class SpiralTestPaperComponent {
     this.feedbackMessage.set('Enviando imagem para análise...');
 
     try {
-      const response = await lastValueFrom(
-        this.spiralTestService.uploadSpiralImage(file)
-      );
+      let response: any;
+
+      if (this.isClinicalMode && this.patientId) {
+        // Clinical mode: use ClinicalTestService
+        const drawDuration = 0; // Paper uploads have no draw duration
+        const method = 1; // PAPER method
+
+        response = await lastValueFrom(
+          this.clinicalTestService.processSpiralTest(
+            Number(this.patientId),
+            file,
+            drawDuration,
+            method
+          )
+        );
+      } else {
+        // Practice mode: use SpiralTestService
+        response = await lastValueFrom(
+          this.spiralTestService.uploadSpiralImage(file)
+        );
+      }
 
       this.uploadStatus.set('success');
       this.feedbackMessage.set('Análise concluída com sucesso!');
 
-      // Navegar para página de resultado
-      this.router.navigate(['/dashboard/tests/result'], {
-        state: {
-          result: response,
-          testType: 'spiral',
-          isPracticeMode: true,
-        },
-      });
+      // Navigate to result page
+      if (this.isClinicalMode) {
+        this.router.navigate(['/dashboard/doctor/clinical-test/result'], {
+          state: {
+            result: response,
+            testType: 'spiral',
+          },
+        });
+      } else {
+        this.router.navigate(['/dashboard/tests/result'], {
+          state: {
+            result: response,
+            testType: 'spiral',
+            isPracticeMode: true,
+          },
+        });
+      }
     } catch (error) {
       console.error('Erro ao enviar imagem:', error);
       this.uploadStatus.set('error');
@@ -117,7 +160,13 @@ export class SpiralTestPaperComponent {
   }
 
   goBackToMethodSelection(): void {
-    this.router.navigate(['/dashboard/tests']);
+    if (this.isClinicalMode && this.patientId) {
+      // Clinical mode: go back to method selection
+      this.router.navigate(['/dashboard/doctor/clinical-test/spiral-method-selection', this.patientId]);
+    } else {
+      // Practice mode: go back to test selection
+      this.router.navigate(['/dashboard/tests']);
+    }
   }
 
   openPreviewModal(): void {
