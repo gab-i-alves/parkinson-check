@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
+import re
 
 from fastapi import Cookie, Depends, HTTPException
 from jwt import decode, encode
@@ -77,6 +78,15 @@ def get_admin_user():
 
 def get_password_hash(password: str):
     return pwd_context.hash(password)
+
+def anonymizeCPF(cpf: str):
+    cpf_num = re.sub(r'[^0-9]', '', cpf)
+
+    if len(cpf_num) != 11:
+        return "CPF Inválido"
+
+    cpf_anonymized = f"{cpf_num[:3]}.***.***-{cpf_num[9:]}"
+    return cpf_anonymized
 
 
 def verify_password(plain_password: str, hashed_password: str):

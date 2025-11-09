@@ -92,9 +92,7 @@ export const DASHBOARD_ROUTES: Routes = [
         path: 'clinical-test/voice/:patientId',
         canActivate: [authGuard(['medico'])],
         loadComponent: () =>
-          import('./components/voice-test/voice-test').then(
-            (c) => c.VoiceTest
-          ),
+          import('./components/voice-test/voice-test').then((c) => c.VoiceTest),
       },
       {
         path: 'clinical-test/result',
@@ -124,9 +122,9 @@ export const DASHBOARD_ROUTES: Routes = [
         path: 'my-test/:testId',
         canActivate: [authGuard(['paciente'])],
         loadComponent: () =>
-          import('./components/patient-test-detail/patient-test-detail.component').then(
-            (c) => c.PatientTestDetailComponent
-          ),
+          import(
+            './components/patient-test-detail/patient-test-detail.component'
+          ).then((c) => c.PatientTestDetailComponent),
       },
       {
         path: 'admin',
@@ -134,6 +132,14 @@ export const DASHBOARD_ROUTES: Routes = [
         loadComponent: () =>
           import('./components/admin-dashboard/admin-dashboard.component').then(
             (c) => c.AdminDashboardComponent
+          ),
+      },
+      {
+        path: 'users',
+        canActivate: [authGuard(['admin'])],
+        loadComponent: () =>
+          import('./components/user-management/user-management.component').then(
+            (c) => c.UserManagementComponent
           ),
       },
     ],

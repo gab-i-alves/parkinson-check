@@ -21,7 +21,7 @@ from core.services.user_service import get_binded_users
 from ..enums import BindEnum, TestType, UserType
 
 
-def create_patient(patient: PatientSchema, session: Session):
+def create_patient(patient: PatientSchema, session: Session, confirmation_email = True):
     if user_service.get_user_by_email(patient.email, session) is not None:
         raise HTTPException(
             HTTPStatus.CONFLICT, detail="Já existe um usuário com o email informado."
@@ -57,12 +57,13 @@ def create_patient(patient: PatientSchema, session: Session):
         birthdate=patient.birthdate,
         user_type=UserType.PATIENT,
         address_id=address.id,
+        is_active=True #TODO ativação da conta pelo email de confirmação
     )
 
     session.add(db_patient)
     session.commit()
     session.refresh(db_patient)
-    return patient
+    return db_patient
 
 
 def create_bind_request(request: RequestBinding, user: User, session: Session) -> Bind:
