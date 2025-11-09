@@ -1,14 +1,49 @@
-<div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Meus Pacientes</h1>
-      <p class="mt-1 text-sm text-gray-500">
-        Gerencie e acompanhe seus pacientes vinculados
-      </p>
-    </div>
+<div class="min-h-screen bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div
+      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
+    ></div>
+    <div
+      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
+    ></div>
+    <div
+      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
+    ></div>
   </div>
 
-  <div class="rounded-lg bg-white p-6 shadow-sm">
+  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+    <!-- Header -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+      <div class="flex items-center space-x-3">
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-700 shadow-lg"
+        >
+          <svg
+            class="h-8 w-8 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Meus Pacientes</h1>
+          <p class="text-sm text-gray-600 mt-1">
+            Gerencie e acompanhe seus pacientes vinculados
+          </p>
+        </div>
+      </div>
+    </div>
+
+  <!-- Main Content Card -->
+  <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
     <div class="mb-6">
       <div class="flex items-end space-x-4">
         <div class="flex-grow">
@@ -98,7 +133,7 @@
           <button
             type="button"
             (click)="toggleSortOrder()"
-            class="mt-1 inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            class="mt-1 inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             title="{{ sortOrder() === 'asc' ? 'Crescente' : 'Decrescente' }}"
           >
             @if (sortOrder() === 'asc') {
@@ -137,7 +172,7 @@
           <button
             type="button"
             (click)="onSearch()"
-            class="mt-6 inline-flex items-center rounded-md border border-transparent bg-violet-700 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            class="mt-6 inline-flex items-center rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
           >
             Pesquisar
           </button>
@@ -149,7 +184,7 @@
     <div class="flex h-64 items-center justify-center">
       <div class="text-center">
         <svg
-          class="mx-auto h-12 w-12 animate-spin text-violet-600"
+          class="mx-auto h-12 w-12 animate-spin text-violet-700"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -168,28 +203,32 @@
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        <p class="mt-2 text-sm text-gray-500">Carregando pacientes...</p>
+        <p class="mt-4 text-sm text-gray-600 font-medium">Carregando pacientes...</p>
       </div>
     </div>
     } @else if (patients().length === 0) {
     <div class="py-12 text-center">
-      <svg
-        class="mx-auto h-12 w-12 text-gray-400"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
+      <div
+        class="flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 border-2 border-gray-200 mx-auto mb-4"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-        />
-      </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">
+        <svg
+          class="h-10 w-10 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+          />
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900">
         Nenhum paciente encontrado
       </h3>
-      <p class="mt-1 text-sm text-gray-500">
+      <p class="mt-2 text-sm text-gray-600">
         Tente ajustar os filtros ou realizar uma nova busca.
       </p>
     </div>
@@ -269,15 +308,15 @@
             <td
               class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
             >
-              <div class="flex items-center justify-end space-x-3">
+              <div class="flex items-center justify-end space-x-2">
                 <a
                   [routerLink]="['/dashboard/doctor/patient', patient.id]"
-                  class="text-violet-600 hover:text-violet-900"
+                  class="inline-flex items-center px-4 py-2 border border-violet-200 text-sm font-semibold rounded-lg text-violet-700 bg-violet-50/50 hover:bg-violet-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-all"
                   >Ver Detalhes</a
                 >
                 <button
                   (click)="unlinkPatient(patient)"
-                  class="text-red-600 hover:text-red-900"
+                  class="inline-flex items-center px-4 py-2 border border-red-200 text-sm font-semibold rounded-lg text-red-700 bg-red-50/50 hover:bg-red-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all"
                   title="Desvincular paciente"
                 >
                   Desvincular
@@ -299,7 +338,7 @@
           [disabled]="currentPage() === 1"
           [class.opacity-50]="currentPage() === 1"
           [class.cursor-not-allowed]="currentPage() === 1"
-          class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          class="relative inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Anterior
         </button>
@@ -308,7 +347,7 @@
           [disabled]="currentPage() === totalPages()"
           [class.opacity-50]="currentPage() === totalPages()"
           [class.cursor-not-allowed]="currentPage() === totalPages()"
-          class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          class="relative ml-3 inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Próxima
         </button>
@@ -412,6 +451,7 @@
       </div>
     </div>
     }
+  </div>
   </div>
 </div>
 

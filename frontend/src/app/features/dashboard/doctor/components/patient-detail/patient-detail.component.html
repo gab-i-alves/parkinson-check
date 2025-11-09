@@ -1,150 +1,160 @@
-<div class="max-w-7xl mx-auto p-6">
-  @if (isLoading()) {
-  <div class="flex items-center justify-center h-64">
-    <div class="text-center">
-      <div
-        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
-      ></div>
-      <p class="text-gray-600 mt-4">Carregando dados do paciente...</p>
+<div class="min-h-screen bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
+    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
+  </div>
+  <div class="container max-w-7xl mx-auto px-6 py-8 relative">
+    @if (isLoading()) {
+    <div class="flex items-center justify-center h-64">
+      <div class="text-center">
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"
+        ></div>
+        <p class="text-gray-600 mt-4 text-sm font-medium">Carregando dados do paciente...</p>
+      </div>
     </div>
-  </div>
-  } @else if (errorMessage()) {
-  <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-    <svg
-      class="w-12 h-12 text-red-500 mx-auto mb-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-    <p class="text-red-800 font-semibold">{{ errorMessage() }}</p>
-    <button
-      (click)="goBack()"
-      class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-    >
-      Voltar
-    </button>
-  </div>
-  } @else if (profile(); as patientProfile) {
-  <div class="space-y-6">
-    <!-- Header com informações básicas -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <div
-            class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center"
-          >
-            <span class="text-2xl font-bold text-blue-600">{{
-              patientProfile.name.charAt(0).toUpperCase()
-            }}</span>
-          </div>
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">
-              {{ patientProfile.name }}
-            </h1>
-            <p class="text-gray-600">ID: #{{ patientProfile.id }}</p>
-            <div class="flex items-center space-x-2 mt-1">
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                [ngClass]="{
-                  'bg-green-100 text-green-800': patientProfile.status === 'stable',
-                  'bg-yellow-100 text-yellow-800': patientProfile.status === 'attention',
-                  'bg-red-100 text-red-800': patientProfile.status === 'critical'
-                }"
-              >
-                {{
-                  patientProfile.status === 'stable'
-                    ? 'Estável'
-                    : patientProfile.status === 'attention'
-                    ? 'Atenção'
-                    : 'Crítico'
-                }}
-              </span>
+    } @else if (errorMessage()) {
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-red-200/50 p-8 text-center">
+      <div class="flex h-16 w-16 items-center justify-center rounded-xl bg-red-100 border-2 border-red-200 mx-auto mb-4">
+        <svg
+          class="h-10 w-10 text-red-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      </div>
+      <p class="text-red-800 font-semibold text-lg">{{ errorMessage() }}</p>
+      <button
+        (click)="goBack()"
+        class="mt-6 rounded-xl bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-red-700 hover:shadow-xl transition-all"
+      >
+        Voltar
+      </button>
+    </div>
+    } @else if (profile(); as patientProfile) {
+    <div class="space-y-6">
+      <!-- Header com informações básicas -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div
+              class="w-16 h-16 bg-violet-100 rounded-xl flex items-center justify-center border-2 border-violet-200"
+            >
+              <span class="text-2xl font-bold text-violet-700">{{
+                patientProfile.name.charAt(0).toUpperCase()
+              }}</span>
+            </div>
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900">
+                {{ patientProfile.name }}
+              </h1>
+              <p class="text-gray-600 mt-1">ID: #{{ patientProfile.id }}</p>
+              <div class="flex items-center space-x-2 mt-2">
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800': patientProfile.status === 'stable',
+                    'bg-yellow-100 text-yellow-800': patientProfile.status === 'attention',
+                    'bg-red-100 text-red-800': patientProfile.status === 'critical'
+                  }"
+                >
+                  {{
+                    patientProfile.status === 'stable'
+                      ? 'Estável'
+                      : patientProfile.status === 'attention'
+                      ? 'Atenção'
+                      : 'Crítico'
+                  }}
+                </span>
+              </div>
             </div>
           </div>
+          <button
+            (click)="goBack()"
+            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50"
+          >
+            ← Voltar
+          </button>
         </div>
-        <button
-          (click)="goBack()"
-          class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          ← Voltar
-        </button>
-      </div>
-    </div>
-
-    <!-- Navegação de Tabs -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-      <div class="border-b border-gray-200">
-        <nav class="flex -mb-px" aria-label="Tabs">
-          <button
-            (click)="selectTab('profile')"
-            [class.border-blue-500]="activeTab() === 'profile'"
-            [class.text-blue-600]="activeTab() === 'profile'"
-            [class.border-transparent]="activeTab() !== 'profile'"
-            [class.text-gray-500]="activeTab() !== 'profile'"
-            class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
-          >
-            Perfil
-          </button>
-          <button
-            (click)="selectTab('history')"
-            [class.border-blue-500]="activeTab() === 'history'"
-            [class.text-blue-600]="activeTab() === 'history'"
-            [class.border-transparent]="activeTab() !== 'history'"
-            [class.text-gray-500]="activeTab() !== 'history'"
-            class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
-          >
-            Histórico
-          </button>
-          <button
-            (click)="selectTab('statistics')"
-            [class.border-blue-500]="activeTab() === 'statistics'"
-            [class.text-blue-600]="activeTab() === 'statistics'"
-            [class.border-transparent]="activeTab() !== 'statistics'"
-            [class.text-gray-500]="activeTab() !== 'statistics'"
-            class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
-          >
-            Estatísticas
-          </button>
-          <button
-            (click)="selectTab('charts')"
-            [class.border-blue-500]="activeTab() === 'charts'"
-            [class.text-blue-600]="activeTab() === 'charts'"
-            [class.border-transparent]="activeTab() !== 'charts'"
-            [class.text-gray-500]="activeTab() !== 'charts'"
-            class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
-          >
-            Gráficos
-          </button>
-        </nav>
       </div>
 
-      <!-- Conteúdo das Tabs -->
-      <div class="p-6">
-        @switch (activeTab()) { @case ('profile') {
-        <app-patient-profile-tab [profile]="patientProfile" />
-        } @case ('history') {
-        <app-history-tab
-          [timeline]="timeline()"
-          [patientId]="patientId()!"
-          [isPatientView]="false"
-        />
-        } @case ('statistics') {
-        <app-statistics-tab [statistics]="statistics()" />
-        } @case ('charts') {
-        <app-charts-tab
-          [timeline]="timeline()"
-          [statistics]="statistics()"
-        />
-        } }
+      <!-- Navegação de Tabs -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+        <div class="border-b border-gray-200">
+          <nav class="flex -mb-px" aria-label="Tabs">
+            <button
+              (click)="selectTab('profile')"
+              [class.border-violet-700]="activeTab() === 'profile'"
+              [class.text-violet-700]="activeTab() === 'profile'"
+              [class.border-transparent]="activeTab() !== 'profile'"
+              [class.text-gray-500]="activeTab() !== 'profile'"
+              class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-semibold text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
+            >
+              Perfil
+            </button>
+            <button
+              (click)="selectTab('history')"
+              [class.border-violet-700]="activeTab() === 'history'"
+              [class.text-violet-700]="activeTab() === 'history'"
+              [class.border-transparent]="activeTab() !== 'history'"
+              [class.text-gray-500]="activeTab() !== 'history'"
+              class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-semibold text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
+            >
+              Histórico
+            </button>
+            <button
+              (click)="selectTab('statistics')"
+              [class.border-violet-700]="activeTab() === 'statistics'"
+              [class.text-violet-700]="activeTab() === 'statistics'"
+              [class.border-transparent]="activeTab() !== 'statistics'"
+              [class.text-gray-500]="activeTab() !== 'statistics'"
+              class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-semibold text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
+            >
+              Estatísticas
+            </button>
+            <button
+              (click)="selectTab('charts')"
+              [class.border-violet-700]="activeTab() === 'charts'"
+              [class.text-violet-700]="activeTab() === 'charts'"
+              [class.border-transparent]="activeTab() !== 'charts'"
+              [class.text-gray-500]="activeTab() !== 'charts'"
+              class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-semibold text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
+            >
+              Gráficos
+            </button>
+          </nav>
+        </div>
+
+        <!-- Conteúdo das Tabs -->
+        <div class="p-8">
+          @switch (activeTab()) { @case ('profile') {
+          <app-patient-profile-tab [profile]="patientProfile" />
+          } @case ('history') {
+          <app-history-tab
+            [timeline]="timeline()"
+            [patientId]="patientId()!"
+            [isPatientView]="false"
+          />
+          } @case ('statistics') {
+          <app-statistics-tab [statistics]="statistics()" />
+          } @case ('charts') {
+          <app-charts-tab
+            [timeline]="timeline()"
+            [statistics]="statistics()"
+          />
+          } }
+        </div>
       </div>
     </div>
+    }
   </div>
-  }
 </div>

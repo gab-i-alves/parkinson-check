@@ -1,9 +1,15 @@
-<div class="min-h-screen bg-gray-50 py-8">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
+    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
+  </div>
+  <div class="container max-w-7xl mx-auto px-6 py-8 relative">
     <div class="mb-6">
       <button
         (click)="goBack()"
-        class="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+        class="flex items-center text-violet-700 hover:text-violet-800 font-semibold"
       >
         <svg
           class="w-5 h-5 mr-2"
@@ -26,50 +32,52 @@
     <div class="flex justify-center items-center py-12">
       <div class="text-center">
         <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"
         ></div>
-        <p class="mt-4 text-gray-600">Carregando detalhes do teste...</p>
+        <p class="mt-4 text-sm text-gray-600 font-medium">Carregando detalhes do teste...</p>
       </div>
     </div>
     } @if (errorMessage()) {
-    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-red-200/50 p-6">
       <div class="flex">
         <div class="flex-shrink-0">
-          <svg
-            class="h-5 w-5 text-red-400"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-              clip-rule="evenodd"
-            />
-          </svg>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 border-2 border-red-200">
+            <svg
+              class="h-8 w-8 text-red-600"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
         </div>
-        <div class="ml-3">
-          <p class="text-sm text-red-700">{{ errorMessage() }}</p>
+        <div class="ml-4">
+          <p class="text-sm text-red-700 font-medium">{{ errorMessage() }}</p>
         </div>
       </div>
     </div>
     } @if (testDetail() && !isLoading()) {
     <div class="space-y-6">
-      <div class="bg-white shadow rounded-lg overflow-hidden">
-        <div class="px-6 py-5 border-b border-gray-200">
-          <h2 class="text-2xl font-bold text-gray-900">Detalhes do Teste</h2>
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+        <div class="px-8 py-6 border-b border-gray-200">
+          <h2 class="text-3xl font-bold text-gray-900">Detalhes do Teste</h2>
         </div>
-        <div class="px-6 py-5">
+        <div class="px-8 py-6">
           <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <dt class="text-sm font-medium text-gray-500">Tipo de Teste</dt>
-              <dd class="mt-1 text-lg text-gray-900">
+              <dd class="mt-1 text-lg text-gray-900 font-semibold">
                 {{ getTestTypeLabel(testDetail()!.test_type) }}
               </dd>
             </div>
 
             <div>
               <dt class="text-sm font-medium text-gray-500">Paciente</dt>
-              <dd class="mt-1 text-lg text-gray-900">
+              <dd class="mt-1 text-lg text-gray-900 font-semibold">
                 {{ testDetail()!.patient.name }}
               </dd>
             </div>
@@ -78,14 +86,14 @@
               <dt class="text-sm font-medium text-gray-500">
                 Data de Execução
               </dt>
-              <dd class="mt-1 text-lg text-gray-900">
+              <dd class="mt-1 text-lg text-gray-900 font-semibold">
                 {{ formatDate(testDetail()!.execution_date) }}
               </dd>
             </div>
 
             <div>
               <dt class="text-sm font-medium text-gray-500">Score</dt>
-              <dd class="mt-1 text-lg text-gray-900">
+              <dd class="mt-1 text-lg text-gray-900 font-semibold">
                 {{ testDetail()!.score.toFixed(2) }}
               </dd>
             </div>
@@ -107,13 +115,13 @@
               <dt class="text-sm font-medium text-gray-500">
                 Duração do Desenho
               </dt>
-              <dd class="mt-1 text-lg text-gray-900">
+              <dd class="mt-1 text-lg text-gray-900 font-semibold">
                 {{ spiralTestDetail()!.draw_duration }}s
               </dd>
             </div>
             <div>
               <dt class="text-sm font-medium text-gray-500">Método</dt>
-              <dd class="mt-1 text-lg text-gray-900">
+              <dd class="mt-1 text-lg text-gray-900 font-semibold">
                 {{ spiralTestDetail()!.method }}
               </dd>
             </div>
@@ -122,7 +130,7 @@
               <dt class="text-sm font-medium text-gray-500">
                 Duração da Gravação
               </dt>
-              <dd class="mt-1 text-lg text-gray-900">
+              <dd class="mt-1 text-lg text-gray-900 font-semibold">
                 {{ voiceTestDetail()!.record_duration }}s
               </dd>
             </div>
@@ -131,14 +139,14 @@
         </div>
       </div>
 
-      <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
         <div
-          class="px-6 py-5 border-b border-gray-200 flex justify-between items-center"
+          class="px-8 py-6 border-b border-gray-200 flex justify-between items-center"
         >
           <h3 class="text-xl font-bold text-gray-900">Anotações Médicas</h3>
           <button
             (click)="toggleAddNote()"
-            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl transition-all"
           >
             @if (isAddingNote()) { Cancelar } @else {
             <svg
@@ -159,13 +167,13 @@
         </div>
 
         @if (isAddingNote()) {
-        <div class="px-6 py-5 bg-gray-50 border-b border-gray-200">
+        <div class="px-8 py-6 bg-gray-50/50 border-b border-gray-200">
           <form [formGroup]="noteForm" (ngSubmit)="addNote()">
             <div class="space-y-4">
               <div>
                 <label
                   for="noteContent"
-                  class="block text-sm font-medium text-gray-700"
+                  class="block text-sm font-semibold text-gray-700"
                 >
                   Conteúdo da Anotação
                 </label>
@@ -173,7 +181,7 @@
                   id="noteContent"
                   formControlName="content"
                   rows="4"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
                   placeholder="Digite sua anotação aqui (mínimo 10 caracteres)..."
                 ></textarea>
                 @if (noteForm.get('content')?.errors && noteForm.get('content')?.touched) {
@@ -191,14 +199,14 @@
               <div>
                 <label
                   for="noteCategory"
-                  class="block text-sm font-medium text-gray-700"
+                  class="block text-sm font-semibold text-gray-700"
                 >
                   Categoria
                 </label>
                 <select
                   id="noteCategory"
                   formControlName="category"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
                 >
                   @for (cat of categories; track cat) {
                     <option [value]="cat">{{ NoteCategoryLabels[cat] }}</option>
@@ -211,7 +219,7 @@
                   id="patientView"
                   type="checkbox"
                   formControlName="patient_view"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  class="h-4 w-4 text-violet-700 focus:ring-violet-700 border-gray-300 rounded"
                 />
                 <label
                   for="patientView"
@@ -225,14 +233,14 @@
                 <button
                   type="button"
                   (click)="toggleAddNote()"
-                  class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                  class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   [disabled]="noteForm.invalid"
-                  class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  class="rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   Salvar Anotação
                 </button>
@@ -242,49 +250,51 @@
         </div>
         }
 
-        <div class="px-6 py-5">
+        <div class="px-8 py-6">
           @if (notes().length === 0) {
-          <div class="text-center py-8">
-            <svg
-              class="mx-auto h-12 w-12 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">
+          <div class="text-center py-12">
+            <div class="flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 border-2 border-gray-200 mx-auto mb-4">
+              <svg
+                class="h-10 w-10 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900">
               Nenhuma anotação
             </h3>
-            <p class="mt-1 text-sm text-gray-500">
+            <p class="text-sm text-gray-600 mt-2">
               Comece adicionando uma nova anotação para este teste.
             </p>
           </div>
           } @else {
           <div class="space-y-4">
             @for (note of notes(); track note.id) {
-            <div class="border border-gray-200 rounded-lg p-4">
+            <div class="border border-gray-200 rounded-xl p-6 bg-white/50">
               @if (editingNoteId() === note.id) {
               <form [formGroup]="editForm" (ngSubmit)="saveEdit(note.id)">
                 <div class="space-y-3">
                   <textarea
                     formControlName="content"
                     rows="3"
-                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
                   ></textarea>
 
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">
                       Categoria
                     </label>
                     <select
                       formControlName="category"
-                      class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
                     >
                       @for (cat of categories; track cat) {
                         <option [value]="cat">{{ NoteCategoryLabels[cat] }}</option>
@@ -296,7 +306,7 @@
                     <input
                       type="checkbox"
                       formControlName="patient_view"
-                      class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      class="h-4 w-4 text-violet-700 focus:ring-violet-700 border-gray-300 rounded"
                     />
                     <label class="ml-2 block text-sm text-gray-900">
                       Visível para o paciente
@@ -307,14 +317,14 @@
                     <button
                       type="button"
                       (click)="cancelEdit()"
-                      class="px-3 py-1 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                      class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50"
                     >
                       Cancelar
                     </button>
                     <button
                       type="submit"
                       [disabled]="editForm.invalid"
-                      class="px-3 py-1 text-sm border border-transparent rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
+                      class="rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl disabled:bg-gray-400"
                     >
                       Salvar
                     </button>
@@ -325,16 +335,16 @@
               <div class="flex justify-between items-start">
                 <div class="flex-1">
                   <div class="flex items-center flex-wrap gap-2 mb-2">
-                    <span class="text-sm font-medium text-gray-900">
+                    <span class="text-sm font-semibold text-gray-900">
                       Dr(a). {{ note.doctor.name }}
                     </span>
-                    <span class="text-sm text-gray-500">
+                    <span class="text-sm text-gray-600">
                       (CRM: {{ note.doctor.crm }})
                     </span>
 
                     <!-- Badge de Categoria -->
                     <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border"
                       [class]="NoteCategoryColors[note.category].bg + ' ' + NoteCategoryColors[note.category].text + ' ' + NoteCategoryColors[note.category].border"
                     >
                       {{ NoteCategoryLabels[note.category] }}
@@ -342,13 +352,13 @@
 
                     @if (note.patient_view) {
                     <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800"
                     >
                       Visível ao paciente
                     </span>
                     } @else {
                     <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-800"
                     >
                       Privado
                     </span>
@@ -356,7 +366,7 @@
 
                     @if (!isOwnNote(note)) {
                     <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-violet-100 text-violet-800"
                     >
                       Outro médico
                     </span>
@@ -364,7 +374,7 @@
 
                     @if (isNoteEdited(note)) {
                     <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-yellow-100 text-yellow-800"
                       [title]="'Editado em ' + formatDate(note.updated_at)"
                     >
                       Editado
@@ -373,7 +383,7 @@
                   </div>
 
                   <!-- Timestamp -->
-                  <div class="text-xs text-gray-500 mb-2">
+                  <div class="text-xs text-gray-600 mb-2">
                     Criado em {{ formatDate(note.created_at) }}
                   </div>
 
@@ -386,7 +396,7 @@
                 <div class="ml-4 flex space-x-2">
                   <button
                     (click)="startEdit(note)"
-                    class="text-blue-600 hover:text-blue-800"
+                    class="text-violet-700 hover:text-violet-800"
                     title="Editar"
                   >
                     <svg

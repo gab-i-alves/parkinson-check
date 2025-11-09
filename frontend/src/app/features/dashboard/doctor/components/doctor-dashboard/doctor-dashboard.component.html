@@ -1,131 +1,139 @@
 @if (isLoading()) {
 <div class="flex h-64 items-center justify-center"></div>
 } @else {
-<div class="space-y-8">
-  <section>
-    <h2 class="mb-4 text-xl font-semibold text-gray-800">
-      Análises Comparativas dos Pacientes
-    </h2>
-    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-      <div class="rounded-lg bg-white shadow">
-        <div class="border-b border-gray-200 p-4">
-          <h3 class="font-semibold text-gray-900">
-            Ranking - Teste da Espiral
-          </h3>
+<div class="min-h-screen bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
+    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
+  </div>
+  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+    <section>
+      <h2 class="mb-4 text-3xl font-bold text-gray-900">
+        Análises Comparativas dos Pacientes
+      </h2>
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+          <div class="border-b border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-900">
+              Ranking - Teste da Espiral
+            </h3>
+          </div>
+          <ul class="divide-y divide-gray-200">
+            <li
+              class="flex justify-between bg-gray-50/50 px-6 py-3 text-xs font-medium text-gray-500"
+            >
+              <span>PACIENTE</span>
+              <span>PONTUAÇÃO</span>
+            </li>
+            @for (patient of patients(); track patient.id) {
+            <li
+              class="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50 transition-colors"
+            >
+              <span class="font-semibold text-gray-800">{{ patient.name }}</span>
+              <span class="text-lg font-bold text-violet-700">85</span>
+            </li>
+            }
+          </ul>
         </div>
-        <ul class="divide-y divide-gray-200">
-          <li
-            class="flex justify-between bg-gray-50 px-4 py-2 text-xs font-medium text-gray-500"
-          >
-            <span>PACIENTE</span>
-            <span>PONTUAÇÃO</span>
-          </li>
-          @for (patient of patients(); track patient.id) {
-          <li
-            class="flex items-center justify-between px-4 py-3 hover:bg-gray-50"
-          >
-            <span class="font-medium text-gray-800">{{ patient.name }}</span>
-            <span class="text-lg font-bold text-primary">85</span>
-          </li>
-          }
-        </ul>
-      </div>
 
-      <div class="rounded-lg bg-white shadow">
-        <div class="border-b border-gray-200 p-4">
-          <h3 class="font-semibold text-gray-900">Ranking - Teste de Voz</h3>
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+          <div class="border-b border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-900">Ranking - Teste de Voz</h3>
+          </div>
+          <ul class="divide-y divide-gray-200">
+            <li
+              class="flex justify-between bg-gray-50/50 px-6 py-3 text-xs font-medium text-gray-500"
+            >
+              <span>PACIENTE</span>
+              <span>PONTUAÇÃO</span>
+            </li>
+            @for (patient of patients(); track patient.id) {
+            <li
+              class="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50 transition-colors"
+            >
+              <span class="font-semibold text-gray-800">{{ patient.name }}</span>
+              <span class="text-lg font-bold text-orange-600">78</span>
+            </li>
+            }
+          </ul>
         </div>
-        <ul class="divide-y divide-gray-200">
-          <li
-            class="flex justify-between bg-gray-50 px-4 py-2 text-xs font-medium text-gray-500"
-          >
-            <span>PACIENTE</span>
-            <span>PONTUAÇÃO</span>
-          </li>
-          @for (patient of patients(); track patient.id) {
-          <li
-            class="flex items-center justify-between px-4 py-3 hover:bg-gray-50"
-          >
-            <span class="font-medium text-gray-800">{{ patient.name }}</span>
-            <span class="text-lg font-bold text-secondary">78</span>
-          </li>
-          }
-        </ul>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section>
-    <h2 class="mb-4 text-xl font-semibold text-gray-800">
-      Métricas Adicionais
-    </h2>
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-      <app-chart-card
-        title="Distribuição de Pacientes por Status"
-        chartType="pie"
-      ></app-chart-card>
-      <app-chart-card
-        title="Desempenho Médio por Faixa Etária"
-        chartType="bar"
-      ></app-chart-card>
-      <app-chart-card
-        title="Evolução da Pontuação Média"
-        chartType="line"
-      ></app-chart-card>
-    </div>
-  </section>
+    <section>
+      <h2 class="mb-4 text-3xl font-bold text-gray-900">
+        Métricas Adicionais
+      </h2>
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <app-chart-card
+          title="Distribuição de Pacientes por Status"
+          chartType="pie"
+        ></app-chart-card>
+        <app-chart-card
+          title="Desempenho Médio por Faixa Etária"
+          chartType="bar"
+        ></app-chart-card>
+        <app-chart-card
+          title="Evolução da Pontuação Média"
+          chartType="line"
+        ></app-chart-card>
+      </div>
+    </section>
 
-  <section>
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-xl font-semibold text-gray-800">Meus Pacientes</h2>
-      <a
-        routerLink="/dashboard/doctor/patients"
-        class="text-sm font-medium text-primary hover:text-primary-dark"
-        >Ver todos</a
-      >
-    </div>
-    <div class="overflow-hidden rounded-lg bg-white shadow">
-      <ul class="divide-y divide-gray-200">
-        @for (patient of patients(); track patient.id) {
-        <li class="block hover:bg-gray-50">
-          <a
-            routerLink="/dashboard/doctor/patient/{{ patient.id }}"
-            class="flex items-center p-4"
-          >
-            <div class="flex flex-1 items-center">
-              <div
-                class="mr-4 h-3 w-3 rounded-full"
-                [class.bg-green-500]="patient.status === 'stable'"
-                [class.bg-yellow-500]="patient.status === 'attention'"
-                [class.bg-red-500]="patient.status === 'critical'"
-              ></div>
-              <div>
-                <p class="font-medium text-gray-900">{{ patient.name }}</p>
-                <p class="text-sm text-gray-500">
-                  Último teste: {{ patient.lastTestDate }}
-                </p>
+    <section>
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-3xl font-bold text-gray-900">Meus Pacientes</h2>
+        <a
+          routerLink="/dashboard/doctor/patients"
+          class="text-sm font-semibold text-violet-700 hover:text-violet-800"
+          >Ver todos</a
+        >
+      </div>
+      <div class="overflow-hidden bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50">
+        <ul class="divide-y divide-gray-200">
+          @for (patient of patients(); track patient.id) {
+          <li class="block hover:bg-gray-50/50 transition-colors">
+            <a
+              routerLink="/dashboard/doctor/patient/{{ patient.id }}"
+              class="flex items-center p-6"
+            >
+              <div class="flex flex-1 items-center">
+                <div
+                  class="mr-4 h-3 w-3 rounded-full"
+                  [class.bg-green-500]="patient.status === 'stable'"
+                  [class.bg-yellow-500]="patient.status === 'attention'"
+                  [class.bg-red-500]="patient.status === 'critical'"
+                ></div>
+                <div>
+                  <p class="font-semibold text-gray-900">{{ patient.name }}</p>
+                  <p class="text-sm text-gray-600">
+                    Último teste: {{ patient.lastTestDate }}
+                  </p>
+                </div>
               </div>
-            </div>
-            <div class="ml-5 flex-shrink-0">
-              <svg
-                class="h-5 w-5 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-              </svg>
-            </div>
-          </a>
-        </li>
-        }
-      </ul>
-    </div>
-  </section>
+              <div class="ml-5 flex-shrink-0">
+                <svg
+                  class="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </div>
+            </a>
+          </li>
+          }
+        </ul>
+      </div>
+    </section>
+  </div>
 </div>
 }
