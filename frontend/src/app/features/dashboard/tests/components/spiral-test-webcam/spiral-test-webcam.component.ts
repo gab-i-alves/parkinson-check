@@ -258,7 +258,7 @@ export class SpiralTestWebcamComponent implements AfterViewInit, OnDestroy, OnIn
 
           // Navegar para resultado clínico se estiver em modo clínico
           if (this.isClinicalMode) {
-            this.router.navigate(['/dashboard/clinical-test/result'], {
+            this.router.navigate(['/dashboard/doctor/clinical-test/result'], {
               state: {
                 result: response,
                 testType: 'spiral',

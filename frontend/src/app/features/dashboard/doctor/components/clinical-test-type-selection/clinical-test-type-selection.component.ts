@@ -45,18 +45,18 @@ export class ClinicalTestTypeSelectionComponent implements OnInit {
   selectSpiralTest(): void {
     const patientId = this.patientId();
     if (patientId) {
-      this.router.navigate(['/dashboard/clinical-test/spiral', patientId]);
+      this.router.navigate(['/dashboard/tests/clinical/spiral', patientId]);
     }
   }
 
   selectVoiceTest(): void {
     const patientId = this.patientId();
     if (patientId) {
-      this.router.navigate(['/dashboard/clinical-test/voice', patientId]);
+      this.router.navigate(['/dashboard/tests/clinical/voice', patientId]);
     }
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard/clinical-test/patient-selection']);
+    this.router.navigate(['/dashboard/doctor/clinical-test/patient-selection']);
   }
 }

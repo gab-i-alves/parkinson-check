@@ -155,7 +155,7 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
             this.recordedAudioUrl.set(undefined);
 
             // Navegar para resultado clínico
-            this.router.navigate(['/dashboard/clinical-test/result'], {
+            this.router.navigate(['/dashboard/doctor/clinical-test/result'], {
               state: {
                 result: response,
                 testType: 'voice',

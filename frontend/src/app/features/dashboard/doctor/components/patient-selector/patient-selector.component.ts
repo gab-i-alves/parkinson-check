@@ -60,7 +60,7 @@ export class PatientSelectorComponent {
     const patientId = this.selectedPatientId();
     if (patientId) {
       this.router.navigate([
-        '/dashboard/clinical-test/type-selection',
+        '/dashboard/doctor/clinical-test/type-selection',
         patientId,
       ]);
     }
