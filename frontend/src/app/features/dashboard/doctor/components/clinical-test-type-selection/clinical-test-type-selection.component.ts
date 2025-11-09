@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
 
 @Component({
   selector: 'app-clinical-test-type-selection',

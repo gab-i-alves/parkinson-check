@@ -1,10 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PatientDetailService } from '../../services/patient-detail.service';
-import { PatientFullProfile } from '../../../../core/models/patient-full-profile.model';
-import { PatientStatistics } from '../../../../core/models/patient-statistics.model';
-import { PatientTimeline } from '../../../../core/models/patient-timeline.model';
+import { PatientDetailService } from '../../../services/patient-detail.service';
+import { PatientFullProfile } from '../../../../../core/models/patient-full-profile.model';
+import { PatientStatistics } from '../../../../../core/models/patient-statistics.model';
+import { PatientTimeline } from '../../../../../core/models/patient-timeline.model';
 import { PatientProfileTabComponent } from '../patient-profile-tab/patient-profile-tab.component';
 import { PatientHistoryTabComponent } from '../patient-history-tab/patient-history-tab.component';
 import { PatientStatisticsTabComponent } from '../patient-statistics-tab/patient-statistics-tab.component';

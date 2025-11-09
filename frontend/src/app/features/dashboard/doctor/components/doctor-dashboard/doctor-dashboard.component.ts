@@ -5,10 +5,10 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
-import { ChartCardComponent } from '../../../../shared/components/chart-card/chart-card.component';
+import { StatCardComponent } from '../../../../../shared/components/stat-card/stat-card.component';
+import { ChartCardComponent } from '../../../../../shared/components/chart-card/chart-card.component';
 import { RouterLink } from '@angular/router';
-import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
 
 interface SummaryStat {
   label: string;

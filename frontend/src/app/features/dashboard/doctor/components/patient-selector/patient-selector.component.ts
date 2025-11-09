@@ -2,8 +2,8 @@ import { Component, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
-import { Patient } from '../../../../core/models/patient.model';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { Patient } from '../../../../../core/models/patient.model';
 
 @Component({
   selector: 'app-patient-selector',

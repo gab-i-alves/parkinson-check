@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PatientStatistics } from '../../../../core/models/patient-statistics.model';
+import { PatientStatistics } from '../../../../../core/models/patient-statistics.model';
 
 @Component({
   selector: 'app-patient-statistics-tab',

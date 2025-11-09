@@ -2,17 +2,17 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
-import { DoctorService } from '../../services/doctor.service';
-import { BindingService } from '../../../../core/services/binding.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CpfPipe } from '../../../../shared/pipes/cpf.pipe';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { DoctorService } from '../../../services/doctor.service';
+import { BindingService } from '../../../../../core/services/binding.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
 import {
   Patient,
   PatientFilters,
   PatientStatus,
   TestType,
-} from '../../../../core/models/patient.model';
+} from '../../../../../core/models/patient.model';
 
 @Component({
   selector: 'app-my-patients-list',

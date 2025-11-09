@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import {
   ClinicalSpiralTestResult,
   ClinicalVoiceTestResult,
-} from '../../../../core/models/clinical-test-result.model';
+} from '../../../../../core/models/clinical-test-result.model';
 
 @Component({
   selector: 'app-clinical-test-result',

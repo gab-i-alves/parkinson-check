@@ -1,13 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DoctorService } from '../../services/doctor.service';
-import { DoctorDashboardService } from '../../services/doctor-dashboard.service';
-import { BindingService } from '../../../../core/services/binding.service';
-import { BindingRequestResponse, isBindingPatient } from '../../../../core/models/binding-request.model';
-import { Patient, PatientStatus } from '../../../../core/models/patient.model';
-import { PatientProfileModalComponent, PatientProfile } from '../../../../shared/components/patient-profile-modal/patient-profile-modal.component';
+import { DoctorService } from '../../../services/doctor.service';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { BindingService } from '../../../../../core/services/binding.service';
+import { BindingRequestResponse, isBindingPatient } from '../../../../../core/models/binding-request.model';
+import { Patient, PatientStatus } from '../../../../../core/models/patient.model';
+import { PatientProfileModalComponent, PatientProfile } from '../../../../../shared/components/patient-profile-modal/patient-profile-modal.component';
 import { firstValueFrom } from 'rxjs';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 interface PatientWithBinding extends Patient {
   bindingStatus?: 'none' | 'pending' | 'linked';

@@ -8,25 +8,25 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TestDetailService } from '../../services/test-detail.service';
-import { NoteService } from '../../services/note.service';
+import { TestDetailService } from '../../../services/test-detail.service';
+import { NoteService } from '../../../services/note.service';
 import {
   TestDetail,
   SpiralTestDetail,
   VoiceTestDetail,
-} from '../../../../core/models/test-detail.model';
+} from '../../../../../core/models/test-detail.model';
 import {
   Note,
   CreateNoteRequest,
   UpdateNoteRequest,
-} from '../../../../core/models/note.model';
+} from '../../../../../core/models/note.model';
 import {
   NoteCategory,
   NoteCategoryLabels,
   NoteCategoryColors,
-} from '../../../../core/enums/note-category.enum';
-import { UserService } from '../../../../core/services/user.service';
-import { NotificationService } from '../../../../core/services/notification.service';
+} from '../../../../../core/enums/note-category.enum';
+import { UserService } from '../../../../../core/services/user.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-test-detail',

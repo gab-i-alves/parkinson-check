@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PatientFullProfile } from '../../../../core/models/patient-full-profile.model';
+import { PatientFullProfile } from '../../../../../core/models/patient-full-profile.model';
 
 @Component({
   selector: 'app-patient-profile-tab',

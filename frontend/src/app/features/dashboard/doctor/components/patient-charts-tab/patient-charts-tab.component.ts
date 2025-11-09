@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PatientTimeline } from '../../../../core/models/patient-timeline.model';
-import { PatientStatistics } from '../../../../core/models/patient-statistics.model';
+import { PatientTimeline } from '../../../../../core/models/patient-timeline.model';
+import { PatientStatistics } from '../../../../../core/models/patient-statistics.model';
 
 interface ChartDataPoint {
   date: string;
