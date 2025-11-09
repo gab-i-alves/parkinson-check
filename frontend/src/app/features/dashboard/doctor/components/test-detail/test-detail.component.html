@@ -436,3 +436,16 @@
     }
   </div>
 </div>
+
+<!-- Modal de confirmação de exclusão de anotação -->
+@if (showDeleteNoteModal()) {
+  <app-confirmation-modal
+    [title]="'Deletar Anotação'"
+    [message]="'Tem certeza que deseja deletar esta anotação?<br><br>Esta ação não poderá ser desfeita.'"
+    [confirmButtonText]="'Sim, deletar'"
+    [confirmButtonClass]="'bg-red-600 hover:bg-red-700 text-white'"
+    [cancelButtonText]="'Cancelar'"
+    (confirm)="confirmDeleteNote()"
+    (cancel)="cancelDeleteNote()"
+  />
+}

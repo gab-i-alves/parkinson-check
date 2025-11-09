@@ -7,6 +7,7 @@ import { DoctorService } from '../../../services/doctor.service';
 import { BindingService } from '../../../../../core/services/binding.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
+import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
 import {
   Patient,
   PatientFilters,
@@ -17,7 +18,7 @@ import {
 @Component({
   selector: 'app-my-patients-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, CpfPipe],
+  imports: [CommonModule, FormsModule, RouterLink, CpfPipe, ConfirmationModalComponent],
   templateUrl: './my-patients-list.component.html',
 })
 export class MyPatientsListComponent implements OnInit {
@@ -42,6 +43,9 @@ export class MyPatientsListComponent implements OnInit {
   pageSizeOptions = [10, 25, 50];
 
   readonly Math = Math;
+
+  showUnlinkModal = signal<boolean>(false);
+  patientToUnlink = signal<Patient | null>(null);
 
   ngOnInit(): void {
     this.loadPatients();
@@ -208,13 +212,21 @@ export class MyPatientsListComponent implements OnInit {
       return;
     }
 
-    if (!confirm(`Tem certeza que deseja desvincular o paciente ${patient.name}?`)) {
+    this.patientToUnlink.set(patient);
+    this.showUnlinkModal.set(true);
+  }
+
+  confirmUnlink(): void {
+    const patient = this.patientToUnlink();
+    if (!patient || !patient.bindingId) {
       return;
     }
 
     this.bindingService.unlinkBinding(patient.bindingId).subscribe({
       next: () => {
         this.notificationService.success('Paciente desvinculado com sucesso', 3000);
+        this.showUnlinkModal.set(false);
+        this.patientToUnlink.set(null);
         this.loadPatients();
       },
       error: (err: any) => {
@@ -222,7 +234,14 @@ export class MyPatientsListComponent implements OnInit {
           `Erro ao desvincular paciente: ${err.error?.detail || 'Tente novamente'}`,
           5000
         );
+        this.showUnlinkModal.set(false);
+        this.patientToUnlink.set(null);
       },
     });
+  }
+
+  cancelUnlink(): void {
+    this.showUnlinkModal.set(false);
+    this.patientToUnlink.set(null);
   }
 }

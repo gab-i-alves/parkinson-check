@@ -27,11 +27,12 @@ import {
 } from '../../../../../core/enums/note-category.enum';
 import { UserService } from '../../../../../core/services/user.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-test-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ConfirmationModalComponent],
   templateUrl: './test-detail.component.html',
 })
 export class TestDetailComponent implements OnInit {
@@ -68,6 +69,9 @@ export class TestDetailComponent implements OnInit {
 
   readonly isAddingNote = signal<boolean>(false);
   readonly editingNoteId = signal<number | null>(null);
+
+  readonly showDeleteNoteModal = signal<boolean>(false);
+  readonly noteToDelete = signal<number | null>(null);
 
   noteForm!: FormGroup;
   editForm!: FormGroup;
@@ -238,7 +242,13 @@ export class TestDetailComponent implements OnInit {
   }
 
   deleteNote(noteId: number): void {
-    if (!confirm('Tem certeza que deseja deletar esta anotação?')) {
+    this.noteToDelete.set(noteId);
+    this.showDeleteNoteModal.set(true);
+  }
+
+  confirmDeleteNote(): void {
+    const noteId = this.noteToDelete();
+    if (noteId === null) {
       return;
     }
 
@@ -247,12 +257,21 @@ export class TestDetailComponent implements OnInit {
         const filteredNotes = this.notes().filter((note) => note.id !== noteId);
         this.notes.set(filteredNotes);
         this.notificationService.success('Anotação deletada com sucesso!');
+        this.showDeleteNoteModal.set(false);
+        this.noteToDelete.set(null);
       },
       error: (err) => {
         console.error('Erro ao deletar nota:', err);
         this.notificationService.error('Erro ao deletar anotação. Tente novamente.');
+        this.showDeleteNoteModal.set(false);
+        this.noteToDelete.set(null);
       },
     });
+  }
+
+  cancelDeleteNote(): void {
+    this.showDeleteNoteModal.set(false);
+    this.noteToDelete.set(null);
   }
 
   isSpiralTest(test: TestDetail): test is SpiralTestDetail {

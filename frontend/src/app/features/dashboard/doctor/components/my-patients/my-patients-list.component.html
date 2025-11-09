@@ -414,3 +414,16 @@
     }
   </div>
 </div>
+
+<!-- Modal de confirmação de desvinculação -->
+@if (showUnlinkModal()) {
+  <app-confirmation-modal
+    [title]="'Desvincular Paciente'"
+    [message]="'Tem certeza que deseja desvincular o paciente <strong>' + patientToUnlink()?.name + '</strong>?<br><br>Esta ação não poderá ser desfeita e você perderá o acesso aos dados deste paciente.'"
+    [confirmButtonText]="'Sim, desvincular'"
+    [confirmButtonClass]="'bg-red-600 hover:bg-red-700 text-white'"
+    [cancelButtonText]="'Cancelar'"
+    (confirm)="confirmUnlink()"
+    (cancel)="cancelUnlink()"
+  />
+}
