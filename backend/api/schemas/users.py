@@ -125,25 +125,26 @@ class UserListResponse(BaseModel):
     name: str
     email: EmailStr
     cpf: str
-    role: UserType
-    status: bool
-    location: str
-    createdAt: str
+    user_type: UserType
+    is_active: bool
+    created_at: str
+    location: str  # cidade, estado
 
 
 class UserFilterSchema(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-    cpf: Optional[str] = None
-    role: Optional[UserType] = None
-    status: Optional[bool] = None
+    search: Optional[str] = None  # busca por nome, email ou CPF
+    user_type: Optional[UserType] = None  # filtrar por tipo
+    is_active: Optional[bool] = None  # filtrar por status
+    limit: int = 50
+    offset: int = 0
 
 
 class UpdateUserSchema(BaseModel):
     name: Optional[str] = None
     email: Optional[EmailStr] = None
-    cpf: Optional[str] = None
+    # Campos que admin pode editar (sem senha)
 
 
 class ChangeUserStatusSchema(BaseModel):
-    status: bool
+    is_active: bool
+    reason: Optional[str] = None  # motivo da desativação
