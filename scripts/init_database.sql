@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS "user" (
 
 
 CREATE TABLE IF NOT EXISTS "patient" (
-  "id" integer PRIMARY KEY  REFERENCES "user" ("id")
+  "id" integer PRIMARY KEY  REFERENCES "user" ("id"),
+  "share_data_for_statistics" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS "doctor" (
