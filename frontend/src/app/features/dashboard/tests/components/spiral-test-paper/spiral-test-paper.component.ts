@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
-import { SpiralTestService } from '../../services/spiral-test.service';
-import { SpiralTestResponse } from '../../../../core/models/spiral-test-response.model';
+import { SpiralTestService } from '../../../services/spiral-test.service';
+import { SpiralTestResponse } from '../../../../../core/models/spiral-test-response.model';
 
 @Component({
   selector: 'app-spiral-test-paper',

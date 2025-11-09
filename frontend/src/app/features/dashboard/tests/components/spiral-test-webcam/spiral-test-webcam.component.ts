@@ -11,9 +11,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
-import { SpiralTestService } from '../../services/spiral-test.service';
-import { ClinicalTestService } from '../../services/clinical-test.service';
-import { SpiralTestResponse } from '../../../../core/models/spiral-test-response.model';
+import { SpiralTestService } from '../../../services/spiral-test.service';
+import { ClinicalTestService } from '../../../services/clinical-test.service';
+import { SpiralTestResponse } from '../../../../../core/models/spiral-test-response.model';
 
 declare const Hands: any;
 declare const Camera: any;

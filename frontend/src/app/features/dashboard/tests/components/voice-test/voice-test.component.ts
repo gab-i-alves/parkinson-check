@@ -14,8 +14,8 @@ import { finalize, Subscription } from 'rxjs';
 import {
   VoiceTestService,
   VoiceTestResponse,
-} from '../../services/voice-test.service';
-import { ClinicalTestService } from '../../services/clinical-test.service';
+} from '../../../services/voice-test.service';
+import { ClinicalTestService } from '../../../services/clinical-test.service';
 import { CommonModule, DecimalPipe } from '@angular/common';
 
 @Component({
