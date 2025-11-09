@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TimelineTestItem, TestType } from '../../../../../core/models/patient-timeline.model';
+import { getTestTypeLabel } from '../../utils/display-helpers';
 
 @Component({
   selector: 'app-recent-tests-list',
@@ -13,9 +14,8 @@ import { TimelineTestItem, TestType } from '../../../../../core/models/patient-t
 export class RecentTestsListComponent {
   tests = input.required<TimelineTestItem[]>();
 
-  getTestTypeLabel(type: TestType): string {
-    return type === 'SPIRAL_TEST' ? 'Espiral' : 'Voz';
-  }
+  // Use shared helper that handles both numeric and string values
+  readonly getTestTypeLabel = getTestTypeLabel;
 
   getClassificationLabel(classification: string): string {
     return classification === 'HEALTHY' ? 'Saudável' : 'Parkinson';

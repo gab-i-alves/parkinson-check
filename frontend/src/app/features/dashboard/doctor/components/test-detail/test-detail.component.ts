@@ -28,6 +28,7 @@ import {
 import { UserService } from '../../../../../core/services/user.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
+import { getTestTypeLabel, getSpiralMethodLabel, getClassificationLabel } from '../../../shared/utils/display-helpers';
 
 @Component({
   selector: 'app-test-detail',
@@ -81,6 +82,9 @@ export class TestDetailComponent implements OnInit {
   readonly NoteCategoryLabels = NoteCategoryLabels;
   readonly NoteCategoryColors = NoteCategoryColors;
   readonly categories = Object.values(NoteCategory);
+  readonly getTestTypeLabel = getTestTypeLabel;
+  readonly getSpiralMethodLabel = getSpiralMethodLabel;
+  readonly getClassificationLabel = getClassificationLabel;
 
   ngOnInit(): void {
     // Inicializar formulários
@@ -150,11 +154,6 @@ export class TestDetailComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit',
     });
-  }
-
-  getTestTypeLabel(type: string): string {
-    // Fix: Backend envia enum como número (1=SPIRAL, 2=VOICE) ao invés de string
-    return type === 'SPIRAL_TEST' || (type as any) === 1 ? 'Teste de Espiral' : 'Teste de Voz';
   }
 
   getClassificationColor(classification: string): string {

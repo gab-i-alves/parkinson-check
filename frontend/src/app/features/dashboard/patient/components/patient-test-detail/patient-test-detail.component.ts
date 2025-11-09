@@ -14,7 +14,7 @@ import {
   NoteCategoryLabels,
   NoteCategoryColors,
 } from '../../../../../core/enums/note-category.enum';
-import { getTestTypeLabel } from '../../../shared/utils/display-helpers';
+import { getTestTypeLabel, getSpiralMethodLabel, getClassificationLabel } from '../../../shared/utils/display-helpers';
 
 @Component({
   selector: 'app-patient-test-detail',
@@ -55,6 +55,8 @@ export class PatientTestDetailComponent implements OnInit {
   readonly NoteCategoryLabels = NoteCategoryLabels;
   readonly NoteCategoryColors = NoteCategoryColors;
   readonly getTestTypeLabel = getTestTypeLabel;
+  readonly getSpiralMethodLabel = getSpiralMethodLabel;
+  readonly getClassificationLabel = getClassificationLabel;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('testId');
