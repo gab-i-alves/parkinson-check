@@ -21,7 +21,7 @@
 
       <div class="flex items-start space-x-4 mb-6">
         <!-- Ícone -->
-        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-700 shadow-lg flex-shrink-0">
+        <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-indigo-700 shadow-lg flex-shrink-0">
           <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
           </svg>
@@ -51,13 +51,13 @@
       <div class="mt-6 flex justify-center gap-4 flex-wrap">
         <button
           (click)="startDrawing()"
-          class="inline-flex items-center rounded-xl bg-green-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-green-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
+          class="inline-flex items-center rounded-lg bg-green-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-green-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
         >
           Iniciar Desenho
         </button>
         <button
           (click)="stopDrawing()"
-          class="inline-flex items-center rounded-xl bg-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-orange-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all"
+          class="inline-flex items-center rounded-lg bg-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-orange-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all"
         >
           Parar de Desenhar
         </button>
@@ -70,7 +70,7 @@
         <button
           (click)="uploadImage()"
           [disabled]="uploadStatus() === 'uploading'"
-          class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           @if (uploadStatus() === 'uploading') { Enviando... } @else { Enviar para
           Análise }
@@ -80,7 +80,7 @@
 
     @if (feedbackMessage()) {
     <div
-      class="rounded-xl p-4 border"
+      class="rounded-lg p-4 border"
       [class.bg-green-50/80]="uploadStatus() === 'success'"
       [class.border-green-200]="uploadStatus() === 'success'"
       [class.bg-red-50/80]="uploadStatus() === 'error'"
@@ -124,7 +124,7 @@
         <h3 class="text-lg font-bold text-gray-900 mb-4">
           Análise Detalhada por Modelo
         </h3>
-        <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200">
+        <div class="mt-4 overflow-x-auto rounded-lg border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50/50">
               <tr>
@@ -197,7 +197,7 @@
       <div class="mt-8 flex justify-end">
         <button
           (click)="goBackToMethodSelection()"
-          class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+          class="inline-flex items-center rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
         >
           Finalizar Teste
         </button>
