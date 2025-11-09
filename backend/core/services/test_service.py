@@ -1000,3 +1000,106 @@ def get_voice_audio(session: Session, doctor: User, test_id: int) -> tuple[bytes
         voice_test.voice_audio_filename or "voice.webm",
         voice_test.voice_audio_content_type or "audio/webm",
     )
+
+
+def get_my_spiral_image(session: Session, patient: User, test_id: int) -> tuple[bytes, str, str]:
+    """
+    Recupera a imagem de um teste de espiral do próprio paciente.
+
+    Args:
+        session: Sessão do banco de dados
+        patient: Paciente logado
+        test_id: ID do teste
+
+    Returns:
+        tuple: (image_data, filename, content_type)
+
+    Raises:
+        HTTPException: Se teste não existe, não pertence ao paciente, não é espiral, ou imagem não disponível
+    """
+    # Buscar o teste
+    test = session.query(Test).filter(Test.id == test_id).first()
+
+    if not test:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Teste não encontrado."
+        )
+
+    # Validar se o teste pertence ao paciente
+    if test.patient_id != patient.id:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
+        )
+
+    # Verificar se é um teste de espiral
+    if test.test_type != TestType.SPIRAL_TEST:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Este teste não é um teste de espiral.",
+        )
+
+    # Buscar o teste de espiral
+    spiral_test = session.query(SpiralTest).filter(SpiralTest.id == test_id).first()
+
+    if not spiral_test or not spiral_test.spiral_image_data:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Imagem não disponível para este teste.",
+        )
+
+    return (
+        spiral_test.spiral_image_data,
+        spiral_test.spiral_image_filename or "spiral.png",
+        spiral_test.spiral_image_content_type or "image/png",
+    )
+
+
+def get_my_voice_audio(session: Session, patient: User, test_id: int) -> tuple[bytes, str, str]:
+    """
+    Recupera o áudio de um teste de voz do próprio paciente.
+
+    Args:
+        session: Sessão do banco de dados
+        patient: Paciente logado
+        test_id: ID do teste
+
+    Returns:
+        tuple: (audio_data, filename, content_type)
+
+    Raises:
+        HTTPException: Se teste não existe, não pertence ao paciente, não é voz, ou áudio não disponível
+    """
+    # Buscar o teste
+    test = session.query(Test).filter(Test.id == test_id).first()
+
+    if not test:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Teste não encontrado."
+        )
+
+    # Validar se o teste pertence ao paciente
+    if test.patient_id != patient.id:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
+        )
+
+    # Verificar se é um teste de voz
+    if test.test_type != TestType.VOICE_TEST:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail="Este teste não é um teste de voz."
+        )
+
+    # Buscar o teste de voz
+    voice_test = session.query(VoiceTest).filter(VoiceTest.id == test_id).first()
+
+    if not voice_test or not voice_test.voice_audio_data:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Áudio não disponível para este teste.",
+        )
+
+    return (
+        voice_test.voice_audio_data,
+        voice_test.voice_audio_filename or "voice.webm",
+        voice_test.voice_audio_content_type or "audio/webm",
+    )

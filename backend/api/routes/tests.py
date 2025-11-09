@@ -7,9 +7,11 @@ from sqlalchemy.orm import Session
 from core.models.users import User
 from core.security.security import get_doctor_user, get_patient_user
 from core.services.test_service import (
+    get_my_spiral_image,
     get_my_test_detail,
     get_my_tests_statistics,
     get_my_tests_timeline,
+    get_my_voice_audio,
     get_patient_detaild_tests,
     get_patient_test_statistics,
     get_patient_test_timeline,
@@ -234,6 +236,48 @@ def get_my_test_details(
     Requer autenticação de paciente.
     """
     return get_my_test_detail(session, user, test_id)
+
+
+@router.get("/my-tests/{test_id}/spiral-image")
+def get_my_test_spiral_image(
+    user: CurrentPatient, test_id: int, session: Session = Depends(get_session)
+):
+    """
+    Retorna a imagem de um teste de espiral do próprio paciente.
+
+    O paciente só pode visualizar imagens de seus próprios testes.
+    Retorna a imagem como arquivo binário.
+
+    Requer autenticação de paciente.
+    """
+    image_data, filename, content_type = get_my_spiral_image(session, user, test_id)
+
+    return Response(
+        content=image_data,
+        media_type=content_type,
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    )
+
+
+@router.get("/my-tests/{test_id}/voice-audio")
+def get_my_test_voice_audio(
+    user: CurrentPatient, test_id: int, session: Session = Depends(get_session)
+):
+    """
+    Retorna o áudio de um teste de voz do próprio paciente.
+
+    O paciente só pode visualizar áudios de seus próprios testes.
+    Retorna o áudio como arquivo binário.
+
+    Requer autenticação de paciente.
+    """
+    audio_data, filename, content_type = get_my_voice_audio(session, user, test_id)
+
+    return Response(
+        content=audio_data,
+        media_type=content_type,
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    )
 
 
 # Endpoints para recuperar mídias (imagens e áudios) dos testes
