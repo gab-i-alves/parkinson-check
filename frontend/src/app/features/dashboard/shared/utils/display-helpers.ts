@@ -84,3 +84,18 @@ export function getTrendLabel(trend: string): string {
   };
   return labels[trend] || trend;
 }
+
+export function getSpiralMethodLabel(method: string | number): string {
+  // Handle numeric values from backend (1=PAPER, 2=WEBCAM)
+  if (method === 1 || method === '1') return 'Papel';
+  if (method === 2 || method === '2') return 'Webcam';
+
+  // Handle string values
+  const labels: Record<string, string> = {
+    'PAPER': 'Papel',
+    'WEBCAM': 'Webcam',
+    'paper': 'Papel',
+    'webcam': 'Webcam',
+  };
+  return labels[method as string] || String(method);
+}
