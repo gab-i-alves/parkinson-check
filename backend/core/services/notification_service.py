@@ -19,7 +19,10 @@ def create_notification(
 
 def get_all_user_notifications(user: User, session: Session):
     notifications = (
-        session.query(Notification).filter(Notification.user_id == user.id).all()
+        session.query(Notification)
+        .filter(Notification.user_id == user.id)
+        .order_by(Notification.created_at.desc())
+        .all()
     )
 
     return notifications
