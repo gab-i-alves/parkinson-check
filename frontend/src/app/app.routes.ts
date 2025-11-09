@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { LandingPage } from './features/home/landing-page/landing-page';
+import { LandingPageComponent } from './features/home/landing-page/landing-page.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: LandingPage,
+    component: LandingPageComponent,
     title: 'ParkinsonCheck | Acompanhamento Inteligente de Parkinson',
   },
   {
