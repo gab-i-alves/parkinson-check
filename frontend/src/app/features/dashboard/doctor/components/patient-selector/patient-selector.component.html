@@ -130,8 +130,8 @@
                 <h3 class="font-semibold text-gray-900">{{ patient.name }}</h3>
                 <p class="text-sm text-gray-600">CPF: {{ patient.cpf }}</p>
                 <p class="text-xs text-gray-500 mt-1">
-                  Último teste: {{ patient.lastTestDate }} ({{
-                    patient.lastTestType
+                  Último teste: {{ formatDate(patient.lastTestDate) }} ({{
+                    formatTestType(patient.lastTestType)
                   }})
                 </p>
               </div>
