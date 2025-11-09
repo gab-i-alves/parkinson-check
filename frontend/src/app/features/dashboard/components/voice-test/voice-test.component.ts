@@ -21,10 +21,10 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 @Component({
   selector: 'app-voice-test',
   imports: [CommonModule, DecimalPipe],
-  templateUrl: './voice-test.html',
+  templateUrl: './voice-test.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VoiceTest implements OnInit, OnDestroy {
+export class VoiceTestComponent implements OnInit, OnDestroy {
   readonly isRecording = signal<boolean | null>(false);
   readonly feedbackMessage = signal<string | null>(null);
   readonly analysisResults = signal<VoiceTestResponse | null>(null);

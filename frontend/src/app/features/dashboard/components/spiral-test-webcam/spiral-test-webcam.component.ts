@@ -22,9 +22,9 @@ declare const Camera: any;
   selector: 'app-spiral-test-webcam',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './spiral-test-webcam.html',
+  templateUrl: './spiral-test-webcam.component.html',
 })
-export class SpiralTestWebcam implements AfterViewInit, OnDestroy, OnInit {
+export class SpiralTestWebcamComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 

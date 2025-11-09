@@ -10,7 +10,7 @@ type SelectionStep = 'main' | 'spiral';
   selector: 'app-test-method-selection',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './test-method-selection.html',
+  templateUrl: './test-method-selection.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TestMethodSelectionComponent {

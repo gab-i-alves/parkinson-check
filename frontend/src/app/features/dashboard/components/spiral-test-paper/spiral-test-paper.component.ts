@@ -9,7 +9,7 @@ import { SpiralTestResponse } from '../../../../core/models/spiral-test-response
   selector: 'app-spiral-test-paper',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './spiral-test-paper.html',
+  templateUrl: './spiral-test-paper.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpiralTestPaperComponent {
