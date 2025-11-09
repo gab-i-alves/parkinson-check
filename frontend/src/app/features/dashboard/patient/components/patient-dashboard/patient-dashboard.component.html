@@ -35,15 +35,19 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         ></path>
       </svg>
-      <p class="text-gray-600 mt-4 font-medium">Carregando seus resultados...</p>
+      <p class="text-gray-600 mt-4 font-medium">
+        Carregando seus resultados...
+      </p>
     </div>
   </div>
   } @else {
   <div class="container mx-auto px-6 py-8 space-y-8 relative">
-    <header class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+    <header
+      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8"
+    >
       <div class="flex items-center space-x-3">
         <div
-          class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-700 shadow-lg"
+          class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg"
         >
           <svg
             class="h-8 w-8 text-white"
@@ -61,329 +65,64 @@
         </div>
         <div>
           <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p class="text-sm text-gray-600 mt-1">Acompanhe seus resultados e evolução</p>
+          <p class="text-sm text-gray-600 mt-1">
+            Acompanhe seus resultados e evolução
+          </p>
         </div>
       </div>
     </header>
 
-  @if (!statistics()) {
-  <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center">
+    @if (!statistics()) {
     <div
-      class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-violet-700"
-    ></div>
-    <p class="text-gray-600 mt-4 font-medium">Carregando estatísticas...</p>
-  </div>
-  } @else if (statistics()!.total_tests === 0) {
-  <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center">
-    <div
-      class="flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 border-2 border-gray-200 mx-auto mb-4"
+      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center"
     >
-      <svg
-        class="w-10 h-10 text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-        />
-      </svg>
+      <div
+        class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-violet-700"
+      ></div>
+      <p class="text-gray-600 mt-4 font-medium">Carregando estatísticas...</p>
     </div>
-    <h3 class="text-lg font-semibold text-gray-900">
-      Você ainda não possui testes clínicos realizados
-    </h3>
-    <p class="text-sm text-gray-600 mt-2">
-      Consulte seu médico para realizar testes clínicos
-    </p>
-  </div>
-  } @else {
-  <section class="space-y-6">
-    <!-- Grid de Cards de Estatísticas -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Card: Total de Testes -->
+    } @else if (statistics()!.total_tests === 0) {
+    <div
+      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center"
+    >
       <div
-        class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+        class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 border-2 border-gray-200 mx-auto mb-4"
       >
-        <div class="flex items-start">
-          <div
-            class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-100 border-2 border-violet-200 flex-shrink-0"
-          >
-            <svg
-              class="h-7 w-7 text-violet-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-          </div>
-          <div class="ml-4 flex-1">
-            <p class="text-sm font-medium text-violet-700">Total de Testes</p>
-            <p class="text-3xl font-bold text-gray-900 mt-2">
-              {{ statistics()!.total_tests }}
-            </p>
-            <p class="text-xs text-gray-700 mt-2">
-              Espiral: {{ statistics()!.total_spiral_tests }} | Voz:
-              {{ statistics()!.total_voice_tests }}
-            </p>
-          </div>
-        </div>
+        <svg
+          class="w-10 h-10 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
       </div>
-
-      <!-- Card: Último Teste -->
-      <div
-        class="bg-orange-50/50 border border-orange-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-      >
-        <div class="flex items-start">
-          <div
-            class="flex h-14 w-14 items-center justify-center rounded-xl bg-orange-100 border-2 border-orange-200 flex-shrink-0"
-          >
-            <svg
-              class="h-7 w-7 text-orange-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-          <div class="ml-4 flex-1">
-            <p class="text-sm font-medium text-orange-700">Último Teste</p>
-            <p class="text-lg font-bold text-gray-900 mt-2">
-              {{ formatDate(statistics()!.last_test_date) }}
-            </p>
-            @if (statistics()!.days_since_last_test !== null) {
-            <p class="text-xs text-gray-700 mt-2">
-              Há {{ statistics()!.days_since_last_test }} dia(s)
-            </p>
-            }
-          </div>
-        </div>
-      </div>
-
-      <!-- Card: Tendência -->
-      <div
-        class="bg-indigo-50/50 border border-indigo-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-      >
-        <div class="flex items-start">
-          <div
-            class="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-100 border-2 border-indigo-200 flex-shrink-0"
-          >
-            <svg
-              class="h-7 w-7 text-indigo-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-              />
-            </svg>
-          </div>
-          <div class="ml-4 flex-1">
-            <p class="text-sm font-medium text-indigo-700">Tendência Geral</p>
-            <p
-              class="text-2xl font-bold mt-2"
-              [ngClass]="getTrendColor(statistics()!.trend)"
-            >
-              {{ getTrendIcon(statistics()!.trend) }}
-              {{ getTrendLabel(statistics()!.trend) }}
-            </p>
-            <p class="text-xs text-gray-700 mt-2">
-              Variação: {{ statistics()!.trend_percentage.toFixed(1) }}%
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card: Intervalo Médio -->
-      <div
-        class="bg-pink-50/50 border border-pink-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-      >
-        <div class="flex items-start">
-          <div
-            class="flex h-14 w-14 items-center justify-center rounded-xl bg-pink-100 border-2 border-pink-200 flex-shrink-0"
-          >
-            <svg
-              class="h-7 w-7 text-pink-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <div class="ml-4 flex-1">
-            <p class="text-sm font-medium text-pink-700">Intervalo Médio</p>
-            <p class="text-3xl font-bold text-gray-900 mt-2">
-              @if (statistics()!.avg_test_interval_days !== null) {
-              {{ statistics()!.avg_test_interval_days!.toFixed(0) }}
-              <span class="text-lg">dias</span>
-              } @else {
-              <span class="text-lg">N/A</span>
-              }
-            </p>
-            <p class="text-xs text-gray-700 mt-2">Entre testes</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Scores Médios -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Score Médio Espiral -->
-      <div
-        class="bg-purple-50/50 border border-purple-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all"
-      >
-        <h3 class="text-lg font-bold text-gray-900 mb-4">
-          Testes de Espiral
-        </h3>
-        <div class="space-y-3">
-          <div>
-            <p class="text-sm font-medium text-purple-700">Score Médio</p>
-            <p class="text-3xl font-bold text-gray-900 mt-1">
-              {{ formatScore(statistics()!.avg_spiral_score) }}
-            </p>
-          </div>
-          <div class="flex justify-between text-sm pt-3 border-t border-purple-200">
-            <div>
-              <p class="text-purple-700">Melhor</p>
-              <p class="font-semibold text-gray-900 mt-1">
-                {{ formatScore(statistics()!.best_spiral_score) }}
-              </p>
-            </div>
-            <div>
-              <p class="text-purple-700">Pior</p>
-              <p class="font-semibold text-gray-900 mt-1">
-                {{ formatScore(statistics()!.worst_spiral_score) }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Score Médio Voz -->
-      <div
-        class="bg-green-50/50 border border-green-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all"
-      >
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Testes de Voz</h3>
-        <div class="space-y-3">
-          <div>
-            <p class="text-sm font-medium text-green-700">Score Médio</p>
-            <p class="text-3xl font-bold text-gray-900 mt-1">
-              {{ formatScore(statistics()!.avg_voice_score) }}
-            </p>
-          </div>
-          <div class="flex justify-between text-sm pt-3 border-t border-green-200">
-            <div>
-              <p class="text-green-700">Melhor</p>
-              <p class="font-semibold text-gray-900 mt-1">
-                {{ formatScore(statistics()!.best_voice_score) }}
-              </p>
-            </div>
-            <div>
-              <p class="text-green-700">Pior</p>
-              <p class="font-semibold text-gray-900 mt-1">
-                {{ formatScore(statistics()!.worst_voice_score) }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Distribuição de Classificações -->
-    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
-      <h3 class="text-lg font-bold text-gray-900 mb-4">
-        Distribuição de Classificações
+      <h3 class="text-lg font-semibold text-gray-900">
+        Você ainda não possui testes clínicos realizados
       </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-green-50/50 rounded-xl p-4 border border-green-200 hover:shadow-md transition-all">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-green-700">
-                Classificados como SAUDÁVEL
-              </p>
-              <p class="text-3xl font-bold text-gray-900 mt-2">
-                {{ statistics()!.healthy_classification_count }}
-              </p>
-              @if (statistics()!.total_tests > 0) {
-              <p class="text-xs text-green-700 mt-1">
-                {{
-                  (
-                    (statistics()!.healthy_classification_count /
-                      statistics()!.total_tests) *
-                    100
-                  ).toFixed(1)
-                }}% do total
-              </p>
-              }
-            </div>
+      <p class="text-sm text-gray-600 mt-2">
+        Consulte seu médico para realizar testes clínicos
+      </p>
+    </div>
+    } @else {
+    <section class="space-y-6">
+      <!-- Grid de Cards de Estatísticas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Card: Total de Testes -->
+        <div
+          class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+        >
+          <div class="flex items-start">
             <div
-              class="flex h-14 w-14 items-center justify-center rounded-xl bg-green-100 border-2 border-green-200 flex-shrink-0"
+              class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-100 border-2 border-violet-200 flex-shrink-0"
             >
               <svg
-                class="h-8 w-8 text-green-600"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-red-50/50 rounded-xl p-4 border border-red-200 hover:shadow-md transition-all">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-red-700">
-                Classificados como PARKINSON
-              </p>
-              <p class="text-3xl font-bold text-gray-900 mt-2">
-                {{ statistics()!.parkinson_classification_count }}
-              </p>
-              @if (statistics()!.total_tests > 0) {
-              <p class="text-xs text-red-700 mt-1">
-                {{
-                  (
-                    (statistics()!.parkinson_classification_count /
-                      statistics()!.total_tests) *
-                    100
-                  ).toFixed(1)
-                }}% do total
-              </p>
-              }
-            </div>
-            <div
-              class="flex h-14 w-14 items-center justify-center rounded-xl bg-red-100 border-2 border-red-200 flex-shrink-0"
-            >
-              <svg
-                class="h-8 w-8 text-red-600"
+                class="h-7 w-7 text-violet-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -392,50 +131,335 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
+            </div>
+            <div class="ml-4 flex-1">
+              <p class="text-sm font-medium text-violet-700">Total de Testes</p>
+              <p class="text-3xl font-bold text-gray-900 mt-2">
+                {{ statistics()!.total_tests }}
+              </p>
+              <p class="text-xs text-gray-700 mt-2">
+                Espiral: {{ statistics()!.total_spiral_tests }} | Voz:
+                {{ statistics()!.total_voice_tests }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Último Teste -->
+        <div
+          class="bg-orange-50/50 border border-orange-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+        >
+          <div class="flex items-start">
+            <div
+              class="flex h-14 w-14 items-center justify-center rounded-lg bg-orange-100 border-2 border-orange-200 flex-shrink-0"
+            >
+              <svg
+                class="h-7 w-7 text-orange-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <div class="ml-4 flex-1">
+              <p class="text-sm font-medium text-orange-700">Último Teste</p>
+              <p class="text-lg font-bold text-gray-900 mt-2">
+                {{ formatDate(statistics()!.last_test_date) }}
+              </p>
+              @if (statistics()!.days_since_last_test !== null) {
+              <p class="text-xs text-gray-700 mt-2">
+                Há {{ statistics()!.days_since_last_test }} dia(s)
+              </p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Tendência -->
+        <div
+          class="bg-indigo-50/50 border border-indigo-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+        >
+          <div class="flex items-start">
+            <div
+              class="flex h-14 w-14 items-center justify-center rounded-lg bg-indigo-100 border-2 border-indigo-200 flex-shrink-0"
+            >
+              <svg
+                class="h-7 w-7 text-indigo-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                />
+              </svg>
+            </div>
+            <div class="ml-4 flex-1">
+              <p class="text-sm font-medium text-indigo-700">Tendência Geral</p>
+              <p
+                class="text-2xl font-bold mt-2"
+                [ngClass]="getTrendColor(statistics()!.trend)"
+              >
+                {{ getTrendIcon(statistics()!.trend) }}
+                {{ getTrendLabel(statistics()!.trend) }}
+              </p>
+              <p class="text-xs text-gray-700 mt-2">
+                Variação: {{ statistics()!.trend_percentage.toFixed(1) }}%
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Intervalo Médio -->
+        <div
+          class="bg-pink-50/50 border border-pink-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+        >
+          <div class="flex items-start">
+            <div
+              class="flex h-14 w-14 items-center justify-center rounded-lg bg-pink-100 border-2 border-pink-200 flex-shrink-0"
+            >
+              <svg
+                class="h-7 w-7 text-pink-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div class="ml-4 flex-1">
+              <p class="text-sm font-medium text-pink-700">Intervalo Médio</p>
+              <p class="text-3xl font-bold text-gray-900 mt-2">
+                @if (statistics()!.avg_test_interval_days !== null) {
+                {{ statistics()!.avg_test_interval_days!.toFixed(0) }}
+                <span class="text-lg">dias</span>
+                } @else {
+                <span class="text-lg">N/A</span>
+                }
+              </p>
+              <p class="text-xs text-gray-700 mt-2">Entre testes</p>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Informações Adicionais -->
-    <div class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md">
-      <div class="flex items-start space-x-3">
+      <!-- Scores Médios -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Score Médio Espiral -->
         <div
-          class="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-100 border-2 border-violet-200 flex-shrink-0"
+          class="bg-purple-50/50 border border-purple-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all"
         >
-          <svg
-            class="h-5 w-5 text-violet-700"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+          <h3 class="text-lg font-bold text-gray-900 mb-4">
+            Testes de Espiral
+          </h3>
+          <div class="space-y-3">
+            <div>
+              <p class="text-sm font-medium text-purple-700">Score Médio</p>
+              <p class="text-3xl font-bold text-gray-900 mt-1">
+                {{ formatScore(statistics()!.avg_spiral_score) }}
+              </p>
+            </div>
+            <div
+              class="flex justify-between text-sm pt-3 border-t border-purple-200"
+            >
+              <div>
+                <p class="text-purple-700">Melhor</p>
+                <p class="font-semibold text-gray-900 mt-1">
+                  {{ formatScore(statistics()!.best_spiral_score) }}
+                </p>
+              </div>
+              <div>
+                <p class="text-purple-700">Pior</p>
+                <p class="font-semibold text-gray-900 mt-1">
+                  {{ formatScore(statistics()!.worst_spiral_score) }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="flex-1">
-          <h4 class="text-sm font-bold text-gray-900 mb-2">Informações</h4>
-          <ul class="text-sm text-gray-700 space-y-1">
-            <li>
-              • Primeiro teste realizado em:
-              <strong>{{ formatDate(statistics()!.first_test_date) }}</strong>
-            </li>
-            <li>• Score abaixo de 0.80 indica resultado saudável</li>
-            <li>• Score acima de 0.80 indica possível presença de Parkinson</li>
-          </ul>
+
+        <!-- Score Médio Voz -->
+        <div
+          class="bg-green-50/50 border border-green-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all"
+        >
+          <h3 class="text-lg font-bold text-gray-900 mb-4">Testes de Voz</h3>
+          <div class="space-y-3">
+            <div>
+              <p class="text-sm font-medium text-green-700">Score Médio</p>
+              <p class="text-3xl font-bold text-gray-900 mt-1">
+                {{ formatScore(statistics()!.avg_voice_score) }}
+              </p>
+            </div>
+            <div
+              class="flex justify-between text-sm pt-3 border-t border-green-200"
+            >
+              <div>
+                <p class="text-green-700">Melhor</p>
+                <p class="font-semibold text-gray-900 mt-1">
+                  {{ formatScore(statistics()!.best_voice_score) }}
+                </p>
+              </div>
+              <div>
+                <p class="text-green-700">Pior</p>
+                <p class="font-semibold text-gray-900 mt-1">
+                  {{ formatScore(statistics()!.worst_voice_score) }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-  }
+
+      <!-- Distribuição de Classificações -->
+      <div
+        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6"
+      >
+        <h3 class="text-lg font-bold text-gray-900 mb-4">
+          Distribuição de Classificações
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            class="bg-green-50/50 rounded-lg p-4 border border-green-200 hover:shadow-md transition-all"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-green-700">
+                  Classificados como SAUDÁVEL
+                </p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">
+                  {{ statistics()!.healthy_classification_count }}
+                </p>
+                @if (statistics()!.total_tests > 0) {
+                <p class="text-xs text-green-700 mt-1">
+                  {{
+                    (
+                      (statistics()!.healthy_classification_count /
+                        statistics()!.total_tests) *
+                      100
+                    ).toFixed(1)
+                  }}% do total
+                </p>
+                }
+              </div>
+              <div
+                class="flex h-14 w-14 items-center justify-center rounded-lg bg-green-100 border-2 border-green-200 flex-shrink-0"
+              >
+                <svg
+                  class="h-8 w-8 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-red-50/50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-red-700">
+                  Classificados como PARKINSON
+                </p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">
+                  {{ statistics()!.parkinson_classification_count }}
+                </p>
+                @if (statistics()!.total_tests > 0) {
+                <p class="text-xs text-red-700 mt-1">
+                  {{
+                    (
+                      (statistics()!.parkinson_classification_count /
+                        statistics()!.total_tests) *
+                      100
+                    ).toFixed(1)
+                  }}% do total
+                </p>
+                }
+              </div>
+              <div
+                class="flex h-14 w-14 items-center justify-center rounded-lg bg-red-100 border-2 border-red-200 flex-shrink-0"
+              >
+                <svg
+                  class="h-8 w-8 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informações Adicionais -->
+      <div
+        class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md"
+      >
+        <div class="flex items-start space-x-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-100 border-2 border-violet-200 flex-shrink-0"
+          >
+            <svg
+              class="h-5 w-5 text-violet-700"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-sm font-bold text-gray-900 mb-2">Informações</h4>
+            <ul class="text-sm text-gray-700 space-y-1">
+              <li>
+                • Primeiro teste realizado em:
+                <strong>{{ formatDate(statistics()!.first_test_date) }}</strong>
+              </li>
+              <li>• Score abaixo de 0.80 indica resultado saudável</li>
+              <li>
+                • Score acima de 0.80 indica possível presença de Parkinson
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    }
   </div>
   }
 </div>
