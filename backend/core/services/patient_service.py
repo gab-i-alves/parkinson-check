@@ -147,14 +147,32 @@ def get_binded_patients(session: Session, current_user: User) -> list[PatientLis
     for item in binded_patients:
         patient = item["user"]
         bind_id = item["bind_id"]
+
+        # Calcula idade
+        age = calculate_age(patient.birthdate)
+
+        # Busca últimos testes para calcular status
+        recent_tests = (
+            session.query(Test)
+            .filter(Test.patient_id == patient.id)
+            .order_by(desc(Test.execution_date))
+            .limit(5)
+            .all()
+        )
+        recent_scores = [test.score for test in recent_tests]
+        status = calculate_patient_status(recent_scores)
+
         patient_list.append(
             PatientListResponse(
                 id=patient.id,
                 name=patient.name,
+                cpf=patient.cpf,
                 email=patient.email,
                 location=f"{patient.address.city}, {patient.address.state}",
                 role=UserType.PATIENT,
                 bind_id=bind_id,
+                age=age,
+                status=status,
             )
         )
     return patient_list
@@ -320,7 +338,7 @@ def get_patient_full_profile(
 def get_patients(session: Session, doctor: User, parameters: GetPatientsSchema) -> list[PatientListResponse]:
     """
     Busca todos os pacientes do sistema, excluindo os já vinculados ao médico atual.
-    Médicos podem usar filtros: name, cpf, email.
+    Médicos podem usar filtros: name, cpf, email, status.
     """
     from sqlalchemy.orm import joinedload
     from core.services.user_service import get_user_active_binds
@@ -336,28 +354,53 @@ def get_patients(session: Session, doctor: User, parameters: GetPatientsSchema) 
     if linked_patient_ids:
         patient_query = patient_query.filter(Patient.id.not_in(linked_patient_ids))
 
-    # Aplicar filtros opcionais
-    filters = parameters.model_dump(exclude_none=True)
-    patient_query = patient_query.filter_by(**filters)
+    # Aplicar filtros opcionais com busca parcial (fuzzy search)
+    if parameters.name:
+        patient_query = patient_query.filter(Patient.name.ilike(f'%{parameters.name}%'))
+
+    if parameters.cpf:
+        patient_query = patient_query.filter(Patient.cpf.ilike(f'%{parameters.cpf}%'))
+
+    if parameters.email:
+        patient_query = patient_query.filter(Patient.email.ilike(f'%{parameters.email}%'))
 
     patients = patient_query.all()
 
-    if not patients:
-        raise HTTPException(
-            HTTPStatus.NOT_FOUND,
-            detail="Não foram encontrados pacientes com os parâmetros fornecidos",
-        )
-
     patient_list = []
 
+    if not patients:
+        return patient_list
+
     for patient in patients:
+        # Calcula idade
+        age = calculate_age(patient.birthdate)
+
+        # Busca últimos testes para calcular status
+        recent_tests = (
+            session.query(Test)
+            .filter(Test.patient_id == patient.id)
+            .order_by(desc(Test.execution_date))
+            .limit(5)
+            .all()
+        )
+        recent_scores = [test.score for test in recent_tests]
+        status = calculate_patient_status(recent_scores)
+
+        # Aplicar filtro de status se fornecido
+        if parameters.status and status != parameters.status:
+            continue
+
         patient_list.append(
             PatientListResponse(
                 id=patient.id,
                 name=patient.name,
+                cpf=patient.cpf,
                 email=patient.email,
                 location=f"{patient.address.city}, {patient.address.state}",
                 role=UserType.PATIENT,
+                bind_id=None,
+                age=age,
+                status=status,
             )
         )
 
