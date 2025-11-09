@@ -5,7 +5,7 @@ import { DoctorService } from '../../../services/doctor.service';
 import { BindingService } from '../../../../../core/services/binding.service';
 import { DoctorProfileModalComponent } from '../../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 import { Doctor } from '../../../../../core/models/doctor.model';
-import { BindingRequestResponse, isBindingDoctor } from '../../../../../core/models/binding-request.model';
+import { BindingRequestResponse, isBindingDoctor, UserType } from '../../../../../core/models/binding-request.model';
 import { firstValueFrom } from 'rxjs';
 import { NotificationService } from '../../../../../core/services/notification.service';
 
@@ -59,20 +59,26 @@ export class PatientBindingRequestsComponent {
 
       if (results) {
         const linkedIds = new Set(this.linkedDoctors().map((d) => d.id));
-        const pendingIds = new Set(
-          this.sentRequests()
+
+        // Combinar IDs de solicitações pendentes (enviadas e recebidas)
+        const pendingIds = new Set([
+          ...this.sentRequests()
+            .filter(r => isBindingDoctor(r.user))
+            .map((r) => r.user.id),
+          ...this.receivedRequests()
             .filter(r => isBindingDoctor(r.user))
             .map((r) => r.user.id)
+        ]);
+
+        // Filtrar médicos que não estão vinculados nem com solicitação pendente
+        const availableDoctors = results.filter(doctor =>
+          !linkedIds.has(doctor.id) && !pendingIds.has(doctor.id)
         );
-        const doctorsWithStatus = results.map((doctor) => {
-          let status: 'linked' | 'pending' | 'unlinked' = 'unlinked';
-          if (linkedIds.has(doctor.id)) {
-            status = 'linked';
-          } else if (pendingIds.has(doctor.id)) {
-            status = 'pending';
-          }
-          return { ...doctor, status };
+
+        const doctorsWithStatus = availableDoctors.map((doctor) => {
+          return { ...doctor, status: 'unlinked' as const };
         });
+
         const sortedDoctors = this.sortDoctors(doctorsWithStatus);
         this.searchResults.set(sortedDoctors);
       }
@@ -152,12 +158,14 @@ export class PatientBindingRequestsComponent {
         // Filter requests by doctor (as patient, we interact with doctors)
         const doctorRequests = data.filter(req => isBindingDoctor(req.user));
 
-        // Separate sent and received requests
-        // Note: The unified endpoint returns pending requests
-        // We'll need to check the status or implement additional logic
-        // For now, we'll treat all as received (doctors sending to patient)
-        this.receivedRequests.set(doctorRequests);
-        this.sentRequests.set([]); // Will be populated if we track sent separately
+        // Separate sent and received requests based on who created the binding
+        // Sent: requests created by the patient (UserType.PATIENT)
+        // Received: requests created by the doctor (UserType.DOCTOR)
+        const sent = doctorRequests.filter(req => req.created_by_type === UserType.PATIENT);
+        const received = doctorRequests.filter(req => req.created_by_type === UserType.DOCTOR);
+
+        this.sentRequests.set(sent);
+        this.receivedRequests.set(received);
 
         this.isLoading.set(false);
       },
