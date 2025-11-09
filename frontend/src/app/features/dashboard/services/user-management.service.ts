@@ -5,7 +5,7 @@ import {
   HttpParams,
   HttpResponse,
 } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
   PaginatedUsers,
@@ -57,7 +57,7 @@ export class UserManagementService {
     };
   }
 
-  private mapBackendUserToFrontend(backendUser: UserBackendResponse): User {
+  mapBackendUserToFrontend(backendUser: UserBackendResponse): User {
     return {
       id: backendUser.id,
       name: backendUser.name,
@@ -148,10 +148,14 @@ export class UserManagementService {
     );
   }
 
-  getUserById(userId: number): Observable<any> {
-    // UserDetail
-    return this.http.get<any>(`${this.apiUrl}/admin/users/${userId}`);
-  }
+getUserById(userId: number): Observable<UserBackendResponse | null> {
+  return this.http.get<UserBackendResponse>(`${this.apiUrl}/admin/users/${userId}`).pipe(
+    catchError((error) => {
+      console.error('Erro ao buscar usuário:', error);
+      return of(null); 
+    })
+  );
+}
 
   createUser(userData: any): Observable<any> {
     // CreateUserData, User

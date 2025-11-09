@@ -254,7 +254,7 @@
                   <div class="text-sm font-medium text-gray-900">
                     {{ user.name }}
                   </div>
-                  <div [class]="getStatusLabel(user.status!)">{{ getUserTypeLabel(Number(user.role))}} - {{getStatusLabel(user.status!)}}</div>
+                  <div [class]="getStatusClass(user.status!)">{{ getUserTypeLabel(Number(user.role))}} - {{getStatusLabel(user.status!)}}</div>
                 </div>
               </div>
             </td>
@@ -276,7 +276,7 @@
             >
             
               <div class="flex items-center"><a
-                [routerLink]="['/dashboard/user', user.id]"
+                [routerLink]="['/dashboard/users/edit/', user.id]"
                 class="text-violet-600 hover:text-violet-900"
                 >Editar</a
               >
@@ -288,7 +288,6 @@
               >
               </div>
               <div class="flex items-center"><a
-                [routerLink]="['/dashboard/user', user.id]"
                 class="text-violet-600 hover:text-violet-900"
                 >Ver Detalhes</a
               >

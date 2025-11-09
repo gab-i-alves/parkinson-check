@@ -142,6 +142,14 @@ export const DASHBOARD_ROUTES: Routes = [
             (c) => c.UserManagementComponent
           ),
       },
+      {
+        path: 'users/edit/:id',
+        canActivate: [authGuard(['admin'])],
+        loadComponent: () =>
+          import('./components/edit-user/edit-user.component').then(
+            (c) => c.EditUserComponent
+          ),
+      },
     ],
   },
 ];
