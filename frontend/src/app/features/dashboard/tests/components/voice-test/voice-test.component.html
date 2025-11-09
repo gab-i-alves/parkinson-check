@@ -1,139 +1,157 @@
-<div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <div>
+<div class="min-h-screen bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
+    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
+  </div>
+
+  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative">
+      <!-- Back button icon -->
       <button
         (click)="goBackToMethodSelection()"
-        class="mb-2 flex items-center space-x-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        aria-label="Voltar"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-4 w-4"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-          />
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
-        <span>Voltar</span>
       </button>
-      <h1 class="text-2xl font-bold text-gray-900">Teste de Voz</h1>
-      <p class="mt-1 text-sm text-gray-500">
-        Leia em voz alta o texto em destaque quando estiver pronto
-      </p>
-    </div>
-  </div>
 
-  <div class="rounded-lg bg-violet-50 p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-violet-900">
-      Instruções Importantes
-    </h2>
-    <ol type="1" class="mt-4 list-inside list-disc space-y-2 text-violet-800">
-      <li>
-        <a>Certifique-se de estar em um ambiente silencioso.</a>
-      </li>
-      <li>
-        <a>Posicione-se a aprocimadamente 15-20 cm do microfone.</a>
-      </li>
-      <li>
-        <a>Clique no botão</a>
-        <span class="font-medium"> Iniciar Gravação</span>
-        <a> quando estiver pronto.</a>
-      </li>
-      <li>
-        <a
-          >Leia o texto exibido em voz alta, com tom natural e velocidade
-          moderada.</a
-        >
-      </li>
-      <li>
-        <a>Procure manter um volume constante durante toda a leitura.</a>
-      </li>
-      <li>
-        <a>Clique em</a>
-        <span class="font-medium"> Finalizar Gravação</span>
-        <a> quando terminar, ou aguarde o término automático.</a>
-      </li>
-    </ol>
-  </div>
-
-  <div class="mt-6 rounded-lg bg-white p-6 shadow-md">
-    <div class="mt-4 flex flex-col items-center gap-4 md:flex-row">
-      <div class="space-y-4 text-center md:text-left">
-        <p class="text-gray-700">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </p>
-        <div class="flex h-24 w-full rounded-lg bg-gray-100">
-          <canvas #audioVisualizer class="h-full w-full"></canvas>
+      <div class="flex items-start space-x-4 mb-6">
+        <!-- Ícone -->
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-700 shadow-lg flex-shrink-0">
+          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+          </svg>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-4">
-          @if (!isRecording()) {
-          <button
-            (click)="startRecording()"
-            [disabled]="!!analysisResults()"
-            class="inline-flex items-center rounded-md bg-violet-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Iniciar Gravação
-          </button>
-          } @else {
-          <button
-            (click)="stopRecording()"
-            class="inline-flex items-center rounded-md bg-violet-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Finalizar Gravação
-          </button>
-          } @if (recordedAudioUrl() && !analysisResults()) {
-          <audio #audioPlayer [src]="recordedAudioUrl()" class="hidden"></audio>
-          <button
-            (click)="playRecording()"
-            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-5 py-2 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
-          >
-            Ouvir Gravação
-          </button>
-          <button
-            (click)="uploadAudio()"
-            class="inline-flex items-center rounded-md bg-green-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-green-700"
-          >
-            Enviar para Análise
-          </button>
-          }
+        <!-- Conteúdo do Header -->
+        <div class="flex-1">
+          <h1 class="text-3xl font-bold text-gray-900">Teste de Voz</h1>
+          <p class="text-sm text-gray-600 mt-1">
+            Leia em voz alta o texto em destaque quando estiver pronto
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">
+          Instruções Importantes
+        </h2>
+        <ol type="1" class="mt-4 list-inside list-disc space-y-2 text-gray-700">
+          <li>
+            <span class="text-sm">Certifique-se de estar em um ambiente silencioso.</span>
+          </li>
+          <li>
+            <span class="text-sm">Posicione-se a aproximadamente 15-20 cm do microfone.</span>
+          </li>
+          <li>
+            <span class="text-sm">Clique no botão</span>
+            <span class="font-medium text-sm"> Iniciar Gravação</span>
+            <span class="text-sm"> quando estiver pronto.</span>
+          </li>
+          <li>
+            <span class="text-sm"
+              >Leia o texto exibido em voz alta, com tom natural e velocidade
+              moderada.</span
+            >
+          </li>
+          <li>
+            <span class="text-sm">Procure manter um volume constante durante toda a leitura.</span>
+          </li>
+          <li>
+            <span class="text-sm">Clique em</span>
+            <span class="font-medium text-sm"> Finalizar Gravação</span>
+            <span class="text-sm"> quando terminar, ou aguarde o término automático.</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+      <div class="flex flex-col items-center gap-4 md:flex-row">
+        <div class="space-y-4 text-center md:text-left w-full">
+          <p class="text-sm text-gray-700 leading-relaxed">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+            culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+          <div class="flex h-24 w-full rounded-2xl bg-gray-100 border border-gray-200 shadow-sm">
+            <canvas #audioVisualizer class="h-full w-full"></canvas>
+          </div>
+
+          <div class="flex flex-wrap justify-center md:justify-start gap-4">
+            @if (!isRecording()) {
+            <button
+              (click)="startRecording()"
+              [disabled]="!!analysisResults()"
+              class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Iniciar Gravação
+            </button>
+            } @else {
+            <button
+              (click)="stopRecording()"
+              class="inline-flex items-center rounded-xl bg-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-orange-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all"
+            >
+              Finalizar Gravação
+            </button>
+            } @if (recordedAudioUrl() && !analysisResults()) {
+            <audio #audioPlayer [src]="recordedAudioUrl()" class="hidden"></audio>
+            <button
+              (click)="playRecording()"
+              class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+            >
+              Ouvir Gravação
+            </button>
+            <button
+              (click)="uploadAudio()"
+              class="inline-flex items-center rounded-xl bg-green-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-green-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
+            >
+              Enviar para Análise
+            </button>
+            }
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  @if (feedbackMessage()) {
-
-  <div class="rounded-lg p-4">
-    <p class="font-medium">{{ feedbackMessage() }}</p>
-  </div>
-  } @if (analysisResults()) {
-  <div class="mt-6 rounded-lg bg-white p-6 shadow-md">
-    <h3 class="text-lg font-semibold text-gray-800">Resultado da Análise</h3>
-    <p>
-      <strong>Pontuação (Score):</strong>
-      {{ analysisResults()?.score | number : "1.2-2" }}
-    </p>
-    <p><strong>Análise:</strong> {{ analysisResults()?.analysis }}</p>
-    <div class="mt-6 flex justify-end">
-      <button
-        (click)="goBackToMethodSelection()"
-        class="rounded-md bg-gray-200 px-6 py-3 text-lg font-semibold text-gray-800 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
-      >
-        Finalizar Teste
-      </button>
+    @if (feedbackMessage()) {
+    <div class="rounded-xl p-4 border bg-violet-50/80 border-violet-200">
+      <div class="flex items-start">
+        <p class="text-sm font-medium text-violet-800">{{ feedbackMessage() }}</p>
+      </div>
     </div>
+    } @if (analysisResults()) {
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+      <h3 class="text-lg font-bold text-gray-900 mb-4">Resultado da Análise</h3>
+      <div class="space-y-4">
+        <div class="bg-violet-50/50 border border-violet-200 rounded-xl p-4">
+          <p class="text-sm font-medium text-violet-700">Pontuação (Score):</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">
+            {{ analysisResults()?.score | number : "1.2-2" }}
+          </p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-900 mb-2">Análise:</p>
+          <p class="text-sm text-gray-700 leading-relaxed">{{ analysisResults()?.analysis }}</p>
+        </div>
+      </div>
+      <div class="mt-8 flex justify-end">
+        <button
+          (click)="goBackToMethodSelection()"
+          class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+        >
+          Finalizar Teste
+        </button>
+      </div>
+    </div>
+    }
   </div>
-  }
 </div>

@@ -1,191 +1,208 @@
-<div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <div>
+<div class="min-h-screen bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
+    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
+  </div>
+
+  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative">
+      <!-- Back button icon -->
       <button
         (click)="goBackToMethodSelection()"
-        class="mb-2 flex items-center space-x-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        aria-label="Voltar"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-4 w-4"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-          />
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
-        <span>Voltar</span>
       </button>
-      <h1 class="text-2xl font-bold text-gray-900">
-        Teste da Espiral: Desenho com a Câmera
-      </h1>
-      <p class="mt-1 text-sm text-gray-500">
-        Use o seu dedo indicador para traçar sobre a espiral guia
-      </p>
-    </div>
-  </div>
 
-  <div class="relative flex justify-center">
-    <video #videoElement class="hidden" autoplay playsinline></video>
-    <canvas
-      #canvasElement
-      width="640"
-      height="480"
-      class="rounded-lg border-2 border-gray-300 bg-gray-900"
-    ></canvas>
-  </div>
+      <div class="flex items-start space-x-4 mb-6">
+        <!-- Ícone -->
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-700 shadow-lg flex-shrink-0">
+          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+        </div>
 
-  <div class="mt-6 flex justify-center gap-4">
-    <button
-      (click)="startDrawing()"
-      class="rounded-md bg-green-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-green-700"
-    >
-      Iniciar Desenho
-    </button>
-    <button
-      (click)="stopDrawing()"
-      class="rounded-md bg-yellow-500 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-yellow-600"
-    >
-      Parar de Desenhar
-    </button>
-    <button
-      (click)="clearCanvas()"
-      class="rounded-md bg-gray-500 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-gray-600"
-    >
-      Limpar
-    </button>
-    <button
-      (click)="uploadImage()"
-      [disabled]="uploadStatus() === 'uploading'"
-      class="rounded-md bg-violet-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-violet-700 disabled:opacity-50"
-    >
-      @if (uploadStatus() === 'uploading') { Enviando... } @else { Enviar para
-      Análise }
-    </button>
-  </div>
+        <!-- Conteúdo do Header -->
+        <div class="flex-1">
+          <h1 class="text-3xl font-bold text-gray-900">
+            Teste da Espiral: Desenho com a Câmera
+          </h1>
+          <p class="text-sm text-gray-600 mt-1">
+            Use o seu dedo indicador para traçar sobre a espiral guia
+          </p>
+        </div>
+      </div>
 
-  @if (feedbackMessage()) {
-  <div
-    class="rounded-lg p-4"
-    [class.bg-green-100]="uploadStatus() === 'success'"
-    [class.text-green-800]="uploadStatus() === 'success'"
-    [class.bg-red-100]="uploadStatus() === 'error'"
-    [class.text-red-800]="uploadStatus() === 'error'"
-    [class.bg-blue-100]="uploadStatus() === 'uploading'"
-    [class.text-blue-800]="uploadStatus() === 'uploading'"
-  >
-    <p class="font-medium">{{ feedbackMessage() }}</p>
-  </div>
-  } @if (analysisResults(); as results) {
-  <div
-    class="mt-8 rounded-lg bg-white p-6 shadow-md ring-1 ring-black ring-opacity-5"
-  >
-    <h2 class="mb-4 text-2xl font-bold text-gray-900">Resultado da Análise</h2>
+      <div class="relative flex justify-center">
+        <video #videoElement class="hidden" autoplay playsinline></video>
+        <canvas
+          #canvasElement
+          width="640"
+          height="480"
+          class="rounded-2xl border-2 border-gray-300 bg-gray-900 shadow-lg"
+        ></canvas>
+      </div>
 
-    <div
-      class="mb-6 rounded-lg p-6"
-      [ngClass]="{
-        'bg-red-50 text-red-800': results.majority_decision === 'Parkinson',
-        'bg-green-50 text-green-800': results.majority_decision === 'Healthy'
-      }"
-    >
-      <p class="text-lg font-semibold">Decisão Final (Maioria dos Votos):</p>
-      <p class="text-3xl font-bold">{{ results.majority_decision }}</p>
-      <p class="mt-2 text-sm">
-        Votos "Healthy":
-        <span class="font-bold">{{ results.vote_count.Healthy }}</span> | Votos
-        "Parkinson":
-        <span class="font-bold">{{ results.vote_count.Parkinson }}</span>
-      </p>
-    </div>
-
-    <div>
-      <h3 class="text-xl font-semibold text-gray-800">
-        Análise Detalhada por Modelo
-      </h3>
-      <div class="mt-4 overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
-                Modelo de IA
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
-                Predição
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
-                Probabilidades
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200 bg-white">
-            @for (modelName of getModelKeys(results); track modelName) {
-            @if(results.model_results[modelName]; as modelData) {
-            <tr>
-              <td
-                class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900"
-              >
-                {{ modelName }}
-              </td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm">
-                <span
-                  class="rounded-full px-2 py-1 text-xs font-semibold"
-                  [ngClass]="{
-                    'bg-red-100 text-red-800':
-                      modelData.prediction === 'Parkinson',
-                    'bg-green-100 text-green-800':
-                      modelData.prediction === 'Healthy'
-                  }"
-                >
-                  {{ modelData.prediction }}
-                </span>
-              </td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                @if (modelData.probabilities) {
-                <span>
-                  Healthy:
-                  {{
-                    modelData.probabilities["Healthy"] || 0 | percent : "1.0-2"
-                  }}
-                  | Parkinson:
-                  {{
-                    modelData.probabilities["Parkinson"] || 0
-                      | percent : "1.0-2"
-                  }}
-                </span>
-                } @else {
-                <span>N/A</span>
-                }
-              </td>
-            </tr>
-            } }
-          </tbody>
-        </table>
+      <div class="mt-6 flex justify-center gap-4 flex-wrap">
+        <button
+          (click)="startDrawing()"
+          class="inline-flex items-center rounded-xl bg-green-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-green-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
+        >
+          Iniciar Desenho
+        </button>
+        <button
+          (click)="stopDrawing()"
+          class="inline-flex items-center rounded-xl bg-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-orange-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all"
+        >
+          Parar de Desenhar
+        </button>
+        <button
+          (click)="clearCanvas()"
+          class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+        >
+          Limpar
+        </button>
+        <button
+          (click)="uploadImage()"
+          [disabled]="uploadStatus() === 'uploading'"
+          class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (uploadStatus() === 'uploading') { Enviando... } @else { Enviar para
+          Análise }
+        </button>
       </div>
     </div>
 
-    <div class="mt-8 flex justify-end">
-      <button
-        (click)="goBackToMethodSelection()"
-        class="rounded-md bg-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
-      >
-        Finalizar Teste
-      </button>
+    @if (feedbackMessage()) {
+    <div
+      class="rounded-xl p-4 border"
+      [class.bg-green-50/80]="uploadStatus() === 'success'"
+      [class.border-green-200]="uploadStatus() === 'success'"
+      [class.bg-red-50/80]="uploadStatus() === 'error'"
+      [class.border-red-200]="uploadStatus() === 'error'"
+      [class.bg-violet-50/80]="uploadStatus() === 'uploading'"
+      [class.border-violet-200]="uploadStatus() === 'uploading'"
+    >
+      <div class="flex items-start">
+        <p class="text-sm font-medium"
+           [class.text-green-800]="uploadStatus() === 'success'"
+           [class.text-red-800]="uploadStatus() === 'error'"
+           [class.text-violet-800]="uploadStatus() === 'uploading'">
+          {{ feedbackMessage() }}
+        </p>
+      </div>
     </div>
+    } @if (analysisResults(); as results) {
+    <div
+      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8"
+    >
+      <h2 class="text-lg font-bold text-gray-900 mb-4">Resultado da Análise</h2>
+
+      <div
+        class="mb-6 rounded-2xl p-6 border"
+        [ngClass]="{
+          'bg-red-50/80 border-red-200 text-red-800': results.majority_decision === 'Parkinson',
+          'bg-green-50/80 border-green-200 text-green-800': results.majority_decision === 'Healthy'
+        }"
+      >
+        <p class="text-lg font-semibold">Decisão Final (Maioria dos Votos):</p>
+        <p class="text-3xl font-bold">{{ results.majority_decision }}</p>
+        <p class="mt-2 text-sm">
+          Votos "Healthy":
+          <span class="font-bold">{{ results.vote_count.Healthy }}</span> | Votos
+          "Parkinson":
+          <span class="font-bold">{{ results.vote_count.Parkinson }}</span>
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-gray-900 mb-4">
+          Análise Detalhada por Modelo
+        </h3>
+        <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50/50">
+              <tr>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  Modelo de IA
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  Predição
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  Probabilidades
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              @for (modelName of getModelKeys(results); track modelName) {
+              @if(results.model_results[modelName]; as modelData) {
+              <tr>
+                <td
+                  class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900"
+                >
+                  {{ modelName }}
+                </td>
+                <td class="whitespace-nowrap px-6 py-4 text-sm">
+                  <span
+                    class="rounded-full px-2 py-1 text-xs font-semibold"
+                    [ngClass]="{
+                      'bg-red-100 text-red-800':
+                        modelData.prediction === 'Parkinson',
+                      'bg-green-100 text-green-800':
+                        modelData.prediction === 'Healthy'
+                    }"
+                  >
+                    {{ modelData.prediction }}
+                  </span>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  @if (modelData.probabilities) {
+                  <span>
+                    Healthy:
+                    {{
+                      modelData.probabilities["Healthy"] || 0 | percent : "1.0-2"
+                    }}
+                    | Parkinson:
+                    {{
+                      modelData.probabilities["Parkinson"] || 0
+                        | percent : "1.0-2"
+                    }}
+                  </span>
+                  } @else {
+                  <span>N/A</span>
+                  }
+                </td>
+              </tr>
+              } }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mt-8 flex justify-end">
+        <button
+          (click)="goBackToMethodSelection()"
+          class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+        >
+          Finalizar Teste
+        </button>
+      </div>
+    </div>
+    }
   </div>
-  }
 </div>
