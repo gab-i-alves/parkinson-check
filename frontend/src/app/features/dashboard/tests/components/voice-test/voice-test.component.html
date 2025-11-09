@@ -74,46 +74,40 @@
         class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8"
       >
         <div
-          class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md h-full"
+          class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6"
         >
-          <h2 class="text-lg font-bold text-gray-900 mb-4">
+          <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+            <svg class="h-5 w-5 text-violet-700 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
             Instruções Importantes
           </h2>
-          <ol type="1" class="mt-4 list-inside list-disc space-y-2 text-gray-700">
-            <li>
-              <span class="text-sm"
-                >Certifique-se de estar em um ambiente silencioso.</span
-              >
+          <ul class="space-y-3 text-sm text-gray-700">
+            <li class="flex items-start">
+              <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">1</span>
+              <span>Certifique-se de estar em um ambiente silencioso</span>
             </li>
-            <li>
-              <span class="text-sm"
-                >Posicione-se a aproximadamente 15-20 cm do microfone.</span
-              >
+            <li class="flex items-start">
+              <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">2</span>
+              <span>Posicione-se a aproximadamente 15-20 cm do microfone</span>
             </li>
-            <li>
-              <span class="text-sm">Clique no botão</span>
-              <span class="font-medium text-sm"> Iniciar</span>
-              <span class="text-sm"> quando estiver pronto.</span>
+            <li class="flex items-start">
+              <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">3</span>
+              <span>Clique em "Iniciar" quando estiver pronto</span>
             </li>
-            <li>
-              <span class="text-sm"
-                >Fale ou emita sons conforme solicitado, com tom natural e
-                velocidade moderada.</span
-              >
+            <li class="flex items-start">
+              <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">4</span>
+              <span>Fale ou emita sons conforme solicitado, com tom natural e velocidade moderada</span>
             </li>
-            <li>
-              <span class="text-sm"
-                >Procure manter um volume constante durante toda a gravação.</span
-              >
+            <li class="flex items-start">
+              <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">5</span>
+              <span>Mantenha um volume constante durante toda a gravação</span>
             </li>
-            <li>
-              <span class="text-sm">Clique em</span>
-              <span class="font-medium text-sm"> Parar</span>
-              <span class="text-sm">
-                quando terminar, ou aguarde o término automático.</span
-              >
+            <li class="flex items-start">
+              <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">6</span>
+              <span>Clique em "Parar" quando terminar, ou aguarde o término automático</span>
             </li>
-          </ol>
+          </ul>
         </div>
       </div>
 
@@ -175,25 +169,25 @@
             <button
               (click)="startRecording()"
               [disabled]="!!analysisResults()"
-              class="inline-flex items-center gap-2 rounded-lg bg-violet-700 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all disabled:cursor-not-allowed disabled:opacity-50"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-violet-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Iniciar
+              <span class="hidden sm:inline">Iniciar</span>
             </button>
             } @else if (isRecording()) {
             <!-- Botão Parar -->
             <button
               (click)="stopRecording()"
-              class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-red-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-red-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
               </svg>
-              Parar
+              <span class="hidden sm:inline">Parar</span>
             </button>
             } @if (recordedAudioUrl() && !analysisResults()) {
             <!-- Audio Player (hidden) -->
@@ -206,12 +200,12 @@
             <!-- Botão Ouvir Gravação -->
             <button
               (click)="playRecording()"
-              class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+              class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
               </svg>
-              Ouvir
+              <span class="hidden sm:inline">Ouvir</span>
             </button>
 
             <!-- Botão Enviar para Análise -->
@@ -222,18 +216,18 @@
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Enviar
+              <span class="hidden sm:inline">Enviar</span>
             </button>
 
             <!-- Botão Cancelar -->
             <button
               (click)="cancelRecording()"
-              class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all"
+              class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
-              Cancelar
+              <span class="hidden sm:inline">Cancelar</span>
             </button>
             }
           </div>
