@@ -38,6 +38,7 @@ def get_pending_bind_requests(user: User, session: Session) -> list[BindingReque
                     email=patients_dict[bind.patient_id].email,
                 ),
                 status=bind.status,
+                created_by_type=bind.created_by_type,
             )
             for bind in bindings
             if bind.patient_id in patients_dict
@@ -65,6 +66,7 @@ def get_pending_bind_requests(user: User, session: Session) -> list[BindingReque
                     specialty=doctors_dict[bind.doctor_id].expertise_area,
                 ),
                 status=bind.status,
+                created_by_type=bind.created_by_type,
             )
             for bind in bindings
             if bind.doctor_id in doctors_dict

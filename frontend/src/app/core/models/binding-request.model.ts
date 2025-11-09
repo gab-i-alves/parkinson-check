@@ -20,11 +20,18 @@ export interface BindingDoctor {
   specialty: string;
 }
 
+// User type enum
+export enum UserType {
+  PATIENT = 'PATIENT',
+  DOCTOR = 'DOCTOR'
+}
+
 // Unified binding request response (used by both doctors and patients)
 export interface BindingRequestResponse {
   id: number;
   user: BindingPatient | BindingDoctor;
   status: BindEnum;
+  created_by_type?: UserType; // Who created the binding request
 }
 
 // Legacy interface - kept for backwards compatibility during migration
