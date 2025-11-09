@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, UploadFile
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from core.models.users import User
@@ -13,7 +14,9 @@ from core.services.test_service import (
     get_patient_test_statistics,
     get_patient_test_timeline,
     get_patient_tests,
+    get_spiral_image,
     get_test_detail,
+    get_voice_audio,
     process_clinical_spiral,
     process_clinical_voice,
     process_spiral,
@@ -231,3 +234,48 @@ def get_my_test_details(
     Requer autenticação de paciente.
     """
     return get_my_test_detail(session, user, test_id)
+
+
+# Endpoints para recuperar mídias (imagens e áudios) dos testes
+
+
+@router.get("/test/{test_id}/spiral-image")
+def get_test_spiral_image(
+    user: CurrentDoctor, test_id: int, session: Session = Depends(get_session)
+):
+    """
+    Retorna a imagem de um teste de espiral.
+
+    O médico só pode visualizar imagens de testes de seus pacientes vinculados.
+    Retorna a imagem como arquivo binário.
+
+    Requer autenticação de médico.
+    """
+    image_data, filename, content_type = get_spiral_image(session, user, test_id)
+
+    return Response(
+        content=image_data,
+        media_type=content_type,
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    )
+
+
+@router.get("/test/{test_id}/voice-audio")
+def get_test_voice_audio(
+    user: CurrentDoctor, test_id: int, session: Session = Depends(get_session)
+):
+    """
+    Retorna o áudio de um teste de voz.
+
+    O médico só pode visualizar áudios de testes de seus pacientes vinculados.
+    Retorna o áudio como arquivo binário.
+
+    Requer autenticação de médico.
+    """
+    audio_data, filename, content_type = get_voice_audio(session, user, test_id)
+
+    return Response(
+        content=audio_data,
+        media_type=content_type,
+        headers={"Content-Disposition": f'inline; filename="{filename}"'},
+    )

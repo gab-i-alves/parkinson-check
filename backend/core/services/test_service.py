@@ -55,6 +55,11 @@ def process_spiral(
         method=schema.method,
     )
 
+    # Armazena a imagem no banco de dados
+    spiral_test_db.spiral_image_data = schema.image.image_content
+    spiral_test_db.spiral_image_filename = schema.image.image_filename
+    spiral_test_db.spiral_image_content_type = schema.image.image_content_type
+
     session.add(spiral_test_db)
     session.commit()
     session.refresh(spiral_test_db)  # Garante que temos o ID gerado
@@ -73,6 +78,10 @@ def process_voice(
     """
     model_result = ai.get_voice_model_response(schema.audio_file, VOICE_MODEL_SERVICE_URL)
 
+    # Lê o conteúdo do arquivo de áudio para armazenar
+    schema.audio_file.file.seek(0)  # Volta ao início do arquivo
+    audio_content = schema.audio_file.file.read()
+
     voice_test_db = VoiceTest(
         test_type=TestType.VOICE_TEST,
         status=TestStatus.DONE,
@@ -80,6 +89,11 @@ def process_voice(
         patient_id=user.id,
         record_duration=schema.record_duration,
     )
+
+    # Armazena o áudio no banco de dados
+    voice_test_db.voice_audio_data = audio_content
+    voice_test_db.voice_audio_filename = schema.audio_file.filename
+    voice_test_db.voice_audio_content_type = schema.audio_file.content_type
 
     session.add(voice_test_db)
     session.commit()
@@ -878,3 +892,111 @@ def get_my_test_detail(
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, detail="Tipo de teste desconhecido."
         )
+
+
+# Funções para recuperar mídias (imagens e áudios) dos testes
+
+
+def get_spiral_image(session: Session, doctor: User, test_id: int) -> tuple[bytes, str, str]:
+    """
+    Recupera a imagem de um teste de espiral.
+
+    Args:
+        session: Sessão do banco de dados
+        doctor: Médico logado
+        test_id: ID do teste
+
+    Returns:
+        tuple: (image_data, filename, content_type)
+
+    Raises:
+        HTTPException: Se teste não existe, não é espiral, médico não tem acesso, ou imagem não disponível
+    """
+    # Buscar o teste
+    test = session.query(Test).filter(Test.id == test_id).first()
+
+    if not test:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Teste não encontrado."
+        )
+
+    # Validar se o médico tem acesso ao paciente
+    binds = get_user_active_binds(session, doctor)
+    if not binds or test.patient_id not in [bind.patient_id for bind in binds]:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
+        )
+
+    # Verificar se é um teste de espiral
+    if test.test_type != TestType.SPIRAL_TEST:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Este teste não é um teste de espiral.",
+        )
+
+    # Buscar o teste de espiral
+    spiral_test = session.query(SpiralTest).filter(SpiralTest.id == test_id).first()
+
+    if not spiral_test or not spiral_test.spiral_image_data:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Imagem não disponível para este teste.",
+        )
+
+    return (
+        spiral_test.spiral_image_data,
+        spiral_test.spiral_image_filename or "spiral.png",
+        spiral_test.spiral_image_content_type or "image/png",
+    )
+
+
+def get_voice_audio(session: Session, doctor: User, test_id: int) -> tuple[bytes, str, str]:
+    """
+    Recupera o áudio de um teste de voz.
+
+    Args:
+        session: Sessão do banco de dados
+        doctor: Médico logado
+        test_id: ID do teste
+
+    Returns:
+        tuple: (audio_data, filename, content_type)
+
+    Raises:
+        HTTPException: Se teste não existe, não é voz, médico não tem acesso, ou áudio não disponível
+    """
+    # Buscar o teste
+    test = session.query(Test).filter(Test.id == test_id).first()
+
+    if not test:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Teste não encontrado."
+        )
+
+    # Validar se o médico tem acesso ao paciente
+    binds = get_user_active_binds(session, doctor)
+    if not binds or test.patient_id not in [bind.patient_id for bind in binds]:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
+        )
+
+    # Verificar se é um teste de voz
+    if test.test_type != TestType.VOICE_TEST:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail="Este teste não é um teste de voz."
+        )
+
+    # Buscar o teste de voz
+    voice_test = session.query(VoiceTest).filter(VoiceTest.id == test_id).first()
+
+    if not voice_test or not voice_test.voice_audio_data:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Áudio não disponível para este teste.",
+        )
+
+    return (
+        voice_test.voice_audio_data,
+        voice_test.voice_audio_filename or "voice.webm",
+        voice_test.voice_audio_content_type or "audio/webm",
+    )

@@ -70,13 +70,19 @@ CREATE TABLE IF NOT EXISTS "test" (
 
 CREATE TABLE IF NOT EXISTS "voice_test" (
   "id" integer PRIMARY KEY REFERENCES "test" ("id"),
-  "record_duration" FLOAT NOT NULL
+  "record_duration" FLOAT NOT NULL,
+  "voice_audio_data" BYTEA DEFAULT NULL,
+  "voice_audio_filename" VARCHAR(255) DEFAULT NULL,
+  "voice_audio_content_type" VARCHAR(100) DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "spiral_test" (
   "id" integer PRIMARY KEY REFERENCES "test" ("id"),
   "draw_duration" FLOAT NOT NULL,
-  "method" spiral_methods_enum NOT NULL
+  "method" spiral_methods_enum NOT NULL,
+  "spiral_image_data" BYTEA DEFAULT NULL,
+  "spiral_image_filename" VARCHAR(255) DEFAULT NULL,
+  "spiral_image_content_type" VARCHAR(100) DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "note" (

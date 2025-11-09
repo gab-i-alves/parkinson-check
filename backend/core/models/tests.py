@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, func
+from sqlalchemy import ForeignKey, LargeBinary, String, func
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -45,6 +45,17 @@ class VoiceTest(Test):
     id: Mapped[int] = mapped_column(ForeignKey("test.id"), primary_key=True, init=False)
     record_duration: Mapped[float] = mapped_column(nullable=False)
 
+    # Campos para armazenar o áudio
+    voice_audio_data: Mapped[bytes | None] = mapped_column(
+        LargeBinary, nullable=True, default=None, doc="Áudio da voz em bytes"
+    )
+    voice_audio_filename: Mapped[str | None] = mapped_column(
+        String, nullable=True, default=None, doc="Nome original do arquivo de áudio"
+    )
+    voice_audio_content_type: Mapped[str | None] = mapped_column(
+        String, nullable=True, default=None, doc="Content-Type do arquivo (ex: audio/webm)"
+    )
+
     __mapper_args__ = {
         "polymorphic_identity": TestType.VOICE_TEST,
     }
@@ -58,6 +69,17 @@ class SpiralTest(Test):
     draw_duration: Mapped[float] = mapped_column(nullable=False)
     method: Mapped[SpiralMethods] = mapped_column(
         "method", PG_ENUM(SpiralMethods, name="spiral_methods_enum", create_type=True)
+    )
+
+    # Campos para armazenar a imagem
+    spiral_image_data: Mapped[bytes | None] = mapped_column(
+        LargeBinary, nullable=True, default=None, doc="Imagem da espiral em bytes"
+    )
+    spiral_image_filename: Mapped[str | None] = mapped_column(
+        String, nullable=True, default=None, doc="Nome original do arquivo de imagem"
+    )
+    spiral_image_content_type: Mapped[str | None] = mapped_column(
+        String, nullable=True, default=None, doc="Content-Type do arquivo (ex: image/png)"
     )
 
     __mapper_args__ = {
