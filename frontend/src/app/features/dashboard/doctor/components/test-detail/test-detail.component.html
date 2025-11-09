@@ -1,9 +1,15 @@
 <div class="min-h-screen bg-gray-100 relative overflow-hidden">
   <!-- Background decorativo -->
   <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
-    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
-    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
+    <div
+      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
+    ></div>
+    <div
+      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
+    ></div>
+    <div
+      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
+    ></div>
   </div>
   <div class="container max-w-7xl mx-auto px-6 py-8 relative">
     <div class="mb-6">
@@ -34,14 +40,20 @@
         <div
           class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"
         ></div>
-        <p class="mt-4 text-sm text-gray-600 font-medium">Carregando detalhes do teste...</p>
+        <p class="mt-4 text-sm text-gray-600 font-medium">
+          Carregando detalhes do teste...
+        </p>
       </div>
     </div>
     } @if (errorMessage()) {
-    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-red-200/50 p-6">
+    <div
+      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-red-200/50 p-6"
+    >
       <div class="flex">
         <div class="flex-shrink-0">
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 border-2 border-red-200">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 border-2 border-red-200"
+          >
             <svg
               class="h-8 w-8 text-red-600"
               fill="currentColor"
@@ -62,7 +74,9 @@
     </div>
     } @if (testDetail() && !isLoading()) {
     <div class="space-y-6">
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+      <div
+        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden"
+      >
         <div class="px-8 py-6 border-b border-gray-200">
           <h2 class="text-3xl font-bold text-gray-900">Detalhes do Teste</h2>
         </div>
@@ -105,7 +119,7 @@
                   class="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
                   [class]="getClassificationColor(testDetail()!.classification)"
                 >
-                  {{ testDetail()!.classification }}
+                  {{ getClassificationLabel(testDetail()!.classification) }}
                 </span>
               </dd>
             </div>
@@ -122,7 +136,7 @@
             <div>
               <dt class="text-sm font-medium text-gray-500">Método</dt>
               <dd class="mt-1 text-lg text-gray-900 font-semibold">
-                {{ spiralTestDetail()!.method }}
+                {{ getSpiralMethodLabel(spiralTestDetail()!.method) }}
               </dd>
             </div>
             } @if (voiceTestDetail()) {
@@ -139,14 +153,16 @@
         </div>
       </div>
 
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+      <div
+        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden"
+      >
         <div
           class="px-8 py-6 border-b border-gray-200 flex justify-between items-center"
         >
           <h3 class="text-xl font-bold text-gray-900">Anotações Médicas</h3>
           <button
             (click)="toggleAddNote()"
-            class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl transition-all"
+            class="inline-flex items-center rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl transition-all"
           >
             @if (isAddingNote()) { Cancelar } @else {
             <svg
@@ -181,18 +197,17 @@
                   id="noteContent"
                   formControlName="content"
                   rows="4"
-                  class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
                   placeholder="Digite sua anotação aqui (mínimo 10 caracteres)..."
                 ></textarea>
-                @if (noteForm.get('content')?.errors && noteForm.get('content')?.touched) {
-                  <p class="mt-1 text-sm text-red-600">
-                    @if (noteForm.get('content')?.errors?.['minlength']) {
-                      A anotação deve ter pelo menos 10 caracteres.
-                    }
-                    @if (noteForm.get('content')?.errors?.['maxlength']) {
-                      A anotação não pode exceder 5000 caracteres.
-                    }
-                  </p>
+                @if (noteForm.get('content')?.errors &&
+                noteForm.get('content')?.touched) {
+                <p class="mt-1 text-sm text-red-600">
+                  @if (noteForm.get('content')?.errors?.['minlength']) { A
+                  anotação deve ter pelo menos 10 caracteres. } @if
+                  (noteForm.get('content')?.errors?.['maxlength']) { A anotação
+                  não pode exceder 5000 caracteres. }
+                </p>
                 }
               </div>
 
@@ -206,10 +221,10 @@
                 <select
                   id="noteCategory"
                   formControlName="category"
-                  class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
                 >
                   @for (cat of categories; track cat) {
-                    <option [value]="cat">{{ NoteCategoryLabels[cat] }}</option>
+                  <option [value]="cat">{{ NoteCategoryLabels[cat] }}</option>
                   }
                 </select>
               </div>
@@ -240,7 +255,7 @@
                 <button
                   type="submit"
                   [disabled]="noteForm.invalid"
-                  class="rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  class="rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   Salvar Anotação
                 </button>
@@ -253,7 +268,9 @@
         <div class="px-8 py-6">
           @if (notes().length === 0) {
           <div class="text-center py-12">
-            <div class="flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 border-2 border-gray-200 mx-auto mb-4">
+            <div
+              class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 border-2 border-gray-200 mx-auto mb-4"
+            >
               <svg
                 class="h-10 w-10 text-gray-400"
                 fill="none"
@@ -278,26 +295,30 @@
           } @else {
           <div class="space-y-4">
             @for (note of notes(); track note.id) {
-            <div class="border border-gray-200 rounded-xl p-6 bg-white/50">
+            <div class="border border-gray-200 rounded-lg p-6 bg-white/50">
               @if (editingNoteId() === note.id) {
               <form [formGroup]="editForm" (ngSubmit)="saveEdit(note.id)">
                 <div class="space-y-3">
                   <textarea
                     formControlName="content"
                     rows="3"
-                    class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
+                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
                   ></textarea>
 
                   <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                    <label
+                      class="block text-sm font-semibold text-gray-700 mb-1"
+                    >
                       Categoria
                     </label>
                     <select
                       formControlName="category"
-                      class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
+                      class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
                     >
                       @for (cat of categories; track cat) {
-                        <option [value]="cat">{{ NoteCategoryLabels[cat] }}</option>
+                      <option [value]="cat">
+                        {{ NoteCategoryLabels[cat] }}
+                      </option>
                       }
                     </select>
                   </div>
@@ -324,7 +345,7 @@
                     <button
                       type="submit"
                       [disabled]="editForm.invalid"
-                      class="rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl disabled:bg-gray-400"
+                      class="rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl disabled:bg-gray-400"
                     >
                       Salvar
                     </button>
@@ -345,7 +366,13 @@
                     <!-- Badge de Categoria -->
                     <span
                       class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border"
-                      [class]="NoteCategoryColors[note.category].bg + ' ' + NoteCategoryColors[note.category].text + ' ' + NoteCategoryColors[note.category].border"
+                      [class]="
+                        NoteCategoryColors[note.category].bg +
+                        ' ' +
+                        NoteCategoryColors[note.category].text +
+                        ' ' +
+                        NoteCategoryColors[note.category].border
+                      "
                     >
                       {{ NoteCategoryLabels[note.category] }}
                     </span>
@@ -362,17 +389,13 @@
                     >
                       Privado
                     </span>
-                    }
-
-                    @if (!isOwnNote(note)) {
+                    } @if (!isOwnNote(note)) {
                     <span
                       class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-violet-100 text-violet-800"
                     >
                       Outro médico
                     </span>
-                    }
-
-                    @if (isNoteEdited(note)) {
+                    } @if (isNoteEdited(note)) {
                     <span
                       class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-yellow-100 text-yellow-800"
                       [title]="'Editado em ' + formatDate(note.updated_at)"
@@ -449,13 +472,15 @@
 
 <!-- Modal de confirmação de exclusão de anotação -->
 @if (showDeleteNoteModal()) {
-  <app-confirmation-modal
-    [title]="'Deletar Anotação'"
-    [message]="'Tem certeza que deseja deletar esta anotação?<br><br>Esta ação não poderá ser desfeita.'"
-    [confirmButtonText]="'Sim, deletar'"
-    [confirmButtonClass]="'bg-red-600 hover:bg-red-700 text-white'"
-    [cancelButtonText]="'Cancelar'"
-    (confirm)="confirmDeleteNote()"
-    (cancel)="cancelDeleteNote()"
-  />
+<app-confirmation-modal
+  [title]="'Deletar Anotação'"
+  [message]="
+    'Tem certeza que deseja deletar esta anotação?<br><br>Esta ação não poderá ser desfeita.'
+  "
+  [confirmButtonText]="'Sim, deletar'"
+  [confirmButtonClass]="'bg-red-600 hover:bg-red-700 text-white'"
+  [cancelButtonText]="'Cancelar'"
+  (confirm)="confirmDeleteNote()"
+  (cancel)="cancelDeleteNote()"
+/>
 }

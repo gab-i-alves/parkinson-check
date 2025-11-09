@@ -1,9 +1,15 @@
 <div class="min-h-screen bg-gray-100 relative overflow-hidden">
   <!-- Background decorativo -->
   <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
-    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
-    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
+    <div
+      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
+    ></div>
+    <div
+      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
+    ></div>
+    <div
+      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
+    ></div>
   </div>
   <div class="container max-w-7xl mx-auto px-6 py-8 relative">
     @if (isLoading()) {
@@ -12,12 +18,18 @@
         <div
           class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"
         ></div>
-        <p class="text-gray-600 mt-4 text-sm font-medium">Carregando dados do paciente...</p>
+        <p class="text-gray-600 mt-4 text-sm font-medium">
+          Carregando dados do paciente...
+        </p>
       </div>
     </div>
     } @else if (errorMessage()) {
-    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-red-200/50 p-8 text-center">
-      <div class="flex h-16 w-16 items-center justify-center rounded-xl bg-red-100 border-2 border-red-200 mx-auto mb-4">
+    <div
+      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-red-200/50 p-8 text-center"
+    >
+      <div
+        class="flex h-16 w-16 items-center justify-center rounded-lg bg-red-100 border-2 border-red-200 mx-auto mb-4"
+      >
         <svg
           class="h-10 w-10 text-red-600"
           fill="none"
@@ -35,7 +47,7 @@
       <p class="text-red-800 font-semibold text-lg">{{ errorMessage() }}</p>
       <button
         (click)="goBack()"
-        class="mt-6 rounded-xl bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-red-700 hover:shadow-xl transition-all"
+        class="mt-6 rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-red-700 hover:shadow-xl transition-all"
       >
         Voltar
       </button>
@@ -43,11 +55,13 @@
     } @else if (profile(); as patientProfile) {
     <div class="space-y-6">
       <!-- Header com informações básicas -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+      <div
+        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8"
+      >
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-4">
             <div
-              class="w-16 h-16 bg-violet-100 rounded-xl flex items-center justify-center border-2 border-violet-200"
+              class="w-16 h-16 bg-violet-100 rounded-lg flex items-center justify-center border-2 border-violet-200"
             >
               <span class="text-2xl font-bold text-violet-700">{{
                 patientProfile.name.charAt(0).toUpperCase()
@@ -62,17 +76,20 @@
                 <span
                   class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
                   [ngClass]="{
-                    'bg-green-100 text-green-800': patientProfile.status === 'stable',
-                    'bg-yellow-100 text-yellow-800': patientProfile.status === 'attention',
-                    'bg-red-100 text-red-800': patientProfile.status === 'critical'
+                    'bg-green-100 text-green-800':
+                      patientProfile.status === 'stable',
+                    'bg-yellow-100 text-yellow-800':
+                      patientProfile.status === 'attention',
+                    'bg-red-100 text-red-800':
+                      patientProfile.status === 'critical'
                   }"
                 >
                   {{
-                    patientProfile.status === 'stable'
-                      ? 'Estável'
-                      : patientProfile.status === 'attention'
-                      ? 'Atenção'
-                      : 'Crítico'
+                    patientProfile.status === "stable"
+                      ? "Estável"
+                      : patientProfile.status === "attention"
+                      ? "Atenção"
+                      : "Crítico"
                   }}
                 </span>
               </div>
@@ -88,7 +105,9 @@
       </div>
 
       <!-- Navegação de Tabs -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+      <div
+        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden"
+      >
         <div class="border-b border-gray-200">
           <nav class="flex -mb-px" aria-label="Tabs">
             <button
@@ -147,10 +166,7 @@
           } @case ('statistics') {
           <app-statistics-tab [statistics]="statistics()" />
           } @case ('charts') {
-          <app-charts-tab
-            [timeline]="timeline()"
-            [statistics]="statistics()"
-          />
+          <app-charts-tab [timeline]="timeline()" [statistics]="statistics()" />
           } }
         </div>
       </div>
