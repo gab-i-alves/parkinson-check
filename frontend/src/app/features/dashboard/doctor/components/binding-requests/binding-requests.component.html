@@ -275,7 +275,7 @@
                     <div class="text-sm font-medium text-gray-900">
                       {{ patient.name }}
                     </div>
-                    <div class="text-sm text-gray-500">{{ patient.cpf }}</div>
+                    <div class="text-sm text-gray-500">{{ patient.cpf | cpf }}</div>
                   </div>
                 </div>
               </td>
@@ -291,7 +291,7 @@
                 </span>
               </td>
               <td
-                class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium space-x-3"
+                class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
               >
                 <button
                   (click)="sendInvite(patient.id)"
@@ -299,12 +299,11 @@
                     patient.bindingStatus === 'pending' ||
                     patient.bindingStatus === 'linked'
                   "
-                  [ngClass]="{
-                    'text-violet-600 hover:text-violet-900':
-                      patient.bindingStatus === 'none',
-                    'text-gray-400 cursor-not-allowed':
-                      patient.bindingStatus !== 'none'
-                  }"
+                  [class]="
+                    patient.bindingStatus === 'none'
+                      ? 'inline-flex items-center px-4 py-2 border border-violet-200 text-sm font-semibold rounded-lg text-violet-700 bg-violet-50/50 hover:bg-violet-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-all'
+                      : 'inline-flex items-center px-4 py-2 border border-gray-200 text-sm font-semibold rounded-lg text-gray-400 bg-gray-50/50 cursor-not-allowed'
+                  "
                 >
                   @if (patient.bindingStatus === 'none') {
                   <span>Enviar Convite</span>
@@ -471,13 +470,6 @@
       </div>
       } }
 
-      <!-- Modal de Perfil do Paciente -->
-      <app-patient-profile-modal
-        [patient]="selectedPatient()"
-        [isVisible]="isPatientProfileModalVisible()"
-        (close)="closePatientProfile()"
-      ></app-patient-profile-modal>
-
       <!-- Conteúdo aba Enviadas -->
       @if (activeTab() === 'sent') { @if (sentRequests().length === 0) {
       <div class="py-12 text-center">
@@ -571,3 +563,10 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de Perfil do Paciente - FORA DO CONTAINER -->
+<app-patient-profile-modal
+  [patient]="selectedPatient()"
+  [isVisible]="isPatientProfileModalVisible()"
+  (close)="closePatientProfile()"
+></app-patient-profile-modal>
