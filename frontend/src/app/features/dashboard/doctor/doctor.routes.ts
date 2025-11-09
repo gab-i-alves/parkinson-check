@@ -46,8 +46,8 @@ export const DOCTOR_ROUTES: Routes = [
   {
     path: 'clinical-test/result',
     loadComponent: () =>
-      import('./components/clinical-test-result/clinical-test-result.component').then(
-        (c) => c.ClinicalTestResultComponent
+      import('../shared/components/test-result/test-result.component').then(
+        (c) => c.TestResultComponent
       ),
   },
   {

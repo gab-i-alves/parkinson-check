@@ -42,4 +42,10 @@ export const TEST_ROUTES: Routes = [
     loadComponent: () =>
       import('./tests/components/voice-test/voice-test.component').then((c) => c.VoiceTestComponent),
   },
+  {
+    path: 'result',
+    title: 'Resultado do Teste',
+    loadComponent: () =>
+      import('./shared/components/test-result/test-result.component').then((c) => c.TestResultComponent),
+  },
 ];
