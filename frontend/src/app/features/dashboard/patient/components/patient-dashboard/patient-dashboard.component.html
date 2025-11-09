@@ -1,465 +1,250 @@
 <div class="min-h-screen bg-gray-100 relative overflow-hidden">
   <!-- Background decorativo -->
   <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div
-      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
-    ></div>
-    <div
-      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
-    ></div>
-    <div
-      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
-    ></div>
+    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
+    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
   </div>
 
   @if (isLoading()) {
   <div class="flex h-screen items-center justify-center">
     <div class="text-center">
-      <svg
-        class="inline-block animate-spin rounded-full h-12 w-12 text-violet-700"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        ></circle>
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
+      <svg class="inline-block animate-spin rounded-full h-12 w-12 text-violet-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
-      <p class="text-gray-600 mt-4 font-medium">
-        Carregando seus resultados...
-      </p>
+      <p class="text-gray-600 mt-4 font-medium">Carregando dashboard comparativo...</p>
     </div>
+  </div>
+  } @else if (!comparativeStats()) {
+  <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center mx-6 my-8">
+    <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 border-2 border-gray-200 mx-auto mb-4">
+      <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-900">Você ainda não possui testes clínicos realizados</h3>
+    <p class="text-sm text-gray-600 mt-2">Consulte seu médico para realizar testes clínicos</p>
   </div>
   } @else {
   <div class="container mx-auto px-6 py-8 space-y-8 relative">
-    <header
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8"
-    >
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
       <div class="flex items-center space-x-3">
-        <div
-          class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg"
-        >
-          <svg
-            class="h-8 w-8 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
+        <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg">
+          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
           </svg>
         </div>
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p class="text-sm text-gray-600 mt-1">
-            Acompanhe seus resultados e evolução
-          </p>
+          <h1 class="text-3xl font-bold text-gray-900">Dashboard Comparativo</h1>
+          <p class="text-sm text-gray-600 mt-1">Veja como você se compara com outros pacientes</p>
         </div>
       </div>
     </header>
 
-    @if (!statistics()) {
-    <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center"
-    >
-      <div
-        class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-violet-700"
-      ></div>
-      <p class="text-gray-600 mt-4 font-medium">Carregando estatísticas...</p>
+    <!-- Card Perfil do Paciente -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+      <h2 class="text-lg font-bold text-gray-900 mb-4">Seu Perfil</h2>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="text-center p-3 bg-violet-50 rounded-lg">
+          <p class="text-xs text-gray-600">Idade</p>
+          <p class="text-xl font-bold text-gray-900">{{ comparativeStats()!.demographics.age }} anos</p>
+        </div>
+        <div class="text-center p-3 bg-blue-50 rounded-lg">
+          <p class="text-xs text-gray-600">Faixa Etária</p>
+          <p class="text-xl font-bold text-gray-900">{{ comparativeStats()!.demographics.age_group }}</p>
+        </div>
+        <div class="text-center p-3 bg-pink-50 rounded-lg">
+          <p class="text-xs text-gray-600">Gênero</p>
+          <p class="text-xl font-bold text-gray-900">{{ comparativeStats()!.demographics.gender === 'male' ? 'Masculino' : 'Feminino' }}</p>
+        </div>
+        <div class="text-center p-3 bg-green-50 rounded-lg">
+          <p class="text-xs text-gray-600">Cidade</p>
+          <p class="text-sm font-bold text-gray-900">{{ comparativeStats()!.demographics.city }}</p>
+        </div>
+        <div class="text-center p-3 bg-orange-50 rounded-lg">
+          <p class="text-xs text-gray-600">Estado</p>
+          <p class="text-sm font-bold text-gray-900">{{ comparativeStats()!.demographics.state }}</p>
+        </div>
+      </div>
     </div>
-    } @else if (statistics()!.total_tests === 0) {
-    <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center"
-    >
-      <div
-        class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 border-2 border-gray-200 mx-auto mb-4"
-      >
-        <svg
-          class="w-10 h-10 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
+
+    <!-- Grid 1: Você vs Média Global + Card Percentil -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Gráfico de Barras Verticais: Você vs Média Global -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Você vs Média Global</h3>
+        <div class="relative" style="height: 300px;">
+          <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType"></canvas>
+        </div>
+        <p class="text-xs text-gray-500 mt-3 text-center">Comparando com {{ comparativeStats()!.total_patients_sharing_data }} pacientes</p>
       </div>
-      <h3 class="text-lg font-semibold text-gray-900">
-        Você ainda não possui testes clínicos realizados
-      </h3>
-      <p class="text-sm text-gray-600 mt-2">
-        Consulte seu médico para realizar testes clínicos
-      </p>
+
+      <!-- Card Percentil com Barra de Progresso -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Seu Percentil no Sistema</h3>
+        @if (comparativeStats()!.patient_percentile !== null) {
+        <div class="space-y-4">
+          <!-- Medalhão e Label -->
+          <div class="text-center">
+            <div class="text-5xl mb-2">{{ getPercentileMedal(comparativeStats()!.patient_percentile) }}</div>
+            <p class="text-3xl font-bold text-gray-900 mb-1">{{ comparativeStats()!.patient_percentile!.toFixed(0) }}º</p>
+            <p class="text-lg font-semibold" [ngClass]="{'text-green-600': comparativeStats()!.patient_percentile! >= 75, 'text-blue-600': comparativeStats()!.patient_percentile! >= 50 && comparativeStats()!.patient_percentile! < 75, 'text-orange-600': comparativeStats()!.patient_percentile! >= 25 && comparativeStats()!.patient_percentile! < 50, 'text-red-600': comparativeStats()!.patient_percentile! < 25}">
+              {{ getPercentileLabel(comparativeStats()!.patient_percentile) }}
+            </p>
+          </div>
+
+          <!-- Barra de Progresso -->
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs text-gray-600">
+              <span>0%</span>
+              <span>50%</span>
+              <span>100%</span>
+            </div>
+            <div class="relative h-8 bg-gray-200 rounded-full overflow-hidden">
+              <!-- Gradient background para contexto -->
+              <div class="absolute inset-0 bg-gradient-to-r from-red-300 via-orange-300 via-yellow-300 via-blue-300 to-green-400"></div>
+
+              <!-- Barra de progresso -->
+              <div
+                class="absolute top-0 left-0 h-full bg-gray-200 transition-all duration-500"
+                [style.width.%]="100 - comparativeStats()!.patient_percentile!">
+              </div>
+
+              <!-- Indicador de posição -->
+              <div
+                class="absolute top-0 h-full w-1 bg-gray-900 shadow-lg transition-all duration-500"
+                [style.left.%]="comparativeStats()!.patient_percentile!"
+                [attr.title]="'Percentil ' + comparativeStats()!.patient_percentile!.toFixed(0)">
+                <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-900 rounded-full"></div>
+                <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-900 rounded-full"></div>
+              </div>
+            </div>
+            <p class="text-sm text-gray-600 text-center mt-2">Você está melhor que <span class="font-bold text-violet-700">{{ comparativeStats()!.patient_percentile!.toFixed(0) }}%</span> dos pacientes</p>
+          </div>
+        </div>
+        } @else {
+        <p class="text-center text-gray-500 py-8">Dados insuficientes</p>
+        }
+      </div>
     </div>
-    } @else {
-    <section class="space-y-6">
-      <!-- Grid de Cards de Estatísticas -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Card: Total de Testes -->
-        <div
-          class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-        >
-          <div class="flex items-start">
-            <div
-              class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-100 border-2 border-violet-200 flex-shrink-0"
-            >
-              <svg
-                class="h-7 w-7 text-violet-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
+
+    <!-- Gráfico de Linha: Você vs Faixa Etária vs Região -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Comparação por Faixa Etária e Região</h3>
+        <div class="flex items-center space-x-2">
+          <label for="regionFilter" class="text-sm text-gray-700">Região:</label>
+          <select id="regionFilter" [ngModel]="regionFilter()" (ngModelChange)="onRegionFilterChange($event)" class="rounded-md border-gray-300 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+            <option value="city">Cidade</option>
+            <option value="state">Estado</option>
+            <option value="country">País</option>
+          </select>
+        </div>
+      </div>
+      <div class="relative" style="height: 300px;">
+        <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType"></canvas>
+      </div>
+    </div>
+
+    <!-- Grid 2: Comparação por Gênero + Comparação Regional + Card Ranking -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Gráfico de Barras Horizontais: Por Gênero -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Comparação por Gênero</h3>
+        <div class="relative" style="height: 250px;">
+          <canvas baseChart [data]="horizontalBarChartData" [options]="horizontalBarChartOptions" [type]="horizontalBarChartType"></canvas>
+        </div>
+      </div>
+
+      <!-- Card Multi-Regional -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Comparação Regional</h3>
+        <div class="space-y-4">
+          @if (comparativeStats()!.regional_avg.city !== null) {
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-gray-700">Cidade ({{ comparativeStats()!.demographics.city }})</span>
+              <span class="font-semibold">{{ comparativeStats()!.regional_avg.city!.toFixed(2) }}</span>
             </div>
-            <div class="ml-4 flex-1">
-              <p class="text-sm font-medium text-violet-700">Total de Testes</p>
-              <p class="text-3xl font-bold text-gray-900 mt-2">
-                {{ statistics()!.total_tests }}
-              </p>
-              <p class="text-xs text-gray-700 mt-2">
-                Espiral: {{ statistics()!.total_spiral_tests }} | Voz:
-                {{ statistics()!.total_voice_tests }}
-              </p>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-violet-600 h-2 rounded-full" [style.width.%]="(comparativeStats()!.regional_avg.city! * 100)"></div>
             </div>
           </div>
-        </div>
-
-        <!-- Card: Último Teste -->
-        <div
-          class="bg-orange-50/50 border border-orange-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-        >
-          <div class="flex items-start">
-            <div
-              class="flex h-14 w-14 items-center justify-center rounded-lg bg-orange-100 border-2 border-orange-200 flex-shrink-0"
-            >
-              <svg
-                class="h-7 w-7 text-orange-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+          }
+          @if (comparativeStats()!.regional_avg.state !== null) {
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-gray-700">Estado ({{ comparativeStats()!.demographics.state }})</span>
+              <span class="font-semibold">{{ comparativeStats()!.regional_avg.state!.toFixed(2) }}</span>
             </div>
-            <div class="ml-4 flex-1">
-              <p class="text-sm font-medium text-orange-700">Último Teste</p>
-              <p class="text-lg font-bold text-gray-900 mt-2">
-                {{ formatDate(statistics()!.last_test_date) }}
-              </p>
-              @if (statistics()!.days_since_last_test !== null) {
-              <p class="text-xs text-gray-700 mt-2">
-                Há {{ statistics()!.days_since_last_test }} dia(s)
-              </p>
-              }
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" [style.width.%]="(comparativeStats()!.regional_avg.state! * 100)"></div>
             </div>
           </div>
-        </div>
-
-        <!-- Card: Tendência -->
-        <div
-          class="bg-indigo-50/50 border border-indigo-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-        >
-          <div class="flex items-start">
-            <div
-              class="flex h-14 w-14 items-center justify-center rounded-lg bg-indigo-100 border-2 border-indigo-200 flex-shrink-0"
-            >
-              <svg
-                class="h-7 w-7 text-indigo-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                />
-              </svg>
+          }
+          @if (comparativeStats()!.regional_avg.country !== null) {
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-gray-700">País ({{ comparativeStats()!.demographics.country }})</span>
+              <span class="font-semibold">{{ comparativeStats()!.regional_avg.country!.toFixed(2) }}</span>
             </div>
-            <div class="ml-4 flex-1">
-              <p class="text-sm font-medium text-indigo-700">Tendência Geral</p>
-              <p
-                class="text-2xl font-bold mt-2"
-                [ngClass]="getTrendColor(statistics()!.trend)"
-              >
-                {{ getTrendIcon(statistics()!.trend) }}
-                {{ getTrendLabel(statistics()!.trend) }}
-              </p>
-              <p class="text-xs text-gray-700 mt-2">
-                Variação: {{ statistics()!.trend_percentage.toFixed(1) }}%
-              </p>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-green-600 h-2 rounded-full" [style.width.%]="(comparativeStats()!.regional_avg.country! * 100)"></div>
             </div>
           </div>
-        </div>
-
-        <!-- Card: Intervalo Médio -->
-        <div
-          class="bg-pink-50/50 border border-pink-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-        >
-          <div class="flex items-start">
-            <div
-              class="flex h-14 w-14 items-center justify-center rounded-lg bg-pink-100 border-2 border-pink-200 flex-shrink-0"
-            >
-              <svg
-                class="h-7 w-7 text-pink-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+          }
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-gray-700 font-bold">Você</span>
+              <span class="font-bold text-violet-700">{{ comparativeStats()!.patient_avg_score.toFixed(2) }}</span>
             </div>
-            <div class="ml-4 flex-1">
-              <p class="text-sm font-medium text-pink-700">Intervalo Médio</p>
-              <p class="text-3xl font-bold text-gray-900 mt-2">
-                @if (statistics()!.avg_test_interval_days !== null) {
-                {{ statistics()!.avg_test_interval_days!.toFixed(0) }}
-                <span class="text-lg">dias</span>
-                } @else {
-                <span class="text-lg">N/A</span>
-                }
-              </p>
-              <p class="text-xs text-gray-700 mt-2">Entre testes</p>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-violet-700 h-2 rounded-full" [style.width.%]="(comparativeStats()!.patient_avg_score * 100)"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Scores Médios -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Score Médio Espiral -->
-        <div
-          class="bg-purple-50/50 border border-purple-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all"
-        >
-          <h3 class="text-lg font-bold text-gray-900 mb-4">
-            Testes de Espiral
-          </h3>
-          <div class="space-y-3">
-            <div>
-              <p class="text-sm font-medium text-purple-700">Score Médio</p>
-              <p class="text-3xl font-bold text-gray-900 mt-1">
-                {{ formatScore(statistics()!.avg_spiral_score) }}
-              </p>
-            </div>
-            <div
-              class="flex justify-between text-sm pt-3 border-t border-purple-200"
-            >
-              <div>
-                <p class="text-purple-700">Melhor</p>
-                <p class="font-semibold text-gray-900 mt-1">
-                  {{ formatScore(statistics()!.best_spiral_score) }}
-                </p>
-              </div>
-              <div>
-                <p class="text-purple-700">Pior</p>
-                <p class="font-semibold text-gray-900 mt-1">
-                  {{ formatScore(statistics()!.worst_spiral_score) }}
-                </p>
-              </div>
-            </div>
+      <!-- Card Medalhão/Ranking -->
+      <div class="bg-gradient-to-br from-violet-50 to-purple-50 rounded-lg shadow-md p-6 border-2 border-violet-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 text-center">Sua Posição</h3>
+        @if (comparativeStats()!.patient_percentile !== null) {
+        <div class="text-center">
+          <div class="text-6xl mb-3">{{ getPercentileMedal(comparativeStats()!.patient_percentile) || '🏅' }}</div>
+          <p class="text-2xl font-bold text-violet-700 mb-2">{{ getPercentileLabel(comparativeStats()!.patient_percentile) }}</p>
+          <p class="text-sm text-gray-700">Percentil {{ comparativeStats()!.patient_percentile!.toFixed(0) }}º</p>
+          <div class="mt-4 pt-4 border-t border-violet-200">
+            <p class="text-xs text-gray-600">Faixa Etária: {{ comparativeStats()!.demographics.age_group }} anos</p>
+            <p class="text-xs text-gray-600 mt-1">Pacientes na sua faixa: {{ comparativeStats()!.total_patients_in_age_group }}</p>
           </div>
         </div>
+        } @else {
+        <p class="text-center text-gray-500 py-8">Dados insuficientes</p>
+        }
+      </div>
+    </div>
 
-        <!-- Score Médio Voz -->
-        <div
-          class="bg-green-50/50 border border-green-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all"
-        >
-          <h3 class="text-lg font-bold text-gray-900 mb-4">Testes de Voz</h3>
-          <div class="space-y-3">
-            <div>
-              <p class="text-sm font-medium text-green-700">Score Médio</p>
-              <p class="text-3xl font-bold text-gray-900 mt-1">
-                {{ formatScore(statistics()!.avg_voice_score) }}
-              </p>
-            </div>
-            <div
-              class="flex justify-between text-sm pt-3 border-t border-green-200"
-            >
-              <div>
-                <p class="text-green-700">Melhor</p>
-                <p class="font-semibold text-gray-900 mt-1">
-                  {{ formatScore(statistics()!.best_voice_score) }}
-                </p>
-              </div>
-              <div>
-                <p class="text-green-700">Pior</p>
-                <p class="font-semibold text-gray-900 mt-1">
-                  {{ formatScore(statistics()!.worst_voice_score) }}
-                </p>
-              </div>
-            </div>
-          </div>
+    <!-- Informações sobre Privacidade -->
+    <div class="bg-blue-50/50 border border-blue-200 rounded-2xl p-6 shadow-md">
+      <div class="flex items-start space-x-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 border-2 border-blue-200 flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-sm font-bold text-gray-900 mb-2">Sobre as Estatísticas Comparativas</h4>
+          <p class="text-sm text-gray-700">
+            • Todas as comparações são feitas de forma anônima e agregada<br>
+            • Apenas pacientes que autorizaram o compartilhamento de dados são incluídos nas estatísticas<br>
+            • Você pode alterar suas preferências de compartilhamento nas Configurações<br>
+            • Os dados são utilizados apenas para fins estatísticos e nunca são compartilhados individualmente
+          </p>
         </div>
       </div>
-
-      <!-- Distribuição de Classificações -->
-      <div
-        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6"
-      >
-        <h3 class="text-lg font-bold text-gray-900 mb-4">
-          Distribuição de Classificações
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div
-            class="bg-green-50/50 rounded-lg p-4 border border-green-200 hover:shadow-md transition-all"
-          >
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-green-700">
-                  Classificados como SAUDÁVEL
-                </p>
-                <p class="text-3xl font-bold text-gray-900 mt-2">
-                  {{ statistics()!.healthy_classification_count }}
-                </p>
-                @if (statistics()!.total_tests > 0) {
-                <p class="text-xs text-green-700 mt-1">
-                  {{
-                    (
-                      (statistics()!.healthy_classification_count /
-                        statistics()!.total_tests) *
-                      100
-                    ).toFixed(1)
-                  }}% do total
-                </p>
-                }
-              </div>
-              <div
-                class="flex h-14 w-14 items-center justify-center rounded-lg bg-green-100 border-2 border-green-200 flex-shrink-0"
-              >
-                <svg
-                  class="h-8 w-8 text-green-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="bg-red-50/50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all"
-          >
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-red-700">
-                  Classificados como PARKINSON
-                </p>
-                <p class="text-3xl font-bold text-gray-900 mt-2">
-                  {{ statistics()!.parkinson_classification_count }}
-                </p>
-                @if (statistics()!.total_tests > 0) {
-                <p class="text-xs text-red-700 mt-1">
-                  {{
-                    (
-                      (statistics()!.parkinson_classification_count /
-                        statistics()!.total_tests) *
-                      100
-                    ).toFixed(1)
-                  }}% do total
-                </p>
-                }
-              </div>
-              <div
-                class="flex h-14 w-14 items-center justify-center rounded-lg bg-red-100 border-2 border-red-200 flex-shrink-0"
-              >
-                <svg
-                  class="h-8 w-8 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Informações Adicionais -->
-      <div
-        class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md"
-      >
-        <div class="flex items-start space-x-3">
-          <div
-            class="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-100 border-2 border-violet-200 flex-shrink-0"
-          >
-            <svg
-              class="h-5 w-5 text-violet-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <div class="flex-1">
-            <h4 class="text-sm font-bold text-gray-900 mb-2">Informações</h4>
-            <ul class="text-sm text-gray-700 space-y-1">
-              <li>
-                • Primeiro teste realizado em:
-                <strong>{{ formatDate(statistics()!.first_test_date) }}</strong>
-              </li>
-              <li>• Score abaixo de 0.80 indica resultado saudável</li>
-              <li>
-                • Score acima de 0.80 indica possível presença de Parkinson
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-    }
+    </div>
   </div>
   }
 </div>

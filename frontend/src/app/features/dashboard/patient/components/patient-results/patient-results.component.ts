@@ -6,9 +6,10 @@ import { PatientStatistics } from '../../../../../core/models/patient-statistics
 import { PatientTimeline } from '../../../../../core/models/patient-timeline.model';
 import { HistoryTabComponent } from '../../../shared/components/history-tab/history-tab.component';
 import { ChartsTabComponent } from '../../../shared/components/charts-tab/charts-tab.component';
+import { StatisticsTabComponent } from '../../../shared/components/statistics-tab/statistics-tab.component';
 import { UserService } from '../../../../../core/services/user.service';
 
-type TabType = 'charts' | 'history';
+type TabType = 'charts' | 'history' | 'statistics';
 
 @Component({
   selector: 'app-patient-results',
@@ -17,6 +18,7 @@ type TabType = 'charts' | 'history';
     CommonModule,
     ChartsTabComponent,
     HistoryTabComponent,
+    StatisticsTabComponent,
   ],
   templateUrl: './patient-results.component.html',
 })

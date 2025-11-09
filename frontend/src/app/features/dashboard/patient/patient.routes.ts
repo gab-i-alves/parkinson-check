@@ -36,4 +36,11 @@ export const PATIENT_ROUTES: Routes = [
         (c) => c.PatientTestDetailComponent
       ),
   },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./components/patient-settings/patient-settings.component').then(
+        (c) => c.PatientSettingsComponent
+      ),
+  },
 ];

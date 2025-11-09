@@ -69,6 +69,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       icon: 'clipboard',
       disabled: false,
     },
+    {
+      path: '/dashboard/settings',
+      label: 'Configurações',
+      icon: 'settings',
+      disabled: false,
+    },
   ];
 
   private doctorLinks: NavLink[] = [

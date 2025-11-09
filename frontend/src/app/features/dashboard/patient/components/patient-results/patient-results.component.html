@@ -134,6 +134,16 @@
             >
               Histórico
             </button>
+            <button
+              (click)="selectTab('statistics')"
+              [class.border-violet-500]="activeTab() === 'statistics'"
+              [class.text-violet-700]="activeTab() === 'statistics'"
+              [class.border-transparent]="activeTab() !== 'statistics'"
+              [class.text-gray-500]="activeTab() !== 'statistics'"
+              class="flex-1 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm hover:text-gray-700 hover:border-gray-300 transition-colors"
+            >
+              Estatísticas
+            </button>
           </nav>
         </div>
 
@@ -147,6 +157,8 @@
             [patientId]="patientId"
             [isPatientView]="true"
           />
+          } @case ('statistics') {
+          <app-statistics-tab [statistics]="statistics()" />
           } }
         </div>
       </div>
