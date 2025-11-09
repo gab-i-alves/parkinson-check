@@ -81,7 +81,7 @@ export class DoctorService {
   /**
    * Médico busca todos os pacientes disponíveis no sistema (exceto já vinculados).
    */
-  searchPatients(term: string, cpf: string): Observable<any[] | null> {
+  searchPatients(term: string, cpf: string, status?: string): Observable<any[] | null> {
     let params = new HttpParams();
 
     if (term) {
@@ -89,6 +89,9 @@ export class DoctorService {
     }
     if (cpf) {
       params = params.append('cpf', cpf);
+    }
+    if (status) {
+      params = params.append('status', status);
     }
 
     return this.http
