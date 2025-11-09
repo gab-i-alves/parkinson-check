@@ -76,7 +76,7 @@ export const DASHBOARD_ROUTES: Routes = [
         path: 'tests',
         canActivate: [authGuard(['paciente'])],
         loadChildren: () =>
-          import('./components/test-method-selection/test.routes').then(
+          import('./tests.routes').then(
             (r) => r.TEST_ROUTES
           ),
       },
@@ -100,16 +100,16 @@ export const DASHBOARD_ROUTES: Routes = [
         path: 'clinical-test/spiral/:patientId',
         canActivate: [authGuard(['medico'])],
         loadComponent: () =>
-          import('./components/spiral-test-webcam/spiral-test-webcam').then(
-            (c) => c.SpiralTestWebcam
+          import('./components/spiral-test-webcam/spiral-test-webcam.component').then(
+            (c) => c.SpiralTestWebcamComponent
           ),
       },
       {
         path: 'clinical-test/voice/:patientId',
         canActivate: [authGuard(['medico'])],
         loadComponent: () =>
-          import('./components/voice-test/voice-test').then(
-            (c) => c.VoiceTest
+          import('./components/voice-test/voice-test.component').then(
+            (c) => c.VoiceTestComponent
           ),
       },
       {

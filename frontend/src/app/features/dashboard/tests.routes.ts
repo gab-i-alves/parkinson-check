@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { TestMethodSelectionComponent } from './test-method-selection';
+import { TestMethodSelectionComponent } from './components/test-method-selection/test-method-selection.component';
 
 export const TEST_ROUTES: Routes = [
   {
@@ -10,15 +10,15 @@ export const TEST_ROUTES: Routes = [
     path: 'spiral-test/webcam',
     title: 'Teste da Espiral com Webcam',
     loadComponent: () =>
-      import('../spiral-test-webcam/spiral-test-webcam').then(
-        (c) => c.SpiralTestWebcam
+      import('./components/spiral-test-webcam/spiral-test-webcam.component').then(
+        (c) => c.SpiralTestWebcamComponent
       ),
   },
   {
     path: 'spiral-test/paper',
     title: 'Teste da Espiral com Papel',
     loadComponent: () =>
-      import('../spiral-test-paper/spiral-test-paper.component').then(
+      import('./components/spiral-test-paper/spiral-test-paper.component').then(
         (c) => c.SpiralTestPaperComponent
       ),
   },
@@ -26,6 +26,6 @@ export const TEST_ROUTES: Routes = [
     path: 'voice-test',
     title: 'Teste de Voz',
     loadComponent: () =>
-      import('../voice-test/voice-test').then((c) => c.VoiceTest),
+      import('./components/voice-test/voice-test.component').then((c) => c.VoiceTestComponent),
   },
 ];
