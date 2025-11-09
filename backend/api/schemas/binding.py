@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 
 from core.enums.bind_enum import BindEnum
+from core.enums.user_enum import UserType
 
 
 class RequestBinding(BaseModel):
@@ -32,3 +33,4 @@ class BindingRequestResponse(BaseModel):
     id: int
     user: BindingPatient | BindingDoctor
     status: BindEnum
+    created_by_type: UserType | None = None
