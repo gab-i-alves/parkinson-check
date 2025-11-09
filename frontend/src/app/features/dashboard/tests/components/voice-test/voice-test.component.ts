@@ -16,11 +16,11 @@ import {
   VoiceTestResponse,
 } from '../../../services/voice-test.service';
 import { ClinicalTestService } from '../../../services/clinical-test.service';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-voice-test',
-  imports: [CommonModule, DecimalPipe],
+  imports: [CommonModule],
   templateUrl: './voice-test.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -29,6 +29,7 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
   readonly feedbackMessage = signal<string | null>(null);
   readonly analysisResults = signal<VoiceTestResponse | null>(null);
   readonly recordedAudioUrl = signal<SafeUrl | undefined>(undefined);
+  readonly isSubmitting = signal<boolean>(false);
 
   private recordedAudioBlob: Blob | undefined;
   private recordingSubscription: Subscription | undefined;
@@ -135,7 +136,8 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.feedbackMessage.set('Analisando seu áudio, por favor aguarde...');
+    this.isSubmitting.set(true);
+    this.feedbackMessage.set(null);
 
     const fileName = `gravacao-${Date.now()}.webm`;
     const audioFile = new File([this.recordedAudioBlob], fileName, {
@@ -148,7 +150,7 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
 
       this.clinicalTestService
         .processVoiceTest(Number(this.patientId), audioFile, recordDuration)
-        .pipe(finalize(() => this.feedbackMessage.set(null)))
+        .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
           next: (response) => {
             this.analysisResults.set(response);
@@ -161,7 +163,7 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
                 testType: 'voice',
               },
             });
-            
+
           },
           error: (err) => {
             this.feedbackMessage.set(`Erro na análise: ${err.message}`);
@@ -172,7 +174,7 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
       // Practice mode: use VoiceTestService
       this.voiceTestService
         .uploadVoiceSample(audioFile)
-        .pipe(finalize(() => this.feedbackMessage.set(null)))
+        .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
           next: (response) => {
             // Navegar para página de resultado
@@ -190,6 +192,13 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
           },
         });
     }
+  }
+
+  cancelRecording(): void {
+    this.recordedAudioUrl.set(undefined);
+    this.recordedAudioBlob = undefined;
+    this.analysisResults.set(null);
+    this.feedbackMessage.set(null);
   }
 
   private initVisualizer(stream: MediaStream): void {
