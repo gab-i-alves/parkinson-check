@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { SpiralTestService } from '../../../services/spiral-test.service';
 import { SpiralTestResponse } from '../../../../../core/models/spiral-test-response.model';
+import { ImagePreviewModalComponent } from '../../../../../shared/components/image-preview-modal/image-preview-modal.component';
 
 @Component({
   selector: 'app-spiral-test-paper',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImagePreviewModalComponent],
   templateUrl: './spiral-test-paper.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -20,6 +21,7 @@ export class SpiralTestPaperComponent {
   );
   readonly feedbackMessage = signal<string | null>(null);
   readonly analysisResults = signal<SpiralTestResponse | null>(null);
+  readonly showPreviewModal = signal<boolean>(false);
 
   constructor(
     private spiralTestService: SpiralTestService,
@@ -74,7 +76,6 @@ export class SpiralTestPaperComponent {
 
     this.uploadStatus.set('uploading');
     this.feedbackMessage.set('Enviando imagem para análise...');
-    this.analysisResults.set(null);
 
     try {
       const response = await lastValueFrom(
@@ -83,7 +84,15 @@ export class SpiralTestPaperComponent {
 
       this.uploadStatus.set('success');
       this.feedbackMessage.set('Análise concluída com sucesso!');
-      this.analysisResults.set(response);
+
+      // Navegar para página de resultado
+      this.router.navigate(['/dashboard/tests/result'], {
+        state: {
+          result: response,
+          testType: 'spiral',
+          isPracticeMode: true,
+        },
+      });
     } catch (error) {
       console.error('Erro ao enviar imagem:', error);
       this.uploadStatus.set('error');
@@ -109,5 +118,13 @@ export class SpiralTestPaperComponent {
 
   goBackToMethodSelection(): void {
     this.router.navigate(['/dashboard/tests']);
+  }
+
+  openPreviewModal(): void {
+    this.showPreviewModal.set(true);
+  }
+
+  closePreviewModal(): void {
+    this.showPreviewModal.set(false);
   }
 }
