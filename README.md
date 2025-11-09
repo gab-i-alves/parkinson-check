@@ -332,45 +332,6 @@ E naveguei até a seção de testes
 
 ---
 
-# HU005 – Visualizar Resultados Individuais
-
-## História do Usuário
-
-**Sendo** usuário  
-**Quero** visualizar detalhadamente os resultados de cada teste clínico realizado em consultório  
-**Para** entender minha condição e acompanhar as avaliações oficiais feitas pelo meu médico.
-
-## Critérios de Aceitação
-
-- Acesso ao resultado clínico
-- Apresentação completa
-- Feedback do médico
-
-### Detalhamento dos Critérios
-
-**Critério de contexto:**  
-Dado que estou logado no sistema  
-E realizei ao menos um teste clínico em consultório
-
-1. **Acesso ao resultado clínico**
-
-   - Dado que estou na página de histórico de testes
-   - Quando seleciono um teste específico da lista
-   - Então o sistema exibe a página de detalhes daquele teste clínico
-
-2. **Apresentação completa**
-
-   - Dado que acessei um teste específico
-   - Quando a página carrega completamente
-   - Então visualizo data, hora, tipo de teste e todas as métricas relevantes
-
-3. **Feedback do médico**
-   - Dado que estou na página de resultado individual
-   - Quando um médico vinculado já analisou meu teste
-   - Então visualizo uma seção destacada com anotações, interpretações e recomendações feitas pelo profissional sobre aquele resultado específico
-
----
-
 # HU006 – Visualizar Resultados Gerais
 
 ## História do Usuário
