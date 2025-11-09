@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { BackendNotificationService } from '../../../core/services/backend-notification.service';
+import { UserService } from '../../../core/services/user.service';
 import { Notification, NotificationType } from '../../../core/models/notification.model';
 
 @Component({
@@ -12,6 +13,7 @@ import { Notification, NotificationType } from '../../../core/models/notificatio
 })
 export class NotificationCenterComponent implements OnInit {
   private notificationService = inject(BackendNotificationService);
+  private userService = inject(UserService);
   private router = inject(Router);
 
   notifications = signal<Notification[]>([]);
@@ -29,7 +31,10 @@ export class NotificationCenterComponent implements OnInit {
         this.notifications.set(notifications);
         this.isLoading.set(false);
       },
-      error: () => this.isLoading.set(false),
+      error: (err) => {
+        console.error('Erro ao carregar notificações:', err);
+        this.isLoading.set(false);
+      },
     });
   }
 
@@ -60,10 +65,17 @@ export class NotificationCenterComponent implements OnInit {
   handleNotificationClick(notification: Notification): void {
     this.markAsRead(notification);
 
-    // Navigate based on notification type
+    // Navigate based on notification type and user role
     if (notification.bind_id) {
-      // Redirect to bindings page
-      this.router.navigate(['/dashboard/bindings']);
+      const currentUser = this.userService.getCurrentUser();
+
+      if (currentUser?.role === 'medico') {
+        // Redirect to doctor's binding requests page
+        this.router.navigate(['/dashboard/doctor/binding-requests']);
+      } else if (currentUser?.role === 'paciente') {
+        // Redirect to patient's requests page
+        this.router.navigate(['/dashboard/patient-requests']);
+      }
     }
   }
 
