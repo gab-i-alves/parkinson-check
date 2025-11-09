@@ -65,4 +65,128 @@ export class TestDetailService {
       }
     );
   }
+
+  /**
+   * Busca a imagem da espiral de um teste específico (médico).
+   * Retorna um Blob que pode ser convertido em URL para exibição.
+   */
+  getSpiralImage(testId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/tests/test/${testId}/spiral-image`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
+  }
+
+  /**
+   * Busca o áudio de voz de um teste específico (médico).
+   * Retorna um Blob que pode ser convertido em URL para reprodução.
+   */
+  getVoiceAudio(testId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/tests/test/${testId}/voice-audio`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
+  }
+
+  /**
+   * Busca a imagem da espiral de um teste do próprio paciente.
+   * Retorna um Blob que pode ser convertido em URL para exibição.
+   */
+  getMySpiralImage(testId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/tests/my-tests/${testId}/spiral-image`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
+  }
+
+  /**
+   * Busca o áudio de voz de um teste do próprio paciente.
+   * Retorna um Blob que pode ser convertido em URL para reprodução.
+   */
+  getMyVoiceAudio(testId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/tests/my-tests/${testId}/voice-audio`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
+  }
+
+  /**
+   * Faz download da imagem da espiral (médico).
+   * Cria um link temporário e aciona o download automaticamente.
+   */
+  downloadSpiralImage(testId: number): void {
+    this.getSpiralImage(testId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `espiral-teste-${testId}.png`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Erro ao baixar imagem:', error);
+      },
+    });
+  }
+
+  /**
+   * Faz download do áudio de voz (médico).
+   * Cria um link temporário e aciona o download automaticamente.
+   */
+  downloadVoiceAudio(testId: number): void {
+    this.getVoiceAudio(testId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `audio-teste-${testId}.webm`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Erro ao baixar áudio:', error);
+      },
+    });
+  }
+
+  /**
+   * Faz download da imagem da espiral (paciente - próprio teste).
+   * Cria um link temporário e aciona o download automaticamente.
+   */
+  downloadMySpiralImage(testId: number): void {
+    this.getMySpiralImage(testId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `espiral-teste-${testId}.png`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Erro ao baixar imagem:', error);
+      },
+    });
+  }
+
+  /**
+   * Faz download do áudio de voz (paciente - próprio teste).
+   * Cria um link temporário e aciona o download automaticamente.
+   */
+  downloadMyVoiceAudio(testId: number): void {
+    this.getMyVoiceAudio(testId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `audio-teste-${testId}.webm`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Erro ao baixar áudio:', error);
+      },
+    });
+  }
 }
