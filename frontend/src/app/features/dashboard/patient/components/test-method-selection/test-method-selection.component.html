@@ -1,22 +1,56 @@
-<div class="space-y-6">
+<div class="min-h-screen bg-gray-100 relative overflow-hidden">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div
+      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
+    ></div>
+    <div
+      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
+    ></div>
+    <div
+      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
+    ></div>
+  </div>
+
+  <div class="container mx-auto px-6 py-8 space-y-6 relative">
   @if (selectionStep() === 'main') {
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Realizar Testes</h1>
-      <p class="mt-1 text-sm text-gray-500">
-        Escolha uma das modalidades abaixo para uma análise detalhada
-      </p>
+  <!-- Header -->
+  <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+    <div class="flex items-center space-x-3">
+      <div
+        class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-700 shadow-lg"
+      >
+        <svg
+          class="h-8 w-8 text-white"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+          />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Realizar Testes</h1>
+        <p class="text-sm text-gray-600 mt-1">
+          Escolha uma das modalidades abaixo para uma análise detalhada
+        </p>
+      </div>
     </div>
   </div>
 
   <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
     <div
       (click)="selectTest('spiral')"
-      class="group cursor-pointer rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-violet-300"
+      class="group cursor-pointer bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
     >
-      <div class="flex items-center space-x-4">
+      <div class="flex items-start space-x-4">
         <div
-          class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-700"
+          class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-100 border-2 border-violet-200 flex-shrink-0"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +58,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="h-6 w-6"
+            class="h-7 w-7 text-violet-700"
           >
             <path
               stroke-linecap="round"
@@ -33,27 +67,29 @@
             />
           </svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900">Teste da Espiral</h3>
-      </div>
-      <p class="mt-4 text-sm text-gray-600">
-        Avalie a estabilidade e a coordenação dos seus movimentos através de
-        um teste de desenho.
-      </p>
-      <div class="mt-4 flex items-center text-sm font-medium text-violet-600">
-        Iniciar Teste
-        <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-        </svg>
+        <div class="flex-1">
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Teste da Espiral</h3>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            Avalie a estabilidade e a coordenação dos seus movimentos através de
+            um teste de desenho.
+          </p>
+          <div class="mt-4 flex items-center text-xs font-medium text-violet-700">
+            <span>Iniciar Teste</span>
+            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
 
     <div
       (click)="selectTest('voice')"
-      class="group cursor-pointer rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-teal-300"
+      class="group cursor-pointer bg-indigo-50/50 border border-indigo-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
     >
-      <div class="flex items-center space-x-4">
+      <div class="flex items-start space-x-4">
         <div
-          class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-teal-100 text-teal-700"
+          class="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-100 border-2 border-indigo-200 flex-shrink-0"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +97,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="h-6 w-6"
+            class="h-7 w-7 text-indigo-700"
           >
             <path
               stroke-linecap="round"
@@ -70,65 +106,80 @@
             />
           </svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900">Teste de Voz</h3>
-      </div>
-      <p class="mt-4 text-sm text-gray-600">
-        Grave sua voz para uma análise de características da sua articulação.
-      </p>
-      <div class="mt-4 flex items-center text-sm font-medium text-teal-600">
-        Iniciar Teste
-        <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-        </svg>
+        <div class="flex-1">
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Teste de Voz</h3>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            Grave sua voz para uma análise de características da sua articulação.
+          </p>
+          <div class="mt-4 flex items-center text-xs font-medium text-indigo-700">
+            <span>Iniciar Teste</span>
+            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   } @else if (selectionStep() === 'spiral') {
   <div class="space-y-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <button
-          (click)="goBack()"
-          class="mb-2 flex items-center space-x-2 text-sm font-medium text-gray-500 hover:text-gray-700"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="h-4 w-4"
+    <!-- Header -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative">
+      <!-- Back button icon -->
+      <button
+        (click)="goBack()"
+        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        aria-label="Voltar"
+      >
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div
+            class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-700 shadow-lg"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-          <span>Voltar</span>
-        </button>
-        <h1 class="text-2xl font-bold text-gray-900">
-          Método do Teste da Espiral
-        </h1>
-        <p class="mt-1 text-sm text-gray-500">
-          Escolha o método que for mais conveniente para você
-        </p>
+            <svg
+              class="h-8 w-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">
+              Método do Teste da Espiral
+            </h1>
+            <p class="text-sm text-gray-600 mt-1">
+              Escolha o método que for mais conveniente para você
+            </p>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
       <div
         (click)="selectSpiralMethod('webcam')"
-        class="cursor-pointer rounded-lg border-2 bg-white p-6 transition-all duration-200"
+        class="cursor-pointer rounded-2xl border-2 bg-white/80 backdrop-blur-sm p-6 shadow-md transition-all duration-200 hover:shadow-lg"
         [class.border-violet-500]="selectedSpiralMethod() === 'webcam'"
-        [class.bg-violet-50]="selectedSpiralMethod() === 'webcam'"
+        [class.bg-violet-500]="selectedSpiralMethod() === 'webcam'"
         [class.border-gray-200]="selectedSpiralMethod() !== 'webcam'"
       >
         <div
-          class="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-100 text-violet-700"
+          class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-100 border-2 border-violet-200"
         >
           <svg
-            class="h-6 w-6"
+            class="h-7 w-7 text-violet-700"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="1.5"
@@ -146,10 +197,10 @@
             />
           </svg>
         </div>
-        <h3 class="mt-4 text-lg font-semibold text-gray-900">
+        <h3 class="mt-4 text-lg font-bold text-gray-900">
           Desenhar no Ar (Webcam)
         </h3>
-        <p class="mt-2 text-sm text-gray-600">
+        <p class="mt-2 text-sm text-gray-700 leading-relaxed">
           Use a câmera para rastrear seu dedo e capturar o desenho em tempo
           real.
         </p>
@@ -157,16 +208,16 @@
 
       <div
         (click)="selectSpiralMethod('paper')"
-        class="cursor-pointer rounded-lg border-2 bg-white p-6 transition-all duration-200"
+        class="cursor-pointer rounded-2xl border-2 bg-white/80 backdrop-blur-sm p-6 shadow-md transition-all duration-200 hover:shadow-lg"
         [class.border-violet-500]="selectedSpiralMethod() === 'paper'"
-        [class.bg-violet-50]="selectedSpiralMethod() === 'paper'"
+        [class.bg-violet-50/50]="selectedSpiralMethod() === 'paper'"
         [class.border-gray-200]="selectedSpiralMethod() !== 'paper'"
       >
         <div
-          class="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-100 text-violet-700"
+          class="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-100 border-2 border-violet-200"
         >
           <svg
-            class="h-6 w-6"
+            class="h-7 w-7 text-violet-700"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="1.5"
@@ -179,10 +230,10 @@
             />
           </svg>
         </div>
-        <h3 class="mt-4 text-lg font-semibold text-gray-900">
+        <h3 class="mt-4 text-lg font-bold text-gray-900">
           Enviar Foto do Papel
         </h3>
-        <p class="mt-2 text-sm text-gray-600">
+        <p class="mt-2 text-sm text-gray-700 leading-relaxed">
           Desenhe em papel e envie uma foto. Ideal para quem não possui uma
           webcam.
         </p>
@@ -193,7 +244,7 @@
     <div class="flex justify-end">
       <button
         (click)="proceedToSpiralTest()"
-        class="inline-flex items-center rounded-md bg-violet-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+        class="inline-flex items-center rounded-xl bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
       >
         Avançar para o Teste
         <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -204,4 +255,5 @@
     }
   </div>
   }
+  </div>
 </div>
