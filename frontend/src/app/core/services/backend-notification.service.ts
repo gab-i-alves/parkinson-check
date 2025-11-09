@@ -91,6 +91,11 @@ export class BackendNotificationService {
         map((resp: HttpResponse<Notification[]>) => {
           const notifications = resp.body || [];
           this.notifications.set(notifications);
+
+          // Update unread count based on actual notifications
+          const actualUnreadCount = notifications.filter(n => !n.read).length;
+          this.unreadCount.set(actualUnreadCount);
+
           return notifications;
         }),
         catchError((err) => {
