@@ -1,6 +1,6 @@
 export interface ClinicalSpiralTestResult {
-  test_id: number;
-  patient_id: number;
+  test_id?: number;
+  patient_id?: number;
   majority_decision: string;
   vote_count: {
     Healthy: number;
@@ -13,13 +13,13 @@ export interface ClinicalSpiralTestResult {
     };
   };
   score: number;
-  execution_date: string;
+  execution_date?: string;
 }
 
 export interface ClinicalVoiceTestResult {
-  test_id: number;
-  patient_id: number;
+  test_id?: number;
+  patient_id?: number;
   score: number;
   analysis: string;
-  execution_date: string;
+  execution_date?: string;
 }
