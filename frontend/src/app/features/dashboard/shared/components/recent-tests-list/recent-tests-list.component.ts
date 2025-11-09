@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TimelineTestItem, TestType } from '../../../../core/models/patient-timeline.model';
+import { TimelineTestItem, TestType } from '../../../../../core/models/patient-timeline.model';
 
 @Component({
   selector: 'app-recent-tests-list',
