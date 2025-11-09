@@ -69,27 +69,33 @@ export class SidebarComponent {
 
   private doctorLinks: NavLink[] = [
     {
-      path: 'doctor',
+      path: '/dashboard/doctor',
       label: 'Dashboard',
       icon: 'home',
       disabled: false,
     },
     {
-      path: 'patients',
+      path: '/dashboard/doctor/clinical-test/patient-selection',
+      label: 'Realizar Testes',
+      icon: 'clipboard',
+      disabled: false,
+    },
+    {
+      path: '/dashboard/doctor/analytics',
+      label: 'Análises',
+      icon: 'chart',
+      disabled: true,
+    },
+    {
+      path: '/dashboard/doctor/patients',
       label: 'Meus Pacientes',
       icon: 'users',
       disabled: false,
     },
     {
-      path: 'binding-requests',
+      path: '/dashboard/doctor/binding-requests',
       label: 'Solicitações',
       icon: 'clipboard',
-      disabled: false,
-    },
-    {
-      path: 'analytics',
-      label: 'Análises',
-      icon: 'chart',
       disabled: false,
     },
   ];
@@ -106,9 +112,9 @@ export class SidebarComponent {
 
   formatUserRole(role: string): string {
     const roleMap: Record<string, string> = {
-      'paciente': 'Paciente',
-      'medico': 'Médico',
-      'admin': 'Administrador'
+      paciente: 'Paciente',
+      medico: 'Médico',
+      admin: 'Administrador',
     };
     return roleMap[role] || role;
   }
