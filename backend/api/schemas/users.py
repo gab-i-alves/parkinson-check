@@ -50,6 +50,7 @@ class GetPatientsSchema(BaseModel):
     name: Optional[str] = None
     cpf: Optional[str] = None
     email: Optional[str] = None
+    status: Optional[str] = None  # "stable" | "attention" | "critical"
 
 
 class DoctorListResponse(UserResponse):
@@ -66,8 +67,11 @@ class PatientSchema(UserSchema):
 
 
 class PatientListResponse(UserResponse):
+    cpf: str
     location: str
     bind_id: Optional[int] = None
+    age: int
+    status: str  # "stable" | "attention" | "critical"
 
 
 class PatientDashboardResponse(BaseModel):
