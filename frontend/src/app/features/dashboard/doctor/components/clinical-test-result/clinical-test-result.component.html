@@ -21,9 +21,8 @@
       >
         <h1 class="text-3xl font-bold mb-2">Resultado do Teste Clínico</h1>
         <p class="text-violet-100">
-          Teste de {{ testType() === "spiral" ? "Espiral" : "Voz" }} realizado
-          em
-          {{ formatDate(res.execution_date) }}
+          Teste de {{ testType() === "spiral" ? "Espiral" : "Voz" }}
+          @if (res.execution_date) { realizado em {{ formatDate(res.execution_date) }} }
         </p>
       </div>
 
