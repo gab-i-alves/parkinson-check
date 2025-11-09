@@ -28,7 +28,7 @@ export interface PaginatedUsers {
 }
 
 export interface UserFilters {
-  status?: boolean;
+  status?: number;
   userType?: UserRole;
   searchQuery?: string;
 }

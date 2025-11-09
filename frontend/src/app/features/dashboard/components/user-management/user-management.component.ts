@@ -1,5 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { UserManagementService } from '../../services/user-management.service';
+import {
+  ChangeStatusData,
+  UserManagementService,
+} from '../../services/user-management.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import {
@@ -8,17 +11,18 @@ import {
   UserRole,
 } from '../../../../core/models/user.model';
 import { RouterLink } from '@angular/router';
+import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-user-management',
-  imports: [RouterLink],
+  imports: [RouterLink, ConfirmationModalComponent],
   templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent implements OnInit {
   users = signal<User[]>([]);
   isLoading = signal<boolean>(false);
   searchQuery = signal<string>('');
-  selectedStatus = signal<boolean>(true);
+  selectedStatus = signal<number>(2);
   selectedUserType = signal<UserRole | ''>('');
   sortBy = signal<'id' | 'name' | 'type' | 'status'>('id');
   sortOrder = signal<'asc' | 'desc'>('asc');
@@ -31,6 +35,9 @@ export class UserManagementComponent implements OnInit {
   pageSizeOptions = [10, 25, 50];
 
   readonly Math = Math;
+
+  isStatusModalVisible = signal<boolean>(false);
+  userToToggleStatus = signal<User | null>(null);
 
   private searchSubject = new Subject<string>();
 
@@ -48,7 +55,7 @@ export class UserManagementComponent implements OnInit {
     const filters: UserFilters = {
       searchQuery: this.searchQuery() || undefined,
       userType: this.selectedUserType() || undefined,
-      status: this.selectedStatus() ,
+      status: this.selectedStatus() || undefined,
     };
 
     this.userManagementService
@@ -125,16 +132,30 @@ export class UserManagementComponent implements OnInit {
   }
 
   onStatusChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value as 'true' | 'false';
-    this.selectedStatus.set(value !== 'false');
-    console.log(this.selectedStatus())
+    const value = (event.target as HTMLSelectElement).value as
+      | 'true'
+      | 'false'
+      | '';
+
+    switch (value) {
+      case 'true':
+        this.selectedStatus.set(1);
+        break;
+      case 'false':
+        this.selectedStatus.set(0);
+        break;
+      default:
+        this.selectedStatus.set(2);
+    }
+
+    console.log(this.selectedStatus());
     this.currentPage.set(1);
     this.loadUsers();
   }
 
   onUserTypeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value as UserRole | '';
-    console.log(value)
+    console.log(value);
     this.selectedUserType.set(value);
     this.currentPage.set(1);
     this.loadUsers();
@@ -168,7 +189,7 @@ export class UserManagementComponent implements OnInit {
 
   clearFilters(): void {
     this.searchQuery.set('');
-    this.selectedStatus.set(true);
+    this.selectedStatus.set(2);
     this.selectedUserType.set('');
     this.currentPage.set(1);
     this.loadUsers();
@@ -197,18 +218,48 @@ export class UserManagementComponent implements OnInit {
     return date.toLocaleDateString('pt-BR');
   }
 
-
-  onToggleStatus(user: any): void {
-    // UserListItem
-    // Abrir modal de confirmação
-    // No modal:
-    // const newStatus = !user.is_active;
-    // const reason = newStatus ? undefined : prompt('Motivo da desativação:');
-    // if (!newStatus && !reason) return; // Cancelou
-    // this.userMgmtService.changeUserStatus(user.id, { is_active: newStatus, reason: reason })
-    //   .subscribe(() => this.loadUsers());
+  initiateStatusChange(user: User): void {
+    this.userToToggleStatus.set(user);
+    this.isStatusModalVisible.set(true);
   }
 
+  cancelStatusChange(): void {
+    this.userToToggleStatus.set(null);
+    this.isStatusModalVisible.set(false);
+  }
+
+  confirmStatusChange(): void {
+    const userToToggleStatus = this.userToToggleStatus();
+    if (!userToToggleStatus) {
+      return;
+    }
+
+    const is_active = !userToToggleStatus.status;
+    const reason = 'idk';
+
+    const statusData: ChangeStatusData = {
+      is_active,
+      reason,
+    };
+
+    this.userManagementService
+      .changeUserStatus(userToToggleStatus.id, statusData)
+      .subscribe({
+        next: () => {
+          this.loadUsers();
+
+          alert('Status do Usuário alterado');
+
+          this.isStatusModalVisible.set(false);
+          this.userToToggleStatus.set(null);
+        },
+        error: (err) => {
+          alert('Ocorreu um erro ao alterar o status do usuário.');
+          console.error(err);
+          this.isStatusModalVisible.set(false);
+        },
+      });
+  }
   onEdit(userId: number): void {
     // Navegar para rota de edição ou abrir modal
     // this.router.navigate(['/dashboard/admin/users', userId, 'edit']);

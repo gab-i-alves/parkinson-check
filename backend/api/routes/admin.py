@@ -93,7 +93,7 @@ async def update_user_by_admin(
     """Admin edita dados do usuário."""
     return user_management_service.update_user(user_id, update_data, session)
 
-@router.patch("/users/{user_id}/status", response_model=UserResponse)
+@router.patch("/users/{user_id}/status", response_model=User)
 async def change_status(
     user_id: int,
     status_data: ChangeUserStatusSchema,

@@ -52,9 +52,9 @@
             (change)="onStatusChange($event)"
             class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
           >
-            <option value="">Todos</option>
+            <option value="false">Todos</option>
             <option value="true">Ativos</option>
-            <option value="false">Inativos</option>
+            <option value="">Inativos</option>
           </select>
         </div>
 
@@ -282,7 +282,7 @@
               >
               </div>
               <div class="flex items-center"><a
-                [routerLink]="['/dashboard/user', user.id]"
+                (click)="initiateStatusChange(user)"
                 class="text-violet-600 hover:text-violet-900"
                 >Ativar/Desativar</a
               >
@@ -424,3 +424,17 @@
     }
   </div>
 </div>
+
+@if (isStatusModalVisible() && userToToggleStatus(); as user) {
+<app-confirmation-modal
+  [title]="'Alterar Status'"
+  [message]="
+    'Tem a certeza que alterar o status de <strong>' +
+    user.name +
+    '</strong>? <br>'
+  "
+  [confirmButtonText]="'Sim, Alterar'"
+  (confirm)="confirmStatusChange()"
+  (cancel)="cancelStatusChange()"
+></app-confirmation-modal>
+}
