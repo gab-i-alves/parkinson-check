@@ -406,3 +406,36 @@ def get_patients(session: Session, doctor: User, parameters: GetPatientsSchema) 
 
     return patient_list
 
+
+def get_privacy_settings(session: Session, user: User):
+    """
+    Retorna as configurações de privacidade do paciente.
+    """
+    from api.schemas.user_settings import PrivacySettingsResponse
+
+    patient = session.query(Patient).filter(Patient.id == user.id).first()
+
+    if not patient:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Paciente não encontrado"
+        )
+
+    return PrivacySettingsResponse(
+        share_data_for_statistics=patient.share_data_for_statistics
+    )
+
+
+def update_privacy_settings(session: Session, user: User, settings):
+    """
+    Atualiza as configurações de privacidade do paciente.
+    """
+    patient = session.query(Patient).filter(Patient.id == user.id).first()
+
+    if not patient:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Paciente não encontrado"
+        )
+
+    patient.share_data_for_statistics = settings.share_data_for_statistics
+    session.commit()
+

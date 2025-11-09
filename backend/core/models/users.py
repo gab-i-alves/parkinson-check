@@ -61,6 +61,10 @@ class Patient(User):
     __tablename__ = "patient"
 
     id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True, init=False)
+    share_data_for_statistics: Mapped[bool] = mapped_column(
+        nullable=False, default=True, server_default="true",
+        doc="Se o paciente permite que seus dados sejam usados em estatísticas agregadas"
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": UserType.PATIENT,

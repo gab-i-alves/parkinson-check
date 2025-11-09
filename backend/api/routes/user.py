@@ -12,6 +12,7 @@ from api.schemas.users import (
     PatientListResponse,
     UserResponse,
 )
+from api.schemas.user_settings import PrivacySettingsResponse, PrivacySettingsSchema
 from core.models import User
 from core.security.security import get_current_user, get_doctor_user, get_patient_user
 from core.services import doctor_service, patient_service
@@ -96,3 +97,31 @@ def get_patient_full_profile(
     Inclui dados pessoais, endereço, idade, status, etc.
     """
     return patient_service.get_patient_full_profile(session, user, patient_id)
+
+
+@router.get("/privacy-settings", response_model=PrivacySettingsResponse)
+def get_privacy_settings(user: CurrentPatient, session: Session = Depends(get_session)):
+    """
+    Retorna as configurações de privacidade do paciente autenticado.
+
+    Requer autenticação de paciente.
+    """
+    return patient_service.get_privacy_settings(session, user)
+
+
+@router.put("/privacy-settings")
+def update_privacy_settings(
+    user: CurrentPatient,
+    settings: PrivacySettingsSchema,
+    session: Session = Depends(get_session),
+):
+    """
+    Atualiza as configurações de privacidade do paciente autenticado.
+
+    Permite o paciente controlar se seus dados devem ser incluídos
+    em estatísticas agregadas do sistema.
+
+    Requer autenticação de paciente.
+    """
+    patient_service.update_privacy_settings(session, user, settings)
+    return {"message": "Configurações atualizadas com sucesso"}
