@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TestDetailService } from '../../services/test-detail.service';
-import { PatientStatistics } from '../../../../core/models/patient-statistics.model';
-import { PatientTimeline } from '../../../../core/models/patient-timeline.model';
+import { TestDetailService } from '../../../services/test-detail.service';
+import { PatientStatistics } from '../../../../../core/models/patient-statistics.model';
+import { PatientTimeline } from '../../../../../core/models/patient-timeline.model';
 import { PatientResultsHistoryTabComponent } from '../patient-results-history-tab/patient-results-history-tab.component';
 import { PatientResultsChartsTabComponent } from '../patient-results-charts-tab/patient-results-charts-tab.component';
 

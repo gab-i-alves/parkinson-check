@@ -7,10 +7,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { RecentTestsListComponent } from '../recent-tests-list/recent-tests-list.component';
-import { TestDetailService } from '../../services/test-detail.service';
-import { PatientStatistics } from '../../../../core/models/patient-statistics.model';
-import { TimelineTestItem } from '../../../../core/models/patient-timeline.model';
+import { RecentTestsListComponent } from '../../../shared/components/recent-tests-list/recent-tests-list.component';
+import { TestDetailService } from '../../../services/test-detail.service';
+import { PatientStatistics } from '../../../../../core/models/patient-statistics.model';
+import { TimelineTestItem } from '../../../../../core/models/patient-timeline.model';
 
 @Component({
   selector: 'app-patient-dashboard',

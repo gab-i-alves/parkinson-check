@@ -1,13 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DoctorService } from '../../services/doctor.service';
-import { BindingService } from '../../../../core/services/binding.service';
-import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
-import { Doctor } from '../../../../core/models/doctor.model';
-import { BindingRequestResponse, isBindingDoctor } from '../../../../core/models/binding-request.model';
+import { DoctorService } from '../../../services/doctor.service';
+import { BindingService } from '../../../../../core/services/binding.service';
+import { DoctorProfileModalComponent } from '../../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
+import { Doctor } from '../../../../../core/models/doctor.model';
+import { BindingRequestResponse, isBindingDoctor } from '../../../../../core/models/binding-request.model';
 import { firstValueFrom } from 'rxjs';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-patient-binding-requests',

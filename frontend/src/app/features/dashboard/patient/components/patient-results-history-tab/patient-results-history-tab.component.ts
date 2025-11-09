@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import {
   PatientTimeline,
   TestType,
-} from '../../../../core/models/patient-timeline.model';
+} from '../../../../../core/models/patient-timeline.model';
 
 type FilterType = 'all' | 'SPIRAL_TEST' | 'VOICE_TEST';
 type FilterClassification = 'all' | 'HEALTHY' | 'PARKINSON';

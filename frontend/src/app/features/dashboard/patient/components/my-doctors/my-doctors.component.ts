@@ -1,12 +1,12 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DoctorService } from '../../services/doctor.service';
-import { BindingService } from '../../../../core/services/binding.service';
-import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
-import { DoctorProfileModalComponent } from '../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
-import { Doctor } from '../../../../core/models/doctor.model';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { DoctorService } from '../../../services/doctor.service';
+import { BindingService } from '../../../../../core/services/binding.service';
+import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
+import { DoctorProfileModalComponent } from '../../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
+import { Doctor } from '../../../../../core/models/doctor.model';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-my-doctors',

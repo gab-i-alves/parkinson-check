@@ -1,19 +1,19 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TestDetailService } from '../../services/test-detail.service';
-import { NoteService } from '../../services/note.service';
+import { TestDetailService } from '../../../services/test-detail.service';
+import { NoteService } from '../../../services/note.service';
 import {
   TestDetail,
   SpiralTestDetail,
   VoiceTestDetail,
-} from '../../../../core/models/test-detail.model';
-import { Note } from '../../../../core/models/note.model';
+} from '../../../../../core/models/test-detail.model';
+import { Note } from '../../../../../core/models/note.model';
 import {
   NoteCategory,
   NoteCategoryLabels,
   NoteCategoryColors,
-} from '../../../../core/enums/note-category.enum';
+} from '../../../../../core/enums/note-category.enum';
 
 @Component({
   selector: 'app-patient-test-detail',
