@@ -81,7 +81,7 @@ export class ClinicalTestResultComponent implements OnInit {
     const res = this.result();
     if (res) {
       // Navegar para perfil completo do paciente
-      this.router.navigate(['/dashboard/patient', res.patient_id]);
+      this.router.navigate(['/dashboard/doctor/patient', res.patient_id]);
     }
   }
 

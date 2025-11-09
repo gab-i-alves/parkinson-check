@@ -275,6 +275,6 @@ export class TestDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard/patients']);
+    this.router.navigate(['/dashboard/doctor/patients']);
   }
 }

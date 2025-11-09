@@ -2,29 +2,6 @@
 <div class="flex h-64 items-center justify-center"></div>
 } @else {
 <div class="space-y-8">
-  <!-- Ação rápida: Realizar teste clínico -->
-  <section>
-    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold mb-2">Realizar Teste Clínico</h2>
-          <p class="text-blue-100">
-            Inicie um novo teste de espiral ou voz para seus pacientes vinculados
-          </p>
-        </div>
-        <a
-          routerLink="/dashboard/clinical-test/patient-selection"
-          class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-md flex items-center space-x-2"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-          </svg>
-          <span>Novo Teste</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
   <section>
     <h2 class="mb-4 text-xl font-semibold text-gray-800">
       Análises Comparativas dos Pacientes
@@ -102,7 +79,7 @@
     <div class="mb-4 flex items-center justify-between">
       <h2 class="text-xl font-semibold text-gray-800">Meus Pacientes</h2>
       <a
-        routerLink="/dashboard/patients"
+        routerLink="/dashboard/doctor/patients"
         class="text-sm font-medium text-primary hover:text-primary-dark"
         >Ver todos</a
       >
@@ -112,7 +89,7 @@
         @for (patient of patients(); track patient.id) {
         <li class="block hover:bg-gray-50">
           <a
-            routerLink="/dashboard/patient/{{ patient.id }}"
+            routerLink="/dashboard/doctor/patient/{{ patient.id }}"
             class="flex items-center p-4"
           >
             <div class="flex flex-1 items-center">
