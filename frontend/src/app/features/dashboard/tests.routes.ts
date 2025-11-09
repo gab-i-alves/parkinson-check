@@ -30,10 +30,18 @@ export const TEST_ROUTES: Routes = [
   },
   {
     path: 'clinical/spiral/:patientId',
-    title: 'Teste Clínico da Espiral',
+    title: 'Teste Clínico da Espiral - Webcam',
     loadComponent: () =>
       import('./tests/components/spiral-test-webcam/spiral-test-webcam.component').then(
         (c) => c.SpiralTestWebcamComponent
+      ),
+  },
+  {
+    path: 'clinical/spiral-paper/:patientId',
+    title: 'Teste Clínico da Espiral - Papel',
+    loadComponent: () =>
+      import('./tests/components/spiral-test-paper/spiral-test-paper.component').then(
+        (c) => c.SpiralTestPaperComponent
       ),
   },
   {

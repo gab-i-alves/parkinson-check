@@ -44,6 +44,13 @@ export const DOCTOR_ROUTES: Routes = [
       ),
   },
   {
+    path: 'clinical-test/spiral-method-selection/:patientId',
+    loadComponent: () =>
+      import('./components/clinical-spiral-method-selection/clinical-spiral-method-selection.component').then(
+        (c) => c.ClinicalSpiralMethodSelectionComponent
+      ),
+  },
+  {
     path: 'clinical-test/result',
     loadComponent: () =>
       import('../shared/components/test-result/test-result.component').then(
