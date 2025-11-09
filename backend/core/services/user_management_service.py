@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from http import HTTPStatus
 from typing import Optional, Tuple, List
 from core.services.patient_service import create_patient
-from core.security.security import get_password_hash
+from core.security.security import anonymizeCPF, get_password_hash
 from core.services import address_service
 from core.enums.user_enum import UserType
 from core.models import User, Patient, Doctor # Adicionar Doctor
@@ -57,6 +57,7 @@ def get_user_by_id(user_id: int, session: Session) -> User:
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(HTTPStatus.NOT_FOUND, detail="Usuário não encontrado")
+        
     return user
 
 def update_user(

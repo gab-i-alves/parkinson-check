@@ -63,7 +63,7 @@ async def list_users(
 
     return users_response
 
-@router.get("/users/{user_id}", response_model=UserResponse) # Usar response genérico
+@router.get("/users/{user_id}", response_model=User) 
 async def get_user_detail(
     user_id: int,
     session: Session = Depends(get_session),
@@ -71,7 +71,9 @@ async def get_user_detail(
 ):
     """Retorna detalhes completos de um usuário."""
     user = user_management_service.get_user_by_id(user_id, session)
-    # Retornar response completo
+    
+    user.cpf = anonymizeCPF(user.cpf, False)
+    
     return user
 
 @router.post("/users", status_code=HTTPStatus.CREATED)
@@ -83,7 +85,7 @@ async def create_user(
     """Admin cria novo usuário."""
     return user_management_service.create_user_by_admin(user_data, session)
 
-@router.put("/users/{user_id}", response_model=UserResponse)
+@router.put("/users/{user_id}", response_model=User)
 async def update_user_by_admin(
     user_id: int,
     update_data: UpdateUserSchema,

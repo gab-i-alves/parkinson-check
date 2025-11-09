@@ -78,13 +78,15 @@ def get_admin_user():
 def get_password_hash(password: str):
     return pwd_context.hash(password)
 
-def anonymizeCPF(cpf: str):
+def anonymizeCPF(cpf: str, formated: bool = True):
     cpf_num = re.sub(r'[^0-9]', '', cpf)
 
-    if len(cpf_num) != 11:
-        return "CPF Inválido"
 
-    cpf_anonymized = f"{cpf_num[:3]}.***.***-{cpf_num[9:]}"
+    if formated:
+        cpf_anonymized = f"{cpf_num[:3]}.***.***-{cpf_num[9:]}"
+    else:
+        cpf_anonymized = f"{cpf_num[:3]}******{cpf_num[9:]}"
+    
     return cpf_anonymized
 
 

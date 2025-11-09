@@ -4,7 +4,6 @@ import {
   UserManagementService,
 } from '../../services/user-management.service';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import {
   User,
   UserFilters,
@@ -22,7 +21,7 @@ export class UserManagementComponent implements OnInit {
   users = signal<User[]>([]);
   isLoading = signal<boolean>(false);
   searchQuery = signal<string>('');
-  selectedStatus = signal<number>(2);
+  selectedStatus = signal<number>(0);
   selectedUserType = signal<UserRole | ''>('');
   sortBy = signal<'id' | 'name' | 'type' | 'status'>('id');
   sortOrder = signal<'asc' | 'desc'>('asc');
@@ -200,7 +199,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   getStatusClass(status: boolean): string {
-    return status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+    return status ? ' text-green-800' : ' text-red-800';
   }
 
   getUserTypeLabel(userRole?: number): string {
@@ -235,7 +234,7 @@ export class UserManagementComponent implements OnInit {
     }
 
     const is_active = !userToToggleStatus.status;
-    const reason = 'idk';
+    const reason = ''; // implementar motivo de desativação
 
     const statusData: ChangeStatusData = {
       is_active,
@@ -259,9 +258,5 @@ export class UserManagementComponent implements OnInit {
           this.isStatusModalVisible.set(false);
         },
       });
-  }
-  onEdit(userId: number): void {
-    // Navegar para rota de edição ou abrir modal
-    // this.router.navigate(['/dashboard/admin/users', userId, 'edit']);
   }
 }
