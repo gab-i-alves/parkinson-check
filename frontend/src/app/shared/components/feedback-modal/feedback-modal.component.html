@@ -10,10 +10,10 @@
   >
     <button
       (click)="onClose()"
-      class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+      class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
     >
       <svg
-        class="h-6 w-6"
+        class="h-5 w-5"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -29,7 +29,11 @@
 
     <div class="text-center">
       <!-- Icon -->
-      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full {{ iconConfig.bgClass }} animate-bounce-small">
+      <div
+        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full {{
+          iconConfig.bgClass
+        }} animate-bounce-small"
+      >
         <svg
           class="h-10 w-10 {{ iconConfig.iconClass }}"
           fill="none"
@@ -54,7 +58,9 @@
       <!-- Button -->
       <button
         (click)="onClose()"
-        class="mt-8 w-full rounded-lg px-6 py-3 text-base font-semibold text-white shadow-md transition-all hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 {{ buttonClass }}"
+        class="mt-8 w-full rounded-lg px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 {{
+          buttonClass
+        }}"
       >
         {{ buttonText }}
       </button>

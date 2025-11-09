@@ -10,10 +10,10 @@
   >
     <button
       (click)="onClose()"
-      class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+      class="absolute top-3 right-3 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
     >
       <svg
-        class="h-6 w-6"
+        class="h-5 w-5"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -28,7 +28,9 @@
     </button>
 
     <div class="text-center">
-      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+      <div
+        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
+      >
         <svg
           class="h-10 w-10 text-primary"
           fill="none"
@@ -50,17 +52,16 @@
       <div class="mt-6 space-y-3 text-left text-gray-600">
         @if (patient.cpf) {
         <p><strong>CPF:</strong> {{ patient.cpf }}</p>
-        }
-        @if (patient.email) {
+        } @if (patient.email) {
         <p><strong>Email:</strong> {{ patient.email }}</p>
-        }
-        @if (patient.testsCount !== undefined) {
+        } @if (patient.testsCount !== undefined) {
         <p><strong>Total de Testes:</strong> {{ patient.testsCount }}</p>
-        }
-        @if (patient.lastTestDate) {
-        <p><strong>Último Teste:</strong> {{ patient.lastTestDate | date: 'dd/MM/yyyy' }}</p>
-        }
-        @if (patient.status) {
+        } @if (patient.lastTestDate) {
+        <p>
+          <strong>Último Teste:</strong>
+          {{ patient.lastTestDate | date : "dd/MM/yyyy" }}
+        </p>
+        } @if (patient.status) {
         <p>
           <strong>Status:</strong>
           <span class="font-medium {{ getStatusClass(patient.status) }}">
@@ -73,7 +74,7 @@
       <div class="mt-8">
         <button
           (click)="onClose()"
-          class="w-full rounded-md bg-primary px-4 py-2.5 text-base font-semibold text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="w-full rounded-lg bg-violet-700 px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
         >
           Fechar
         </button>
