@@ -14,6 +14,7 @@ import {
   NoteCategoryLabels,
   NoteCategoryColors,
 } from '../../../../../core/enums/note-category.enum';
+import { getTestTypeLabel } from '../../../shared/utils/display-helpers';
 
 @Component({
   selector: 'app-patient-test-detail',
@@ -53,6 +54,7 @@ export class PatientTestDetailComponent implements OnInit {
   readonly NoteCategory = NoteCategory;
   readonly NoteCategoryLabels = NoteCategoryLabels;
   readonly NoteCategoryColors = NoteCategoryColors;
+  readonly getTestTypeLabel = getTestTypeLabel;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('testId');
@@ -104,11 +106,6 @@ export class PatientTestDetailComponent implements OnInit {
     });
   }
 
-  getTestTypeLabel(type: string): string {
-    // Fix: Backend envia enum como número (1=SPIRAL, 2=VOICE) ao invés de string
-    return type === 'SPIRAL_TEST' || (type as any) === 1 ? 'Teste de Espiral' : 'Teste de Voz';
-  }
-
   getClassificationColor(classification: string): string {
     return classification === 'HEALTHY'
       ? 'text-green-600 bg-green-50'
@@ -130,6 +127,6 @@ export class PatientTestDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/dashboard/results']);
   }
 }
