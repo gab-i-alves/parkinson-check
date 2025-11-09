@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .routes import auth, binding, register, tests, user, note, notification
+from .routes import auth, binding, register, tests, user, note, notification, statistics
 
 api_router = APIRouter(prefix="/api")
 
@@ -11,3 +11,4 @@ api_router.include_router(user.router)
 api_router.include_router(tests.router)
 api_router.include_router(note.router)
 api_router.include_router(notification.router)
+api_router.include_router(statistics.router)
