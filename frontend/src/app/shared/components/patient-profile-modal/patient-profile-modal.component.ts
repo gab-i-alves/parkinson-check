@@ -6,22 +6,21 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CpfPipe } from '../../pipes/cpf.pipe';
 
 export interface PatientProfile {
   id: string;
   name: string;
-  age: number;
+  age?: number;
   cpf?: string;
-  email?: string;
+  email: string;
   status?: 'stable' | 'attention' | 'critical' | 'pending' | 'linked' | 'unlinked';
-  lastTestDate?: string;
-  testsCount?: number;
 }
 
 @Component({
   selector: 'app-patient-profile-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CpfPipe],
   templateUrl: './patient-profile-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -48,13 +47,19 @@ export class PatientProfileModalComponent {
 
   getStatusClass(status?: string): string {
     const classMap: { [key: string]: string } = {
-      stable: 'text-green-600',
-      attention: 'text-yellow-600',
-      critical: 'text-red-600',
-      pending: 'text-yellow-600',
-      linked: 'text-green-600',
-      unlinked: 'text-gray-500',
+      stable: 'bg-green-100 text-green-800',
+      attention: 'bg-yellow-100 text-yellow-800',
+      critical: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-100 text-yellow-800',
+      linked: 'bg-green-100 text-green-800',
+      unlinked: 'bg-gray-100 text-gray-800',
     };
-    return status ? classMap[status] || 'text-gray-500' : 'text-gray-500';
+    return status ? classMap[status] || 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-800';
+  }
+
+  formatDate(dateString?: string): string {
+    if (!dateString) return 'Não disponível';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR');
   }
 }

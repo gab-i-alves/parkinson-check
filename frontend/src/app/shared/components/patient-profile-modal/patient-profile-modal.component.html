@@ -1,16 +1,26 @@
 @if (isVisible && patient) {
+<!-- Overlay - cobre toda a tela -->
 <div
+  class="fixed top-0 left-0 right-0 bottom-0 w-screen h-screen bg-black bg-opacity-50 transition-opacity"
   (click)="onClose()"
-  class="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity"
+  style="position: fixed !important; inset: 0 !important; z-index: 99998 !important; width: 100vw !important; height: 100vh !important;"
 ></div>
 
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+<!-- Modal Container -->
+<div
+  class="fixed top-0 left-0 right-0 bottom-0 w-screen h-screen flex items-center justify-center p-4"
+  style="position: fixed !important; inset: 0 !important; z-index: 99999 !important; pointer-events: none; width: 100vw !important; height: 100vh !important;"
+>
   <div
-    class="relative w-full max-w-md transform rounded-lg bg-white p-6 shadow-xl transition-all"
+    (click)="$event.stopPropagation()"
+    class="relative w-full max-w-md transform rounded-2xl bg-white shadow-2xl transition-all"
+    style="pointer-events: auto;"
   >
+    <!-- Close Button -->
     <button
       (click)="onClose()"
-      class="absolute top-3 right-3 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+      type="button"
+      class="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
     >
       <svg
         class="h-5 w-5"
@@ -27,58 +37,70 @@
       </svg>
     </button>
 
-    <div class="text-center">
-      <div
-        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
-      >
-        <svg
-          class="h-10 w-10 text-primary"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
+    <!-- Header -->
+    <div class="border-b border-gray-200 bg-gradient-to-r from-violet-50 to-purple-50 p-6 rounded-t-2xl">
+      <div class="flex flex-col items-center text-center">
+        <div
+          class="h-20 w-20 flex-shrink-0 bg-violet-700 rounded-full flex items-center justify-center shadow-lg mb-4"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-          />
-        </svg>
+          <span class="text-3xl font-bold text-white">{{
+            patient.name.charAt(0).toUpperCase()
+          }}</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900">
+          {{ patient.name }}
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">{{ patient.email }}</p>
       </div>
+    </div>
 
-      <h3 class="mt-4 text-2xl font-bold text-gray-900">{{ patient.name }}</h3>
-      <p class="mt-1 text-base text-gray-500">{{ patient.age }} anos</p>
-
-      <div class="mt-6 space-y-3 text-left text-gray-600">
+    <!-- Content -->
+    <div class="p-6">
+      <dl class="space-y-4">
         @if (patient.cpf) {
-        <p><strong>CPF:</strong> {{ patient.cpf }}</p>
-        } @if (patient.email) {
-        <p><strong>Email:</strong> {{ patient.email }}</p>
-        } @if (patient.testsCount !== undefined) {
-        <p><strong>Total de Testes:</strong> {{ patient.testsCount }}</p>
-        } @if (patient.lastTestDate) {
-        <p>
-          <strong>Último Teste:</strong>
-          {{ patient.lastTestDate | date : "dd/MM/yyyy" }}
-        </p>
-        } @if (patient.status) {
-        <p>
-          <strong>Status:</strong>
-          <span class="font-medium {{ getStatusClass(patient.status) }}">
-            {{ getStatusText(patient.status) }}
-          </span>
-        </p>
+        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+          <dt class="text-sm font-medium text-gray-500">CPF</dt>
+          <dd class="text-sm text-gray-900 font-semibold">{{ patient.cpf | cpf }}</dd>
+        </div>
         }
-      </div>
 
-      <div class="mt-8">
-        <button
-          (click)="onClose()"
-          class="w-full rounded-lg bg-violet-700 px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
-        >
-          Fechar
-        </button>
-      </div>
+        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+          <dt class="text-sm font-medium text-gray-500">Email</dt>
+          <dd class="text-sm text-gray-900 font-semibold">{{ patient.email }}</dd>
+        </div>
+
+        @if (patient.age && patient.age > 0) {
+        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+          <dt class="text-sm font-medium text-gray-500">Idade</dt>
+          <dd class="text-sm text-gray-900 font-semibold">{{ patient.age }} anos</dd>
+        </div>
+        }
+
+        @if (patient.status && patient.status !== 'pending') {
+        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+          <dt class="text-sm font-medium text-gray-500">Status</dt>
+          <dd>
+            <span
+              [class]="getStatusClass(patient.status)"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
+            >
+              {{ getStatusText(patient.status) }}
+            </span>
+          </dd>
+        </div>
+        }
+      </dl>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t border-gray-200 bg-gray-50 p-6 rounded-b-2xl">
+      <button
+        (click)="onClose()"
+        type="button"
+        class="w-full inline-flex items-center justify-center px-6 py-3 border border-violet-200 text-sm font-semibold rounded-lg text-violet-700 bg-violet-50 hover:bg-violet-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-all"
+      >
+        Fechar
+      </button>
     </div>
   </div>
 </div>
