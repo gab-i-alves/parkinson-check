@@ -70,6 +70,7 @@
               type="text"
               id="search"
               [(ngModel)]="searchQuery"
+              (keyup.enter)="onSearch()"
               placeholder="Digite o nome ou CRM..."
               class="block w-full rounded-md border-gray-300 py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
             />
