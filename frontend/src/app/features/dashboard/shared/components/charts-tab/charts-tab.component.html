@@ -26,164 +26,176 @@
     </p>
   </div>
   } @else {
+
+  <!-- Filtro -->
   <div class="bg-gray-50 rounded-lg p-4">
-    <label
-      for="chartFilter"
-      class="block text-sm font-medium text-gray-700 mb-2"
-    >
-      Filtrar por tipo de teste
-    </label>
-    <select
-      id="chartFilter"
-      [ngModel]="selectedTestType()"
-      (ngModelChange)="selectedTestType.set($event)"
-      class="block w-full md:w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-    >
-      <option value="all">Todos os testes</option>
-      <option value="spiral">Apenas Espiral</option>
-      <option value="voice">Apenas Voz</option>
-    </select>
+    <div class="flex items-end space-x-4">
+      <div class="flex-grow">
+        <label
+          for="chartFilter"
+          class="block text-sm font-medium text-gray-700"
+        >
+          Filtrar por tipo de teste
+        </label>
+        <select
+          id="chartFilter"
+          [ngModel]="selectedTestType()"
+          (ngModelChange)="selectedTestType.set($event)"
+          class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+        >
+          <option value="all">Todos os testes</option>
+          <option value="spiral">Apenas Espiral</option>
+          <option value="voice">Apenas Voz</option>
+        </select>
+      </div>
+    </div>
   </div>
 
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">
-      Progressão de Scores ao Longo do Tempo
-    </h3>
+  <!-- Grid Principal de Gráficos -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Gráfico de Linha - Progressão de Scores -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        Progressão de Scores ao Longo do Tempo
+      </h3>
 
-    @if (filteredChartData().length > 0) {
-    <div class="relative h-64 border-l-2 border-b-2 border-gray-300">
-      <div
-        class="absolute left-0 top-0 bottom-0 -ml-12 flex flex-col justify-between text-xs text-gray-600"
-      >
-        <span>{{ getMaxScore().toFixed(2) }}</span>
-        <span>{{ ((getMaxScore() + getMinScore()) / 2).toFixed(2) }}</span>
-        <span>{{ getMinScore().toFixed(2) }}</span>
+      @if (filteredChartData().length > 0) {
+      <div class="relative" style="height: 350px;">
+        <canvas
+          baseChart
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          [type]="lineChartType"
+        ></canvas>
       </div>
+      } @else {
+      <p class="text-center text-gray-500 py-8">
+        Nenhum dado disponível para o filtro selecionado.
+      </p>
+      }
+    </div>
 
-      <div class="relative h-full w-full">
-        @for (point of filteredChartData(); track $index) {
-        <div
-          class="absolute w-3 h-3 rounded-full transform -translate-x-1/2 -translate-y-1/2"
-          [ngClass]="{
-            'bg-blue-500': point.type === 'spiral',
-            'bg-purple-500': point.type === 'voice'
-          }"
-          [style.left.%]="
-            ($index / (filteredChartData().length - 1 || 1)) * 100
-          "
-          [style.bottom.%]="getScorePercentage(point.score)"
-        ></div>
-        }
+    <!-- Gráfico de Barras - Scores Médios por Mês -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        Evolução Mensal de Scores
+      </h3>
 
-        <svg class="absolute inset-0 w-full h-full pointer-events-none">
-          @for (point of filteredChartData(); track $index; let isLast = $last)
-          { @if (!isLast) {
-          <line
-            [attr.x1]="
-              ($index / (filteredChartData().length - 1 || 1)) * 100 + '%'
-            "
-            [attr.y1]="100 - getScorePercentage(point.score) + '%'"
-            [attr.x2]="
-              (($index + 1) / (filteredChartData().length - 1 || 1)) * 100 + '%'
-            "
-            [attr.y2]="
-              100 -
-              getScorePercentage(filteredChartData()[$index + 1].score) +
-              '%'
-            "
-            [attr.stroke]="point.type === 'spiral' ? '#3b82f6' : '#a855f7'"
-            stroke-width="2"
-            opacity="0.5"
-          />
-          } }
-        </svg>
+      @if (filteredChartData().length > 0) {
+      <div class="relative" style="height: 350px;">
+        <canvas
+          baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType"
+        ></canvas>
       </div>
+      } @else {
+      <p class="text-center text-gray-500 py-8">
+        Nenhum dado disponível para o filtro selecionado.
+      </p>
+      }
+    </div>
+  </div>
 
-      <div class="mt-2 flex justify-between text-xs text-gray-600">
-        <span>{{ filteredChartData()[0].date || "" }}</span>
-        <span>{{
-          filteredChartData()[filteredChartData().length - 1].date || ""
-        }}</span>
+  <!-- Grid de Gráfico de Pizza, Radar e Estatísticas -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Gráfico de Pizza - Distribuição de Classificações -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        Distribuição de Classificações
+      </h3>
+
+      <div class="relative" style="height: 300px;">
+        <canvas
+          baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType"
+        ></canvas>
       </div>
     </div>
 
-    <div class="mt-4 flex justify-center space-x-6">
-      <div class="flex items-center">
-        <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-        <span class="text-sm text-gray-700">Teste de Espiral</span>
+    <!-- Gráfico de Radar - Análise Multidimensional -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        Análise Multidimensional
+      </h3>
+
+      @if (filteredChartData().length > 0) {
+      <div class="relative" style="height: 300px;">
+        <canvas
+          baseChart
+          [data]="radarChartData"
+          [options]="radarChartOptions"
+          [type]="radarChartType"
+        ></canvas>
       </div>
-      <div class="flex items-center">
-        <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
-        <span class="text-sm text-gray-700">Teste de Voz</span>
+      } @else {
+      <p class="text-center text-gray-500 py-8">
+        Nenhum dado disponível para o filtro selecionado.
+      </p>
+      }
+    </div>
+
+    <!-- Cards de Scores Médios e Melhores/Piores -->
+    @if (computedStats(); as stats) {
+    <div class="space-y-6">
+      <!-- Scores Médios -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+          Scores Médios
+        </h3>
+        <div class="space-y-4">
+          @if (stats.totalSpiralTests > 0) {
+          <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+            <div class="flex items-center space-x-3">
+              <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+              <span class="text-sm font-medium text-gray-700">Teste de Espiral</span>
+            </div>
+            <span class="text-lg font-bold text-blue-600">{{ stats.avgSpiralScore.toFixed(2) }}</span>
+          </div>
+          }
+          @if (stats.totalVoiceTests > 0) {
+          <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+            <div class="flex items-center space-x-3">
+              <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+              <span class="text-sm font-medium text-gray-700">Teste de Voz</span>
+            </div>
+            <span class="text-lg font-bold text-purple-600">{{ stats.avgVoiceScore.toFixed(2) }}</span>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Melhores e Piores Resultados -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+          Melhores e Piores Scores
+        </h3>
+        <div class="space-y-3">
+          @if (stats.totalSpiralTests > 0) {
+          <div class="border-l-4 border-blue-500 pl-3">
+            <p class="text-xs font-medium text-gray-600">Espiral</p>
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-sm text-gray-700">Melhor: <span class="font-bold text-green-600">{{ stats.bestSpiralScore.toFixed(2) }}</span></span>
+              <span class="text-sm text-gray-700">Pior: <span class="font-bold text-red-600">{{ stats.worstSpiralScore.toFixed(2) }}</span></span>
+            </div>
+          </div>
+          }
+          @if (stats.totalVoiceTests > 0) {
+          <div class="border-l-4 border-purple-500 pl-3">
+            <p class="text-xs font-medium text-gray-600">Voz</p>
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-sm text-gray-700">Melhor: <span class="font-bold text-green-600">{{ stats.bestVoiceScore.toFixed(2) }}</span></span>
+              <span class="text-sm text-gray-700">Pior: <span class="font-bold text-red-600">{{ stats.worstVoiceScore.toFixed(2) }}</span></span>
+            </div>
+          </div>
+          }
+        </div>
       </div>
     </div>
-    } @else {
-    <p class="text-center text-gray-500 py-8">
-      Nenhum dado disponível para o filtro selecionado.
-    </p>
     }
-  </div>
-
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">
-      Distribuição de Classificações
-    </h3>
-
-    <div class="space-y-4">
-      <div>
-        <div
-          class="flex justify-between text-sm font-medium text-gray-700 mb-1"
-        >
-          <span>Saudável</span>
-          <span>{{ statistics.healthy_classification_count }} testes</span>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-8 overflow-hidden">
-          <div
-            class="bg-green-500 h-8 rounded-full flex items-center justify-end pr-2 text-white text-sm font-semibold transition-all duration-500"
-            [style.width.%]="
-              (statistics.healthy_classification_count /
-                statistics.total_tests) *
-              100
-            "
-          >
-            {{
-              (
-                (statistics.healthy_classification_count /
-                  statistics.total_tests) *
-                100
-              ).toFixed(1)
-            }}%
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div
-          class="flex justify-between text-sm font-medium text-gray-700 mb-1"
-        >
-          <span>Parkinson</span>
-          <span>{{ statistics.parkinson_classification_count }} testes</span>
-        </div>
-        <div class="w-full bg-gray-200 rounded-full h-8 overflow-hidden">
-          <div
-            class="bg-red-500 h-8 rounded-full flex items-center justify-end pr-2 text-white text-sm font-semibold transition-all duration-500"
-            [style.width.%]="
-              (statistics.parkinson_classification_count /
-                statistics.total_tests) *
-              100
-            "
-          >
-            {{
-              (
-                (statistics.parkinson_classification_count /
-                  statistics.total_tests) *
-                100
-              ).toFixed(1)
-            }}%
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
   }
 </div>

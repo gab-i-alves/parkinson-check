@@ -26,6 +26,7 @@ export class HistoryTabComponent implements OnChanges {
   readonly filterClassification = signal<FilterClassification>('all');
   readonly currentPage = signal<number>(1);
   readonly pageSize = signal<number>(10);
+  readonly pageSizeOptions = [10, 25, 50];
 
   readonly Math = Math;
 
@@ -89,6 +90,19 @@ export class HistoryTabComponent implements OnChanges {
     if (this.currentPage() < this.totalPages()) {
       this.currentPage.set(this.currentPage() + 1);
     }
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const newSize = parseInt(target.value, 10);
+    this.pageSize.set(newSize);
+    this.currentPage.set(1);
   }
 
   onFilterTypeChange(value: FilterType): void {
