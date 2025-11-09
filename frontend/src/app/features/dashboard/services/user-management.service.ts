@@ -113,9 +113,12 @@ export class UserManagementService {
           );
         }
 
+        console.log(filters?.status)
         if (filters?.status !== undefined) {
+          const status = filters?.status === 1
+
           filteredUsers = filteredUsers.filter(
-            (u) => u.status === filters.status
+            (u) => u.status === status
           );
         }
 
