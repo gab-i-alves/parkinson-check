@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -36,7 +36,7 @@ import { getTestTypeLabel, getSpiralMethodLabel, getClassificationLabel } from '
   imports: [CommonModule, FormsModule, ReactiveFormsModule, ConfirmationModalComponent],
   templateUrl: './test-detail.component.html',
 })
-export class TestDetailComponent implements OnInit {
+export class TestDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private testDetailService = inject(TestDetailService);
@@ -51,6 +51,11 @@ export class TestDetailComponent implements OnInit {
   readonly isLoading = signal<boolean>(true);
   readonly errorMessage = signal<string | null>(null);
   readonly currentUserId = signal<number | null>(null);
+
+  // Signals para mídia
+  readonly mediaUrl = signal<string | null>(null);
+  readonly isLoadingMedia = signal<boolean>(false);
+  readonly mediaError = signal<string | null>(null);
 
   readonly spiralTestDetail = computed<SpiralTestDetail | null>(() => {
     const td = this.testDetail();
@@ -123,6 +128,8 @@ export class TestDetailComponent implements OnInit {
       next: (test) => {
         this.testDetail.set(test);
         this.isLoading.set(false);
+        // Carregar mídia baseado no tipo de teste
+        this.loadMedia(testId, test);
       },
       error: (err) => {
         console.error('Erro ao carregar detalhes do teste:', err);
@@ -132,6 +139,41 @@ export class TestDetailComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  loadMedia(testId: number, test: TestDetail): void {
+    this.isLoadingMedia.set(true);
+    this.mediaError.set(null);
+
+    if (this.isSpiralTest(test)) {
+      // Carregar imagem da espiral
+      this.testDetailService.getSpiralImage(testId).subscribe({
+        next: (blob) => {
+          const url = URL.createObjectURL(blob);
+          this.mediaUrl.set(url);
+          this.isLoadingMedia.set(false);
+        },
+        error: (err) => {
+          console.error('Erro ao carregar imagem:', err);
+          this.mediaError.set('Imagem não disponível');
+          this.isLoadingMedia.set(false);
+        },
+      });
+    } else if (this.isVoiceTest(test)) {
+      // Carregar áudio de voz
+      this.testDetailService.getVoiceAudio(testId).subscribe({
+        next: (blob) => {
+          const url = URL.createObjectURL(blob);
+          this.mediaUrl.set(url);
+          this.isLoadingMedia.set(false);
+        },
+        error: (err) => {
+          console.error('Erro ao carregar áudio:', err);
+          this.mediaError.set('Áudio não disponível');
+          this.isLoadingMedia.set(false);
+        },
+      });
+    }
   }
 
   loadNotes(testId: number): void {
@@ -294,5 +336,36 @@ export class TestDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/dashboard/doctor/patients']);
+  }
+
+  downloadMedia(): void {
+    const id = this.testId();
+    if (!id) return;
+
+    const test = this.testDetail();
+    if (!test) return;
+
+    if (this.isSpiralTest(test)) {
+      this.testDetailService.downloadSpiralImage(id);
+      this.notificationService.success('Download da imagem iniciado!');
+    } else if (this.isVoiceTest(test)) {
+      this.testDetailService.downloadVoiceAudio(id);
+      this.notificationService.success('Download do áudio iniciado!');
+    }
+  }
+
+  openMediaInNewTab(): void {
+    const url = this.mediaUrl();
+    if (url) {
+      window.open(url, '_blank');
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Limpar URL de mídia para evitar memory leak
+    const url = this.mediaUrl();
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
   }
 }
