@@ -14,14 +14,19 @@ export function formatDate(dateString: string | null): string {
   }).format(date);
 }
 
-export function getTestTypeLabel(testType: string): string {
+export function getTestTypeLabel(testType: string | number): string {
+  // Handle numeric values from backend (1=SPIRAL, 2=VOICE)
+  if (testType === 1 || testType === '1') return 'Espiral';
+  if (testType === 2 || testType === '2') return 'Voz';
+
+  // Handle string values
   const labels: Record<string, string> = {
     'SPIRAL_TEST': 'Espiral',
     'VOICE_TEST': 'Voz',
     'spiral': 'Espiral',
     'voice': 'Voz',
   };
-  return labels[testType] || testType;
+  return labels[testType as string] || String(testType);
 }
 
 export function getClassificationLabel(classification: string): string {
