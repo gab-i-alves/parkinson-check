@@ -4,11 +4,14 @@ import {
   signal,
   computed,
   inject,
+  OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserService } from '../../../../core/services/user.service';
 import { AuthService } from '../../../../features/auth/services/auth.services';
+import { BackendNotificationService } from '../../../../core/services/backend-notification.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 interface NavLink {
@@ -25,9 +28,10 @@ interface NavLink {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private notificationService = inject(BackendNotificationService);
   private router = inject(Router);
 
   readonly user = toSignal(this.userService.currentUser$, {
@@ -108,7 +112,17 @@ export class SidebarComponent {
     return this.patientLinks;
   });
 
-  readonly notificationCount = signal<number>(3);
+  readonly notificationCount = this.notificationService.unreadCount$;
+
+  ngOnInit(): void {
+    // Start polling for notifications every 30 seconds
+    this.notificationService.startPolling(30000);
+  }
+
+  ngOnDestroy(): void {
+    // Stop polling when component is destroyed
+    this.notificationService.stopPolling();
+  }
 
   formatUserRole(role: string): string {
     const roleMap: Record<string, string> = {
