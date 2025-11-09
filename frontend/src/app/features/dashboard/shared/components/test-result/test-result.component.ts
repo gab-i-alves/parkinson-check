@@ -102,4 +102,12 @@ export class TestResultComponent implements OnInit {
       this.router.navigate(['/dashboard/doctor']);
     }
   }
+
+  goBack(): void {
+    if (this.isPracticeMode()) {
+      this.router.navigate(['/dashboard/tests']);
+    } else {
+      this.router.navigate(['/dashboard/doctor']);
+    }
+  }
 }
