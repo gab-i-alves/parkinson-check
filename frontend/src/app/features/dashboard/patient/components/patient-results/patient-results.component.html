@@ -79,12 +79,16 @@
       <!-- Conteúdo das Tabs -->
       <div class="p-6">
         @switch (activeTab()) { @case ('charts') {
-        <app-patient-results-charts-tab
+        <app-charts-tab
           [timeline]="timeline()"
           [statistics]="statistics()"
         />
         } @case ('history') {
-        <app-patient-results-history-tab [timeline]="timeline()" />
+        <app-history-tab
+          [timeline]="timeline()"
+          [patientId]="patientId"
+          [isPatientView]="true"
+        />
         } }
       </div>
     </div>

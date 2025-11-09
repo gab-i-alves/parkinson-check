@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { TestDetailService } from '../../../services/test-detail.service';
 import { PatientStatistics } from '../../../../../core/models/patient-statistics.model';
 import { PatientTimeline } from '../../../../../core/models/patient-timeline.model';
-import { PatientResultsHistoryTabComponent } from '../patient-results-history-tab/patient-results-history-tab.component';
-import { PatientResultsChartsTabComponent } from '../patient-results-charts-tab/patient-results-charts-tab.component';
+import { HistoryTabComponent } from '../../../shared/components/history-tab/history-tab.component';
+import { ChartsTabComponent } from '../../../shared/components/charts-tab/charts-tab.component';
+import { UserService } from '../../../../../core/services/user.service';
 
 type TabType = 'charts' | 'history';
 
@@ -14,14 +15,15 @@ type TabType = 'charts' | 'history';
   standalone: true,
   imports: [
     CommonModule,
-    PatientResultsChartsTabComponent,
-    PatientResultsHistoryTabComponent,
+    ChartsTabComponent,
+    HistoryTabComponent,
   ],
   templateUrl: './patient-results.component.html',
 })
 export class PatientResultsComponent implements OnInit {
   private router = inject(Router);
   private testDetailService = inject(TestDetailService);
+  private userService = inject(UserService);
 
   readonly activeTab = signal<TabType>('charts');
   readonly isLoading = signal<boolean>(true);
@@ -29,6 +31,11 @@ export class PatientResultsComponent implements OnInit {
 
   readonly statistics = signal<PatientStatistics | null>(null);
   readonly timeline = signal<PatientTimeline | null>(null);
+
+  // Get patientId from UserService
+  get patientId(): number {
+    return this.userService.getCurrentUser()?.id || 0;
+  }
 
   ngOnInit(): void {
     this.loadMyData();
