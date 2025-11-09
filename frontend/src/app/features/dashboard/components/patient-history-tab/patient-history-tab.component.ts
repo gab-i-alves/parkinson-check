@@ -36,7 +36,13 @@ export class PatientHistoryTabComponent implements OnChanges {
 
     // Filtrar por tipo
     if (this.filterType() !== 'all') {
-      tests = tests.filter((t) => t.test_type === this.filterType());
+      // Fix: Backend envia enum como número (1=SPIRAL, 2=VOICE)
+      tests = tests.filter((t) => {
+        const filterValue = this.filterType();
+        return t.test_type === filterValue ||
+               (filterValue === 'SPIRAL_TEST' && (t.test_type as any) === 1) ||
+               (filterValue === 'VOICE_TEST' && (t.test_type as any) === 2);
+      });
     }
 
     // Filtrar por classificação
@@ -76,7 +82,8 @@ export class PatientHistoryTabComponent implements OnChanges {
   }
 
   getTestTypeLabel(type: TestType): string {
-    return type === 'SPIRAL_TEST' ? 'Espiral' : 'Voz';
+    // Fix: Backend envia enum como número (1=SPIRAL, 2=VOICE) ao invés de string
+    return type === 'SPIRAL_TEST' || (type as any) === 1 ? 'Espiral' : 'Voz';
   }
 
   getClassificationLabel(classification: string): string {

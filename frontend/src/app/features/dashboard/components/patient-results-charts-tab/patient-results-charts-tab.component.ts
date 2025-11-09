@@ -41,7 +41,8 @@ export class PatientResultsChartsTabComponent implements OnChanges {
     const data: ChartDataPoint[] = this.timeline.tests.map((test) => ({
       date: new Date(test.execution_date).toLocaleDateString('pt-BR'),
       score: test.score,
-      type: test.test_type === 'SPIRAL_TEST' ? 'spiral' : 'voice',
+      // Fix: Backend envia enum como número (1=SPIRAL, 2=VOICE) ao invés de string
+      type: test.test_type === 'SPIRAL_TEST' || (test.test_type as any) === 1 ? 'spiral' : 'voice',
       classification: test.classification,
     }));
 

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Dict, Literal, Optional
 
 from fastapi import File, Form, UploadFile
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from core.enums import SpiralMethods, TestStatus, TestType
 
@@ -269,6 +269,8 @@ class PatientTestStatistics(BaseModel):
 
 class TimelineTestItem(BaseModel):
     """Item individual de teste para timeline"""
+
+    model_config = ConfigDict(use_enum_values=False)
 
     test_id: int
     test_type: TestType

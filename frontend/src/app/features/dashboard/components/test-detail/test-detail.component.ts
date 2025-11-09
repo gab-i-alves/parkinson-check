@@ -149,7 +149,8 @@ export class TestDetailComponent implements OnInit {
   }
 
   getTestTypeLabel(type: string): string {
-    return type === 'SPIRAL_TEST' ? 'Teste de Espiral' : 'Teste de Voz';
+    // Fix: Backend envia enum como número (1=SPIRAL, 2=VOICE) ao invés de string
+    return type === 'SPIRAL_TEST' || (type as any) === 1 ? 'Teste de Espiral' : 'Teste de Voz';
   }
 
   getClassificationColor(classification: string): string {
@@ -255,11 +256,13 @@ export class TestDetailComponent implements OnInit {
   }
 
   isSpiralTest(test: TestDetail): test is SpiralTestDetail {
-    return test.test_type === 'SPIRAL_TEST';
+    // Fix: Backend envia enum como número (1=SPIRAL, 2=VOICE) ao invés de string
+    return test.test_type === 'SPIRAL_TEST' || (test.test_type as any) === 1;
   }
 
   isVoiceTest(test: TestDetail): test is VoiceTestDetail {
-    return test.test_type === 'VOICE_TEST';
+    // Fix: Backend envia enum como número (1=SPIRAL, 2=VOICE) ao invés de string
+    return test.test_type === 'VOICE_TEST' || (test.test_type as any) === 2;
   }
 
   isOwnNote(note: Note): boolean {
