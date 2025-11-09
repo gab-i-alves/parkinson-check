@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { TestMethodSelectionComponent } from './components/test-method-selection/test-method-selection.component';
+import { TestMethodSelectionComponent } from './patient/components/test-method-selection/test-method-selection.component';
 
 export const TEST_ROUTES: Routes = [
   {
@@ -10,7 +10,7 @@ export const TEST_ROUTES: Routes = [
     path: 'spiral-test/webcam',
     title: 'Teste da Espiral com Webcam',
     loadComponent: () =>
-      import('./components/spiral-test-webcam/spiral-test-webcam.component').then(
+      import('./tests/components/spiral-test-webcam/spiral-test-webcam.component').then(
         (c) => c.SpiralTestWebcamComponent
       ),
   },
@@ -18,7 +18,7 @@ export const TEST_ROUTES: Routes = [
     path: 'spiral-test/paper',
     title: 'Teste da Espiral com Papel',
     loadComponent: () =>
-      import('./components/spiral-test-paper/spiral-test-paper.component').then(
+      import('./tests/components/spiral-test-paper/spiral-test-paper.component').then(
         (c) => c.SpiralTestPaperComponent
       ),
   },
@@ -26,6 +26,20 @@ export const TEST_ROUTES: Routes = [
     path: 'voice-test',
     title: 'Teste de Voz',
     loadComponent: () =>
-      import('./components/voice-test/voice-test.component').then((c) => c.VoiceTestComponent),
+      import('./tests/components/voice-test/voice-test.component').then((c) => c.VoiceTestComponent),
+  },
+  {
+    path: 'clinical/spiral/:patientId',
+    title: 'Teste Clínico da Espiral',
+    loadComponent: () =>
+      import('./tests/components/spiral-test-webcam/spiral-test-webcam.component').then(
+        (c) => c.SpiralTestWebcamComponent
+      ),
+  },
+  {
+    path: 'clinical/voice/:patientId',
+    title: 'Teste Clínico de Voz',
+    loadComponent: () =>
+      import('./tests/components/voice-test/voice-test.component').then((c) => c.VoiceTestComponent),
   },
 ];
