@@ -132,68 +132,145 @@
           <h2 class="text-lg font-bold text-gray-900">Detalhes do Teste</h2>
         </div>
         <div class="px-6 py-5">
-          <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Tipo de Teste</dt>
-              <dd class="mt-1 text-lg text-gray-900">
-                {{ getTestTypeLabel(testDetail()!.test_type) }}
-              </dd>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Coluna esquerda: Informações do teste -->
+            <div class="lg:col-span-2">
+              <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Tipo de Teste</dt>
+                  <dd class="mt-1 text-lg text-gray-900">
+                    {{ getTestTypeLabel(testDetail()!.test_type) }}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">
+                    Data de Execução
+                  </dt>
+                  <dd class="mt-1 text-lg text-gray-900">
+                    {{ formatDate(testDetail()!.execution_date) }}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Score</dt>
+                  <dd class="mt-1 text-lg text-gray-900">
+                    {{ testDetail()!.score.toFixed(2) }}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Classificação</dt>
+                  <dd class="mt-1">
+                    <span
+                      class="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
+                      [class]="getClassificationColor(testDetail()!.classification)"
+                    >
+                      {{ getClassificationLabel(testDetail()!.classification) }}
+                    </span>
+                  </dd>
+                </div>
+
+                @if (spiralTestDetail()) {
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">
+                    Duração do Desenho
+                  </dt>
+                  <dd class="mt-1 text-lg text-gray-900">
+                    {{ spiralTestDetail()!.draw_duration }}s
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Método</dt>
+                  <dd class="mt-1 text-lg text-gray-900">
+                    {{ getSpiralMethodLabel(spiralTestDetail()!.method) }}
+                  </dd>
+                </div>
+                } @if (voiceTestDetail()) {
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">
+                    Duração da Gravação
+                  </dt>
+                  <dd class="mt-1 text-lg text-gray-900">
+                    {{ voiceTestDetail()!.record_duration }}s
+                  </dd>
+                </div>
+                }
+              </dl>
             </div>
 
-            <div>
-              <dt class="text-sm font-medium text-gray-500">
-                Data de Execução
-              </dt>
-              <dd class="mt-1 text-lg text-gray-900">
-                {{ formatDate(testDetail()!.execution_date) }}
-              </dd>
-            </div>
+            <!-- Coluna direita: Preview de mídia -->
+            <div class="lg:col-span-1">
+              <div class="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">
+                  @if (spiralTestDetail()) { Imagem da Espiral }
+                  @else if (voiceTestDetail()) { Áudio da Gravação }
+                </h3>
 
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Score</dt>
-              <dd class="mt-1 text-lg text-gray-900">
-                {{ testDetail()!.score.toFixed(2) }}
-              </dd>
-            </div>
+                @if (isLoadingMedia()) {
+                <div class="flex justify-center items-center py-12">
+                  <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-violet-700"></div>
+                </div>
+                } @else if (mediaError()) {
+                <div class="text-center py-8">
+                  <svg class="h-12 w-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-sm text-gray-500">{{ mediaError() }}</p>
+                </div>
+                } @else if (mediaUrl()) {
+                  @if (spiralTestDetail()) {
+                  <!-- Preview da imagem -->
+                  <div class="mb-3">
+                    <img
+                      [src]="mediaUrl()!"
+                      alt="Espiral desenhada"
+                      class="w-full h-auto rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition-opacity"
+                      (click)="openMediaInNewTab()"
+                    />
+                  </div>
+                  } @else if (voiceTestDetail()) {
+                  <!-- Player de áudio -->
+                  <div class="mb-3">
+                    <audio
+                      [src]="mediaUrl()!"
+                      controls
+                      class="w-full"
+                      controlsList="nodownload"
+                    >
+                      Seu navegador não suporta o elemento de áudio.
+                    </audio>
+                  </div>
+                  }
 
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Classificação</dt>
-              <dd class="mt-1">
-                <span
-                  class="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
-                  [class]="getClassificationColor(testDetail()!.classification)"
-                >
-                  {{ getClassificationLabel(testDetail()!.classification) }}
-                </span>
-              </dd>
-            </div>
+                  <!-- Botões de ação -->
+                  <div class="space-y-2">
+                    <button
+                      (click)="downloadMedia()"
+                      class="w-full inline-flex items-center justify-center rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800 transition-all"
+                    >
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Baixar @if (spiralTestDetail()) { Imagem } @else { Áudio }
+                    </button>
 
-            @if (spiralTestDetail()) {
-            <div>
-              <dt class="text-sm font-medium text-gray-500">
-                Duração do Desenho
-              </dt>
-              <dd class="mt-1 text-lg text-gray-900">
-                {{ spiralTestDetail()!.draw_duration }}s
-              </dd>
+                    @if (spiralTestDetail()) {
+                    <button
+                      (click)="openMediaInNewTab()"
+                      class="w-full inline-flex items-center justify-center rounded-lg border border-violet-700 px-4 py-2 text-sm font-semibold text-violet-700 bg-white hover:bg-violet-50 transition-all"
+                    >
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                      </svg>
+                      Ampliar Imagem
+                    </button>
+                    }
+                  </div>
+                }
+              </div>
             </div>
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Método</dt>
-              <dd class="mt-1 text-lg text-gray-900">
-                {{ getSpiralMethodLabel(spiralTestDetail()!.method) }}
-              </dd>
-            </div>
-            } @if (voiceTestDetail()) {
-            <div>
-              <dt class="text-sm font-medium text-gray-500">
-                Duração da Gravação
-              </dt>
-              <dd class="mt-1 text-lg text-gray-900">
-                {{ voiceTestDetail()!.record_duration }}s
-              </dd>
-            </div>
-            }
-          </dl>
+          </div>
         </div>
       </div>
 
