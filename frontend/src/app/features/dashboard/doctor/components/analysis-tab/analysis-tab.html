@@ -1,0 +1,124 @@
+@if (isLoading()) {
+<div class="flex h-64 items-center justify-center">
+  <p class="text-gray-600">Carregando análises...</p>
+</div>
+} @else {
+<div class="space-y-6">
+  <!-- Estatísticas Agregadas -->
+  <section>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-bold text-gray-900">Estatísticas Agregadas</h2>
+      <div class="flex gap-2">
+        <button
+          (click)="exportCSV()"
+          class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors text-sm font-semibold"
+        >
+          Exportar CSV
+        </button>
+        <button
+          (click)="exportPDF()"
+          class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-semibold"
+        >
+          Gerar PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Total de Pacientes -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total de Pacientes</p>
+            <p class="text-3xl font-bold text-violet-700 mt-2">{{ stats().totalPatients }}</p>
+          </div>
+          <div class="h-12 w-12 bg-violet-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total de Testes -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total de Testes</p>
+            <p class="text-3xl font-bold text-orange-600 mt-2">{{ stats().totalTests }}</p>
+          </div>
+          <div class="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pacientes Estáveis -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Pacientes Estáveis</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">{{ stats().patientsStable }}</p>
+          </div>
+          <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pacientes Requerendo Atenção -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Requerendo Atenção</p>
+            <p class="text-3xl font-bold text-yellow-600 mt-2">{{ stats().patientsAttention }}</p>
+          </div>
+          <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pacientes Críticos -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Pacientes Críticos</p>
+            <p class="text-3xl font-bold text-red-600 mt-2">{{ stats().patientsCritical }}</p>
+          </div>
+          <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gráficos de Análise -->
+  <section>
+    <h2 class="text-2xl font-bold text-gray-900 mb-4">Análise Visual</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <app-chart-card
+        title="Distribuição por Status"
+        chartType="pie"
+      ></app-chart-card>
+      <app-chart-card
+        title="Desempenho Médio por Tipo de Teste"
+        chartType="bar"
+      ></app-chart-card>
+      <app-chart-card
+        title="Evolução Temporal dos Testes"
+        chartType="line"
+      ></app-chart-card>
+    </div>
+  </section>
+</div>
+}
