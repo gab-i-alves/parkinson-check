@@ -1,0 +1,11 @@
+<div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+  <h3 class="text-lg font-bold text-gray-900 mb-4">{{ title }}</h3>
+  <div [style.height]="height" class="relative">
+    <canvas
+      baseChart
+      [data]="chartData"
+      [options]="chartOptions"
+      [type]="chartType"
+    ></canvas>
+  </div>
+</div>
