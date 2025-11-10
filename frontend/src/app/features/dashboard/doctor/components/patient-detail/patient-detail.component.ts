@@ -7,7 +7,7 @@ import { PatientStatistics } from '../../../../../core/models/patient-statistics
 import { PatientTimeline } from '../../../../../core/models/patient-timeline.model';
 import { PatientProfileTabComponent } from '../patient-profile-tab/patient-profile-tab.component';
 import { HistoryTabComponent } from '../../../shared/components/history-tab/history-tab.component';
-import { StatisticsTabComponent } from '../../../shared/components/statistics-tab/patient-statistics-tab.component';
+import { StatisticsTabComponent } from '../../../shared/components/statistics-tab/statistics-tab.component';
 import { ChartsTabComponent } from '../../../shared/components/charts-tab/charts-tab.component';
 
 type TabType = 'profile' | 'history' | 'statistics' | 'charts';

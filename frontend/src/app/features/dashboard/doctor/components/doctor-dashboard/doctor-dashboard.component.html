@@ -1,5 +1,10 @@
 @if (isLoading()) {
-<div class="flex h-64 items-center justify-center"></div>
+<div class="flex h-64 items-center justify-center">
+  <div class="text-center">
+    <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-violet-600 border-r-transparent"></div>
+    <p class="mt-4 text-gray-600">Carregando dashboard...</p>
+  </div>
+</div>
 } @else {
 <div class="min-h-screen bg-gray-100 relative overflow-hidden">
   <!-- Background decorativo -->
@@ -8,130 +13,208 @@
     <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
     <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
   </div>
-  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+
+  <div class="container mx-auto px-6 py-8 space-y-8 relative">
+    <!-- Header -->
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <h1 class="text-3xl font-bold text-gray-900">Dashboard do Médico</h1>
+    </div>
+
+    <!-- KPIs -->
     <section>
-      <h2 class="mb-4 text-3xl font-bold text-gray-900">
-        Análises Comparativas dos Pacientes
-      </h2>
-      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
-          <div class="border-b border-gray-200 p-6">
-            <h3 class="text-lg font-bold text-gray-900">
-              Ranking - Teste da Espiral
-            </h3>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <!-- KPI 1: Total de Pacientes -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Total de Pacientes</p>
+              <p class="mt-2 text-3xl font-bold text-gray-900">{{ kpis().totalPatients }}</p>
+            </div>
+            <div class="p-3 bg-violet-100 rounded-lg">
+              <svg class="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
           </div>
-          <ul class="divide-y divide-gray-200">
-            <li
-              class="flex justify-between bg-gray-50/50 px-6 py-3 text-xs font-medium text-gray-500"
-            >
-              <span>PACIENTE</span>
-              <span>PONTUAÇÃO</span>
-            </li>
-            @for (patient of patients(); track patient.id) {
-            <li
-              class="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50 transition-colors"
-            >
-              <span class="font-semibold text-gray-800">{{ patient.name }}</span>
-              <span class="text-lg font-bold text-violet-700">85</span>
-            </li>
-            }
-          </ul>
         </div>
 
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
-          <div class="border-b border-gray-200 p-6">
-            <h3 class="text-lg font-bold text-gray-900">Ranking - Teste de Voz</h3>
+        <!-- KPI 2: Testes Este Mês -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Testes Este Mês</p>
+              <p class="mt-2 text-3xl font-bold text-gray-900">{{ kpis().totalTestsThisMonth }}</p>
+            </div>
+            <div class="p-3 bg-blue-100 rounded-lg">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+            </div>
           </div>
-          <ul class="divide-y divide-gray-200">
-            <li
-              class="flex justify-between bg-gray-50/50 px-6 py-3 text-xs font-medium text-gray-500"
-            >
-              <span>PACIENTE</span>
-              <span>PONTUAÇÃO</span>
-            </li>
-            @for (patient of patients(); track patient.id) {
-            <li
-              class="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50 transition-colors"
-            >
-              <span class="font-semibold text-gray-800">{{ patient.name }}</span>
-              <span class="text-lg font-bold text-orange-600">78</span>
-            </li>
-            }
-          </ul>
+        </div>
+
+        <!-- KPI 3: Score Médio Geral -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Score Médio Geral</p>
+              <div class="flex items-center gap-2 mt-2">
+                <p class="text-3xl font-bold text-gray-900">
+                  {{ kpis().avgScoreGeneral !== null ? (kpis().avgScoreGeneral! * 100).toFixed(0) : '-' }}
+                </p>
+                @if (kpis().scoreTrend === 'up') {
+                  <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                  </svg>
+                } @else if (kpis().scoreTrend === 'down') {
+                  <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                  </svg>
+                }
+              </div>
+            </div>
+            <div class="p-3 bg-green-100 rounded-lg">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 4: Pacientes em Atenção -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Precisam Atenção</p>
+              <p class="mt-2 text-3xl font-bold text-red-600">{{ kpis().patientsNeedingAttention }}</p>
+            </div>
+            <div class="p-3 bg-red-100 rounded-lg">
+              <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 5: Taxa de Adesão -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Taxa de Adesão</p>
+              <p class="mt-2 text-3xl font-bold text-gray-900">{{ kpis().adherenceRate }}%</p>
+            </div>
+            <div class="p-3 bg-orange-100 rounded-lg">
+              <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 6: Novos Pacientes -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Novos Pacientes</p>
+              <p class="mt-2 text-3xl font-bold text-gray-900">{{ kpis().newPatientsThisMonth }}</p>
+            </div>
+            <div class="p-3 bg-purple-100 rounded-lg">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- Gráficos Principais -->
     <section>
-      <h2 class="mb-4 text-3xl font-bold text-gray-900">
-        Métricas Adicionais
-      </h2>
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <app-chart-card
-          title="Distribuição de Pacientes por Status"
-          chartType="pie"
-        ></app-chart-card>
-        <app-chart-card
-          title="Desempenho Médio por Faixa Etária"
-          chartType="bar"
-        ></app-chart-card>
-        <app-chart-card
-          title="Evolução da Pontuação Média"
-          chartType="line"
-        ></app-chart-card>
-      </div>
-    </section>
+      <h2 class="mb-6 text-2xl font-bold text-gray-900">Análises e Gráficos</h2>
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+        <!-- Gráfico 1: Evolução de Scores -->
+        <app-dashboard-chart
+          title="Evolução de Scores ao Longo do Tempo"
+          [chartData]="scoreEvolutionChartData"
+          [chartOptions]="scoreEvolutionChartOptions"
+          [chartType]="scoreEvolutionChartType"
+          height="350px"
+        ></app-dashboard-chart>
 
-    <section>
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-3xl font-bold text-gray-900">Meus Pacientes</h2>
-        <a
-          routerLink="/dashboard/doctor/patients"
-          class="text-sm font-semibold text-violet-700 hover:text-violet-800"
-          >Ver todos</a
-        >
-      </div>
-      <div class="overflow-hidden bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50">
-        <ul class="divide-y divide-gray-200">
-          @for (patient of patients(); track patient.id) {
-          <li class="block hover:bg-gray-50/50 transition-colors">
-            <a
-              routerLink="/dashboard/doctor/patient/{{ patient.id }}"
-              class="flex items-center p-6"
+        <!-- Gráfico 2: Distribuição por Status -->
+        <app-dashboard-chart
+          title="Distribuição por Status"
+          [chartData]="statusDistributionChartData"
+          [chartOptions]="statusDistributionChartOptions"
+          [chartType]="statusDistributionChartType"
+          height="350px"
+        ></app-dashboard-chart>
+
+        <!-- Gráfico 3: Performance por Faixa Etária -->
+        <app-dashboard-chart
+          title="Performance por Faixa Etária"
+          [chartData]="agePerformanceChartData"
+          [chartOptions]="agePerformanceChartOptions"
+          [chartType]="agePerformanceChartType"
+          height="350px"
+        ></app-dashboard-chart>
+
+        <!-- Gráfico 4: Pacientes por Status -->
+        <app-dashboard-chart
+          title="Pacientes por Status de Atenção"
+          [chartData]="patientStatusChartData"
+          [chartOptions]="patientStatusChartOptions"
+          [chartType]="patientStatusChartType"
+          height="350px"
+        ></app-dashboard-chart>
+
+        <!-- Gráfico 5: Frequência de Testes -->
+        <app-dashboard-chart
+          title="Frequência de Testes Realizados"
+          [chartData]="testFrequencyChartData"
+          [chartOptions]="testFrequencyChartOptions"
+          [chartType]="testFrequencyChartType"
+          height="350px"
+        ></app-dashboard-chart>
+
+        <!-- Lista: Top 5 Pacientes que Precisam Atenção -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+          <div class="border-b border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-900">Top 5 Pacientes que Precisam de Atenção</h3>
+          </div>
+          <ul class="divide-y divide-gray-200">
+            @for (patient of patientsNeedingAttention(); track patient.patient_id) {
+            <li
+              class="px-6 py-4 hover:bg-gray-50/50 transition-colors cursor-pointer"
+              (click)="viewPatientDetails(patient.patient_id)"
             >
-              <div class="flex flex-1 items-center">
-                <div
-                  class="mr-4 h-3 w-3 rounded-full"
-                  [class.bg-green-500]="patient.status === 'stable'"
-                  [class.bg-yellow-500]="patient.status === 'attention'"
-                  [class.bg-red-500]="patient.status === 'critical'"
-                ></div>
-                <div>
-                  <p class="font-semibold text-gray-900">{{ patient.name }}</p>
-                  <p class="text-sm text-gray-600">
-                    Último teste: {{ patient.lastTestDate }}
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <p class="font-semibold text-gray-800">{{ patient.patient_name }}</p>
+                  <p class="text-sm text-gray-500">
+                    Score: {{ (patient.avg_score * 100).toFixed(0) }} | Testes: {{ patient.total_tests }}
                   </p>
                 </div>
+                <div class="flex items-center gap-2">
+                  @if (patient.status === 'critical') {
+                    <span class="px-3 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full">Crítico</span>
+                  } @else {
+                    <span class="px-3 py-1 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full">Atenção</span>
+                  }
+                </div>
               </div>
-              <div class="ml-5 flex-shrink-0">
-                <svg
-                  class="h-5 w-5 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                  />
-                </svg>
-              </div>
-            </a>
-          </li>
-          }
-        </ul>
+            </li>
+            }
+            @if (patientsNeedingAttention().length === 0) {
+            <li class="px-6 py-8 text-center text-gray-500">
+              <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p>Nenhum paciente precisa de atenção no momento</p>
+            </li>
+            }
+          </ul>
+        </div>
       </div>
     </section>
   </div>
