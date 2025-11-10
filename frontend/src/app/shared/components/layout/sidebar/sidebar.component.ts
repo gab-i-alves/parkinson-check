@@ -94,7 +94,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       path: '/dashboard/doctor/analytics',
       label: 'Análises',
       icon: 'chart',
-      disabled: true,
+      disabled: false,
     },
     {
       path: '/dashboard/doctor/patients',

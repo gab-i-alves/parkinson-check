@@ -9,6 +9,13 @@ export const DOCTOR_ROUTES: Routes = [
       ),
   },
   {
+    path: 'analytics',
+    loadComponent: () =>
+      import('./components/analysis-tab/analysis-tab').then(
+        (c) => c.AnalysisTab
+      ),
+  },
+  {
     path: 'patients',
     loadComponent: () =>
       import('./components/my-patients/my-patients-list.component').then(
