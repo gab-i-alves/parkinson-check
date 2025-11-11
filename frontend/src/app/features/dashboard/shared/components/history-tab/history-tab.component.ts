@@ -7,6 +7,8 @@ import {
   TestType,
 } from '../../../../../core/models/patient-timeline.model';
 import { formatDate, getTestTypeLabel, getClassificationLabel, getClassificationColor, getClassificationBgColor } from '../../utils/display-helpers';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 type FilterType = 'all' | 'SPIRAL_TEST' | 'VOICE_TEST';
 type FilterClassification = 'all' | 'HEALTHY' | 'PARKINSON';
@@ -14,7 +16,7 @@ type FilterClassification = 'all' | 'HEALTHY' | 'PARKINSON';
 @Component({
   selector: 'app-history-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TooltipDirective, BadgeComponent],
   templateUrl: './history-tab.component.html',
 })
 export class HistoryTabComponent implements OnChanges {
@@ -27,6 +29,7 @@ export class HistoryTabComponent implements OnChanges {
   readonly currentPage = signal<number>(1);
   readonly pageSize = signal<number>(10);
   readonly pageSizeOptions = [10, 25, 50];
+  readonly selectedView = signal<'table' | 'cards'>('table');
 
   readonly Math = Math;
 
@@ -128,5 +131,35 @@ export class HistoryTabComponent implements OnChanges {
 
   isVoiceTest(testType: TestType | any): boolean {
     return testType === 'VOICE_TEST' || testType === 2;
+  }
+
+  clearFilters(): void {
+    this.filterType.set('all');
+    this.filterClassification.set('all');
+    this.currentPage.set(1);
+  }
+
+  getClassificationBadgeVariant(classification: string): 'success' | 'error' | 'neutral' {
+    if (classification === 'HEALTHY') return 'success';
+    if (classification === 'PARKINSON') return 'error';
+    return 'neutral';
+  }
+
+  formatDuration(test: any): string {
+    if (this.isSpiralTest(test.test_type)) {
+      return test.draw_duration ? `${test.draw_duration}s` : '-';
+    } else if (this.isVoiceTest(test.test_type)) {
+      return test.record_duration ? `${test.record_duration}s` : '-';
+    }
+    return '-';
+  }
+
+  getAverageScore(): string {
+    if (!this.timeline || this.timeline.tests.length === 0) {
+      return '0.00';
+    }
+    const sum = this.timeline.tests.reduce((acc, test) => acc + test.score, 0);
+    const avg = sum / this.timeline.tests.length;
+    return avg.toFixed(2);
   }
 }

@@ -1,12 +1,45 @@
-<div class="space-y-6">
-  @if (!timeline || !statistics) {
-  <div class="text-center py-8">
-    <p class="text-gray-500">Carregando dados para gráficos...</p>
+@if (!timeline || !statistics) {
+<!-- Enhanced Skeleton Loading - Intelly Palette -->
+<div class="space-y-6 animate-pulse">
+  <!-- Header Skeleton -->
+  <div class="flex items-center justify-between">
+    <div>
+      <div class="h-6 bg-neutral-200 rounded-xl w-48 mb-2"></div>
+      <div class="h-4 bg-neutral-200 rounded-xl w-64"></div>
+    </div>
+    <div class="h-10 bg-neutral-200 rounded-full w-36"></div>
   </div>
-  } @else if (timeline.total_count === 0) {
-  <div class="text-center py-12">
+
+  <!-- Tabs Skeleton -->
+  <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
+    <div class="h-9 bg-neutral-200 rounded-full w-28"></div>
+    <div class="h-9 bg-neutral-200 rounded-full w-32"></div>
+  </div>
+
+  <!-- Cards Skeleton -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    @for (item of [1,2,3]; track item) {
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 h-48"></div>
+    }
+  </div>
+
+  <!-- Charts Skeleton -->
+  <div class="space-y-4">
+    @for (item of [1,2]; track item) {
+    <div class="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 h-96"></div>
+    }
+  </div>
+</div>
+} @else if (timeline.total_count === 0) {
+<!-- Enhanced Empty State - Intelly Design -->
+<div class="flex flex-col items-center justify-center py-16 px-4 text-center bg-white rounded-2xl shadow-sm border border-neutral-200">
+  <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-6 relative overflow-hidden">
+    <div class="absolute top-2 right-2 w-16 h-16 opacity-30">
+      <div class="w-8 h-8 bg-blue-600 rounded-full"></div>
+      <div class="w-5 h-5 bg-blue-600 rounded-full absolute top-3 left-6"></div>
+    </div>
     <svg
-      class="mx-auto h-12 w-12 text-gray-400"
+      class="w-12 h-12 text-blue-600 relative z-10"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -18,46 +51,143 @@
         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
       />
     </svg>
-    <h3 class="mt-2 text-sm font-medium text-gray-900">
-      Sem dados para visualização
-    </h3>
-    <p class="mt-1 text-sm text-gray-500">
-      É necessário ter pelo menos 1 teste para gerar gráficos.
-    </p>
   </div>
-  } @else {
+  <h3 class="text-xl font-semibold text-neutral-900 mb-2">
+    Sem dados para visualização
+  </h3>
+  <p class="text-sm text-neutral-600 mb-6 max-w-md">
+    É necessário ter pelo menos 1 teste para gerar gráficos e análises. Realize seu primeiro teste para começar!
+  </p>
+  <button
+    class="px-6 py-2.5 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors shadow-md hover:shadow-lg"
+  >
+    Realizar Primeiro Teste
+  </button>
+</div>
+} @else {
+<div class="space-y-6">
 
-  <!-- Filtro -->
-  <div class="bg-gray-50 rounded-lg p-4">
-    <div class="flex items-end space-x-4">
-      <div class="flex-grow">
-        <label
-          for="chartFilter"
-          class="block text-sm font-medium text-gray-700"
-        >
-          Filtrar por tipo de teste
+  <!-- Tabs Pills Navigation - Intelly Style -->
+  <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
+    <button
+      (click)="selectedView.set('overview')"
+      [class]="selectedView() === 'overview' ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
+    >
+      Visão Geral
+    </button>
+    <button
+      (click)="selectedView.set('detailed')"
+      [class]="selectedView() === 'detailed' ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
+    >
+      Gráficos Detalhados
+    </button>
+  </div>
+
+  <!-- Enhanced Filters Section - Intelly Palette -->
+  <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-base font-semibold text-neutral-900">Filtros de Análise</h3>
+      @if (selectedTestType() !== 'all') {
+      <button
+        (click)="clearFilters()"
+        class="text-sm text-pink-600 hover:text-pink-700 font-medium transition-colors"
+      >
+        Limpar filtros
+      </button>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Filter 1: Test Type -->
+      <div>
+        <label class="flex items-center gap-2 text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2">
+          Tipo de Teste
+          <button
+            appTooltip="Filtre os gráficos por tipo de teste realizado"
+            [tooltipPosition]="'top'"
+            class="inline-flex items-center"
+          >
+            <svg class="w-3.5 h-3.5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+          </button>
         </label>
-        <select
-          id="chartFilter"
-          [ngModel]="selectedTestType()"
-          (ngModelChange)="selectedTestType.set($event)"
-          class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
-        >
-          <option value="all">Todos os testes</option>
-          <option value="spiral">Apenas Espiral</option>
-          <option value="voice">Apenas Voz</option>
-        </select>
+        <div class="relative">
+          <select
+            id="chartFilter"
+            [ngModel]="selectedTestType()"
+            (ngModelChange)="selectedTestType.set($event)"
+            class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-400 transition-all appearance-none cursor-pointer"
+          >
+            <option value="all">Todos os testes</option>
+            <option value="spiral">Apenas Espiral</option>
+            <option value="voice">Apenas Voz</option>
+          </select>
+          <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Summary Stats -->
+      <div class="md:col-span-2 flex items-end gap-3">
+        <div class="flex-1 bg-yellow-100 rounded-xl p-4 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;"></div>
+          <div class="relative z-10">
+            <p class="text-xs font-medium text-neutral-700 mb-1">Testes Filtrados</p>
+            <p class="text-2xl font-bold text-neutral-900">{{ filteredChartData().length }}</p>
+          </div>
+        </div>
+        <div class="flex-1 bg-pink-100 rounded-xl p-4 relative overflow-hidden">
+          <svg class="absolute bottom-0 right-0 w-20 h-20 opacity-20" viewBox="0 0 200 200">
+            <path d="M0,100 Q50,50 100,100 T200,100 L200,200 L0,200 Z" fill="currentColor"/>
+          </svg>
+          <div class="relative z-10">
+            <p class="text-xs font-medium text-neutral-700 mb-1">Score Médio</p>
+            @if (computedStats(); as stats) {
+            <p class="text-2xl font-bold text-neutral-900">
+              {{ ((stats.avgSpiralScore + stats.avgVoiceScore) / 2).toFixed(1) }}
+            </p>
+            }
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Active Filters Badges -->
+    @if (selectedTestType() !== 'all') {
+    <div class="flex items-center gap-2 flex-wrap mt-4 pt-4 border-t border-neutral-200">
+      <span class="text-xs text-neutral-600 font-medium">Filtro ativo:</span>
+      <span class="inline-flex items-center gap-2 px-3 py-1 bg-pink-100 text-pink-900 rounded-full text-xs font-medium">
+        {{ getTestTypeLabel(selectedTestType()) }}
+        <button (click)="clearFilters()" class="hover:text-pink-700">
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </span>
+    </div>
+    }
   </div>
 
-  <!-- Grid Principal de Gráficos -->
+  @if (selectedView() === 'overview') {
+  <!-- OVERVIEW: Grid Principal de Gráficos -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Gráfico de Linha - Progressão de Scores -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">
-        Progressão de Scores ao Longo do Tempo
-      </h3>
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-neutral-900">
+          Progressão de Scores ao Longo do Tempo
+        </h3>
+        <button
+          appTooltip="Evolução dos scores dos testes ao longo do tempo"
+          [tooltipPosition]="'top'"
+        >
+          <svg class="w-5 h-5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
 
       @if (filteredChartData().length > 0) {
       <div class="relative" style="height: 350px;">
@@ -69,17 +199,34 @@
         ></canvas>
       </div>
       } @else {
-      <p class="text-center text-gray-500 py-8">
-        Nenhum dado disponível para o filtro selecionado.
-      </p>
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+          </svg>
+        </div>
+        <p class="text-sm text-neutral-600 max-w-xs">
+          Nenhum dado disponível para o filtro selecionado.
+        </p>
+      </div>
       }
     </div>
 
     <!-- Gráfico de Barras - Scores Médios por Mês -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">
-        Evolução Mensal de Scores
-      </h3>
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-neutral-900">
+          Evolução Mensal de Scores
+        </h3>
+        <button
+          appTooltip="Média dos scores agrupados por mês"
+          [tooltipPosition]="'top'"
+        >
+          <svg class="w-5 h-5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
 
       @if (filteredChartData().length > 0) {
       <div class="relative" style="height: 350px;">
@@ -91,9 +238,16 @@
         ></canvas>
       </div>
       } @else {
-      <p class="text-center text-gray-500 py-8">
-        Nenhum dado disponível para o filtro selecionado.
-      </p>
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+        <p class="text-sm text-neutral-600 max-w-xs">
+          Nenhum dado disponível para o filtro selecionado.
+        </p>
+      </div>
       }
     </div>
   </div>
@@ -101,12 +255,22 @@
   <!-- Grid de Gráfico de Pizza, Radar e Estatísticas -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Gráfico de Pizza - Distribuição de Classificações -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">
-        Distribuição de Classificações
-      </h3>
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-neutral-900">
+          Distribuição de Classificações
+        </h3>
+        <button
+          appTooltip="Proporção entre classificações Saudável e Parkinson"
+          [tooltipPosition]="'top'"
+        >
+          <svg class="w-5 h-5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
 
-      <div class="relative" style="height: 300px;">
+      <div class="relative" style="height: 280px;">
         <canvas
           baseChart
           [data]="pieChartData"
@@ -117,13 +281,23 @@
     </div>
 
     <!-- Gráfico de Radar - Análise Multidimensional -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">
-        Análise Multidimensional
-      </h3>
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-neutral-900">
+          Análise Multidimensional
+        </h3>
+        <button
+          appTooltip="Comparação de múltiplas métricas de qualidade"
+          [tooltipPosition]="'top'"
+        >
+          <svg class="w-5 h-5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
 
       @if (filteredChartData().length > 0) {
-      <div class="relative" style="height: 300px;">
+      <div class="relative" style="height: 280px;">
         <canvas
           baseChart
           [data]="radarChartData"
@@ -132,70 +306,260 @@
         ></canvas>
       </div>
       } @else {
-      <p class="text-center text-gray-500 py-8">
-        Nenhum dado disponível para o filtro selecionado.
-      </p>
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center mb-3">
+          <svg class="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+          </svg>
+        </div>
+        <p class="text-xs text-neutral-600 max-w-xs">
+          Nenhum dado disponível
+        </p>
+      </div>
       }
     </div>
 
     <!-- Cards de Scores Médios e Melhores/Piores -->
     @if (computedStats(); as stats) {
-    <div class="space-y-6">
-      <!-- Scores Médios -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-          Scores Médios
-        </h3>
-        <div class="space-y-4">
-          @if (stats.totalSpiralTests > 0) {
-          <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-            <div class="flex items-center space-x-3">
-              <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span class="text-sm font-medium text-gray-700">Teste de Espiral</span>
-            </div>
-            <span class="text-lg font-bold text-blue-600">{{ stats.avgSpiralScore.toFixed(2) }}</span>
+    <div class="space-y-4">
+      <!-- Scores Médios - Yellow Card -->
+      <div class="bg-yellow-100 rounded-2xl shadow-sm border border-yellow-200 p-5 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;"></div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-2 mb-3">
+            <h3 class="text-sm font-semibold text-neutral-900">Scores Médios</h3>
+            <button
+              appTooltip="Média dos scores por tipo de teste"
+              [tooltipPosition]="'top'"
+            >
+              <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </button>
           </div>
-          }
-          @if (stats.totalVoiceTests > 0) {
-          <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-            <div class="flex items-center space-x-3">
-              <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
-              <span class="text-sm font-medium text-gray-700">Teste de Voz</span>
+          <div class="space-y-3">
+            @if (stats.totalSpiralTests > 0) {
+            <div class="flex items-center justify-between p-3 bg-white/70 rounded-lg">
+              <div class="flex items-center space-x-2">
+                <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                <span class="text-xs font-medium text-neutral-700">Espiral</span>
+              </div>
+              <span class="text-base font-bold text-blue-600">{{ stats.avgSpiralScore.toFixed(2) }}</span>
             </div>
-            <span class="text-lg font-bold text-purple-600">{{ stats.avgVoiceScore.toFixed(2) }}</span>
+            }
+            @if (stats.totalVoiceTests > 0) {
+            <div class="flex items-center justify-between p-3 bg-white/70 rounded-lg">
+              <div class="flex items-center space-x-2">
+                <div class="w-2.5 h-2.5 bg-pink-500 rounded-full"></div>
+                <span class="text-xs font-medium text-neutral-700">Voz</span>
+              </div>
+              <span class="text-base font-bold text-pink-600">{{ stats.avgVoiceScore.toFixed(2) }}</span>
+            </div>
+            }
           </div>
-          }
         </div>
       </div>
 
-      <!-- Melhores e Piores Resultados -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-          Melhores e Piores Scores
-        </h3>
-        <div class="space-y-3">
-          @if (stats.totalSpiralTests > 0) {
-          <div class="border-l-4 border-blue-500 pl-3">
-            <p class="text-xs font-medium text-gray-600">Espiral</p>
-            <div class="flex items-center justify-between mt-1">
-              <span class="text-sm text-gray-700">Melhor: <span class="font-bold text-green-600">{{ stats.bestSpiralScore.toFixed(2) }}</span></span>
-              <span class="text-sm text-gray-700">Pior: <span class="font-bold text-red-600">{{ stats.worstSpiralScore.toFixed(2) }}</span></span>
-            </div>
+      <!-- Melhores e Piores Resultados - Pink Card -->
+      <div class="bg-pink-100 rounded-2xl shadow-sm border border-pink-200 p-5 relative overflow-hidden">
+        <svg class="absolute bottom-0 right-0 w-20 h-20 opacity-10" viewBox="0 0 200 200">
+          <path d="M0,100 Q50,50 100,100 T200,100 L200,200 L0,200 Z" fill="currentColor"/>
+        </svg>
+        <div class="relative z-10">
+          <div class="flex items-center gap-2 mb-3">
+            <h3 class="text-sm font-semibold text-neutral-900">Extremos</h3>
+            <button
+              appTooltip="Melhores e piores scores registrados"
+              [tooltipPosition]="'top'"
+            >
+              <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </button>
           </div>
-          }
-          @if (stats.totalVoiceTests > 0) {
-          <div class="border-l-4 border-purple-500 pl-3">
-            <p class="text-xs font-medium text-gray-600">Voz</p>
-            <div class="flex items-center justify-between mt-1">
-              <span class="text-sm text-gray-700">Melhor: <span class="font-bold text-green-600">{{ stats.bestVoiceScore.toFixed(2) }}</span></span>
-              <span class="text-sm text-gray-700">Pior: <span class="font-bold text-red-600">{{ stats.worstVoiceScore.toFixed(2) }}</span></span>
+          <div class="space-y-3">
+            @if (stats.totalSpiralTests > 0) {
+            <div class="border-l-3 border-blue-400 pl-3 bg-white/50 p-2 rounded-r-lg">
+              <p class="text-xs font-medium text-neutral-600 mb-1">Espiral</p>
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-1">
+                  <svg class="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="font-semibold text-green-700">{{ stats.bestSpiralScore.toFixed(2) }}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <svg class="w-3 h-3 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="font-semibold text-red-700">{{ stats.worstSpiralScore.toFixed(2) }}</span>
+                </div>
+              </div>
             </div>
+            }
+            @if (stats.totalVoiceTests > 0) {
+            <div class="border-l-3 border-pink-400 pl-3 bg-white/50 p-2 rounded-r-lg">
+              <p class="text-xs font-medium text-neutral-600 mb-1">Voz</p>
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-1">
+                  <svg class="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="font-semibold text-green-700">{{ stats.bestVoiceScore.toFixed(2) }}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <svg class="w-3 h-3 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="font-semibold text-red-700">{{ stats.worstVoiceScore.toFixed(2) }}</span>
+                </div>
+              </div>
+            </div>
+            }
           </div>
-          }
         </div>
       </div>
     </div>
     }
   </div>
   }
+
+  @if (selectedView() === 'detailed') {
+  <!-- DETAILED: Accordion with All Charts -->
+  <div class="space-y-4">
+    <!-- Accordion Item 1: Line Chart -->
+    <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+      <button
+        (click)="toggleAccordion('line')"
+        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-neutral-900">Progressão de Scores ao Longo do Tempo</h3>
+        </div>
+        @if (expandedAccordion() === 'line') {
+          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+          </svg>
+        } @else {
+          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        }
+      </button>
+      @if (expandedAccordion() === 'line') {
+      <div class="px-5 pb-5 border-t border-neutral-100">
+        @if (filteredChartData().length > 0) {
+        <div class="relative mt-4" style="height: 400px;">
+          <canvas
+            baseChart
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+            [type]="lineChartType"
+          ></canvas>
+        </div>
+        } @else {
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <p class="text-sm text-neutral-600">Nenhum dado disponível para o filtro selecionado.</p>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Accordion Item 2: Bar Chart -->
+    <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+      <button
+        (click)="toggleAccordion('bar')"
+        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-neutral-900">Evolução Mensal de Scores</h3>
+        </div>
+        @if (expandedAccordion() === 'bar') {
+          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+          </svg>
+        } @else {
+          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        }
+      </button>
+      @if (expandedAccordion() === 'bar') {
+      <div class="px-5 pb-5 border-t border-neutral-100">
+        @if (filteredChartData().length > 0) {
+        <div class="relative mt-4" style="height: 400px;">
+          <canvas
+            baseChart
+            [data]="barChartData"
+            [options]="barChartOptions"
+            [type]="barChartType"
+          ></canvas>
+        </div>
+        } @else {
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <p class="text-sm text-neutral-600">Nenhum dado disponível para o filtro selecionado.</p>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Accordion Item 3: Radar Chart -->
+    <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+      <button
+        (click)="toggleAccordion('radar')"
+        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-neutral-900">Análise Multidimensional</h3>
+        </div>
+        @if (expandedAccordion() === 'radar') {
+          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+          </svg>
+        } @else {
+          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        }
+      </button>
+      @if (expandedAccordion() === 'radar') {
+      <div class="px-5 pb-5 border-t border-neutral-100">
+        @if (filteredChartData().length > 0) {
+        <div class="relative mt-4" style="height: 400px;">
+          <canvas
+            baseChart
+            [data]="radarChartData"
+            [options]="radarChartOptions"
+            [type]="radarChartType"
+          ></canvas>
+        </div>
+        } @else {
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <p class="text-sm text-neutral-600">Nenhum dado disponível para o filtro selecionado.</p>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
+
 </div>
+}

@@ -5,6 +5,8 @@ import { PatientTimeline } from '../../../../../core/models/patient-timeline.mod
 import { PatientStatistics } from '../../../../../core/models/patient-statistics.model';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { ToastService } from '../../../../../shared/services/toast.service';
 
 interface ChartDataPoint {
   date: string;
@@ -34,7 +36,7 @@ interface ComputedStatistics {
 @Component({
   selector: 'app-charts-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseChartDirective],
+  imports: [CommonModule, FormsModule, BaseChartDirective, TooltipDirective],
   templateUrl: './charts-tab.component.html',
 })
 export class ChartsTabComponent implements OnChanges {
@@ -46,6 +48,10 @@ export class ChartsTabComponent implements OnChanges {
   readonly chartData = signal<ChartDataPoint[]>([]);
   readonly selectedTestType = signal<'all' | 'spiral' | 'voice'>('all');
   readonly computedStats = signal<ComputedStatistics | null>(null);
+
+  // New signals for enhanced UI
+  readonly selectedView = signal<'overview' | 'detailed'>('overview');
+  readonly expandedAccordion = signal<string | null>('line');
 
   // Line Chart Configuration
   public lineChartData: ChartConfiguration['data'] = {
@@ -610,5 +616,27 @@ export class ChartsTabComponent implements OnChanges {
       default:
         return 'Estável';
     }
+  }
+
+  // New utility methods for enhanced UI
+  toggleAccordion(chartId: string): void {
+    if (this.expandedAccordion() === chartId) {
+      this.expandedAccordion.set(null);
+    } else {
+      this.expandedAccordion.set(chartId);
+    }
+  }
+
+  clearFilters(): void {
+    this.selectedTestType.set('all');
+  }
+
+  getTestTypeLabel(type: 'all' | 'spiral' | 'voice'): string {
+    const labels: Record<'all' | 'spiral' | 'voice', string> = {
+      all: 'Todos os testes',
+      spiral: 'Teste de Espiral',
+      voice: 'Teste de Voz'
+    };
+    return labels[type];
   }
 }

@@ -5,11 +5,13 @@ import {
   ClinicalSpiralTestResult,
   ClinicalVoiceTestResult,
 } from '../../../../../core/models/clinical-test-result.model';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-test-result',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TooltipDirective, BadgeComponent],
   templateUrl: './test-result.component.html',
 })
 export class TestResultComponent implements OnInit {
@@ -60,12 +62,34 @@ export class TestResultComponent implements OnInit {
 
   getClassificationColor(): string {
     const classification = this.getClassification();
-    return classification === 'PARKINSON' ? 'text-red-600' : 'text-green-600';
+    return classification === 'PARKINSON' ? 'text-pink-700' : 'text-green-700';
   }
 
   getClassificationBgColor(): string {
     const classification = this.getClassification();
-    return classification === 'PARKINSON' ? 'bg-red-50' : 'bg-green-50';
+    return classification === 'PARKINSON' ? 'bg-pink-50 border-pink-200' : 'bg-green-50 border-green-200';
+  }
+
+  getClassificationBadgeVariant(): 'success' | 'error' | 'neutral' {
+    const classification = this.getClassification();
+    if (classification === 'HEALTHY') return 'success';
+    if (classification === 'PARKINSON') return 'error';
+    return 'neutral';
+  }
+
+  getClassificationLabel(): string {
+    const classification = this.getClassification();
+    return classification === 'HEALTHY' ? 'Saudável' : 'Parkinson';
+  }
+
+  formatProbability(value: number): string {
+    return (value * 100).toFixed(1) + '%';
+  }
+
+  getPredictionBadgeVariant(prediction: string): 'success' | 'error' | 'neutral' {
+    if (prediction === 'HEALTHY') return 'success';
+    if (prediction === 'PARKINSON') return 'error';
+    return 'neutral';
   }
 
   formatDate(dateString: string): string {
