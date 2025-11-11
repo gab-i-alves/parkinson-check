@@ -3,7 +3,7 @@
   *ngIf="currentStep > 1"
   type="button"
   (click)="previousStep()"
-  class="absolute top-0 left-0 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+  class="absolute top-0 left-0 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white border border-neutral-300 rounded-lg hover:bg-gray-50 hover:text-neutral-900 transition-all shadow-sm"
   aria-label="Voltar"
 >
   <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -16,23 +16,21 @@
   </svg>
 </button>
 
-<!-- Progress indicator -->
+<!-- Progress indicator - Enhanced Design -->
 <div class="mb-8">
-  <div class="flex items-center justify-center space-x-2">
-    <div
-      *ngFor="let step of [1, 2, 3, 4]; let i = index"
-      class="flex items-center"
-    >
+  <div class="flex items-center justify-between max-w-3xl mx-auto">
+    <!-- Step 1 -->
+    <div class="flex flex-col items-center gap-2 flex-1">
       <div
         [ngClass]="{
-          'bg-violet-700 text-white': currentStep === step,
-          'bg-violet-100 text-violet-700': currentStep > step,
-          'bg-gray-200 text-gray-500': currentStep < step
+          'bg-pink-200 text-neutral-900': currentStep === 1,
+          'bg-green-500 text-white': currentStep > 1,
+          'bg-neutral-200 text-neutral-500': currentStep < 1
         }"
-        class="flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm transition-all duration-200"
+        class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-200"
       >
         <svg
-          *ngIf="currentStep > step"
+          *ngIf="currentStep > 1"
           class="w-5 h-5"
           fill="currentColor"
           viewBox="0 0 20 20"
@@ -43,27 +41,103 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="currentStep <= step">{{ step }}</span>
+        <span *ngIf="currentStep <= 1">1</span>
       </div>
-      <div
-        *ngIf="i < 3"
-        [ngClass]="{
-          'bg-violet-100': currentStep > step,
-          'bg-gray-200': currentStep <= step
-        }"
-        class="w-12 h-1 mx-2 transition-all duration-200"
-      ></div>
+      <span class="text-xs font-medium text-neutral-900 text-center">Pessoal</span>
     </div>
-  </div>
 
-  <!-- Step labels -->
-  <div class="mt-3 flex justify-center">
-    <p class="text-xs text-gray-600">
-      <span *ngIf="currentStep === 1">Dados Pessoais</span>
-      <span *ngIf="currentStep === 2">Dados Profissionais</span>
-      <span *ngIf="currentStep === 3">Endereço</span>
-      <span *ngIf="currentStep === 4">Segurança & Documentação</span>
-    </p>
+    <div
+      [ngClass]="{
+        'bg-green-500': currentStep > 1,
+        'bg-neutral-200': currentStep <= 1
+      }"
+      class="flex-1 h-1 -mx-2 transition-all duration-200"
+    ></div>
+
+    <!-- Step 2 -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div
+        [ngClass]="{
+          'bg-pink-200 text-neutral-900': currentStep === 2,
+          'bg-green-500 text-white': currentStep > 2,
+          'bg-neutral-200 text-neutral-500': currentStep < 2
+        }"
+        class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-200"
+      >
+        <svg
+          *ngIf="currentStep > 2"
+          class="w-5 h-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="currentStep <= 2">2</span>
+      </div>
+      <span class="text-xs font-medium text-neutral-900 text-center">Profissional</span>
+    </div>
+
+    <div
+      [ngClass]="{
+        'bg-green-500': currentStep > 2,
+        'bg-neutral-200': currentStep <= 2
+      }"
+      class="flex-1 h-1 -mx-2 transition-all duration-200"
+    ></div>
+
+    <!-- Step 3 -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div
+        [ngClass]="{
+          'bg-pink-200 text-neutral-900': currentStep === 3,
+          'bg-green-500 text-white': currentStep > 3,
+          'bg-neutral-200 text-neutral-500': currentStep < 3
+        }"
+        class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-200"
+      >
+        <svg
+          *ngIf="currentStep > 3"
+          class="w-5 h-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="currentStep <= 3">3</span>
+      </div>
+      <span class="text-xs font-medium text-neutral-900 text-center">Endereço</span>
+    </div>
+
+    <div
+      [ngClass]="{
+        'bg-green-500': currentStep > 3,
+        'bg-neutral-200': currentStep <= 3
+      }"
+      class="flex-1 h-1 -mx-2 transition-all duration-200"
+    ></div>
+
+    <!-- Step 4 -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div
+        [ngClass]="{
+          'bg-pink-200 text-neutral-900': currentStep === 4,
+          'bg-green-500 text-white': currentStep > 4,
+          'bg-neutral-200 text-neutral-500': currentStep < 4
+        }"
+        class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-200"
+      >
+        <span>4</span>
+      </div>
+      <span class="text-xs font-medium text-neutral-900 text-center">Segurança</span>
+    </div>
   </div>
 </div>
 
@@ -103,7 +177,7 @@
     <div>
       <label
         for="name_medico"
-        class="block text-sm font-medium text-gray-900 mb-2"
+        class="block text-sm font-medium text-neutral-900 mb-2"
       >
         Nome Completo
       </label>
@@ -114,7 +188,7 @@
         type="text"
         required
         placeholder="Digite seu nome completo"
-        class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+        class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
       />
       <div
         *ngIf="
@@ -143,7 +217,7 @@
       <div>
         <label
           for="cpf_medico"
-          class="block text-sm font-medium text-gray-900 mb-2"
+          class="block text-sm font-medium text-neutral-900 mb-2"
         >
           CPF
         </label>
@@ -155,7 +229,7 @@
           type="text"
           required
           placeholder="000.000.000-00"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -183,7 +257,7 @@
       <div>
         <label
           for="birthdate_medico"
-          class="block text-sm font-medium text-gray-900 mb-2"
+          class="block text-sm font-medium text-neutral-900 mb-2"
         >
           Data de Nascimento
         </label>
@@ -193,7 +267,7 @@
           formControlName="birthdate"
           type="date"
           required
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -221,7 +295,7 @@
   <div *ngIf="currentStep === 2" class="space-y-5">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
-        <label for="crm" class="block text-sm font-medium text-gray-900 mb-2">
+        <label for="crm" class="block text-sm font-medium text-neutral-900 mb-2">
           CRM
         </label>
         <input
@@ -231,7 +305,7 @@
           required
           formControlName="crm"
           placeholder="00000-UF"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -256,19 +330,46 @@
       <div>
         <label
           for="expertise_area"
-          class="block text-sm font-medium text-gray-900 mb-2"
+          class="flex items-center gap-2 text-sm font-medium text-neutral-900 mb-2"
         >
-          Especialidade
+          <span>Especialidade</span>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-200 text-neutral-900 text-xs font-medium">
+            Recomendado: Neurologia
+          </span>
         </label>
-        <select
-          id="expertise_area"
-          formControlName="expertise_area"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
-        >
-          <option>Neurologia</option>
-          <option>Geriatria</option>
-          <option>Outra</option>
-        </select>
+
+        <!-- Custom Dropdown -->
+        <div class="relative">
+          <button
+            type="button"
+            (click)="toggleSpecialtyDropdown()"
+            class="flex items-center justify-between w-full px-4 py-3 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300"
+          >
+            <span class="text-sm text-neutral-900">
+              {{ doctorForm.get('expertise_area')?.value || 'Selecione sua especialidade' }}
+            </span>
+            <svg class="w-5 h-5 text-neutral-600 transition-transform" [class.rotate-180]="showSpecialtyDropdown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <div
+            *ngIf="showSpecialtyDropdown"
+            class="absolute top-full left-0 mt-2 w-full bg-white rounded-xl shadow-lg border border-neutral-200 py-2 z-50 max-h-60 overflow-y-auto"
+          >
+            <button
+              type="button"
+              *ngFor="let specialty of specialties"
+              (click)="selectSpecialty(specialty.value)"
+              class="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-neutral-50 text-sm text-left transition-colors"
+              [class.bg-pink-50]="doctorForm.get('expertise_area')?.value === specialty.value"
+            >
+              <span class="text-2xl">{{ specialty.icon }}</span>
+              <span class="text-neutral-900">{{ specialty.label }}</span>
+            </button>
+          </div>
+        </div>
+
         <div
           *ngIf="
             doctorForm.get('expertise_area')?.invalid &&
@@ -295,7 +396,7 @@
   <div *ngIf="currentStep === 3" class="space-y-5">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div>
-        <label for="cep" class="block text-sm font-medium text-gray-900 mb-2">
+        <label for="cep" class="block text-sm font-medium text-neutral-900 mb-2">
           CEP
         </label>
         <input
@@ -304,7 +405,7 @@
           formControlName="cep"
           mask="00000-000"
           placeholder="00000-000"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -329,7 +430,7 @@
       <div class="sm:col-span-2">
         <label
           for="street"
-          class="block text-sm font-medium text-gray-900 mb-2"
+          class="block text-sm font-medium text-neutral-900 mb-2"
         >
           Rua
         </label>
@@ -338,7 +439,7 @@
           id="street"
           formControlName="street"
           placeholder="Nome da rua"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
     </div>
@@ -347,7 +448,7 @@
       <div>
         <label
           for="number"
-          class="block text-sm font-medium text-gray-900 mb-2"
+          class="block text-sm font-medium text-neutral-900 mb-2"
         >
           Número
         </label>
@@ -356,14 +457,14 @@
           id="number"
           formControlName="number"
           placeholder="Nº"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
 
       <div class="sm:col-span-2">
         <label
           for="complement"
-          class="block text-sm font-medium text-gray-900 mb-2"
+          class="block text-sm font-medium text-neutral-900 mb-2"
         >
           Complemento
         </label>
@@ -372,7 +473,7 @@
           id="complement"
           formControlName="complement"
           placeholder="Apto, bloco, etc. (opcional)"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
     </div>
@@ -381,7 +482,7 @@
       <div>
         <label
           for="neighborhood"
-          class="block text-sm font-medium text-gray-900 mb-2"
+          class="block text-sm font-medium text-neutral-900 mb-2"
         >
           Bairro
         </label>
@@ -390,12 +491,12 @@
           id="neighborhood"
           formControlName="neighborhood"
           placeholder="Seu bairro"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
 
       <div>
-        <label for="city" class="block text-sm font-medium text-gray-900 mb-2">
+        <label for="city" class="block text-sm font-medium text-neutral-900 mb-2">
           Cidade
         </label>
         <input
@@ -403,12 +504,12 @@
           id="city"
           formControlName="city"
           placeholder="Sua cidade"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
 
       <div>
-        <label for="state" class="block text-sm font-medium text-gray-900 mb-2">
+        <label for="state" class="block text-sm font-medium text-neutral-900 mb-2">
           Estado
         </label>
         <input
@@ -417,7 +518,7 @@
           formControlName="state"
           placeholder="UF"
           maxlength="2"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm uppercase"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm uppercase"
         />
       </div>
     </div>
@@ -430,7 +531,7 @@
       <div>
         <label
           for="email_medico"
-          class="block text-sm font-medium text-gray-900 mb-2"
+          class="block text-sm font-medium text-neutral-900 mb-2"
         >
           E-mail
         </label>
@@ -441,7 +542,7 @@
           required
           formControlName="email"
           placeholder="Digite seu e-mail"
-          class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -470,7 +571,7 @@
         <div>
           <label
             for="password_medico"
-            class="block text-sm font-medium text-gray-900 mb-2"
+            class="block text-sm font-medium text-neutral-900 mb-2"
           >
             Senha
           </label>
@@ -482,7 +583,7 @@
               [type]="showPassword ? 'text' : 'password'"
               required
               placeholder="Digite sua senha"
-              class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-11 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+              class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 pr-11 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             <button
               type="button"
@@ -545,7 +646,7 @@
               </svg>
               <span
                 [class.text-green-600]="!doctorForm.get('password')?.errors?.['required'] && !doctorForm.get('password')?.errors?.['minlength']"
-                [class.text-gray-600]="doctorForm.get('password')?.errors?.['required'] || doctorForm.get('password')?.errors?.['minlength']"
+                [class.text-neutral-600]="doctorForm.get('password')?.errors?.['required'] || doctorForm.get('password')?.errors?.['minlength']"
               >
                 Mínimo de 8 caracteres
               </span>
@@ -566,7 +667,7 @@
               </svg>
               <span
                 [class.text-green-600]="!doctorForm.get('password')?.errors?.['required'] && !doctorForm.get('password')?.errors?.['strong']"
-                [class.text-gray-600]="doctorForm.get('password')?.errors?.['required'] || doctorForm.get('password')?.errors?.['strong']"
+                [class.text-neutral-600]="doctorForm.get('password')?.errors?.['required'] || doctorForm.get('password')?.errors?.['strong']"
               >
                 Letras maiúsculas, minúsculas e números
               </span>
@@ -596,7 +697,7 @@
         <div>
           <label
             for="confirmPassword"
-            class="block text-sm font-medium text-gray-900 mb-2"
+            class="block text-sm font-medium text-neutral-900 mb-2"
           >
             Confirme sua Senha
           </label>
@@ -607,7 +708,7 @@
               formControlName="confirmPassword"
               [type]="showConfirmPassword ? 'text' : 'password'"
               placeholder="Digite sua senha novamente"
-              class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-11 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+              class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 pr-11 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             <button
               type="button"
@@ -681,75 +782,128 @@
     </div>
 
     <!-- Documentation Section -->
-    <div class="pt-4 border-t border-gray-200">
-      <h3 class="text-sm font-semibold text-gray-900 mb-3">Documentação</h3>
+    <div class="pt-4 border-t border-neutral-200">
+      <h3 class="text-sm font-semibold text-neutral-900 mb-4">Documentação</h3>
 
-      <div class="mb-4 rounded-lg border border-yellow-300 bg-yellow-50/80 p-4">
-        <div class="flex items-start">
-          <svg
-            class="h-5 w-5 text-yellow-600 mt-0.5 mr-3"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <div>
-            <p class="text-sm font-medium text-yellow-800">Importante</p>
-            <p class="text-xs text-yellow-700 mt-1">
-              Seu cadastro passará por verificação. Você receberá um e-mail
-              quando sua conta for aprovada.
-            </p>
-          </div>
+      <!-- Enhanced Alert Banner -->
+      <div class="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+        <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+        </svg>
+        <div class="flex-1">
+          <h4 class="text-sm font-semibold text-blue-900 mb-1">Verificação Necessária</h4>
+          <p class="text-sm text-blue-800">
+            Seu cadastro passará por análise da nossa equipe. Você receberá um e-mail quando for aprovado.
+          </p>
         </div>
       </div>
 
-      <div>
-        <label
-          for="file-upload"
-          class="block text-sm font-medium text-gray-900 mb-2"
-        >
-          Carteira do CRM (frente e verso)
-        </label>
+      <!-- Tabs for document types -->
+      <div class="border-b border-neutral-200 mb-4">
+        <nav class="flex gap-6">
+          <button
+            type="button"
+            (click)="selectDocumentTab('crm-front')"
+            [class.border-neutral-900]="activeDocumentTab === 'crm-front'"
+            [class.text-neutral-900]="activeDocumentTab === 'crm-front'"
+            [class.border-transparent]="activeDocumentTab !== 'crm-front'"
+            [class.text-neutral-600]="activeDocumentTab !== 'crm-front'"
+            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
+          >
+            CRM Frente
+            <span *ngIf="uploadedFiles['crm-front']" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium">
+              ✓
+            </span>
+          </button>
+          <button
+            type="button"
+            (click)="selectDocumentTab('crm-back')"
+            [class.border-neutral-900]="activeDocumentTab === 'crm-back'"
+            [class.text-neutral-900]="activeDocumentTab === 'crm-back'"
+            [class.border-transparent]="activeDocumentTab !== 'crm-back'"
+            [class.text-neutral-600]="activeDocumentTab !== 'crm-back'"
+            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
+          >
+            CRM Verso
+            <span *ngIf="uploadedFiles['crm-back']" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium">
+              ✓
+            </span>
+          </button>
+          <button
+            type="button"
+            (click)="selectDocumentTab('proof')"
+            [class.border-neutral-900]="activeDocumentTab === 'proof'"
+            [class.text-neutral-900]="activeDocumentTab === 'proof'"
+            [class.border-transparent]="activeDocumentTab !== 'proof'"
+            [class.text-neutral-600]="activeDocumentTab !== 'proof'"
+            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
+          >
+            Comprovante
+            <span *ngIf="uploadedFiles['proof']" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium">
+              ✓
+            </span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Enhanced File Upload Area -->
+      <div *ngIf="!uploadedFiles[activeDocumentTab]">
         <div
-          class="mt-2 flex justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 px-6 pt-5 pb-6 transition-colors hover:border-violet-400"
+          class="border-2 border-dashed border-neutral-300 rounded-xl p-8 text-center hover:border-pink-300 hover:bg-pink-50/50 transition-colors cursor-pointer"
+          (click)="fileInput.click()"
         >
-          <div class="space-y-1 text-center">
-            <svg
-              class="mx-auto h-12 w-12 text-gray-400"
-              stroke="currentColor"
-              fill="none"
-              viewBox="0 0 48 48"
-              aria-hidden="true"
-            >
-              <path
-                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+          <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            <div class="flex text-sm text-gray-600 justify-center">
-              <label
-                for="file-upload"
-                class="relative cursor-pointer rounded-md font-medium text-violet-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-violet-500 focus-within:ring-offset-2 hover:text-violet-800 transition-colors"
-              >
-                <span>Carregar um arquivo</span>
-                <input
-                  id="file-upload"
-                  name="file-upload"
-                  type="file"
-                  accept="image/*,.pdf"
-                  class="sr-only"
-                />
-              </label>
-              <p class="pl-1">ou arraste e solte</p>
-            </div>
-            <p class="text-xs text-gray-500">PNG, JPG, PDF até 5MB</p>
           </div>
+          <h3 class="text-sm font-semibold text-neutral-900 mb-2">
+            Envie seu documento {{ getDocumentLabel(activeDocumentTab) }}
+          </h3>
+          <p class="text-xs text-neutral-600 mb-4">
+            Arraste e solte ou clique para selecionar
+          </p>
+          <p class="text-xs text-neutral-500">
+            Formatos aceitos: PDF, JPG, PNG (máx. 5MB)
+          </p>
+          <input
+            #fileInput
+            type="file"
+            accept="image/*,.pdf"
+            (change)="onFileSelected($event)"
+            class="hidden"
+          />
+        </div>
+      </div>
+
+      <!-- Uploaded File Preview -->
+      <div *ngIf="uploadedFiles[activeDocumentTab]" class="space-y-2">
+        <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-neutral-200">
+          <div class="w-12 h-12 bg-neutral-900 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="text-sm font-semibold text-neutral-900 truncate">
+              {{ uploadedFiles[activeDocumentTab]!.name }}
+            </h4>
+            <p class="text-xs text-neutral-500">
+              {{ formatFileSize(uploadedFiles[activeDocumentTab]!.size) }}
+            </p>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-200 text-neutral-900 text-xs font-medium mt-1">
+              Aguardando verificação
+            </span>
+          </div>
+          <button
+            type="button"
+            (click)="removeFile(activeDocumentTab)"
+            class="p-2 hover:bg-red-100 rounded-lg transition-colors"
+          >
+            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -764,7 +918,7 @@
       *ngIf="currentStep < totalSteps"
       type="button"
       (click)="nextStep()"
-      class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-white bg-violet-700 rounded-lg shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+      class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-white bg-neutral-900 rounded-lg shadow-lg hover:bg-neutral-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
     >
       Próximo
       <svg
@@ -786,7 +940,7 @@
       *ngIf="currentStep === totalSteps"
       type="submit"
       [disabled]="doctorForm.invalid || isLoading"
-      class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-violet-700 rounded-lg shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+      class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-neutral-900 rounded-lg shadow-lg hover:bg-neutral-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
     >
       <svg
         *ngIf="isLoading"

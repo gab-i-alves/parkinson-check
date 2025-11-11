@@ -35,6 +35,28 @@ export class DoctorRegisterFormComponent {
   showPassword = false;
   showConfirmPassword = false;
 
+  // Specialty dropdown
+  showSpecialtyDropdown = false;
+  specialties = [
+    { value: 'Neurologia', label: 'Neurologia', icon: '🧠' },
+    { value: 'Geriatria', label: 'Geriatria', icon: '👴' },
+    { value: 'Cardiologia', label: 'Cardiologia', icon: '❤️' },
+    { value: 'Ortopedia', label: 'Ortopedia', icon: '🦴' },
+    { value: 'Psiquiatria', label: 'Psiquiatria', icon: '🧘' },
+    { value: 'Clínica Geral', label: 'Clínica Geral', icon: '👨‍⚕️' },
+    { value: 'Outra', label: 'Outra', icon: '📋' }
+  ];
+
+  // Document upload
+  activeDocumentTab: 'crm-front' | 'crm-back' | 'proof' = 'crm-front';
+  uploadedFiles: {
+    [key: string]: File | null;
+  } = {
+    'crm-front': null,
+    'crm-back': null,
+    'proof': null
+  };
+
   // DECISÃO DE ARQUITETURA: Uso de @Output para comunicar com o pai.
   // Em vez de conter a lógica de submissão, ele emite um evento.
   // Isso desacopla o componente da lógica de negócio (ex: chamadas de API).
@@ -118,5 +140,66 @@ export class DoctorRegisterFormComponent {
 
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  // Specialty dropdown methods
+  toggleSpecialtyDropdown(): void {
+    this.showSpecialtyDropdown = !this.showSpecialtyDropdown;
+  }
+
+  selectSpecialty(value: string): void {
+    this.doctorForm.patchValue({ expertise_area: value });
+    this.showSpecialtyDropdown = false;
+  }
+
+  // Document upload methods
+  selectDocumentTab(tab: 'crm-front' | 'crm-back' | 'proof'): void {
+    this.activeDocumentTab = tab;
+  }
+
+  getDocumentLabel(tab: string): string {
+    const labels: { [key: string]: string } = {
+      'crm-front': 'CRM Frente',
+      'crm-back': 'CRM Verso',
+      'proof': 'Comprovante'
+    };
+    return labels[tab] || '';
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Arquivo muito grande. O tamanho máximo é 5MB.');
+        return;
+      }
+
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        alert('Formato de arquivo inválido. Use JPG, PNG ou PDF.');
+        return;
+      }
+
+      this.uploadedFiles[this.activeDocumentTab] = file;
+
+      // Reset input
+      input.value = '';
+    }
+  }
+
+  removeFile(tab: string): void {
+    this.uploadedFiles[tab] = null;
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   }
 }

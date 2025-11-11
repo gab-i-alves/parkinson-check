@@ -8,6 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { UserRole } from '../../../../core/models/user.model';
 import { AuthService } from '../../services/auth.services';
 import { UserService } from '../../../../core/services/user.service';
@@ -18,6 +19,17 @@ import { LoginForm } from '../../../../core/models/login.model';
   standalone: true,
   imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './login.component.html',
+  animations: [
+    trigger('slideUp', [
+      transition(':enter', [
+        style({ transform: 'translateY(100%)', opacity: 0 }),
+        animate('300ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ transform: 'translateY(100%)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class LoginComponent implements OnInit {
   activeTab: UserRole = 'paciente';
@@ -33,6 +45,12 @@ export class LoginComponent implements OnInit {
 
   buttonTouched = false;
   showPassword = false;
+
+  // Toast notification properties
+  showToast = false;
+  toastMessage = '';
+  toastType: 'error' | 'success' = 'error';
+  private toastTimeout?: number;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -66,10 +84,34 @@ export class LoginComponent implements OnInit {
     this.activeTab = role;
     this.loginForm.reset({ remember: false });
     this.apiError = null;
+    this.closeToast();
   }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  showToastNotification(message: string, type: 'error' | 'success'): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+
+    // Clear any existing timeout
+    if (this.toastTimeout) {
+      window.clearTimeout(this.toastTimeout);
+    }
+
+    // Auto-hide toast after 5 seconds
+    this.toastTimeout = window.setTimeout(() => {
+      this.closeToast();
+    }, 5000);
+  }
+
+  closeToast(): void {
+    this.showToast = false;
+    if (this.toastTimeout) {
+      window.clearTimeout(this.toastTimeout);
+    }
   }
 
   onSubmit(): void {
@@ -78,7 +120,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.apiError = null;
+    this.closeToast();
     this.isLoading = true;
     this.loginForm.disable();
 
@@ -98,15 +140,21 @@ export class LoginComponent implements OnInit {
 
         console.log('Usuário sincronizado no UserService:', currentUser);
 
-        if (currentUser?.role === 'medico') {
-          this.router.navigate(['/dashboard/doctor']);
-        } else {
-          this.router.navigate(['/dashboard']);
-        }
+        // Show success toast
+        this.showToastNotification('Login realizado com sucesso!', 'success');
+
+        // Navigate after a short delay to show the toast
+        setTimeout(() => {
+          if (currentUser?.role === 'medico') {
+            this.router.navigate(['/dashboard/doctor']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
+        }, 1000);
       },
       error: (err) => {
         console.error('Erro no login:', err);
-        this.apiError = 'E-mail ou senha inválidos. Tente novamente.';
+        this.showToastNotification('E-mail ou senha inválidos. Tente novamente.', 'error');
         this.isLoading = false;
         this.loginForm.enable();
       },

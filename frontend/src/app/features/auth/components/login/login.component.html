@@ -1,28 +1,28 @@
 <div
-  class="min-h-screen flex items-center justify-center px-6 py-12 bg-gray-100 relative overflow-hidden"
+  class="min-h-screen flex items-center justify-center px-6 py-12 bg-neutral-50 relative overflow-hidden"
 >
   <!-- Background decorativo -->
   <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
     <div
-      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
+      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-yellow-200/30 rounded-full filter blur-3xl opacity-50"
     ></div>
     <div
-      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
+      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-pink-200/30 rounded-full filter blur-3xl opacity-40"
     ></div>
     <div
-      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
+      class="absolute top-[30%] left-[10%] w-64 h-64 bg-blue-200/30 rounded-full filter blur-3xl opacity-35"
     ></div>
   </div>
 
   <div class="w-full max-w-md relative">
     <!-- Card principal -->
     <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative"
+      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-neutral-200/50 p-8 relative"
     >
       <!-- Back button icon -->
       <a
         routerLink="/"
-        class="absolute top-6 left-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        class="absolute top-6 left-6 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 hover:text-neutral-900 transition-all shadow-sm"
         aria-label="Voltar para página inicial"
       >
         <svg
@@ -47,58 +47,72 @@
           class="inline-flex items-center justify-center space-x-3 group"
         >
           <div
-            class="flex h-12 w-12 items-center justify-center rounded-lg bg-violet-700 shadow-lg group-hover:bg-violet-800 transition-colors"
+            class="flex h-12 w-12 items-center justify-center rounded-lg bg-neutral-900 shadow-lg group-hover:bg-neutral-800 transition-colors"
           >
             <span class="text-2xl font-bold text-white">P</span>
           </div>
           <div class="text-left">
-            <h1 class="text-2xl font-bold text-gray-900">ParkinsonCheck</h1>
-            <p class="text-xs text-gray-600">Monitoramento Inteligente</p>
+            <h1 class="text-2xl font-bold text-neutral-900">ParkinsonCheck</h1>
+            <p class="text-xs text-neutral-600">Monitoramento Inteligente</p>
           </div>
         </a>
-        <h2 class="mt-6 text-lg font-semibold text-gray-900">
+        <h2 class="mt-6 text-lg font-semibold text-neutral-900">
           Acesse sua conta
         </h2>
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-1 text-sm text-neutral-600">
           Selecione seu perfil e faça login
         </p>
       </div>
 
-      <!-- Tabs de perfil -->
-      <div class="flex bg-gray-100 rounded-lg p-1 mb-6">
-        <button
-          (click)="selectTab('paciente')"
-          [ngClass]="{
-            'bg-white shadow-sm text-violet-700 font-semibold':
-              activeTab === 'paciente',
-            'text-gray-600 hover:text-gray-900': activeTab !== 'paciente'
-          }"
-          class="flex-1 py-2.5 px-3 text-sm rounded-md transition-all duration-200 focus:outline-none"
-        >
-          Paciente
-        </button>
-        <button
-          (click)="selectTab('medico')"
-          [ngClass]="{
-            'bg-white shadow-sm text-violet-700 font-semibold':
-              activeTab === 'medico',
-            'text-gray-600 hover:text-gray-900': activeTab !== 'medico'
-          }"
-          class="flex-1 py-2.5 px-3 text-sm rounded-md transition-all duration-200 focus:outline-none"
-        >
-          Médico
-        </button>
-        <button
-          (click)="selectTab('admin')"
-          [ngClass]="{
-            'bg-white shadow-sm text-violet-700 font-semibold':
-              activeTab === 'admin',
-            'text-gray-600 hover:text-gray-900': activeTab !== 'admin'
-          }"
-          class="flex-1 py-2.5 px-3 text-sm rounded-md transition-all duration-200 focus:outline-none"
-        >
-          Admin
-        </button>
+      <!-- Tabs de perfil com badge -->
+      <div class="mb-4">
+        <div class="flex items-center justify-center mb-3">
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+            [ngClass]="{
+              'bg-pink-200 text-neutral-900': activeTab === 'paciente',
+              'bg-blue-200 text-neutral-900': activeTab === 'medico',
+              'bg-yellow-200 text-neutral-900': activeTab === 'admin'
+            }"
+          >
+            Modo: {{ activeTab === 'paciente' ? 'Paciente' : activeTab === 'medico' ? 'Médico' : 'Administrador' }}
+          </span>
+        </div>
+        <div class="flex bg-neutral-100 rounded-full p-1">
+          <button
+            (click)="selectTab('paciente')"
+            [ngClass]="{
+              'bg-white shadow-sm text-neutral-900 font-medium':
+                activeTab === 'paciente',
+              'text-neutral-600 hover:text-neutral-900': activeTab !== 'paciente'
+            }"
+            class="flex-1 py-2 px-4 text-sm rounded-full transition-all duration-200 focus:outline-none"
+          >
+            Paciente
+          </button>
+          <button
+            (click)="selectTab('medico')"
+            [ngClass]="{
+              'bg-white shadow-sm text-neutral-900 font-medium':
+                activeTab === 'medico',
+              'text-neutral-600 hover:text-neutral-900': activeTab !== 'medico'
+            }"
+            class="flex-1 py-2 px-4 text-sm rounded-full transition-all duration-200 focus:outline-none"
+          >
+            Médico
+          </button>
+          <button
+            (click)="selectTab('admin')"
+            [ngClass]="{
+              'bg-white shadow-sm text-neutral-900 font-medium':
+                activeTab === 'admin',
+              'text-neutral-600 hover:text-neutral-900': activeTab !== 'admin'
+            }"
+            class="flex-1 py-2 px-4 text-sm rounded-full transition-all duration-200 focus:outline-none"
+          >
+            Admin
+          </button>
+        </div>
       </div>
 
       <!-- Form -->
@@ -109,34 +123,12 @@
         class="space-y-5"
         novalidate
       >
-        <!-- Error banner -->
-        <div
-          *ngIf="apiError"
-          class="bg-red-50/80 border border-red-200 rounded-lg p-4"
-        >
-          <div class="flex items-start">
-            <svg
-              class="h-5 w-5 text-red-600 mt-0.5 mr-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
-          </div>
-        </div>
 
         <!-- Email -->
         <div>
           <label
             for="email"
-            class="block text-sm font-medium text-gray-900 mb-2"
+            class="block text-sm font-medium text-neutral-800 mb-2"
           >
             E-mail
           </label>
@@ -146,7 +138,7 @@
             formControlName="email"
             required
             [placeholder]="emailPlaceholder"
-            class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+            class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
           />
           <div
             *ngIf="
@@ -175,9 +167,25 @@
         <div>
           <label
             for="password"
-            class="block text-sm font-medium text-gray-900 mb-2"
+            class="flex items-center gap-2 text-sm font-medium text-neutral-800 mb-2"
           >
-            Senha
+            <span>Senha</span>
+            <div class="relative group">
+              <button
+                type="button"
+                class="p-1 hover:bg-neutral-100 rounded-lg transition-colors"
+                aria-label="Informações sobre requisitos de senha"
+              >
+                <svg class="w-4 h-4 text-neutral-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </button>
+
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                Mínimo 8 caracteres
+                <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-neutral-900"></div>
+              </div>
+            </div>
           </label>
           <div class="relative">
             <input
@@ -186,12 +194,12 @@
               formControlName="password"
               required
               placeholder="Digite sua senha"
-              class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-11 text-gray-900 placeholder-gray-400 shadow-sm transition-colors focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 sm:text-sm"
+              class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 pr-11 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             <button
               type="button"
               (click)="togglePasswordVisibility()"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 transition-colors"
+              class="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-500 hover:text-neutral-700 transition-colors"
               aria-label="Toggle password visibility"
             >
               <svg
@@ -260,16 +268,16 @@
               id="remember"
               type="checkbox"
               formControlName="remember"
-              class="h-4 w-4 rounded border-gray-300 text-violet-700 focus:ring-violet-500 focus:ring-offset-0"
+              class="h-4 w-4 rounded border-neutral-300 text-neutral-900 focus:ring-pink-200 focus:ring-offset-0"
             />
-            <label for="remember" class="ml-2 block text-sm text-gray-700">
+            <label for="remember" class="ml-2 block text-sm text-neutral-700">
               Manter conectado
             </label>
           </div>
           <div class="text-sm">
             <a
               routerLink="/auth/forgot-password"
-              class="font-medium text-violet-700 hover:text-violet-800 transition-colors"
+              class="font-medium text-neutral-900 hover:text-pink-600 transition-colors"
             >
               Esqueceu sua senha?
             </a>
@@ -281,7 +289,7 @@
           <button
             type="submit"
             [disabled]="loginForm.invalid || isLoading"
-            class="flex w-full items-center justify-center rounded-lg bg-violet-700 py-3.5 px-4 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            class="flex w-full items-center justify-center rounded-full bg-neutral-900 py-3 px-6 text-sm font-semibold text-white shadow-md hover:bg-neutral-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-200 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <svg
               *ngIf="isLoading"
@@ -312,15 +320,78 @@
 
     <!-- Footer links -->
     <div class="mt-6 text-center">
-      <p class="text-sm text-gray-700">
+      <p class="text-sm text-neutral-700">
         Ainda não possui uma conta?
         <a
           routerLink="/auth/register"
-          class="font-semibold text-violet-700 hover:text-violet-800 transition-colors"
+          class="font-semibold text-neutral-900 hover:text-pink-600 transition-colors"
         >
           Cadastre-se agora
         </a>
       </p>
     </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div
+    *ngIf="showToast"
+    [@slideUp]
+    class="fixed bottom-6 right-6 max-w-md bg-white rounded-xl shadow-lg border border-neutral-200 p-4 flex items-start gap-3 z-50"
+  >
+    <div
+      class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+      [ngClass]="{
+        'bg-red-100': toastType === 'error',
+        'bg-green-100': toastType === 'success'
+      }"
+    >
+      <svg
+        *ngIf="toastType === 'error'"
+        class="w-5 h-5 text-red-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <svg
+        *ngIf="toastType === 'success'"
+        class="w-5 h-5 text-green-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+    </div>
+    <div class="flex-1">
+      <h4 class="text-sm font-semibold text-neutral-900 mb-1">
+        {{ toastType === 'error' ? 'Erro no login' : 'Login realizado!' }}
+      </h4>
+      <p class="text-xs text-neutral-600">{{ toastMessage }}</p>
+    </div>
+    <button
+      (click)="closeToast()"
+      class="p-1 hover:bg-neutral-100 rounded transition-colors"
+      aria-label="Fechar notificação"
+    >
+      <svg class="w-4 h-4 text-neutral-500" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fill-rule="evenodd"
+          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
   </div>
 </div>
