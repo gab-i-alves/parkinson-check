@@ -198,7 +198,7 @@ def get_comparative_statistics(session: Session, user: User) -> ComparativeStati
         # Calcular médias de todos os pacientes compartilhando dados (excluindo o paciente atual)
         all_averages = []
         for p_id in sharing_patient_ids:
-            if p_id == patient_id:  # Pular o próprio paciente
+            if p_id == patient.id:  # Pular o próprio paciente
                 continue
             avg_query = select(func.avg(Test.score)).where(Test.patient_id == p_id)
             avg_score = session.scalar(avg_query)
