@@ -27,7 +27,7 @@ class User:
     )
     address_id: Mapped[int] = mapped_column(ForeignKey("address.id"))
     address: Mapped["Address"] = relationship(init=False, back_populates="users")
-    is_active: Mapped[bool] = mapped_column(nullable=False, default=True, server_default="true")
+    is_active: Mapped[bool] = mapped_column(init=False, nullable=False, default=True, server_default="true")
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), init=False, nullable=False, server_default="CURRENT_TIMESTAMP"
     )

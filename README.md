@@ -70,15 +70,15 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento local:
 7.  **Configuração do primeiro administrador:**
     Utilize uma das seguintes abordagens:
 
-    - Voltando ao **primeiro terminal**, execute: 
+    - Voltando ao **primeiro terminal**, execute:
 
     ```bash
-    docker exec -it parkinson-check-backend-1 python /app/scripts/seeds/first_admin.py
+    docker exec -it parkinson-check-backend-1 python scripts/seeds/first_admin.py
     ```
     - Alternativamente, abra a interface do docker, e nela o **terminal do container do backend (Exec tab)**, e então execute:
 
     ```bash
-    python -m scripts.seeds.first_admin
+    python scripts/seeds/first_admin.py
     ```
 
 ## Roadmap do Produto
