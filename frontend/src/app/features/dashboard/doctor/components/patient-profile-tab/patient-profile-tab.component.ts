@@ -1,11 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PatientFullProfile } from '../../../../../core/models/patient-full-profile.model';
+import { PatientStatus } from '../../../../../core/models/patient.model';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-patient-profile-tab',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BadgeComponent],
   templateUrl: './patient-profile-tab.component.html',
 })
 export class PatientProfileTabComponent {
@@ -18,5 +20,25 @@ export class PatientProfileTabComponent {
       month: '2-digit',
       year: 'numeric',
     });
+  }
+
+  getStatusLabel(status?: PatientStatus): string {
+    if (!status) return 'N/A';
+    const labels: Record<PatientStatus, string> = {
+      stable: 'Estável',
+      attention: 'Atenção',
+      critical: 'Crítico',
+    };
+    return labels[status];
+  }
+
+  getStatusVariant(status?: PatientStatus): 'success' | 'warning' | 'error' | 'neutral' {
+    if (!status) return 'neutral';
+    const variants: Record<PatientStatus, 'success' | 'warning' | 'error'> = {
+      stable: 'success',
+      attention: 'warning',
+      critical: 'error',
+    };
+    return variants[status];
   }
 }

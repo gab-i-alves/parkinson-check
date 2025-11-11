@@ -1,124 +1,1186 @@
 @if (isLoading()) {
-<div class="flex h-64 items-center justify-center">
-  <p class="text-gray-600">Carregando análises...</p>
+<!-- Enhanced Skeleton Loading -->
+<div class="space-y-6 animate-pulse">
+  <!-- Header Skeleton -->
+  <div class="flex items-center justify-between">
+    <div>
+      <div class="h-8 bg-neutral-200 rounded w-48 mb-2"></div>
+      <div class="h-4 bg-neutral-200 rounded w-64"></div>
+    </div>
+    <div class="h-10 bg-neutral-200 rounded-full w-32"></div>
+  </div>
+
+  <!-- Tabs Skeleton -->
+  <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
+    <div class="h-9 bg-neutral-200 rounded-full w-32"></div>
+    <div class="h-9 bg-neutral-200 rounded-full w-28"></div>
+    <div class="h-9 bg-neutral-200 rounded-full w-36"></div>
+  </div>
+
+  <!-- KPI Cards Skeleton -->
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"
+  >
+    @for (item of [1,2,3,4,5,6]; track item) {
+    <div
+      class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-5 h-28"
+    ></div>
+    }
+  </div>
+
+  <!-- Charts Skeleton -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    @for (item of [1,2,3]; track item) {
+    <div
+      class="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 h-80"
+    ></div>
+    }
+  </div>
 </div>
 } @else {
 <div class="space-y-6">
-  <!-- Estatísticas Agregadas -->
-  <section>
+  <!-- Actions Bar -->
+  <div class="flex items-center justify-between">
+    <!-- Tabs Pills Navigation -->
+    <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
+      <button
+        (click)="selectTab('overview')"
+        [class]="
+          selectedTab() === 'overview'
+            ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all'
+            : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'
+        "
+      >
+        Visão Geral
+      </button>
+      <button
+        (click)="selectTab('charts')"
+        [class]="
+          selectedTab() === 'charts'
+            ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all'
+            : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'
+        "
+      >
+        Gráficos
+      </button>
+      <button
+        (click)="selectTab('list')"
+        [class]="
+          selectedTab() === 'list'
+            ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all'
+            : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'
+        "
+      >
+        <span>Lista Completa</span>
+        @if (filteredPatients().length > 0) {
+        <span
+          class="ml-2 px-2 py-0.5 bg-pink-200 text-pink-900 rounded-full text-xs"
+        >
+          {{ filteredPatients().length }}
+        </span>
+        }
+      </button>
+    </div>
+
+    <!-- Export Dropdown -->
+    <div class="relative">
+      <button
+        (click)="toggleExportDropdown()"
+        class="inline-flex items-center gap-2 px-6 py-2.5 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-all text-sm font-medium shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-200"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        Exportar
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      @if (showExportDropdown()) {
+      <div
+        class="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-neutral-200 py-2 z-50"
+      >
+        <button
+          (click)="exportCSV(); closeExportDropdown()"
+          class="w-full text-left px-4 py-2.5 hover:bg-neutral-50 text-sm flex items-center gap-3 transition-colors"
+        >
+          <svg
+            class="w-4 h-4 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          <span>Exportar CSV</span>
+        </button>
+        <button
+          (click)="exportPDF(); closeExportDropdown()"
+          class="w-full text-left px-4 py-2.5 hover:bg-neutral-50 text-sm flex items-center gap-3 transition-colors"
+        >
+          <svg
+            class="w-4 h-4 text-red-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+            />
+          </svg>
+          <span>Gerar PDF</span>
+        </button>
+        <div class="border-t border-neutral-200 my-2"></div>
+        <button
+          (click)="closeExportDropdown()"
+          class="w-full text-left px-4 py-2.5 hover:bg-neutral-50 text-sm flex items-center gap-3 text-neutral-600 transition-colors"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+          <span>Cancelar</span>
+        </button>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Advanced Filters Section -->
+  <section class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-2xl font-bold text-gray-900">Estatísticas Agregadas</h2>
-      <div class="flex gap-2">
-        <button
-          (click)="exportCSV()"
-          class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors text-sm font-semibold"
+      <h3 class="text-lg font-bold text-neutral-900">Filtros Avançados</h3>
+      @if (getActiveFiltersCount() > 0) {
+      <button
+        (click)="clearFilters()"
+        class="text-sm text-pink-600 hover:text-pink-700 font-medium transition-colors"
+      >
+        Limpar todos ({{ getActiveFiltersCount() }})
+      </button>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Search -->
+      <div>
+        <label
+          class="flex items-center gap-2 text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2"
         >
-          Exportar CSV
-        </button>
-        <button
-          (click)="exportPDF()"
-          class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-semibold"
+          Buscar Paciente
+          <button
+            appTooltip="Digite o nome, email ou CPF do paciente para buscar"
+            [tooltipPosition]="'top'"
+            class="inline-flex items-center"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-neutral-400 hover:text-neutral-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
+        </label>
+        <div class="relative">
+          <input
+            type="text"
+            [ngModel]="filters().searchTerm"
+            (ngModelChange)="updateFilter('searchTerm', $event)"
+            placeholder="Nome, email ou CPF..."
+            class="w-full pl-10 pr-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-400 transition-all"
+          />
+          <svg
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <label
+          class="flex items-center gap-2 text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2"
         >
-          Gerar PDF
-        </button>
+          Status do Paciente
+          <button
+            appTooltip="Filtre pacientes por seu status de saúde atual"
+            [tooltipPosition]="'top'"
+            class="inline-flex items-center"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-neutral-400 hover:text-neutral-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
+        </label>
+        <select
+          [ngModel]="filters().status"
+          (ngModelChange)="updateFilter('status', $event)"
+          class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-400 transition-all cursor-pointer"
+        >
+          <option value="all">Todos os status</option>
+          <option value="stable">✅ Estável</option>
+          <option value="attention">⚠️ Atenção</option>
+          <option value="critical">🔴 Crítico</option>
+        </select>
+      </div>
+
+      <!-- Date From -->
+      <div>
+        <label
+          class="flex items-center gap-2 text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2"
+        >
+          Data Inicial
+          <button
+            appTooltip="Filtre testes realizados a partir desta data"
+            [tooltipPosition]="'top'"
+            class="inline-flex items-center"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-neutral-400 hover:text-neutral-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
+        </label>
+        <input
+          type="date"
+          [ngModel]="filters().dateFrom"
+          (ngModelChange)="updateFilter('dateFrom', $event)"
+          class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-400 transition-all"
+        />
+      </div>
+
+      <!-- Date To -->
+      <div>
+        <label
+          class="flex items-center gap-2 text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2"
+        >
+          Data Final
+          <button
+            appTooltip="Filtre testes realizados até esta data"
+            [tooltipPosition]="'top'"
+            class="inline-flex items-center"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-neutral-400 hover:text-neutral-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
+        </label>
+        <input
+          type="date"
+          [ngModel]="filters().dateTo"
+          (ngModelChange)="updateFilter('dateTo', $event)"
+          class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-400 transition-all"
+        />
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- Total de Pacientes -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Total de Pacientes</p>
-            <p class="text-3xl font-bold text-violet-700 mt-2">{{ stats().totalPatients }}</p>
+    <!-- Active Filters Badges -->
+    @if (getActiveFiltersCount() > 0) {
+    <div
+      class="flex items-center gap-2 flex-wrap mt-4 pt-4 border-t border-neutral-200"
+    >
+      <span class="text-xs text-neutral-600 font-medium">Filtros ativos:</span>
+
+      @if (filters().searchTerm) {
+      <span
+        class="inline-flex items-center gap-2 px-3 py-1 bg-pink-100 text-pink-900 rounded-full text-xs font-medium"
+      >
+        🔍 "{{ filters().searchTerm }}"
+        <button
+          (click)="removeFilter('searchTerm')"
+          class="hover:text-pink-700"
+        >
+          <svg
+            class="w-3 h-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </span>
+      } @if (filters().status !== 'all') {
+      <span
+        class="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-xs font-medium"
+      >
+        Status: {{ getStatusLabelForFilter(filters().status) }}
+        <button (click)="removeFilter('status')" class="hover:text-blue-700">
+          <svg
+            class="w-3 h-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </span>
+      } @if (filters().dateFrom) {
+      <span
+        class="inline-flex items-center gap-2 px-3 py-1 bg-yellow-100 text-yellow-900 rounded-full text-xs font-medium"
+      >
+        De: {{ filters().dateFrom }}
+        <button
+          (click)="removeFilter('dateFrom')"
+          class="hover:text-yellow-700"
+        >
+          <svg
+            class="w-3 h-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </span>
+      } @if (filters().dateTo) {
+      <span
+        class="inline-flex items-center gap-2 px-3 py-1 bg-yellow-100 text-yellow-900 rounded-full text-xs font-medium"
+      >
+        Até: {{ filters().dateTo }}
+        <button (click)="removeFilter('dateTo')" class="hover:text-yellow-700">
+          <svg
+            class="w-3 h-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </span>
+      }
+    </div>
+    }
+
+    <!-- Results count -->
+    <div class="mt-4 pt-4 border-t border-neutral-200">
+      <p class="text-sm text-neutral-600">
+        Exibindo
+        <span class="font-semibold text-neutral-900">{{
+          filteredPatients().length
+        }}</span>
+        de
+        <span class="font-semibold text-neutral-900">{{
+          stats().totalPatients
+        }}</span>
+        paciente(s)
+      </p>
+    </div>
+  </section>
+
+  <!-- Tab Content -->
+  @if (selectedTab() === 'overview') {
+  <!-- KPI Cards - Styled like Doctor Dashboard -->
+  <section>
+    <h3 class="text-lg font-bold text-neutral-900 mb-4">
+      Estatísticas Agregadas
+    </h3>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"
+    >
+      <!-- Total de Pacientes - Yellow with dots -->
+      <div
+        class="bg-yellow-100 rounded-2xl shadow-sm border border-yellow-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all relative overflow-hidden"
+      >
+        <div
+          class="absolute inset-0 opacity-10"
+          style="
+            background-image: radial-gradient(
+              circle,
+              #000 1px,
+              transparent 1px
+            );
+            background-size: 20px 20px;
+          "
+        ></div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-xs font-medium text-neutral-700">
+              Total de Pacientes
+            </p>
+            <button
+              appTooltip="Número total de pacientes no sistema"
+              [tooltipPosition]="'top'"
+              class="inline-flex items-center"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-neutral-600 hover:text-neutral-800"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </button>
           </div>
-          <div class="h-12 w-12 bg-violet-100 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </div>
+          <p class="text-2xl font-bold text-neutral-900">
+            {{ stats().totalPatients }}
+          </p>
         </div>
       </div>
 
-      <!-- Total de Testes -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Total de Testes</p>
-            <p class="text-3xl font-bold text-orange-600 mt-2">{{ stats().totalTests }}</p>
+      <!-- Total de Testes - Pink with wave -->
+      <div
+        class="bg-pink-100 rounded-2xl shadow-sm border border-pink-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all relative overflow-hidden"
+      >
+        <svg
+          class="absolute bottom-0 right-0 w-24 h-24 opacity-20"
+          viewBox="0 0 200 200"
+        >
+          <path
+            d="M0,100 Q50,50 100,100 T200,100 L200,200 L0,200 Z"
+            fill="currentColor"
+          />
+        </svg>
+        <div class="relative z-10">
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-xs font-medium text-neutral-700">Total de Testes</p>
+            <button
+              appTooltip="Soma de todos os testes realizados"
+              [tooltipPosition]="'top'"
+              class="inline-flex items-center"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-neutral-600 hover:text-neutral-800"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </button>
           </div>
-          <div class="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-          </div>
+          <p class="text-2xl font-bold text-neutral-900">
+            {{ stats().totalTests }}
+          </p>
         </div>
       </div>
 
-      <!-- Pacientes Estáveis -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Pacientes Estáveis</p>
-            <p class="text-3xl font-bold text-green-600 mt-2">{{ stats().patientsStable }}</p>
+      <!-- Score Médio - Blue with circles -->
+      <div
+        class="bg-blue-100 rounded-2xl shadow-sm border border-blue-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all relative overflow-hidden"
+      >
+        <div class="absolute top-0 right-0 w-20 h-20 opacity-20">
+          <div
+            class="w-12 h-12 bg-current rounded-full absolute top-0 right-0"
+          ></div>
+          <div
+            class="w-8 h-8 bg-current rounded-full absolute top-6 right-8"
+          ></div>
+        </div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-xs font-medium text-neutral-700">Score Médio</p>
+            <button
+              appTooltip="Média dos scores de todos os testes"
+              [tooltipPosition]="'top'"
+              class="inline-flex items-center"
+            >
+              <svg
+                class="w-3.5 h-3.5 text-neutral-600 hover:text-neutral-800"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </button>
           </div>
-          <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
+          <p class="text-2xl font-bold text-neutral-900">
+            {{ stats().averageScore.toFixed(1) }}
+          </p>
         </div>
       </div>
 
-      <!-- Pacientes Requerendo Atenção -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Requerendo Atenção</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-2">{{ stats().patientsAttention }}</p>
-          </div>
-          <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      <!-- Pacientes Estáveis - Green -->
+      <div
+        class="bg-green-100 rounded-2xl shadow-sm border border-green-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all"
+      >
+        <div class="flex items-center gap-2 mb-2">
+          <p class="text-xs font-medium text-neutral-700">Estáveis</p>
+          <button
+            appTooltip="Pacientes com status estável"
+            [tooltipPosition]="'top'"
+            class="inline-flex items-center"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-neutral-600 hover:text-neutral-800"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
-          </div>
+          </button>
         </div>
+        <p class="text-2xl font-bold text-green-600">
+          {{ stats().patientsStable }}
+        </p>
       </div>
 
-      <!-- Pacientes Críticos -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">Pacientes Críticos</p>
-            <p class="text-3xl font-bold text-red-600 mt-2">{{ stats().patientsCritical }}</p>
-          </div>
-          <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <!-- Pacientes Atenção - Yellow/Orange -->
+      <div
+        class="bg-orange-100 rounded-2xl shadow-sm border border-orange-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all"
+      >
+        <div class="flex items-center gap-2 mb-2">
+          <p class="text-xs font-medium text-neutral-700">Necessitam Atenção</p>
+          <button
+            appTooltip="Pacientes que requerem monitoramento"
+            [tooltipPosition]="'top'"
+            class="inline-flex items-center"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-neutral-600 hover:text-neutral-800"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
-          </div>
+          </button>
         </div>
+        <p class="text-2xl font-bold text-orange-600">
+          {{ stats().patientsAttention }}
+        </p>
+      </div>
+
+      <!-- Pacientes Críticos - Red -->
+      <div
+        class="bg-red-100 rounded-2xl shadow-sm border border-red-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all"
+      >
+        <div class="flex items-center gap-2 mb-2">
+          <p class="text-xs font-medium text-neutral-700">Críticos</p>
+          <button
+            appTooltip="Pacientes em estado crítico"
+            [tooltipPosition]="'top'"
+            class="inline-flex items-center"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-neutral-600 hover:text-neutral-800"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
+        </div>
+        <p class="text-2xl font-bold text-red-600">
+          {{ stats().patientsCritical }}
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- Gráficos de Análise -->
+  <!-- Quick Charts Overview -->
   <section>
-    <h2 class="text-2xl font-bold text-gray-900 mb-4">Análise Visual</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <h3 class="text-lg font-bold text-neutral-900 mb-4">
+      Visão Geral dos Gráficos
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <app-chart-card
         title="Distribuição por Status"
         chartType="pie"
+        [data]="statusDistributionData()"
       ></app-chart-card>
       <app-chart-card
-        title="Desempenho Médio por Tipo de Teste"
+        title="Testes por Tipo"
         chartType="bar"
+        [data]="testTypeData()"
       ></app-chart-card>
       <app-chart-card
-        title="Evolução Temporal dos Testes"
+        title="Evolução Temporal"
         chartType="line"
+        [data]="testsOverTimeData()"
       ></app-chart-card>
     </div>
   </section>
+  } @if (selectedTab() === 'charts') {
+  <!-- Detailed Charts with Accordion -->
+  <section class="space-y-4">
+    <h3 class="text-lg font-bold text-neutral-900 mb-4">Gráficos Detalhados</h3>
+
+    <!-- Chart 1: Status Distribution -->
+    <div
+      class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm"
+    >
+      <button
+        (click)="toggleChart('distribution')"
+        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-pink-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
+              />
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-neutral-900">
+            Distribuição por Status
+          </h3>
+        </div>
+        @if (expandedChart() === 'distribution') {
+        <svg
+          class="w-5 h-5 text-neutral-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+        } @else {
+        <svg
+          class="w-5 h-5 text-neutral-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+        }
+      </button>
+      @if (expandedChart() === 'distribution') {
+      <div class="px-5 pb-5 border-t border-neutral-100">
+        <app-chart-card
+          title=""
+          chartType="pie"
+          [data]="statusDistributionData()"
+        ></app-chart-card>
+      </div>
+      }
+    </div>
+
+    <!-- Chart 2: Test Types -->
+    <div
+      class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm"
+    >
+      <button
+        (click)="toggleChart('testTypes')"
+        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-neutral-900">
+            Testes por Tipo
+          </h3>
+        </div>
+        @if (expandedChart() === 'testTypes') {
+        <svg
+          class="w-5 h-5 text-neutral-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+        } @else {
+        <svg
+          class="w-5 h-5 text-neutral-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+        }
+      </button>
+      @if (expandedChart() === 'testTypes') {
+      <div class="px-5 pb-5 border-t border-neutral-100">
+        <app-chart-card
+          title=""
+          chartType="bar"
+          [data]="testTypeData()"
+        ></app-chart-card>
+      </div>
+      }
+    </div>
+
+    <!-- Chart 3: Time Evolution -->
+    <div
+      class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm"
+    >
+      <button
+        (click)="toggleChart('evolution')"
+        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-yellow-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
+              />
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-neutral-900">
+            Evolução Temporal dos Testes
+          </h3>
+        </div>
+        @if (expandedChart() === 'evolution') {
+        <svg
+          class="w-5 h-5 text-neutral-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+        } @else {
+        <svg
+          class="w-5 h-5 text-neutral-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+        }
+      </button>
+      @if (expandedChart() === 'evolution') {
+      <div class="px-5 pb-5 border-t border-neutral-100">
+        <app-chart-card
+          title=""
+          chartType="line"
+          [data]="testsOverTimeData()"
+        ></app-chart-card>
+      </div>
+      }
+    </div>
+  </section>
+  } @if (selectedTab() === 'list') {
+  <!-- Enhanced Patient Table -->
+  <section
+    class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden"
+  >
+    <div class="p-6 border-b border-neutral-200">
+      <h3 class="text-lg font-bold text-neutral-900">
+        Lista Completa de Pacientes
+      </h3>
+      <p class="text-sm text-neutral-600 mt-1">
+        Todos os pacientes que correspondem aos filtros aplicados
+      </p>
+    </div>
+
+    @if (filteredPatients().length === 0) {
+    <!-- Enhanced Empty State -->
+    <div class="p-16 text-center">
+      <div
+        class="inline-flex items-center justify-center w-20 h-20 bg-neutral-100 rounded-full mb-4"
+      >
+        <svg
+          class="w-10 h-10 text-neutral-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+          />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-neutral-900 mb-2">
+        Nenhum paciente encontrado
+      </h3>
+      <p class="text-sm text-neutral-600 mb-6 max-w-md mx-auto">
+        Não encontramos pacientes que correspondam aos filtros aplicados. Tente
+        ajustar os filtros ou limpar todos para ver mais resultados.
+      </p>
+      <button
+        (click)="clearFilters()"
+        class="px-6 py-2.5 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
+      >
+        Limpar filtros
+      </button>
+    </div>
+    } @else {
+    <!-- Enhanced Table -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-neutral-200">
+        <thead class="bg-neutral-50">
+          <tr>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+            >
+              Paciente
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+            >
+              Email
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+            >
+              Status
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-center text-xs font-medium text-neutral-500 uppercase tracking-wider"
+            >
+              Testes
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+            >
+              Último Teste
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+            >
+              Tipo
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-neutral-100">
+          @for (patient of paginatedPatients(); track patient.id) {
+          <tr class="hover:bg-pink-50/50 transition-colors cursor-pointer">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <span class="text-sm font-semibold text-pink-700">
+                    {{ getPatientInitials(patient.name) }}
+                  </span>
+                </div>
+                <div>
+                  <div class="text-sm font-semibold text-neutral-900">
+                    {{ patient.name }}
+                  </div>
+                  <div class="text-xs text-neutral-500">
+                    ID: #{{ patient.id }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">
+              {{ patient.email || "N/A" }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <app-badge [variant]="getStatusVariant(patient.status)">
+                {{ getStatusLabel(patient.status) }}
+              </app-badge>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-center">
+              <span class="text-sm font-bold text-neutral-900">{{
+                patient.testsCount || 0
+              }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">
+              {{ patient.lastTestDate || "N/A" }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              @if (patient.lastTestType) {
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 text-neutral-800 capitalize"
+              >
+                {{ patient.lastTestType }}
+              </span>
+              } @else {
+              <span class="text-sm text-neutral-400">N/A</span>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Enhanced Pagination -->
+    <div class="px-6 py-4 border-t border-neutral-200 bg-neutral-50">
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div class="text-sm text-neutral-600">
+          Página
+          <span class="font-semibold text-neutral-900">{{
+            currentPage()
+          }}</span>
+          de
+          <span class="font-semibold text-neutral-900">{{ totalPages() }}</span>
+          <span class="text-neutral-500 mx-2">·</span>
+          <span class="font-semibold text-neutral-900">{{
+            filteredPatients().length
+          }}</span>
+          {{ filteredPatients().length === 1 ? "paciente" : "pacientes" }}
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="previousPage()"
+            [disabled]="currentPage() === 1"
+            class="inline-flex items-center gap-1 px-4 py-2 border border-neutral-300 rounded-lg text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            Anterior
+          </button>
+
+          <!-- Page Numbers -->
+          @for (page of [].constructor(Math.min(totalPages(), 5)); track $index)
+          {
+          <button
+            (click)="goToPage($index + 1)"
+            [class]="
+              $index + 1 === currentPage()
+                ? 'px-3 py-2 bg-neutral-900 text-white rounded-lg text-sm font-medium'
+                : 'px-3 py-2 bg-white border border-neutral-300 text-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 transition-all'
+            "
+          >
+            {{ $index + 1 }}
+          </button>
+          }
+
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage() === totalPages()"
+            class="inline-flex items-center gap-1 px-4 py-2 border border-neutral-300 rounded-lg text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            Próxima
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </section>
+  }
 </div>
 }

@@ -5,11 +5,12 @@ import {
   ClinicalSpiralTestResult,
   ClinicalVoiceTestResult,
 } from '../../../../../core/models/clinical-test-result.model';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-clinical-test-result',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BadgeComponent],
   templateUrl: './clinical-test-result.component.html',
 })
 export class ClinicalTestResultComponent implements OnInit {
@@ -56,14 +57,13 @@ export class ClinicalTestResultComponent implements OnInit {
     }
   }
 
-  getClassificationColor(): string {
+  getClassificationVariant(): 'success' | 'error' {
     const classification = this.getClassification();
-    return classification === 'PARKINSON' ? 'text-red-600' : 'text-green-600';
+    return classification === 'PARKINSON' ? 'error' : 'success';
   }
 
-  getClassificationBgColor(): string {
-    const classification = this.getClassification();
-    return classification === 'PARKINSON' ? 'bg-red-50' : 'bg-green-50';
+  getPredictionVariant(prediction: string): 'success' | 'error' {
+    return prediction === 'PARKINSON' ? 'error' : 'success';
   }
 
   formatDate(dateString: string): string {

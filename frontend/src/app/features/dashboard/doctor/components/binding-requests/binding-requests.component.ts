@@ -7,8 +7,9 @@ import { BindingRequestResponse, isBindingPatient } from '../../../../../core/mo
 import { Patient, PatientStatus } from '../../../../../core/models/patient.model';
 import { PatientProfileModalComponent, PatientProfile } from '../../../../../shared/components/patient-profile-modal/patient-profile-modal.component';
 import { firstValueFrom } from 'rxjs';
-import { NotificationService } from '../../../../../core/services/notification.service';
+import { ToastService } from '../../../../../shared/services/toast.service';
 import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 interface PatientWithBinding extends Patient {
   bindingStatus?: 'none' | 'pending' | 'linked';
@@ -17,14 +18,14 @@ interface PatientWithBinding extends Patient {
 @Component({
   selector: 'app-binding-requests',
   standalone: true,
-  imports: [CommonModule, PatientProfileModalComponent, CpfPipe],
+  imports: [CommonModule, PatientProfileModalComponent, CpfPipe, BadgeComponent],
   templateUrl: './binding-requests.component.html',
 })
 export class BindingRequestsComponent implements OnInit {
   private medicService = inject(DoctorService);
   private bindingService = inject(BindingService);
   private dashboardService = inject(DoctorDashboardService);
-  private notificationService = inject(NotificationService);
+  private toastService = inject(ToastService);
 
   // Solicitações
   requests = signal<BindingRequestResponse[]>([]);  // Recebidas de pacientes
@@ -74,13 +75,12 @@ export class BindingRequestsComponent implements OnInit {
   acceptRequest(id: number): void {
     this.bindingService.acceptBindingRequest(id).subscribe({
       next: () => {
-        this.notificationService.success('Solicitação aceita com sucesso', 3000);
+        this.toastService.success('Solicitação aceita com sucesso!');
         this.loadRequests(); // Reload to refresh the list
       },
       error: (err) => {
-        this.notificationService.error(
-          `Erro ao aceitar solicitação: ${err.error?.detail || 'Tente novamente'}`,
-          5000
+        this.toastService.error(
+          `Erro ao aceitar solicitação: ${err.error?.detail || 'Tente novamente'}`
         );
       },
     });
@@ -89,13 +89,12 @@ export class BindingRequestsComponent implements OnInit {
   rejectRequest(id: number): void {
     this.bindingService.rejectBindingRequest(id).subscribe({
       next: () => {
-        this.notificationService.success('Solicitação recusada', 3000);
+        this.toastService.success('Solicitação recusada com sucesso!');
         this.loadRequests(); // Reload to refresh the list
       },
       error: (err) => {
-        this.notificationService.error(
-          `Erro ao recusar solicitação: ${err.error?.detail || 'Tente novamente'}`,
-          5000
+        this.toastService.error(
+          `Erro ao recusar solicitação: ${err.error?.detail || 'Tente novamente'}`
         );
       },
     });
@@ -191,7 +190,7 @@ export class BindingRequestsComponent implements OnInit {
 
     this.bindingService.requestBinding(numericId).subscribe({
       next: () => {
-        this.notificationService.success('Convite enviado com sucesso', 3000);
+        this.toastService.success('Convite enviado com sucesso!');
         // Update patient status in the list
         this.searchResults.update((patients) =>
           patients.map((p) =>
@@ -200,15 +199,15 @@ export class BindingRequestsComponent implements OnInit {
         );
       },
       error: (err) => {
-        this.notificationService.error(
-          `Erro ao enviar convite: ${err.error?.detail || 'Tente novamente'}`,
-          5000
+        this.toastService.error(
+          `Erro ao enviar convite: ${err.error?.detail || 'Tente novamente'}`
         );
       },
     });
   }
 
-  getStatusLabel(status: PatientStatus): string {
+  getStatusLabel(status?: PatientStatus): string {
+    if (!status) return 'N/A';
     const labels: Record<PatientStatus, string> = {
       stable: 'Estável',
       attention: 'Atenção',
@@ -217,13 +216,14 @@ export class BindingRequestsComponent implements OnInit {
     return labels[status];
   }
 
-  getStatusClass(status: PatientStatus): string {
-    const classes: Record<PatientStatus, string> = {
-      stable: 'bg-green-100 text-green-800',
-      attention: 'bg-yellow-100 text-yellow-800',
-      critical: 'bg-red-100 text-red-800',
+  getStatusVariant(status?: PatientStatus): 'success' | 'warning' | 'error' | 'neutral' {
+    if (!status) return 'neutral';
+    const variants: Record<PatientStatus, 'success' | 'warning' | 'error'> = {
+      stable: 'success',
+      attention: 'warning',
+      critical: 'error',
     };
-    return classes[status];
+    return variants[status];
   }
 
   viewPatientProfile(request: BindingRequestResponse): void {

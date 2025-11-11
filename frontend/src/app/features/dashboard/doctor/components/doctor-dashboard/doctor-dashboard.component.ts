@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
 import { DoctorDashboardDataService } from '../../../../../core/services/doctor-dashboard-data.service';
@@ -16,11 +17,14 @@ import {
   DashboardKPIs,
   PatientNeedingAttention,
 } from '../../../../../core/models/doctor-dashboard.model';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { ToastService } from '../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-doctor-dashboard',
   standalone: true,
-  imports: [CommonModule, DashboardChart, FormsModule],
+  imports: [CommonModule, DashboardChart, FormsModule, TooltipDirective, BadgeComponent],
   templateUrl: './doctor-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -28,6 +32,8 @@ export class DoctorDashboardComponent implements OnInit {
   private doctorDashboardService = inject(DoctorDashboardService);
   private doctorDashboardDataService = inject(DoctorDashboardDataService);
   private cdr = inject(ChangeDetectorRef);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
 
   readonly isLoading = signal<boolean>(true);
   readonly kpis = signal<DashboardKPIs>({
@@ -42,6 +48,10 @@ export class DoctorDashboardComponent implements OnInit {
   });
   readonly patientsNeedingAttention = signal<PatientNeedingAttention[]>([]);
   readonly rankings = signal<any>(null);
+
+  // Navigation signals
+  readonly selectedTab = signal<'overview' | 'analysis' | 'patients'>('overview');
+  readonly expandedAccordion = signal<string | null>('age-performance');
 
   // Chart.js configurations
   // 1. Evolução de Scores (Linha)
@@ -81,7 +91,10 @@ export class DoctorDashboardComponent implements OnInit {
       next: (overview) => {
         this.calculateKPIs(overview);
       },
-      error: (err) => console.error('Erro ao carregar overview:', err),
+      error: (err) => {
+        console.error('Erro ao carregar overview:', err);
+        this.toastService.error('Erro ao carregar dados do dashboard', 'Erro');
+      },
     });
 
     // 2. Carregar evolução de scores (gráfico de linha dupla)
@@ -89,7 +102,10 @@ export class DoctorDashboardComponent implements OnInit {
       next: (evolution) => {
         this.setupScoreEvolutionChart(evolution);
       },
-      error: (err) => console.error('Erro ao carregar evolução:', err),
+      error: (err) => {
+        console.error('Erro ao carregar evolução:', err);
+        this.toastService.error('Erro ao carregar evolução de scores', 'Erro');
+      },
     });
 
     // 3. Carregar distribuição por status (donut)
@@ -129,9 +145,11 @@ export class DoctorDashboardComponent implements OnInit {
       next: (rankings) => {
         this.loadPatientsNeedingAttention(rankings);
         this.isLoading.set(false);
+        this.toastService.success('Dashboard carregado com sucesso!', 'Sucesso');
       },
       error: (err) => {
         console.error('Erro ao carregar rankings:', err);
+        this.toastService.error('Erro ao carregar dados de pacientes', 'Erro');
         this.isLoading.set(false);
       },
     });
@@ -156,9 +174,11 @@ export class DoctorDashboardComponent implements OnInit {
   }
 
   private loadPatientsNeedingAttention(rankings: any) {
-    // Inverter os rankings para mostrar os piores
+    // Inverter os rankings para mostrar os piores e filtrar apenas pacientes com score < 0.6
     const allPatients = rankings.top_overall_scores || [];
-    const worstPatients = [...allPatients].reverse().slice(0, 5);
+    const worstPatients = [...allPatients]
+      .reverse()
+      .filter((p: any) => p.avg_score < 0.6); // Apenas pacientes que precisam atenção
 
     const patientsAttention: PatientNeedingAttention[] = worstPatients.map((p: any) => ({
       patient_id: p.patient_id,
@@ -184,8 +204,8 @@ export class DoctorDashboardComponent implements OnInit {
           data: timeSeries.map((d: any) => d.avg_score),
           label: 'Score Médio',
           fill: false,
-          borderColor: 'rgb(124, 58, 237)',
-          backgroundColor: 'rgba(124, 58, 237, 0.5)',
+          borderColor: 'rgb(255, 181, 232)', // pink-200
+          backgroundColor: 'rgba(255, 181, 232, 0.5)',
           tension: 0.4,
           pointRadius: 4,
           pointHoverRadius: 6,
@@ -245,8 +265,8 @@ export class DoctorDashboardComponent implements OnInit {
         {
           data: ageGroups.map((g: any) => g.avg_score),
           label: 'Score Médio',
-          backgroundColor: 'rgba(124, 58, 237, 0.8)',
-          borderColor: 'rgb(124, 58, 237)',
+          backgroundColor: 'rgba(180, 212, 255, 0.8)', // blue-200
+          borderColor: 'rgb(180, 212, 255)',
           borderWidth: 2,
         },
       ],
@@ -324,8 +344,8 @@ export class DoctorDashboardComponent implements OnInit {
           data: timeSeries.map((d: any) => d.test_count),
           label: 'Quantidade de Testes',
           fill: true,
-          borderColor: 'rgb(59, 130, 246)',
-          backgroundColor: 'rgba(59, 130, 246, 0.3)',
+          borderColor: 'rgb(255, 230, 109)', // yellow-200
+          backgroundColor: 'rgba(255, 230, 109, 0.3)',
           tension: 0.4,
         },
       ],
@@ -349,7 +369,29 @@ export class DoctorDashboardComponent implements OnInit {
 
   // Método para navegar para detalhes do paciente
   viewPatientDetails(patientId: number) {
-    // TODO: Implementar navegação para detalhes do paciente
-    console.log('Navegando para paciente:', patientId);
+    this.router.navigate(['/dashboard/doctor/patient', patientId]);
+  }
+
+  // Métodos de navegação
+  selectTab(tab: 'overview' | 'analysis' | 'patients') {
+    this.selectedTab.set(tab);
+  }
+
+  toggleAccordion(chartId: string) {
+    if (this.expandedAccordion() === chartId) {
+      this.expandedAccordion.set(null);
+    } else {
+      this.expandedAccordion.set(chartId);
+    }
+  }
+
+  // Método para gerar iniciais do nome do paciente
+  getPatientInitials(name: string): string {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
   }
 }

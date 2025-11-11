@@ -1,534 +1,268 @@
-<div class="min-h-screen bg-gray-100 relative overflow-hidden">
-  <!-- Background decorativo -->
-  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div
-      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
-    ></div>
-    <div
-      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
-    ></div>
-    <div
-      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
-    ></div>
-  </div>
-  <div class="container max-w-7xl mx-auto px-6 py-8 relative">
+<div class="min-h-screen bg-neutral-50">
+  <div class="max-w-7xl mx-auto px-6 py-8">
     @if (isLoading()) {
-    <div class="flex justify-center items-center py-12">
-      <div class="text-center">
-        <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-violet-700"
-        ></div>
-        <p class="mt-4 text-sm text-gray-600 font-medium">
-          Carregando detalhes do teste...
-        </p>
-      </div>
-    </div>
-    } @if (errorMessage()) {
-    <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-red-200/50 p-6"
-    >
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <div
-            class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 border-2 border-red-200"
-          >
-            <svg
-              class="h-8 w-8 text-red-600"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                clip-rule="evenodd"
-              />
-            </svg>
+    <!-- Skeleton Loader -->
+    <div class="space-y-6 animate-pulse">
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <div class="h-8 bg-neutral-200 rounded w-1/3 mb-6"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-4">
+            <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+            <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+            <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
           </div>
-        </div>
-        <div class="ml-4">
-          <p class="text-sm text-red-700 font-medium">{{ errorMessage() }}</p>
+          <div class="h-48 bg-neutral-200 rounded-xl"></div>
         </div>
       </div>
     </div>
-    } @if (testDetail() && !isLoading()) {
+    } @else if (errorMessage()) {
+    <!-- Estado de Erro -->
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-12 text-center">
+      <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-10 h-10 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-neutral-900 mb-2">Erro ao Carregar Teste</h3>
+      <p class="text-sm text-neutral-600 mb-6">{{ errorMessage() }}</p>
+      <button (click)="goBack()" class="px-6 py-2.5 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors">
+        Voltar
+      </button>
+    </div>
+    } @else if (testDetail()) {
     <div class="space-y-6">
-      <div
-        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden relative"
-      >
-        <!-- Back button -->
-        <button
-          (click)="goBack()"
-          class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm z-10"
-          aria-label="Voltar"
-        >
-          <svg
-            class="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-
-        <div class="px-8 py-6 border-b border-gray-200">
-          <h2 class="text-3xl font-bold text-gray-900">Detalhes do Teste</h2>
+      <!-- Cabeçalho do Teste -->
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <div class="flex items-start justify-between mb-6">
+          <h2 class="text-2xl font-semibold text-neutral-900">Detalhes do Teste</h2>
+          <button (click)="goBack()" class="px-4 py-2 bg-neutral-100 text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar
+          </button>
         </div>
-        <div class="px-8 py-6">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Coluna esquerda: Informações do teste -->
-            <div class="lg:col-span-2">
-              <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Tipo de Teste</dt>
-                  <dd class="mt-1 text-lg text-gray-900 font-semibold">
-                    {{ getTestTypeLabel(testDetail()!.test_type) }}
-                  </dd>
-                </div>
 
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Paciente</dt>
-                  <dd class="mt-1 text-lg text-gray-900 font-semibold">
-                    {{ testDetail()!.patient.name }}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">
-                    Data de Execução
-                  </dt>
-                  <dd class="mt-1 text-lg text-gray-900 font-semibold">
-                    {{ formatDate(testDetail()!.execution_date) }}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Score</dt>
-                  <dd class="mt-1 text-lg text-gray-900 font-semibold">
-                    {{ testDetail()!.score.toFixed(2) }}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Classificação</dt>
-                  <dd class="mt-1">
-                    <span
-                      class="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
-                      [class]="getClassificationColor(testDetail()!.classification)"
-                    >
-                      {{ getClassificationLabel(testDetail()!.classification) }}
-                    </span>
-                  </dd>
-                </div>
-
-                @if (spiralTestDetail()) {
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">
-                    Duração do Desenho
-                  </dt>
-                  <dd class="mt-1 text-lg text-gray-900 font-semibold">
-                    {{ spiralTestDetail()!.draw_duration }}s
-                  </dd>
-                </div>
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Método</dt>
-                  <dd class="mt-1 text-lg text-gray-900 font-semibold">
-                    {{ getSpiralMethodLabel(spiralTestDetail()!.method) }}
-                  </dd>
-                </div>
-                } @if (voiceTestDetail()) {
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">
-                    Duração da Gravação
-                  </dt>
-                  <dd class="mt-1 text-lg text-gray-900 font-semibold">
-                    {{ voiceTestDetail()!.record_duration }}s
-                  </dd>
-                </div>
-                }
-              </dl>
-            </div>
-
-            <!-- Coluna direita: Preview de mídia -->
-            <div class="lg:col-span-1">
-              <div class="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">
-                  @if (spiralTestDetail()) { Imagem da Espiral }
-                  @else if (voiceTestDetail()) { Áudio da Gravação }
-                </h3>
-
-                @if (isLoadingMedia()) {
-                <div class="flex justify-center items-center py-12">
-                  <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-violet-700"></div>
-                </div>
-                } @else if (mediaError()) {
-                <div class="text-center py-8">
-                  <svg class="h-12 w-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p class="text-sm text-gray-500">{{ mediaError() }}</p>
-                </div>
-                } @else if (mediaUrl()) {
-                  @if (spiralTestDetail()) {
-                  <!-- Preview da imagem -->
-                  <div class="mb-3">
-                    <img
-                      [src]="mediaUrl()!"
-                      alt="Espiral desenhada"
-                      class="w-full h-auto rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition-opacity"
-                      (click)="openMediaInNewTab()"
-                    />
-                  </div>
-                  } @else if (voiceTestDetail()) {
-                  <!-- Player de áudio -->
-                  <div class="mb-3">
-                    <audio
-                      [src]="mediaUrl()!"
-                      controls
-                      class="w-full"
-                      controlsList="nodownload"
-                    >
-                      Seu navegador não suporta o elemento de áudio.
-                    </audio>
-                  </div>
-                  }
-
-                  <!-- Botões de ação -->
-                  <div class="space-y-2">
-                    <button
-                      (click)="downloadMedia()"
-                      class="w-full inline-flex items-center justify-center rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800 transition-all"
-                    >
-                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      Baixar @if (spiralTestDetail()) { Imagem } @else { Áudio }
-                    </button>
-
-                    @if (spiralTestDetail()) {
-                    <button
-                      (click)="openMediaInNewTab()"
-                      class="w-full inline-flex items-center justify-center rounded-lg border border-violet-700 px-4 py-2 text-sm font-semibold text-violet-700 bg-white hover:bg-violet-50 transition-all"
-                    >
-                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                      </svg>
-                      Ampliar Imagem
-                    </button>
-                    }
-                  </div>
-                }
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Informações do Teste -->
+          <div class="lg:col-span-2">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Tipo de Teste</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ getTestTypeLabel(testDetail()!.test_type) }}</dd>
               </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Paciente</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ testDetail()!.patient.name }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Data de Execução</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ formatDate(testDetail()!.execution_date) }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Score</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ testDetail()!.score.toFixed(2) }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Classificação</dt>
+                <dd class="mt-1">
+                  <app-badge [variant]="testDetail()!.classification === 'HEALTHY' ? 'success' : 'error'">
+                    {{ getClassificationLabel(testDetail()!.classification) }}
+                  </app-badge>
+                </dd>
+              </div>
+              @if (spiralTestDetail()) {
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Duração do Desenho</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ spiralTestDetail()!.draw_duration }}s</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Método</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ getSpiralMethodLabel(spiralTestDetail()!.method) }}</dd>
+              </div>
+              }
+              @if (voiceTestDetail()) {
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Duração da Gravação</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ voiceTestDetail()!.record_duration }}s</dd>
+              </div>
+              }
+            </dl>
+          </div>
+
+          <!-- Preview de Mídia -->
+          <div class="lg:col-span-1">
+            <div class="border border-neutral-200 rounded-xl p-4 bg-neutral-50">
+              <h3 class="text-sm font-semibold text-neutral-900 mb-3">
+                @if (spiralTestDetail()) { Imagem da Espiral }
+                @else if (voiceTestDetail()) { Áudio da Gravação }
+              </h3>
+
+              @if (isLoadingMedia()) {
+              <div class="flex justify-center items-center py-12">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-neutral-900 border-t-transparent"></div>
+              </div>
+              } @else if (mediaError()) {
+              <div class="text-center py-8">
+                <svg class="h-12 w-12 text-neutral-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-sm text-neutral-500">{{ mediaError() }}</p>
+              </div>
+              } @else if (mediaUrl()) {
+                @if (spiralTestDetail()) {
+                <div class="mb-3">
+                  <img [src]="mediaUrl()!" alt="Espiral desenhada" class="w-full h-auto rounded-lg border border-neutral-300 cursor-pointer hover:opacity-90 transition-opacity" (click)="openMediaInNewTab()" />
+                </div>
+                } @else if (voiceTestDetail()) {
+                <div class="mb-3">
+                  <audio [src]="mediaUrl()!" controls class="w-full" controlsList="nodownload">
+                    Seu navegador não suporta o elemento de áudio.
+                  </audio>
+                </div>
+                }
+                <div class="space-y-2">
+                  <button (click)="downloadMedia()" class="w-full inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Baixar @if (spiralTestDetail()) { Imagem } @else { Áudio }
+                  </button>
+                  @if (spiralTestDetail()) {
+                  <button (click)="openMediaInNewTab()" class="w-full inline-flex items-center justify-center rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-900 bg-white hover:bg-neutral-50 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                    Ampliar
+                  </button>
+                  }
+                </div>
+              }
             </div>
           </div>
         </div>
       </div>
 
-      <div
-        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden"
-      >
-        <div
-          class="px-8 py-6 border-b border-gray-200 flex justify-between items-center"
-        >
-          <h3 class="text-xl font-bold text-gray-900">Anotações Médicas</h3>
-          <button
-            (click)="toggleAddNote()"
-            class="inline-flex items-center rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl transition-all"
-          >
+      <!-- Anotações Médicas -->
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-neutral-900">Anotações Médicas</h3>
+          <button (click)="toggleAddNote()" class="inline-flex items-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 transition-colors">
             @if (isAddingNote()) { Cancelar } @else {
-            <svg
-              class="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              />
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            Nova Anotação }
+            Nova Anotação
+            }
           </button>
         </div>
 
         @if (isAddingNote()) {
-        <div class="px-8 py-6 bg-gray-50/50 border-b border-gray-200">
+        <div class="px-6 py-4 bg-neutral-50 border-b border-neutral-200">
           <form [formGroup]="noteForm" (ngSubmit)="addNote()">
             <div class="space-y-4">
               <div>
-                <label
-                  for="noteContent"
-                  class="block text-sm font-semibold text-gray-700"
-                >
-                  Conteúdo da Anotação
-                </label>
-                <textarea
-                  id="noteContent"
-                  formControlName="content"
-                  rows="4"
-                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
-                  placeholder="Digite sua anotação aqui (mínimo 10 caracteres)..."
-                ></textarea>
-                @if (noteForm.get('content')?.errors &&
-                noteForm.get('content')?.touched) {
+                <label for="noteContent" class="block text-sm font-medium text-neutral-800 mb-2">Conteúdo da Anotação</label>
+                <textarea id="noteContent" formControlName="content" rows="4" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent" placeholder="Digite sua anotação aqui (mínimo 10 caracteres)..."></textarea>
+                @if (noteForm.get('content')?.errors && noteForm.get('content')?.touched) {
                 <p class="mt-1 text-sm text-red-600">
-                  @if (noteForm.get('content')?.errors?.['minlength']) { A
-                  anotação deve ter pelo menos 10 caracteres. } @if
-                  (noteForm.get('content')?.errors?.['maxlength']) { A anotação
-                  não pode exceder 5000 caracteres. }
+                  @if (noteForm.get('content')?.errors?.['minlength']) { A anotação deve ter pelo menos 10 caracteres. }
+                  @if (noteForm.get('content')?.errors?.['maxlength']) { A anotação não pode exceder 5000 caracteres. }
                 </p>
                 }
               </div>
-
               <div>
-                <label
-                  for="noteCategory"
-                  class="block text-sm font-semibold text-gray-700"
-                >
-                  Categoria
-                </label>
-                <select
-                  id="noteCategory"
-                  formControlName="category"
-                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
-                >
+                <label for="noteCategory" class="block text-sm font-medium text-neutral-800 mb-2">Categoria</label>
+                <select id="noteCategory" formControlName="category" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent">
                   @for (cat of categories; track cat) {
                   <option [value]="cat">{{ NoteCategoryLabels[cat] }}</option>
                   }
                 </select>
               </div>
-
               <div class="flex items-center">
-                <input
-                  id="patientView"
-                  type="checkbox"
-                  formControlName="patient_view"
-                  class="h-4 w-4 text-violet-700 focus:ring-violet-700 border-gray-300 rounded"
-                />
-                <label
-                  for="patientView"
-                  class="ml-2 block text-sm text-gray-900"
-                >
-                  Visível para o paciente
-                </label>
+                <input id="patientView" type="checkbox" formControlName="patient_view" class="h-4 w-4 text-neutral-900 focus:ring-pink-200 border-neutral-300 rounded" />
+                <label for="patientView" class="ml-2 text-sm text-neutral-900">Visível para o paciente</label>
               </div>
-
-              <div class="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  (click)="toggleAddNote()"
-                  class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  [disabled]="noteForm.invalid"
-                  class="rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
-                  Salvar Anotação
-                </button>
+              <div class="flex justify-end gap-3">
+                <button type="button" (click)="toggleAddNote()" class="px-4 py-2 rounded-lg border border-neutral-300 text-sm font-medium text-neutral-900 bg-white hover:bg-neutral-50 transition-colors">Cancelar</button>
+                <button type="submit" [disabled]="noteForm.invalid" class="px-6 py-2 rounded-lg bg-neutral-900 text-sm font-medium text-white hover:bg-neutral-800 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors">Salvar</button>
               </div>
             </div>
           </form>
         </div>
         }
 
-        <div class="px-8 py-6">
+        <div class="px-6 py-6">
           @if (notes().length === 0) {
           <div class="text-center py-12">
-            <div
-              class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 border-2 border-gray-200 mx-auto mb-4"
-            >
-              <svg
-                class="h-10 w-10 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
+            <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900">
-              Nenhuma anotação
-            </h3>
-            <p class="text-sm text-gray-600 mt-2">
-              Comece adicionando uma nova anotação para este teste.
-            </p>
+            <h3 class="text-lg font-semibold text-neutral-900">Nenhuma anotação</h3>
+            <p class="text-sm text-neutral-600 mt-2">Comece adicionando uma nova anotação para este teste.</p>
           </div>
           } @else {
           <div class="space-y-4">
             @for (note of notes(); track note.id) {
-            <div class="border border-gray-200 rounded-lg p-6 bg-white/50">
+            <div class="border border-neutral-200 rounded-xl p-4 bg-white">
               @if (editingNoteId() === note.id) {
               <form [formGroup]="editForm" (ngSubmit)="saveEdit(note.id)">
                 <div class="space-y-3">
-                  <textarea
-                    formControlName="content"
-                    rows="3"
-                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
-                  ></textarea>
-
+                  <textarea formControlName="content" rows="3" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-200"></textarea>
                   <div>
-                    <label
-                      class="block text-sm font-semibold text-gray-700 mb-1"
-                    >
-                      Categoria
-                    </label>
-                    <select
-                      formControlName="category"
-                      class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-violet-700 focus:ring-violet-700 sm:text-sm"
-                    >
+                    <label class="block text-sm font-medium text-neutral-800 mb-1">Categoria</label>
+                    <select formControlName="category" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-200">
                       @for (cat of categories; track cat) {
-                      <option [value]="cat">
-                        {{ NoteCategoryLabels[cat] }}
-                      </option>
+                      <option [value]="cat">{{ NoteCategoryLabels[cat] }}</option>
                       }
                     </select>
                   </div>
-
                   <div class="flex items-center">
-                    <input
-                      type="checkbox"
-                      formControlName="patient_view"
-                      class="h-4 w-4 text-violet-700 focus:ring-violet-700 border-gray-300 rounded"
-                    />
-                    <label class="ml-2 block text-sm text-gray-900">
-                      Visível para o paciente
-                    </label>
+                    <input type="checkbox" formControlName="patient_view" class="h-4 w-4 text-neutral-900 focus:ring-pink-200 border-neutral-300 rounded" />
+                    <label class="ml-2 text-sm text-neutral-900">Visível para o paciente</label>
                   </div>
-
-                  <div class="flex justify-end space-x-2">
-                    <button
-                      type="button"
-                      (click)="cancelEdit()"
-                      class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      type="submit"
-                      [disabled]="editForm.invalid"
-                      class="rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl disabled:bg-gray-400"
-                    >
-                      Salvar
-                    </button>
+                  <div class="flex justify-end gap-2">
+                    <button type="button" (click)="cancelEdit()" class="px-4 py-2 rounded-lg border border-neutral-300 text-sm font-medium text-neutral-900 hover:bg-neutral-50">Cancelar</button>
+                    <button type="submit" [disabled]="editForm.invalid" class="px-6 py-2 rounded-lg bg-neutral-900 text-sm font-medium text-white hover:bg-neutral-800 disabled:bg-neutral-400">Salvar</button>
                   </div>
                 </div>
               </form>
               } @else {
-              <div class="flex justify-between items-start">
-                <div class="flex-1">
+              <div class="flex justify-between items-start gap-4">
+                <div class="flex-1 min-w-0">
                   <div class="flex items-center flex-wrap gap-2 mb-2">
-                    <span class="text-sm font-semibold text-gray-900">
-                      Dr(a). {{ note.doctor.name }}
-                    </span>
-                    <span class="text-sm text-gray-600">
-                      (CRM: {{ note.doctor.crm }})
-                    </span>
-
-                    <!-- Badge de Categoria -->
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border"
-                      [class]="
-                        NoteCategoryColors[note.category].bg +
-                        ' ' +
-                        NoteCategoryColors[note.category].text +
-                        ' ' +
-                        NoteCategoryColors[note.category].border
-                      "
-                    >
+                    <span class="text-sm font-semibold text-neutral-900">Dr(a). {{ note.doctor.name }}</span>
+                    <span class="text-xs text-neutral-500">(CRM: {{ note.doctor.crm }})</span>
+                    <app-badge [variant]="NoteCategoryColors[note.category].text === 'text-red-800' ? 'error' : NoteCategoryColors[note.category].text === 'text-yellow-800' ? 'warning' : 'info'">
                       {{ NoteCategoryLabels[note.category] }}
-                    </span>
-
+                    </app-badge>
                     @if (note.patient_view) {
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800"
-                    >
-                      Visível ao paciente
-                    </span>
+                    <app-badge variant="success">Visível ao paciente</app-badge>
                     } @else {
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-800"
-                    >
-                      Privado
-                    </span>
-                    } @if (!isOwnNote(note)) {
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-violet-100 text-violet-800"
-                    >
-                      Outro médico
-                    </span>
-                    } @if (isNoteEdited(note)) {
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-yellow-100 text-yellow-800"
-                      [title]="'Editado em ' + formatDate(note.updated_at)"
-                    >
-                      Editado
-                    </span>
+                    <app-badge variant="neutral">Privado</app-badge>
+                    }
+                    @if (!isOwnNote(note)) {
+                    <app-badge variant="purple">Outro médico</app-badge>
+                    }
+                    @if (isNoteEdited(note)) {
+                    <app-badge variant="yellow" [title]="'Editado em ' + formatDate(note.updated_at)">Editado</app-badge>
                     }
                   </div>
-
-                  <!-- Timestamp -->
-                  <div class="text-xs text-gray-600 mb-2">
-                    Criado em {{ formatDate(note.created_at) }}
-                  </div>
-
-                  <p class="text-gray-700 whitespace-pre-wrap">
-                    {{ note.content }}
-                  </p>
+                  <div class="text-xs text-neutral-500 mb-2">Criado em {{ formatDate(note.created_at) }}</div>
+                  <p class="text-sm text-neutral-700 whitespace-pre-wrap break-words">{{ note.content }}</p>
                 </div>
-
                 @if (isOwnNote(note)) {
-                <div class="ml-4 flex space-x-2">
-                  <button
-                    (click)="startEdit(note)"
-                    class="text-violet-700 hover:text-violet-800"
-                    title="Editar"
-                  >
-                    <svg
-                      class="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                      />
+                <div class="flex gap-2 flex-shrink-0">
+                  <button (click)="startEdit(note)" class="text-neutral-600 hover:text-neutral-900 transition-colors" title="Editar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   </button>
-                  <button
-                    (click)="deleteNote(note.id)"
-                    class="text-red-600 hover:text-red-800"
-                    title="Deletar"
-                  >
-                    <svg
-                      class="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
+                  <button (click)="deleteNote(note.id)" class="text-red-600 hover:text-red-800 transition-colors" title="Deletar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
                 </div>
@@ -546,15 +280,13 @@
   </div>
 </div>
 
-<!-- Modal de confirmação de exclusão de anotação -->
+<!-- Modal de confirmação -->
 @if (showDeleteNoteModal()) {
 <app-confirmation-modal
   [title]="'Deletar Anotação'"
-  [message]="
-    'Tem certeza que deseja deletar esta anotação?<br><br>Esta ação não poderá ser desfeita.'
-  "
+  [message]="'Tem certeza que deseja deletar esta anotação? Esta ação não poderá ser desfeita.'"
+  [type]="'danger'"
   [confirmButtonText]="'Sim, deletar'"
-  [confirmButtonClass]="'bg-red-600 hover:bg-red-700 text-white'"
   [cancelButtonText]="'Cancelar'"
   (confirm)="confirmDeleteNote()"
   (cancel)="cancelDeleteNote()"

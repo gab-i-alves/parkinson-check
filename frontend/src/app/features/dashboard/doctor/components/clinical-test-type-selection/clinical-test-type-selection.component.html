@@ -1,26 +1,11 @@
-<div class="min-h-screen bg-gray-100 relative overflow-hidden">
-  <!-- Background decorativo -->
-  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div
-      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
-    ></div>
-    <div
-      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
-    ></div>
-    <div
-      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
-    ></div>
-  </div>
-
-  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+<div class="min-h-screen bg-neutral-50">
+  <div class="container mx-auto px-6 py-8 space-y-6">
     <!-- Header -->
-    <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative"
-    >
-      <!-- Back button icon -->
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8 relative">
+      <!-- Back button -->
       <button
         (click)="goBack()"
-        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 hover:text-neutral-900 transition-all shadow-sm"
         aria-label="Voltar"
       >
         <svg
@@ -38,46 +23,29 @@
         </svg>
       </button>
 
-      <div class="flex items-center space-x-3">
-        <div
-          class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg"
-        >
-          <svg
-            class="h-8 w-8 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-            />
-          </svg>
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">
-            Selecionar Tipo de Teste
-          </h1>
-          <p class="text-sm text-gray-600 mt-1">
-            Paciente:
-            <span class="font-semibold">{{ patientName() }}</span> (ID:
-            {{ patientId() }})
-          </p>
-        </div>
+      <div>
+        <h1 class="text-2xl font-bold text-neutral-900 mb-1">
+          Selecionar Tipo de Teste
+        </h1>
+        <p class="text-sm text-neutral-600">
+          Paciente:
+          <span class="font-semibold">{{ patientName() }}</span>
+          <span class="text-neutral-400 mx-1">•</span>
+          <span class="text-neutral-500">ID: {{ patientId() }}</span>
+        </p>
       </div>
     </div>
 
+    <!-- Test Type Cards -->
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
       <!-- Teste de Espiral -->
       <div
         (click)="selectSpiralTest()"
-        class="group cursor-pointer bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+        class="group cursor-pointer bg-white border-2 border-neutral-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-pink-200 transition-all hover:-translate-y-1"
       >
-        <div class="flex items-start space-x-4">
+        <div class="flex items-start gap-4">
           <div
-            class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-100 border-2 border-violet-200 flex-shrink-0"
+            class="flex h-14 w-14 items-center justify-center rounded-xl bg-pink-100 flex-shrink-0 group-hover:bg-pink-200 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +53,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="h-7 w-7 text-violet-700"
+              class="h-7 w-7 text-pink-700"
             >
               <path
                 stroke-linecap="round"
@@ -95,19 +63,19 @@
             </svg>
           </div>
           <div class="flex-1">
-            <h3 class="text-lg font-bold text-gray-900 mb-2">
+            <h3 class="text-lg font-bold text-neutral-900 mb-2">
               Teste da Espiral
             </h3>
-            <p class="text-sm text-gray-700 leading-relaxed">
+            <p class="text-sm text-neutral-700 leading-relaxed">
               Avalie a coordenação motora do paciente através do desenho de uma
               espiral.
             </p>
             <div
-              class="mt-4 flex items-center text-xs font-medium text-violet-700"
+              class="mt-4 flex items-center text-sm font-semibold text-pink-700"
             >
               <span>Iniciar Teste</span>
               <svg
-                class="ml-1 w-4 h-4"
+                class="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -127,11 +95,11 @@
       <!-- Teste de Voz -->
       <div
         (click)="selectVoiceTest()"
-        class="group cursor-pointer bg-indigo-50/50 border border-indigo-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+        class="group cursor-pointer bg-white border-2 border-neutral-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all hover:-translate-y-1"
       >
-        <div class="flex items-start space-x-4">
+        <div class="flex items-start gap-4">
           <div
-            class="flex h-14 w-14 items-center justify-center rounded-lg bg-indigo-100 border-2 border-indigo-200 flex-shrink-0"
+            class="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 flex-shrink-0 group-hover:bg-blue-200 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +107,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="h-7 w-7 text-indigo-700"
+              class="h-7 w-7 text-blue-700"
             >
               <path
                 stroke-linecap="round"
@@ -149,16 +117,16 @@
             </svg>
           </div>
           <div class="flex-1">
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Teste de Voz</h3>
-            <p class="text-sm text-gray-700 leading-relaxed">
+            <h3 class="text-lg font-bold text-neutral-900 mb-2">Teste de Voz</h3>
+            <p class="text-sm text-neutral-700 leading-relaxed">
               Analise padrões vocais que podem indicar sintomas de Parkinson.
             </p>
             <div
-              class="mt-4 flex items-center text-xs font-medium text-indigo-700"
+              class="mt-4 flex items-center text-sm font-semibold text-blue-700"
             >
               <span>Iniciar Teste</span>
               <svg
-                class="ml-1 w-4 h-4"
+                class="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

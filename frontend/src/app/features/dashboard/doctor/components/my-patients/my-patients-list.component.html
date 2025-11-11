@@ -1,68 +1,17 @@
-<div class="min-h-screen bg-gray-100 relative overflow-hidden">
-  <!-- Background decorativo -->
-  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div
-      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
-    ></div>
-    <div
-      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
-    ></div>
-    <div
-      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
-    ></div>
-  </div>
-
-  <div class="container mx-auto px-6 py-8 space-y-6 relative">
-    <!-- Header -->
-    <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8"
-    >
-      <div class="flex items-center space-x-3">
-        <div
-          class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg"
-        >
-          <svg
-            class="h-8 w-8 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">Meus Pacientes</h1>
-          <p class="text-sm text-gray-600 mt-1">
-            Gerencie e acompanhe seus pacientes vinculados
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content Card -->
-    <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6"
-    >
-      <div class="mb-6">
-        <div class="flex items-end space-x-4">
-          <div class="flex-grow">
-            <label for="search" class="block text-sm font-medium text-gray-700">
-              Nome ou CPF do Paciente
+<div class="min-h-screen bg-neutral-50">
+  <div class="max-w-7xl mx-auto px-6 py-8 space-y-6">
+    <!-- Filtros -->
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+      <div class="space-y-4">
+        <!-- Linha 1: Busca -->
+        <div class="flex gap-4">
+          <div class="flex-1 relative">
+            <label for="search" class="block text-sm font-medium text-neutral-800 mb-2">
+              Buscar Paciente
             </label>
-            <div class="relative mt-1">
-              <div
-                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-              >
-                <svg
-                  class="h-5 w-5 text-gray-400"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-5 h-5 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fill-rule="evenodd"
                     d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
@@ -71,27 +20,49 @@
                 </svg>
               </div>
               <input
-                type="text"
+                type="search"
                 id="search"
                 [value]="searchQuery()"
                 (input)="onSearchChange($event)"
-                placeholder="Digite o nome ou CPF..."
-                class="block w-full rounded-md border-gray-300 py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                (keyup.enter)="onSearch()"
+                placeholder="Digite o nome ou CPF do paciente..."
+                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-neutral-300 text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent"
               />
             </div>
           </div>
 
+          <div class="flex-shrink-0 flex items-end">
+            <button
+              type="button"
+              (click)="onSearch()"
+              class="px-6 py-2.5 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors shadow-sm"
+            >
+              Pesquisar
+            </button>
+          </div>
+        </div>
+
+        <!-- Linha 2: Filtros -->
+        <div class="flex flex-wrap gap-3">
           <div class="flex-shrink-0">
-            <label for="status" class="block text-sm font-medium text-gray-700">
+            <label
+              for="status"
+              class="block text-sm font-medium text-neutral-800 mb-2"
+              appTooltip="Filtre pacientes por condição de saúde"
+              [tooltipPosition]="'top'"
+            >
               Status
+              <svg class="inline w-4 h-4 text-neutral-400 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+              </svg>
             </label>
             <select
               id="status"
               [value]="selectedStatus()"
               (change)="onStatusChange($event)"
-              class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              class="px-4 py-2.5 pr-10 bg-white border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent appearance-none cursor-pointer"
             >
-              <option value="">Todos</option>
+              <option value="">Todos os status</option>
               <option value="stable">Estável</option>
               <option value="attention">Atenção</option>
               <option value="critical">Crítico</option>
@@ -101,31 +72,44 @@
           <div class="flex-shrink-0">
             <label
               for="testType"
-              class="block text-sm font-medium text-gray-700"
+              class="block text-sm font-medium text-neutral-800 mb-2"
+              appTooltip="Filtre pelo tipo do último teste realizado"
+              [tooltipPosition]="'top'"
             >
-              Último Teste
+              Tipo de Teste
+              <svg class="inline w-4 h-4 text-neutral-400 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+              </svg>
             </label>
             <select
               id="testType"
               [value]="selectedTestType()"
               (change)="onTestTypeChange($event)"
-              class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              class="px-4 py-2.5 pr-10 bg-white border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent appearance-none cursor-pointer"
             >
-              <option value="">Todos</option>
+              <option value="">Todos os testes</option>
               <option value="spiral">Espiral</option>
               <option value="voice">Voz</option>
             </select>
           </div>
 
           <div class="flex-shrink-0">
-            <label for="sortBy" class="block text-sm font-medium text-gray-700">
+            <label
+              for="sortBy"
+              class="block text-sm font-medium text-neutral-800 mb-2"
+              appTooltip="Escolha como ordenar a lista"
+              [tooltipPosition]="'top'"
+            >
               Ordenar por
+              <svg class="inline w-4 h-4 text-neutral-400 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+              </svg>
             </label>
             <select
               id="sortBy"
               [value]="sortBy()"
               (change)="onSortChange($event)"
-              class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              class="px-4 py-2.5 pr-10 bg-white border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent appearance-none cursor-pointer"
             >
               <option value="name">Nome</option>
               <option value="age">Idade</option>
@@ -134,98 +118,95 @@
           </div>
 
           <div class="flex-shrink-0">
-            <label class="block text-sm font-medium text-gray-700">
+            <label class="block text-sm font-medium text-neutral-800 mb-2">
               Ordem
             </label>
             <button
               type="button"
               (click)="toggleSortOrder()"
-              class="mt-1 inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              title="{{ sortOrder() === 'asc' ? 'Crescente' : 'Decrescente' }}"
+              class="px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+              [title]="sortOrder() === 'asc' ? 'Crescente' : 'Decrescente'"
+              appTooltip="{{ sortOrder() === 'asc' ? 'Alternar para decrescente' : 'Alternar para crescente' }}"
+              [tooltipPosition]="'top'"
             >
               @if (sortOrder() === 'asc') {
-              <svg
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"
-                />
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
               </svg>
               } @else {
-              <svg
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
-                />
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
               </svg>
               }
             </button>
           </div>
 
-          <div class="flex-shrink-0">
+          @if (searchQuery() || selectedStatus() || selectedTestType()) {
+          <div class="flex-shrink-0 flex items-end">
             <button
               type="button"
-              (click)="onSearch()"
-              class="mt-6 inline-flex items-center rounded-lg bg-violet-700 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+              (click)="clearFilters()"
+              class="px-4 py-2.5 bg-neutral-100 text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-colors"
             >
-              Pesquisar
+              Limpar filtros
             </button>
           </div>
+          }
         </div>
-      </div>
 
+        <!-- Filtros ativos (badges) -->
+        @if (searchQuery() || selectedStatus() || selectedTestType()) {
+        <div class="flex items-center gap-2 flex-wrap pt-2 border-t border-neutral-200">
+          <span class="text-xs text-neutral-600 font-medium">Filtros ativos:</span>
+
+          @if (searchQuery()) {
+          <app-badge variant="pink">
+            🔍 "{{ searchQuery() }}"
+          </app-badge>
+          }
+
+          @if (selectedStatus()) {
+          <app-badge variant="blue">
+            Status: {{ getStatusLabel(selectedStatus() || undefined) }}
+          </app-badge>
+          }
+
+          @if (selectedTestType()) {
+          <app-badge variant="yellow">
+            Teste: {{ getTestTypeLabel(selectedTestType() || undefined) }}
+          </app-badge>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
       @if (isLoading()) {
-      <div class="flex h-64 items-center justify-center">
-        <div class="text-center">
-          <svg
-            class="mx-auto h-12 w-12 animate-spin text-violet-700"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <p class="mt-4 text-sm text-gray-600 font-medium">
-            Carregando pacientes...
-          </p>
+      <!-- Skeleton Loader -->
+      <div class="space-y-4 animate-pulse">
+        <div class="h-4 bg-neutral-200 rounded-full w-3/4"></div>
+        <div class="h-4 bg-neutral-200 rounded-full w-1/2"></div>
+
+        <div class="space-y-3 pt-4">
+          @for (item of [1,2,3,4,5]; track item) {
+          <div class="flex items-center gap-4 p-4 bg-neutral-50 rounded-xl">
+            <div class="w-12 h-12 bg-neutral-200 rounded-full"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 bg-neutral-200 rounded w-1/3"></div>
+              <div class="h-3 bg-neutral-200 rounded w-1/4"></div>
+            </div>
+            <div class="h-8 bg-neutral-200 rounded-full w-20"></div>
+          </div>
+          }
         </div>
       </div>
       } @else if (patients().length === 0) {
-      <div class="py-12 text-center">
-        <div
-          class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 border-2 border-gray-200 mx-auto mb-4"
-        >
-          <svg
-            class="h-10 w-10 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+      <!-- Empty State -->
+      <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
+        <div class="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-10 h-10 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -234,101 +215,97 @@
             />
           </svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900">
+        <h3 class="text-lg font-semibold text-neutral-900 mb-2">
           Nenhum paciente encontrado
         </h3>
-        <p class="mt-2 text-sm text-gray-600">
-          Tente ajustar os filtros ou realizar uma nova busca.
+        <p class="text-sm text-neutral-600 mb-6 max-w-sm">
+          @if (searchQuery() || selectedStatus() || selectedTestType()) {
+            Tente ajustar os filtros ou realizar uma nova busca com termos diferentes.
+          } @else {
+            Você ainda não possui pacientes vinculados. Quando houver pacientes, eles aparecerão aqui.
+          }
         </p>
+        @if (searchQuery() || selectedStatus() || selectedTestType()) {
+        <button
+          (click)="clearFilters()"
+          class="px-6 py-2.5 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
+        >
+          Limpar filtros
+        </button>
+        }
       </div>
       } @else {
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
+      <!-- Tabela de Pacientes -->
+      <div class="overflow-x-auto -mx-6">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-neutral-200">
+              <th class="text-left py-3 px-6 text-xs font-medium text-neutral-500 uppercase tracking-wider">
                 Paciente
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
+              <th class="text-left py-3 px-6 text-xs font-medium text-neutral-500 uppercase tracking-wider">
                 Idade
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
+              <th class="text-left py-3 px-6 text-xs font-medium text-neutral-500 uppercase tracking-wider">
                 Último Teste
               </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
+              <th class="text-left py-3 px-6 text-xs font-medium text-neutral-500 uppercase tracking-wider">
                 Status
               </th>
-              <th scope="col" class="relative px-6 py-3">
-                <span class="sr-only">Ações</span>
+              <th class="text-right py-3 px-6 text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                Ações
               </th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200 bg-white">
+          <tbody class="divide-y divide-neutral-100">
             @for (patient of patients(); track patient.id) {
-            <tr class="hover:bg-gray-50">
-              <td class="whitespace-nowrap px-6 py-4">
-                <div class="flex items-center">
-                  <div
-                    class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700"
-                  >
-                    <span class="font-semibold">{{
-                      patient.name.charAt(0).toUpperCase()
-                    }}</span>
+            <tr class="hover:bg-neutral-50 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span class="text-sm font-semibold text-neutral-900">
+                      {{ patient.name.charAt(0).toUpperCase() }}
+                    </span>
                   </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">
+                  <div>
+                    <div class="text-sm font-semibold text-neutral-900">
                       {{ patient.name }}
                     </div>
-                    <div class="text-sm text-gray-500">
+                    <div class="text-xs text-neutral-500">
                       {{ patient.cpf | cpf }}
                     </div>
                   </div>
                 </div>
               </td>
-              <td class="whitespace-nowrap px-6 py-4">
-                <div class="text-sm text-gray-900">{{ patient.age }} anos</div>
+              <td class="px-6 py-4">
+                <div class="text-sm text-neutral-900">{{ patient.age }} anos</div>
               </td>
-              <td class="whitespace-nowrap px-6 py-4">
-                <div class="text-sm text-gray-900">
+              <td class="px-6 py-4">
+                <div class="text-sm text-neutral-900">
                   {{ formatDate(patient.lastTestDate) }}
                 </div>
-                <div class="text-sm text-gray-500">
+                <div class="text-xs text-neutral-500">
                   {{ getTestTypeLabel(patient.lastTestType) }}
                 </div>
               </td>
-              <td class="whitespace-nowrap px-6 py-4">
-                <span
-                  [class]="getStatusClass(patient.status)"
-                  class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
-                >
+              <td class="px-6 py-4">
+                <app-badge [variant]="getStatusVariant(patient.status)">
                   {{ getStatusLabel(patient.status) }}
-                </span>
+                </app-badge>
               </td>
-              <td
-                class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
-              >
-                <div class="flex items-center justify-end space-x-2">
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-end gap-2">
                   <a
                     [routerLink]="['/dashboard/doctor/patient', patient.id]"
-                    class="inline-flex items-center px-4 py-2 border border-violet-200 text-sm font-semibold rounded-lg text-violet-700 bg-violet-50/50 hover:bg-violet-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-all"
-                    >Ver Detalhes</a
+                    class="px-4 py-2 bg-neutral-900 text-white rounded-lg text-xs font-medium hover:bg-neutral-800 transition-colors"
                   >
+                    Ver Detalhes
+                  </a>
                   <button
                     (click)="unlinkPatient(patient)"
-                    class="inline-flex items-center px-4 py-2 border border-red-200 text-sm font-semibold rounded-lg text-red-700 bg-red-50/50 hover:bg-red-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all"
-                    title="Desvincular paciente"
+                    class="px-4 py-2 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors"
+                    appTooltip="Remover vínculo com este paciente"
+                    [tooltipPosition]="'top'"
                   >
                     Desvincular
                   </button>
@@ -340,145 +317,98 @@
         </table>
       </div>
 
-      <div
-        class="mt-6 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
-      >
-        <div class="flex flex-1 justify-between sm:hidden">
+      <!-- Paginação -->
+      <div class="flex items-center justify-between border-t border-neutral-200 mt-6 pt-4">
+        <div class="flex items-center gap-4">
+          <p class="text-sm text-neutral-700">
+            Mostrando
+            <span class="font-semibold">{{ (currentPage() - 1) * pageSize() + 1 }}</span>
+            até
+            <span class="font-semibold">{{ Math.min(currentPage() * pageSize(), totalPatients()) }}</span>
+            de
+            <span class="font-semibold">{{ totalPatients() }}</span>
+            pacientes
+          </p>
+          <div class="flex items-center gap-2">
+            <label for="pageSize" class="text-sm text-neutral-700">Por página:</label>
+            <select
+              id="pageSize"
+              [value]="pageSize()"
+              (change)="onPageSizeChange($event)"
+              class="px-3 py-1.5 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent"
+            >
+              @for (size of pageSizeOptions; track size) {
+              <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <nav class="flex items-center gap-1">
           <button
             (click)="previousPage()"
             [disabled]="currentPage() === 1"
-            [class.opacity-50]="currentPage() === 1"
-            [class.cursor-not-allowed]="currentPage() === 1"
-            class="relative inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            class="px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-100"
+            [class.text-neutral-400]="currentPage() === 1"
+            [class.text-neutral-700]="currentPage() !== 1"
           >
-            Anterior
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
+
+          @for (page of [].constructor(Math.min(totalPages(), 5)); track $index) {
+          <button
+            (click)="goToPage($index + 1)"
+            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            [class.bg-neutral-900]="currentPage() === $index + 1"
+            [class.text-white]="currentPage() === $index + 1"
+            [class.text-neutral-700]="currentPage() !== $index + 1"
+            [class.hover:bg-neutral-100]="currentPage() !== $index + 1"
+          >
+            {{ $index + 1 }}
+          </button>
+          }
+
+          @if (totalPages() > 5) {
+          <span class="px-2 text-neutral-500">...</span>
+          <button
+            (click)="goToPage(totalPages())"
+            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            [class.bg-neutral-900]="currentPage() === totalPages()"
+            [class.text-white]="currentPage() === totalPages()"
+            [class.text-neutral-700]="currentPage() !== totalPages()"
+            [class.hover:bg-neutral-100]="currentPage() !== totalPages()"
+          >
+            {{ totalPages() }}
+          </button>
+          }
+
           <button
             (click)="nextPage()"
             [disabled]="currentPage() === totalPages()"
-            [class.opacity-50]="currentPage() === totalPages()"
-            [class.cursor-not-allowed]="currentPage() === totalPages()"
-            class="relative ml-3 inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            class="px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-100"
+            [class.text-neutral-400]="currentPage() === totalPages()"
+            [class.text-neutral-700]="currentPage() !== totalPages()"
           >
-            Próxima
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
           </button>
-        </div>
-        <div
-          class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between"
-        >
-          <div class="flex items-center gap-4">
-            <p class="text-sm text-gray-700">
-              Mostrando
-              <span class="font-medium">{{
-                (currentPage() - 1) * pageSize() + 1
-              }}</span>
-              até
-              <span class="font-medium">{{
-                Math.min(currentPage() * pageSize(), totalPatients())
-              }}</span>
-              de
-              <span class="font-medium">{{ totalPatients() }}</span>
-              resultados
-            </p>
-            <div class="flex items-center gap-2">
-              <label for="pageSize" class="text-sm text-gray-700"
-                >Itens por página:</label
-              >
-              <select
-                id="pageSize"
-                [value]="pageSize()"
-                (change)="onPageSizeChange($event)"
-                class="rounded-md border-gray-300 py-1 pl-2 pr-8 text-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500"
-              >
-                @for (size of pageSizeOptions; track size) {
-                <option [value]="size">{{ size }}</option>
-                }
-              </select>
-            </div>
-          </div>
-          <div>
-            <nav
-              class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-              aria-label="Paginação"
-            >
-              <button
-                (click)="previousPage()"
-                [disabled]="currentPage() === 1"
-                [class.opacity-50]="currentPage() === 1"
-                [class.cursor-not-allowed]="currentPage() === 1"
-                class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-              >
-                <span class="sr-only">Anterior</span>
-                <svg
-                  class="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-
-              @for (page of [].constructor(totalPages()); track $index) {
-              <button
-                (click)="goToPage($index + 1)"
-                [class.bg-violet-50]="currentPage() === $index + 1"
-                [class.border-violet-500]="currentPage() === $index + 1"
-                [class.text-violet-600]="currentPage() === $index + 1"
-                [class.z-10]="currentPage() === $index + 1"
-                class="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-              >
-                {{ $index + 1 }}
-              </button>
-              }
-
-              <button
-                (click)="nextPage()"
-                [disabled]="currentPage() === totalPages()"
-                [class.opacity-50]="currentPage() === totalPages()"
-                [class.cursor-not-allowed]="currentPage() === totalPages()"
-                class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-              >
-                <span class="sr-only">Próxima</span>
-                <svg
-                  class="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-            </nav>
-          </div>
-        </div>
+        </nav>
       </div>
       }
     </div>
   </div>
 </div>
 
-<!-- Modal de confirmação de desvinculação -->
+<!-- Modal de confirmação -->
 @if (showUnlinkModal()) {
 <app-confirmation-modal
   [title]="'Desvincular Paciente'"
-  [message]="
-    'Tem certeza que deseja desvincular o paciente <strong>' +
-    patientToUnlink()?.name +
-    '</strong>?<br><br>Esta ação não poderá ser desfeita e você perderá o acesso aos dados deste paciente.'
-  "
+  [message]="'Tem certeza que deseja desvincular o paciente ' + patientToUnlink()?.name + '? Esta ação não poderá ser desfeita e você perderá o acesso aos dados deste paciente.'"
+  [type]="'danger'"
   [confirmButtonText]="'Sim, desvincular'"
-  [confirmButtonClass]="'bg-red-600 hover:bg-red-700 text-white'"
   [cancelButtonText]="'Cancelar'"
   (confirm)="confirmUnlink()"
   (cancel)="cancelUnlink()"

@@ -5,9 +5,11 @@ import { RouterLink } from '@angular/router';
 import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
 import { DoctorService } from '../../../services/doctor.service';
 import { BindingService } from '../../../../../core/services/binding.service';
-import { NotificationService } from '../../../../../core/services/notification.service';
+import { ToastService } from '../../../../../shared/services/toast.service';
 import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
 import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import {
   Patient,
   PatientFilters,
@@ -18,14 +20,22 @@ import {
 @Component({
   selector: 'app-my-patients-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, CpfPipe, ConfirmationModalComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    CpfPipe,
+    ConfirmationModalComponent,
+    BadgeComponent,
+    TooltipDirective
+  ],
   templateUrl: './my-patients-list.component.html',
 })
 export class MyPatientsListComponent implements OnInit {
   private dashboardService = inject(DoctorDashboardService);
   private doctorService = inject(DoctorService);
   private bindingService = inject(BindingService);
-  private notificationService = inject(NotificationService);
+  private toastService = inject(ToastService);
 
   patients = signal<Patient[]>([]);
   isLoading = signal<boolean>(false);
@@ -174,7 +184,8 @@ export class MyPatientsListComponent implements OnInit {
     this.loadPatients();
   }
 
-  getStatusLabel(status: PatientStatus): string {
+  getStatusLabel(status?: PatientStatus): string {
+    if (!status) return 'N/A';
     const labels: Record<PatientStatus, string> = {
       stable: 'Estável',
       attention: 'Atenção',
@@ -183,13 +194,13 @@ export class MyPatientsListComponent implements OnInit {
     return labels[status];
   }
 
-  getStatusClass(status: PatientStatus): string {
-    const classes: Record<PatientStatus, string> = {
-      stable: 'bg-green-100 text-green-800',
-      attention: 'bg-yellow-100 text-yellow-800',
-      critical: 'bg-red-100 text-red-800',
+  getStatusVariant(status: PatientStatus): 'success' | 'warning' | 'error' {
+    const variants: Record<PatientStatus, 'success' | 'warning' | 'error'> = {
+      stable: 'success',
+      attention: 'warning',
+      critical: 'error',
     };
-    return classes[status];
+    return variants[status];
   }
 
   getTestTypeLabel(testType?: TestType): string {
@@ -208,7 +219,7 @@ export class MyPatientsListComponent implements OnInit {
 
   unlinkPatient(patient: Patient): void {
     if (!patient.bindingId) {
-      this.notificationService.warning('ID de vínculo não encontrado', 3000);
+      this.toastService.warning('ID de vínculo não encontrado');
       return;
     }
 
@@ -224,15 +235,14 @@ export class MyPatientsListComponent implements OnInit {
 
     this.bindingService.unlinkBinding(patient.bindingId).subscribe({
       next: () => {
-        this.notificationService.success('Paciente desvinculado com sucesso', 3000);
+        this.toastService.success('Paciente desvinculado com sucesso');
         this.showUnlinkModal.set(false);
         this.patientToUnlink.set(null);
         this.loadPatients();
       },
       error: (err: any) => {
-        this.notificationService.error(
-          `Erro ao desvincular paciente: ${err.error?.detail || 'Tente novamente'}`,
-          5000
+        this.toastService.error(
+          err.error?.detail || 'Erro ao desvincular paciente. Tente novamente.'
         );
         this.showUnlinkModal.set(false);
         this.patientToUnlink.set(null);

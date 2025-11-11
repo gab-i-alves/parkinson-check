@@ -1,37 +1,23 @@
-<div class="min-h-screen bg-gray-100 relative overflow-hidden">
-  <!-- Background decorativo -->
-  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div
-      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
-    ></div>
-    <div
-      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
-    ></div>
-    <div
-      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
-    ></div>
-  </div>
-
-  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+<div class="min-h-screen bg-neutral-50">
+  <div class="container mx-auto px-6 py-8 space-y-6">
     @if (isLoading()) {
+    <!-- Loading State -->
     <div class="flex items-center justify-center min-h-[50vh]">
       <div class="text-center">
         <div
-          class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-violet-600 border-r-transparent"
+          class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-pink-600 border-r-transparent"
         ></div>
-        <p class="mt-4 text-gray-600">Carregando informações do paciente...</p>
+        <p class="mt-4 text-neutral-600 font-medium">Carregando informações do paciente...</p>
       </div>
     </div>
     } @else {
     <div class="space-y-6">
       <!-- Header -->
-      <div
-        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative"
-      >
-        <!-- Back button icon -->
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8 relative">
+        <!-- Back button -->
         <button
           (click)="goBack()"
-          class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+          class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 hover:text-neutral-900 transition-all shadow-sm"
           aria-label="Voltar"
         >
           <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,46 +25,29 @@
           </svg>
         </button>
 
-        <div class="flex items-center space-x-3">
-          <div
-            class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg"
-          >
-            <svg
-              class="h-8 w-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5"
-              />
-            </svg>
-          </div>
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900">
-              Método do Teste da Espiral
-            </h1>
-            <p class="text-sm text-gray-600 mt-1">
-              Paciente:
-              <span class="font-semibold">{{ patientName() }}</span> (ID:
-              {{ patientId() }})
-            </p>
-          </div>
+        <div>
+          <h1 class="text-2xl font-bold text-neutral-900 mb-1">
+            Método do Teste da Espiral
+          </h1>
+          <p class="text-sm text-neutral-600">
+            Paciente:
+            <span class="font-semibold">{{ patientName() }}</span>
+            <span class="text-neutral-400 mx-1">•</span>
+            <span class="text-neutral-500">ID: {{ patientId() }}</span>
+          </p>
         </div>
       </div>
 
+      <!-- Method Selection Cards -->
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
         <!-- Webcam Method -->
         <div
           (click)="selectMethod('webcam')"
-          class="group cursor-pointer bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+          class="group cursor-pointer bg-white border-2 border-neutral-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-pink-200 transition-all hover:-translate-y-1"
         >
-          <div class="flex items-start space-x-4">
+          <div class="flex items-start gap-4">
             <div
-              class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-100 border-2 border-violet-200 flex-shrink-0"
+              class="flex h-14 w-14 items-center justify-center rounded-xl bg-pink-100 flex-shrink-0 group-hover:bg-pink-200 transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -86,7 +55,7 @@
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                class="h-7 w-7 text-violet-700"
+                class="h-7 w-7 text-pink-700"
               >
                 <path
                   stroke-linecap="round"
@@ -101,18 +70,18 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h3 class="text-lg font-bold text-gray-900 mb-2">
+              <h3 class="text-lg font-bold text-neutral-900 mb-2">
                 Desenhar no Ar (Webcam)
               </h3>
-              <p class="text-sm text-gray-700 leading-relaxed">
+              <p class="text-sm text-neutral-700 leading-relaxed">
                 Use a câmera para rastrear o dedo do paciente e capturar o desenho em tempo real.
               </p>
               <div
-                class="mt-4 flex items-center text-xs font-medium text-violet-700"
+                class="mt-4 flex items-center text-sm font-semibold text-pink-700"
               >
                 <span>Selecionar Método</span>
                 <svg
-                  class="ml-1 w-4 h-4"
+                  class="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -132,11 +101,11 @@
         <!-- Paper Method -->
         <div
           (click)="selectMethod('paper')"
-          class="group cursor-pointer bg-indigo-50/50 border border-indigo-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+          class="group cursor-pointer bg-white border-2 border-neutral-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-yellow-200 transition-all hover:-translate-y-1"
         >
-          <div class="flex items-start space-x-4">
+          <div class="flex items-start gap-4">
             <div
-              class="flex h-14 w-14 items-center justify-center rounded-lg bg-indigo-100 border-2 border-indigo-200 flex-shrink-0"
+              class="flex h-14 w-14 items-center justify-center rounded-xl bg-yellow-100 flex-shrink-0 group-hover:bg-yellow-200 transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -144,7 +113,7 @@
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                class="h-7 w-7 text-indigo-700"
+                class="h-7 w-7 text-yellow-700"
               >
                 <path
                   stroke-linecap="round"
@@ -154,18 +123,18 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h3 class="text-lg font-bold text-gray-900 mb-2">
+              <h3 class="text-lg font-bold text-neutral-900 mb-2">
                 Enviar Foto do Papel
               </h3>
-              <p class="text-sm text-gray-700 leading-relaxed">
+              <p class="text-sm text-neutral-700 leading-relaxed">
                 Paciente desenha em papel e envia uma foto. Ideal quando não há webcam disponível.
               </p>
               <div
-                class="mt-4 flex items-center text-xs font-medium text-indigo-700"
+                class="mt-4 flex items-center text-sm font-semibold text-yellow-700"
               >
                 <span>Selecionar Método</span>
                 <svg
-                  class="ml-1 w-4 h-4"
+                  class="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

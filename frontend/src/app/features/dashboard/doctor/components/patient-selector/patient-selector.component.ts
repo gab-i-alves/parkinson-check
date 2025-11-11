@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
-import { Patient } from '../../../../../core/models/patient.model';
+import { Patient, PatientStatus } from '../../../../../core/models/patient.model';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-patient-selector',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BadgeComponent],
   templateUrl: './patient-selector.component.html',
 })
 export class PatientSelectorComponent {
@@ -84,5 +85,25 @@ export class PatientSelectorComponent {
   formatTestType(testType?: string): string {
     if (!testType) return 'N/A';
     return testType === 'voice' ? 'Voz' : testType === 'spiral' ? 'Espiral' : testType;
+  }
+
+  getStatusLabel(status?: PatientStatus): string {
+    if (!status) return 'N/A';
+    const labels: Record<PatientStatus, string> = {
+      stable: 'Estável',
+      attention: 'Atenção',
+      critical: 'Crítico',
+    };
+    return labels[status];
+  }
+
+  getStatusVariant(status?: PatientStatus): 'success' | 'warning' | 'error' | 'neutral' {
+    if (!status) return 'neutral';
+    const variants: Record<PatientStatus, 'success' | 'warning' | 'error'> = {
+      stable: 'success',
+      attention: 'warning',
+      critical: 'error',
+    };
+    return variants[status];
   }
 }

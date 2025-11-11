@@ -26,14 +26,15 @@ import {
   NoteCategoryColors,
 } from '../../../../../core/enums/note-category.enum';
 import { UserService } from '../../../../../core/services/user.service';
-import { NotificationService } from '../../../../../core/services/notification.service';
+import { ToastService } from '../../../../../shared/services/toast.service';
 import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { getTestTypeLabel, getSpiralMethodLabel, getClassificationLabel } from '../../../shared/utils/display-helpers';
 
 @Component({
   selector: 'app-test-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ConfirmationModalComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ConfirmationModalComponent, BadgeComponent],
   templateUrl: './test-detail.component.html',
 })
 export class TestDetailComponent implements OnInit, OnDestroy {
@@ -42,7 +43,7 @@ export class TestDetailComponent implements OnInit, OnDestroy {
   private testDetailService = inject(TestDetailService);
   private noteService = inject(NoteService);
   private userService = inject(UserService);
-  private notificationService = inject(NotificationService);
+  private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
 
   readonly testId = signal<number | null>(null);
@@ -213,7 +214,7 @@ export class TestDetailComponent implements OnInit, OnDestroy {
 
   addNote(): void {
     if (this.noteForm.invalid || !this.testId()) {
-      this.notificationService.warning('Por favor, preencha todos os campos obrigatórios.');
+      this.toastService.warning('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
@@ -230,11 +231,11 @@ export class TestDetailComponent implements OnInit, OnDestroy {
         this.notes.set([note, ...this.notes()]);
         this.noteForm.reset({ patient_view: false, category: NoteCategory.OBSERVATION });
         this.isAddingNote.set(false);
-        this.notificationService.success('Anotação criada com sucesso!');
+        this.toastService.success('Anotação criada com sucesso!');
       },
       error: (err) => {
         console.error('Erro ao criar nota:', err);
-        this.notificationService.error('Erro ao criar anotação. Tente novamente.');
+        this.toastService.error('Erro ao criar anotação. Tente novamente.');
       },
     });
   }
@@ -255,7 +256,7 @@ export class TestDetailComponent implements OnInit, OnDestroy {
 
   saveEdit(noteId: number): void {
     if (this.editForm.invalid) {
-      this.notificationService.warning('Por favor, preencha todos os campos obrigatórios.');
+      this.toastService.warning('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
@@ -273,11 +274,11 @@ export class TestDetailComponent implements OnInit, OnDestroy {
         this.notes.set(updatedNotes);
         this.editingNoteId.set(null);
         this.editForm.reset();
-        this.notificationService.success('Anotação atualizada com sucesso!');
+        this.toastService.success('Anotação atualizada com sucesso!');
       },
       error: (err) => {
         console.error('Erro ao atualizar nota:', err);
-        this.notificationService.error('Erro ao atualizar anotação. Tente novamente.');
+        this.toastService.error('Erro ao atualizar anotação. Tente novamente.');
       },
     });
   }
@@ -297,13 +298,13 @@ export class TestDetailComponent implements OnInit, OnDestroy {
       next: () => {
         const filteredNotes = this.notes().filter((note) => note.id !== noteId);
         this.notes.set(filteredNotes);
-        this.notificationService.success('Anotação deletada com sucesso!');
+        this.toastService.success('Anotação deletada com sucesso!');
         this.showDeleteNoteModal.set(false);
         this.noteToDelete.set(null);
       },
       error: (err) => {
         console.error('Erro ao deletar nota:', err);
-        this.notificationService.error('Erro ao deletar anotação. Tente novamente.');
+        this.toastService.error('Erro ao deletar anotação. Tente novamente.');
         this.showDeleteNoteModal.set(false);
         this.noteToDelete.set(null);
       },
@@ -347,10 +348,10 @@ export class TestDetailComponent implements OnInit, OnDestroy {
 
     if (this.isSpiralTest(test)) {
       this.testDetailService.downloadSpiralImage(id);
-      this.notificationService.success('Download da imagem iniciado!');
+      this.toastService.success('Download da imagem iniciado!');
     } else if (this.isVoiceTest(test)) {
       this.testDetailService.downloadVoiceAudio(id);
-      this.notificationService.success('Download do áudio iniciado!');
+      this.toastService.success('Download do áudio iniciado!');
     }
   }
 
