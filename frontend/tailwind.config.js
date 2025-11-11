@@ -4,27 +4,39 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          light: "#8b5cf6", // violet-500
-          DEFAULT: "#6d28d9", // violet-700
-          dark: "#5b21b6", // violet-800
+        // Intelly Design System Colors
+        yellow: {
+          50: "#FFFDF5",
+          100: "#FFF9E6",
+          200: "#FFF3CC",
+          300: "#FFE66D", // Primary Yellow
         },
-        secondary: {
-          light: "#34d399", // emerald-400
-          DEFAULT: "#10b981", // emerald-500
-          dark: "#059669", // emerald-600
+        pink: {
+          50: "#FFF5FC",
+          100: "#FFEAF8",
+          200: "#FFB5E8", // Primary Pink
         },
-        gray: {
-          50: "#f9fafb",
-          100: "#f3f4f6",
-          200: "#e5e7eb",
-          300: "#d1d5db",
-          400: "#9ca3af",
-          500: "#6b7280",
-          600: "#4b5563",
-          700: "#374151",
-          800: "#1f2937",
-          900: "#111827",
+        blue: {
+          50: "#F5F9FF",
+          100: "#E6F1FF",
+          200: "#B4D4FF", // Primary Blue
+        },
+        green: {
+          50: "#F7FBF7",
+          100: "#E8F4E8",
+          200: "#C1E1C1", // Primary Green
+        },
+        neutral: {
+          50: "#F8F8F6",
+          100: "#F0F0ED",
+          200: "#E0E0DB",
+          300: "#C8C8C0",
+          400: "#A0A098",
+          500: "#787870",
+          600: "#5A5A54",
+          700: "#3F3F3B",
+          800: "#2A2A27",
+          900: "#1A1A1A",
         },
       },
     },

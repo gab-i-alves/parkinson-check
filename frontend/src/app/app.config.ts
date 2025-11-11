@@ -9,6 +9,7 @@ import {
   withFetch,
   withInterceptors,
 } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideNgxMask } from 'ngx-mask';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideAnimations(),
     provideNgxMask(),
     provideCharts(withDefaultRegisterables()),
   ],
