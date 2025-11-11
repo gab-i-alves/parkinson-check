@@ -78,8 +78,8 @@ export class PatientDashboardComponent implements OnInit {
         {
           data: [stats.patient_avg_score, stats.global_avg_score || 0],
           label: 'Score Médio',
-          backgroundColor: ['rgba(124, 58, 237, 0.8)', 'rgba(156, 163, 175, 0.6)'],
-          borderColor: ['rgb(124, 58, 237)', 'rgb(156, 163, 175)'],
+          backgroundColor: ['rgba(219, 39, 119, 0.8)', 'rgba(163, 163, 163, 0.6)'],
+          borderColor: ['rgb(219, 39, 119)', 'rgb(163, 163, 163)'],
           borderWidth: 2,
         },
       ],
@@ -112,8 +112,8 @@ export class PatientDashboardComponent implements OnInit {
         {
           data: [stats.patient_avg_score],
           label: 'Você',
-          borderColor: 'rgb(124, 58, 237)',
-          backgroundColor: 'rgba(124, 58, 237, 0.1)',
+          borderColor: 'rgb(219, 39, 119)',
+          backgroundColor: 'rgba(219, 39, 119, 0.1)',
           tension: 0.4,
         },
         {
@@ -161,12 +161,12 @@ export class PatientDashboardComponent implements OnInit {
           backgroundColor: [
             'rgba(59, 130, 246, 0.7)',
             'rgba(236, 72, 153, 0.7)',
-            'rgba(124, 58, 237, 0.8)',
+            'rgba(219, 39, 119, 0.8)',
           ],
           borderColor: [
             'rgb(59, 130, 246)',
             'rgb(236, 72, 153)',
-            'rgb(124, 58, 237)',
+            'rgb(219, 39, 119)',
           ],
           borderWidth: 2,
         },

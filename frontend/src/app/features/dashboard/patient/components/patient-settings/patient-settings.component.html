@@ -1,39 +1,50 @@
-<div class="min-h-screen bg-gray-100 relative overflow-hidden">
-  <!-- Background decorativo -->
-  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
-    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
-    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
-  </div>
+<div class="min-h-screen bg-neutral-50">
+  <div class="max-w-4xl mx-auto px-6 py-8 space-y-6">
+    @if (isLoading()) {
+    <!-- Enhanced Skeleton Loader -->
+    <div class="space-y-6 animate-pulse">
+      <!-- Header Skeleton -->
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
+        <div class="flex items-center gap-3">
+          <div class="w-14 h-14 bg-neutral-200 rounded-lg"></div>
+          <div class="flex-1 space-y-2">
+            <div class="h-6 bg-neutral-200 rounded w-1/4"></div>
+            <div class="h-4 bg-neutral-200 rounded w-1/3"></div>
+          </div>
+        </div>
+      </div>
 
-  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+      <!-- Content Skeleton -->
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <div class="h-6 bg-neutral-200 rounded w-1/4 mb-6"></div>
+        <div class="space-y-4">
+          <div class="h-4 bg-neutral-200 rounded w-full"></div>
+          <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+          <div class="h-32 bg-neutral-200 rounded-xl"></div>
+        </div>
+      </div>
+    </div>
+    } @else {
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
-      <div class="flex items-center space-x-3">
-        <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg">
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
+      <div class="flex items-center gap-3">
+        <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-neutral-900">
           <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         </div>
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Configurações</h1>
-          <p class="text-sm text-gray-600 mt-1">Gerencie suas preferências e privacidade</p>
+          <h1 class="text-3xl font-bold text-neutral-900">Configurações</h1>
+          <p class="text-sm text-neutral-600 mt-1">Gerencie suas preferências e privacidade</p>
         </div>
       </div>
-    </header>
-
-    @if (isLoading()) {
-    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center">
-      <div class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-violet-700"></div>
-      <p class="text-gray-600 mt-4 font-medium">Carregando configurações...</p>
     </div>
-    } @else {
 
     <!-- Seção de Privacidade -->
-    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
-      <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
-        <svg class="h-6 w-6 text-violet-700 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
+      <h2 class="text-xl font-bold text-neutral-900 mb-6 flex items-center">
+        <svg class="h-6 w-6 text-neutral-900 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
         </svg>
         Privacidade e Dados
@@ -41,19 +52,19 @@
 
       <div class="space-y-6">
         <!-- Toggle para compartilhamento de dados -->
-        <div class="border border-gray-200 rounded-lg p-6 hover:border-violet-300 transition-colors">
-          <div class="flex items-start justify-between">
+        <div class="border border-neutral-200 rounded-xl p-6 hover:border-neutral-300 transition-colors">
+          <div class="flex items-start justify-between gap-6">
             <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">
+              <h3 class="text-lg font-semibold text-neutral-900 mb-2">
                 Compartilhar Dados para Estatísticas
               </h3>
-              <p class="text-sm text-gray-600 mb-4">
+              <p class="text-sm text-neutral-600 mb-4">
                 Permitir que seus dados sejam incluídos em estatísticas agregadas e anônimas do sistema.
                 Isso ajuda a melhorar a experiência de todos os pacientes ao fornecer comparações mais precisas.
               </p>
 
               <!-- Lista de benefícios -->
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
                 <p class="text-sm font-medium text-blue-900 mb-2">Quando você compartilha seus dados:</p>
                 <ul class="text-sm text-blue-800 space-y-1">
                   <li class="flex items-start">
@@ -85,14 +96,14 @@
 
               <!-- Aviso quando desabilitado -->
               @if (!shareDataForStatistics()) {
-              <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+              <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
                 <div class="flex items-start">
-                  <svg class="h-5 w-5 text-orange-600 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="h-5 w-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                   </svg>
                   <div class="flex-1">
-                    <p class="text-sm font-medium text-orange-900">Compartilhamento desabilitado</p>
-                    <p class="text-sm text-orange-800 mt-1">
+                    <p class="text-sm font-medium text-yellow-900">Compartilhamento desabilitado</p>
+                    <p class="text-sm text-yellow-800 mt-1">
                       Você não verá comparações estatísticas no dashboard, pois optou por não compartilhar seus dados.
                     </p>
                   </div>
@@ -102,7 +113,7 @@
             </div>
 
             <!-- Toggle Switch -->
-            <div class="ml-6 flex-shrink-0">
+            <div class="flex-shrink-0">
               <label class="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -110,37 +121,18 @@
                   (change)="onToggleChange($event)"
                   class="sr-only peer"
                 />
-                <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-violet-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-violet-600"></div>
+                <div class="w-14 h-7 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-200"></div>
               </label>
             </div>
           </div>
         </div>
 
         <!-- Botão Salvar -->
-        <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-          <div>
-            @if (saveSuccess()) {
-            <div class="flex items-center text-green-600">
-              <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-              </svg>
-              <span class="text-sm font-medium">Configurações salvas com sucesso!</span>
-            </div>
-            }
-            @if (errorMessage()) {
-            <div class="flex items-center text-red-600">
-              <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-              </svg>
-              <span class="text-sm font-medium">{{ errorMessage() }}</span>
-            </div>
-            }
-          </div>
-
+        <div class="flex items-center justify-end pt-4 border-t border-neutral-200">
           <button
             (click)="savePrivacySettings()"
             [disabled]="isSaving()"
-            class="inline-flex items-center rounded-lg bg-violet-700 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            class="inline-flex items-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             @if (isSaving()) {
             <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -160,16 +152,16 @@
     </div>
 
     <!-- Card informativo adicional -->
-    <div class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6 shadow-md">
-      <div class="flex items-start space-x-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-100 border-2 border-violet-200 flex-shrink-0">
-          <svg class="h-5 w-5 text-violet-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+      <div class="flex items-start gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
         <div class="flex-1">
-          <h4 class="text-sm font-bold text-gray-900 mb-2">Sobre Suas Configurações de Privacidade</h4>
-          <p class="text-sm text-gray-700">
+          <h4 class="text-sm font-bold text-blue-900 mb-2">Sobre Suas Configurações de Privacidade</h4>
+          <p class="text-sm text-blue-800">
             Você pode alterar essas configurações a qualquer momento. Suas preferências serão aplicadas imediatamente e respeitadas em todos os cálculos estatísticos.
             Lembre-se: mesmo quando você compartilha dados, nunca compartilhamos informações que possam identificá-lo individualmente.
           </p>

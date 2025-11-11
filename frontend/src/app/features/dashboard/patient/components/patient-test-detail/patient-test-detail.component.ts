@@ -14,12 +14,14 @@ import {
   NoteCategoryLabels,
   NoteCategoryColors,
 } from '../../../../../core/enums/note-category.enum';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { getTestTypeLabel, getSpiralMethodLabel, getClassificationLabel } from '../../../shared/utils/display-helpers';
 
 @Component({
   selector: 'app-patient-test-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BadgeComponent],
   templateUrl: './patient-test-detail.component.html',
 })
 export class PatientTestDetailComponent implements OnInit, OnDestroy {
@@ -27,6 +29,7 @@ export class PatientTestDetailComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private testDetailService = inject(TestDetailService);
   private noteService = inject(NoteService);
+  private toastService = inject(ToastService);
 
   readonly testId = signal<number | null>(null);
   readonly testDetail = signal<TestDetail | null>(null);
@@ -183,8 +186,10 @@ export class PatientTestDetailComponent implements OnInit, OnDestroy {
 
     if (this.isSpiralTest(test)) {
       this.testDetailService.downloadMySpiralImage(id);
+      this.toastService.success('Download da imagem iniciado!');
     } else if (this.isVoiceTest(test)) {
       this.testDetailService.downloadMyVoiceAudio(id);
+      this.toastService.success('Download do áudio iniciado!');
     }
   }
 

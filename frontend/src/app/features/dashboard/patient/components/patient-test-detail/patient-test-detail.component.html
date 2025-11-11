@@ -1,363 +1,186 @@
-<div class="min-h-screen bg-gray-100 relative overflow-hidden">
-  <!-- Background decorativo -->
-  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div
-      class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"
-    ></div>
-    <div
-      class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"
-    ></div>
-    <div
-      class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"
-    ></div>
-  </div>
-
-  <div class="container mx-auto px-6 py-8 space-y-6 relative">
+<div class="min-h-screen bg-neutral-50">
+  <div class="max-w-7xl mx-auto px-6 py-8">
     @if (isLoading()) {
-    <div class="flex h-screen items-center justify-center">
-      <div class="text-center">
-        <svg
-          class="inline-block animate-spin rounded-full h-12 w-12 text-violet-700"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          ></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
-        <p class="text-gray-600 mt-4 font-medium">
-          Carregando detalhes do teste...
-        </p>
+    <!-- Skeleton Loader -->
+    <div class="space-y-6 animate-pulse">
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <div class="h-8 bg-neutral-200 rounded w-1/3 mb-6"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-4">
+            <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+            <div class="h-4 bg-neutral-200 rounded w-1/2"></div>
+            <div class="h-4 bg-neutral-200 rounded w-2/3"></div>
+          </div>
+          <div class="h-48 bg-neutral-200 rounded-xl"></div>
+        </div>
       </div>
     </div>
     } @else if (errorMessage()) {
-    <div
-      class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center"
-    >
-      <div
-        class="flex h-16 w-16 items-center justify-center rounded-lg bg-red-100 border-2 border-red-200 mx-auto mb-4"
-      >
-        <svg
-          class="h-10 w-10 text-red-600"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
+    <!-- Estado de Erro -->
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-12 text-center">
+      <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-10 h-10 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
         </svg>
       </div>
-      <h3 class="text-lg font-semibold text-gray-900">
-        Erro ao carregar detalhes
-      </h3>
-      <p class="text-sm text-gray-600 mt-2">{{ errorMessage() }}</p>
+      <h3 class="text-lg font-semibold text-neutral-900 mb-2">Erro ao Carregar Teste</h3>
+      <p class="text-sm text-neutral-600 mb-6">{{ errorMessage() }}</p>
+      <button (click)="goBack()" class="px-6 py-2.5 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors">
+        Voltar
+      </button>
     </div>
-    } @else if (testDetail() && !isLoading()) {
+    } @else if (testDetail()) {
     <div class="space-y-6">
-      <!-- Header com botão voltar -->
-      <div
-        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative"
-      >
-        <!-- Back button -->
-        <button
-          (click)="goBack()"
-          class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
-          aria-label="Voltar"
-        >
-          <svg
-            class="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <div
-              class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg"
-            >
-              <svg
-                class="h-8 w-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h1 class="text-3xl font-bold text-gray-900">
-                Detalhes do Teste
-              </h1>
-              <p class="text-sm text-gray-600 mt-1">
-                Informações completas sobre o teste clínico
-              </p>
-            </div>
-          </div>
+      <!-- Cabeçalho do Teste -->
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <div class="flex items-start justify-between mb-6">
+          <h2 class="text-2xl font-semibold text-neutral-900">Detalhes do Teste</h2>
+          <button (click)="goBack()" class="px-4 py-2 bg-neutral-100 text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar
+          </button>
         </div>
-      </div>
-      <!-- Informações do Teste -->
-      <div
-        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden"
-      >
-        <div class="px-8 py-6 border-b border-gray-200">
-          <h2 class="text-lg font-bold text-gray-900">Detalhes do Teste</h2>
-        </div>
-        <div class="px-6 py-5">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Coluna esquerda: Informações do teste -->
-            <div class="lg:col-span-2">
-              <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Tipo de Teste</dt>
-                  <dd class="mt-1 text-lg text-gray-900">
-                    {{ getTestTypeLabel(testDetail()!.test_type) }}
-                  </dd>
-                </div>
 
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">
-                    Data de Execução
-                  </dt>
-                  <dd class="mt-1 text-lg text-gray-900">
-                    {{ formatDate(testDetail()!.execution_date) }}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Score</dt>
-                  <dd class="mt-1 text-lg text-gray-900">
-                    {{ testDetail()!.score.toFixed(2) }}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Classificação</dt>
-                  <dd class="mt-1">
-                    <span
-                      class="inline-flex rounded-full px-3 py-1 text-sm font-semibold"
-                      [class]="getClassificationColor(testDetail()!.classification)"
-                    >
-                      {{ getClassificationLabel(testDetail()!.classification) }}
-                    </span>
-                  </dd>
-                </div>
-
-                @if (spiralTestDetail()) {
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">
-                    Duração do Desenho
-                  </dt>
-                  <dd class="mt-1 text-lg text-gray-900">
-                    {{ spiralTestDetail()!.draw_duration }}s
-                  </dd>
-                </div>
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">Método</dt>
-                  <dd class="mt-1 text-lg text-gray-900">
-                    {{ getSpiralMethodLabel(spiralTestDetail()!.method) }}
-                  </dd>
-                </div>
-                } @if (voiceTestDetail()) {
-                <div>
-                  <dt class="text-sm font-medium text-gray-500">
-                    Duração da Gravação
-                  </dt>
-                  <dd class="mt-1 text-lg text-gray-900">
-                    {{ voiceTestDetail()!.record_duration }}s
-                  </dd>
-                </div>
-                }
-              </dl>
-            </div>
-
-            <!-- Coluna direita: Preview de mídia -->
-            <div class="lg:col-span-1">
-              <div class="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">
-                  @if (spiralTestDetail()) { Imagem da Espiral }
-                  @else if (voiceTestDetail()) { Áudio da Gravação }
-                </h3>
-
-                @if (isLoadingMedia()) {
-                <div class="flex justify-center items-center py-12">
-                  <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-violet-700"></div>
-                </div>
-                } @else if (mediaError()) {
-                <div class="text-center py-8">
-                  <svg class="h-12 w-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p class="text-sm text-gray-500">{{ mediaError() }}</p>
-                </div>
-                } @else if (mediaUrl()) {
-                  @if (spiralTestDetail()) {
-                  <!-- Preview da imagem -->
-                  <div class="mb-3">
-                    <img
-                      [src]="mediaUrl()!"
-                      alt="Espiral desenhada"
-                      class="w-full h-auto rounded-lg border border-gray-300 cursor-pointer hover:opacity-90 transition-opacity"
-                      (click)="openMediaInNewTab()"
-                    />
-                  </div>
-                  } @else if (voiceTestDetail()) {
-                  <!-- Player de áudio -->
-                  <div class="mb-3">
-                    <audio
-                      [src]="mediaUrl()!"
-                      controls
-                      class="w-full"
-                      controlsList="nodownload"
-                    >
-                      Seu navegador não suporta o elemento de áudio.
-                    </audio>
-                  </div>
-                  }
-
-                  <!-- Botões de ação -->
-                  <div class="space-y-2">
-                    <button
-                      (click)="downloadMedia()"
-                      class="w-full inline-flex items-center justify-center rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800 transition-all"
-                    >
-                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      Baixar @if (spiralTestDetail()) { Imagem } @else { Áudio }
-                    </button>
-
-                    @if (spiralTestDetail()) {
-                    <button
-                      (click)="openMediaInNewTab()"
-                      class="w-full inline-flex items-center justify-center rounded-lg border border-violet-700 px-4 py-2 text-sm font-semibold text-violet-700 bg-white hover:bg-violet-50 transition-all"
-                    >
-                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                      </svg>
-                      Ampliar Imagem
-                    </button>
-                    }
-                  </div>
-                }
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Informações do Teste -->
+          <div class="lg:col-span-2">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Tipo de Teste</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ getTestTypeLabel(testDetail()!.test_type) }}</dd>
               </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Data de Execução</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ formatDate(testDetail()!.execution_date) }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Score</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ testDetail()!.score.toFixed(2) }}</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Classificação</dt>
+                <dd class="mt-1">
+                  <app-badge [variant]="testDetail()!.classification === 'HEALTHY' ? 'success' : 'error'">
+                    {{ getClassificationLabel(testDetail()!.classification) }}
+                  </app-badge>
+                </dd>
+              </div>
+              @if (spiralTestDetail()) {
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Duração do Desenho</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ spiralTestDetail()!.draw_duration }}s</dd>
+              </div>
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Método</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ getSpiralMethodLabel(spiralTestDetail()!.method) }}</dd>
+              </div>
+              }
+              @if (voiceTestDetail()) {
+              <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Duração da Gravação</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ voiceTestDetail()!.record_duration }}s</dd>
+              </div>
+              }
+            </dl>
+          </div>
+
+          <!-- Preview de Mídia -->
+          <div class="lg:col-span-1">
+            <div class="border border-neutral-200 rounded-xl p-4 bg-neutral-50">
+              <h3 class="text-sm font-semibold text-neutral-900 mb-3">
+                @if (spiralTestDetail()) { Imagem da Espiral }
+                @else if (voiceTestDetail()) { Áudio da Gravação }
+              </h3>
+
+              @if (isLoadingMedia()) {
+              <div class="flex justify-center items-center py-12">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-neutral-900 border-t-transparent"></div>
+              </div>
+              } @else if (mediaError()) {
+              <div class="text-center py-8">
+                <svg class="h-12 w-12 text-neutral-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-sm text-neutral-500">{{ mediaError() }}</p>
+              </div>
+              } @else if (mediaUrl()) {
+                @if (spiralTestDetail()) {
+                <div class="mb-3">
+                  <img [src]="mediaUrl()!" alt="Espiral desenhada" class="w-full h-auto rounded-lg border border-neutral-300 cursor-pointer hover:opacity-90 transition-opacity" (click)="openMediaInNewTab()" />
+                </div>
+                } @else if (voiceTestDetail()) {
+                <div class="mb-3">
+                  <audio [src]="mediaUrl()!" controls class="w-full" controlsList="nodownload">
+                    Seu navegador não suporta o elemento de áudio.
+                  </audio>
+                </div>
+                }
+                <div class="space-y-2">
+                  <button (click)="downloadMedia()" class="w-full inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Baixar @if (spiralTestDetail()) { Imagem } @else { Áudio }
+                  </button>
+                  @if (spiralTestDetail()) {
+                  <button (click)="openMediaInNewTab()" class="w-full inline-flex items-center justify-center rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-900 bg-white hover:bg-neutral-50 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                    Ampliar
+                  </button>
+                  }
+                </div>
+              }
             </div>
           </div>
         </div>
       </div>
 
       <!-- Anotações Médicas -->
-      <div
-        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden"
-      >
-        <div class="px-8 py-6 border-b border-gray-200">
-          <h3 class="text-lg font-bold text-gray-900">Anotações Médicas</h3>
-          <p class="text-sm text-gray-600 mt-1">
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-neutral-200">
+          <h3 class="text-lg font-semibold text-neutral-900">Anotações Médicas</h3>
+          <p class="text-sm text-neutral-600 mt-1">
             Anotações compartilhadas pelos seus médicos sobre este teste
           </p>
         </div>
 
-        <div class="px-6 py-5">
+        <div class="px-6 py-6">
           @if (notes().length === 0) {
-          <div class="text-center py-8">
-            <div
-              class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 border-2 border-gray-200 mx-auto mb-4"
-            >
-              <svg
-                class="h-10 w-10 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
+          <div class="text-center py-12">
+            <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900">
+            <h3 class="text-lg font-semibold text-neutral-900">
               Nenhuma anotação compartilhada
             </h3>
-            <p class="text-sm text-gray-600 mt-2">
+            <p class="text-sm text-neutral-600 mt-2">
               Seu médico ainda não adicionou anotações visíveis para este teste.
             </p>
           </div>
           } @else {
           <div class="space-y-4">
             @for (note of notes(); track note.id) {
-            <div class="border border-gray-200 rounded-2xl p-4 bg-gray-50/50">
-              <div class="flex justify-between items-start">
-                <div class="flex-1">
+            <div class="border border-neutral-200 rounded-xl p-4 bg-white">
+              <div class="flex justify-between items-start gap-4">
+                <div class="flex-1 min-w-0">
                   <div class="flex items-center flex-wrap gap-2 mb-2">
-                    <span class="text-sm font-medium text-gray-900">
-                      Dr(a). {{ note.doctor.name }}
-                    </span>
-                    <span class="text-sm text-gray-500">
-                      (CRM: {{ note.doctor.crm }})
-                    </span>
-
-                    <!-- Badge de Categoria -->
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
-                      [class]="
-                        NoteCategoryColors[note.category].bg +
-                        ' ' +
-                        NoteCategoryColors[note.category].text +
-                        ' ' +
-                        NoteCategoryColors[note.category].border
-                      "
-                    >
+                    <span class="text-sm font-semibold text-neutral-900">Dr(a). {{ note.doctor.name }}</span>
+                    <span class="text-xs text-neutral-500">(CRM: {{ note.doctor.crm }})</span>
+                    <app-badge [variant]="NoteCategoryColors[note.category].text === 'text-red-800' ? 'error' : NoteCategoryColors[note.category].text === 'text-yellow-800' ? 'warning' : 'info'">
                       {{ NoteCategoryLabels[note.category] }}
-                    </span>
-
+                    </app-badge>
                     @if (isNoteEdited(note)) {
-                    <span
-                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
-                      [title]="'Editado em ' + formatDate(note.updated_at)"
-                    >
-                      Editado
-                    </span>
+                    <app-badge variant="yellow" [title]="'Editado em ' + formatDate(note.updated_at)">Editado</app-badge>
                     }
                   </div>
-
-                  <!-- Timestamp -->
-                  <div class="text-xs text-gray-500 mb-2">
-                    Criado em {{ formatDate(note.created_at) }}
-                  </div>
-
-                  <p class="text-gray-700 whitespace-pre-wrap">
-                    {{ note.content }}
-                  </p>
+                  <div class="text-xs text-neutral-500 mb-2">Criado em {{ formatDate(note.created_at) }}</div>
+                  <p class="text-sm text-neutral-700 whitespace-pre-wrap break-words">{{ note.content }}</p>
                 </div>
               </div>
             </div>

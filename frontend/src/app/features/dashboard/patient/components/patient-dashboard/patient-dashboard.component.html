@@ -1,71 +1,95 @@
-<div class="min-h-screen bg-gray-100 relative overflow-hidden">
-  <!-- Background decorativo -->
-  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
-    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
-    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
-  </div>
-
+<div class="min-h-screen bg-neutral-50">
   @if (isLoading()) {
-  <div class="flex h-screen items-center justify-center">
-    <div class="text-center">
-      <svg class="inline-block animate-spin rounded-full h-12 w-12 text-violet-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      <p class="text-gray-600 mt-4 font-medium">Carregando dashboard comparativo...</p>
+  <!-- Skeleton Loader -->
+  <div class="container mx-auto px-6 py-8 space-y-8 animate-pulse">
+    <!-- Header Skeleton -->
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
+      <div class="flex items-center space-x-3">
+        <div class="h-14 w-14 bg-neutral-200 rounded-lg"></div>
+        <div class="flex-1">
+          <div class="h-8 bg-neutral-200 rounded w-1/3 mb-2"></div>
+          <div class="h-4 bg-neutral-200 rounded w-1/4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Card Skeleton -->
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+      <div class="h-6 bg-neutral-200 rounded w-32 mb-4"></div>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="h-20 bg-neutral-200 rounded-lg"></div>
+        <div class="h-20 bg-neutral-200 rounded-lg"></div>
+        <div class="h-20 bg-neutral-200 rounded-lg"></div>
+        <div class="h-20 bg-neutral-200 rounded-lg"></div>
+        <div class="h-20 bg-neutral-200 rounded-lg"></div>
+      </div>
+    </div>
+
+    <!-- Charts Skeleton -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <div class="h-6 bg-neutral-200 rounded w-1/3 mb-4"></div>
+        <div class="h-64 bg-neutral-200 rounded"></div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <div class="h-6 bg-neutral-200 rounded w-1/3 mb-4"></div>
+        <div class="h-64 bg-neutral-200 rounded"></div>
+      </div>
     </div>
   </div>
   } @else if (!comparativeStats()) {
-  <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center mx-6 my-8">
-    <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-100 border-2 border-gray-200 mx-auto mb-4">
-      <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-      </svg>
+  <!-- Empty State -->
+  <div class="container mx-auto px-6 py-8">
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-12 text-center">
+      <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-neutral-900 mb-2">Você ainda não possui testes clínicos realizados</h3>
+      <p class="text-sm text-neutral-600">Consulte seu médico para realizar testes clínicos</p>
     </div>
-    <h3 class="text-lg font-semibold text-gray-900">Você ainda não possui testes clínicos realizados</h3>
-    <p class="text-sm text-gray-600 mt-2">Consulte seu médico para realizar testes clínicos</p>
   </div>
   } @else {
-  <div class="container mx-auto px-6 py-8 space-y-8 relative">
+  <div class="container mx-auto px-6 py-8 space-y-8">
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+    <header class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
       <div class="flex items-center space-x-3">
-        <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg">
-          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-pink-100">
+          <svg class="h-8 w-8 text-pink-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
           </svg>
         </div>
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Dashboard Comparativo</h1>
-          <p class="text-sm text-gray-600 mt-1">Veja como você se compara com outros pacientes</p>
+          <h1 class="text-3xl font-bold text-neutral-900">Dashboard Comparativo</h1>
+          <p class="text-sm text-neutral-600 mt-1">Veja como você se compara com outros pacientes</p>
         </div>
       </div>
     </header>
 
     <!-- Card Perfil do Paciente -->
-    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
-      <h2 class="text-lg font-bold text-gray-900 mb-4">Seu Perfil</h2>
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+      <h2 class="text-lg font-bold text-neutral-900 mb-4">Seu Perfil</h2>
       <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div class="text-center p-3 bg-violet-50 rounded-lg">
-          <p class="text-xs text-gray-600">Idade</p>
-          <p class="text-xl font-bold text-gray-900">{{ comparativeStats()!.demographics.age }} anos</p>
+        <div class="text-center p-3 bg-pink-50 rounded-lg border border-pink-100">
+          <p class="text-xs text-neutral-600">Idade</p>
+          <p class="text-xl font-bold text-neutral-900">{{ comparativeStats()!.demographics.age }} anos</p>
         </div>
-        <div class="text-center p-3 bg-blue-50 rounded-lg">
-          <p class="text-xs text-gray-600">Faixa Etária</p>
-          <p class="text-xl font-bold text-gray-900">{{ comparativeStats()!.demographics.age_group }}</p>
+        <div class="text-center p-3 bg-blue-50 rounded-lg border border-blue-100">
+          <p class="text-xs text-neutral-600">Faixa Etária</p>
+          <p class="text-xl font-bold text-neutral-900">{{ comparativeStats()!.demographics.age_group }}</p>
         </div>
-        <div class="text-center p-3 bg-pink-50 rounded-lg">
-          <p class="text-xs text-gray-600">Gênero</p>
-          <p class="text-xl font-bold text-gray-900">{{ comparativeStats()!.demographics.gender === 'male' ? 'Masculino' : 'Feminino' }}</p>
+        <div class="text-center p-3 bg-pink-50 rounded-lg border border-pink-100">
+          <p class="text-xs text-neutral-600">Gênero</p>
+          <p class="text-xl font-bold text-neutral-900">{{ comparativeStats()!.demographics.gender === 'male' ? 'Masculino' : 'Feminino' }}</p>
         </div>
-        <div class="text-center p-3 bg-green-50 rounded-lg">
-          <p class="text-xs text-gray-600">Cidade</p>
-          <p class="text-sm font-bold text-gray-900">{{ comparativeStats()!.demographics.city }}</p>
+        <div class="text-center p-3 bg-green-50 rounded-lg border border-green-100">
+          <p class="text-xs text-neutral-600">Cidade</p>
+          <p class="text-sm font-bold text-neutral-900">{{ comparativeStats()!.demographics.city }}</p>
         </div>
-        <div class="text-center p-3 bg-orange-50 rounded-lg">
-          <p class="text-xs text-gray-600">Estado</p>
-          <p class="text-sm font-bold text-gray-900">{{ comparativeStats()!.demographics.state }}</p>
+        <div class="text-center p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+          <p class="text-xs text-neutral-600">Estado</p>
+          <p class="text-sm font-bold text-neutral-900">{{ comparativeStats()!.demographics.state }}</p>
         </div>
       </div>
     </div>
@@ -73,70 +97,75 @@
     <!-- Grid 1: Você vs Média Global + Card Percentil -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Gráfico de Barras Verticais: Você vs Média Global -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Você vs Média Global</h3>
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <h3 class="text-lg font-semibold text-neutral-900 mb-4">Você vs Média Global</h3>
         <div class="relative" style="height: 300px;">
           <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType"></canvas>
         </div>
-        <p class="text-xs text-gray-500 mt-3 text-center">Comparando com {{ comparativeStats()!.total_patients_sharing_data }} pacientes</p>
+        <p class="text-xs text-neutral-500 mt-3 text-center">Comparando com {{ comparativeStats()!.total_patients_sharing_data }} pacientes</p>
       </div>
 
       <!-- Card Percentil com Barra de Progresso -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Seu Percentil no Sistema</h3>
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <h3 class="text-lg font-semibold text-neutral-900 mb-4">Seu Percentil no Sistema</h3>
         @if (comparativeStats()!.patient_percentile !== null) {
         <div class="space-y-4">
           <!-- Medalhão e Label -->
           <div class="text-center">
             <div class="text-5xl mb-2">{{ getPercentileMedal(comparativeStats()!.patient_percentile) }}</div>
-            <p class="text-3xl font-bold text-gray-900 mb-1">{{ comparativeStats()!.patient_percentile!.toFixed(0) }}º</p>
-            <p class="text-lg font-semibold" [ngClass]="{'text-green-600': comparativeStats()!.patient_percentile! >= 75, 'text-blue-600': comparativeStats()!.patient_percentile! >= 50 && comparativeStats()!.patient_percentile! < 75, 'text-orange-600': comparativeStats()!.patient_percentile! >= 25 && comparativeStats()!.patient_percentile! < 50, 'text-red-600': comparativeStats()!.patient_percentile! < 25}">
+            <p class="text-3xl font-bold text-neutral-900 mb-1">{{ comparativeStats()!.patient_percentile!.toFixed(0) }}º</p>
+            <p class="text-lg font-semibold" [ngClass]="{'text-green-600': comparativeStats()!.patient_percentile! >= 75, 'text-blue-600': comparativeStats()!.patient_percentile! >= 50 && comparativeStats()!.patient_percentile! < 75, 'text-yellow-600': comparativeStats()!.patient_percentile! >= 25 && comparativeStats()!.patient_percentile! < 50, 'text-red-600': comparativeStats()!.patient_percentile! < 25}">
               {{ getPercentileLabel(comparativeStats()!.patient_percentile) }}
             </p>
           </div>
 
           <!-- Barra de Progresso -->
           <div class="space-y-2">
-            <div class="flex justify-between text-xs text-gray-600">
+            <div class="flex justify-between text-xs text-neutral-600">
               <span>0%</span>
               <span>50%</span>
               <span>100%</span>
             </div>
-            <div class="relative h-8 bg-gray-200 rounded-full overflow-hidden">
-              <!-- Gradient background para contexto -->
-              <div class="absolute inset-0 bg-gradient-to-r from-red-300 via-orange-300 via-yellow-300 via-blue-300 to-green-400"></div>
+            <div class="relative h-8 bg-neutral-200 rounded-full overflow-hidden">
+              <!-- Segmented background for context -->
+              <div class="absolute inset-0 flex">
+                <div class="flex-1 bg-red-300"></div>
+                <div class="flex-1 bg-yellow-300"></div>
+                <div class="flex-1 bg-blue-300"></div>
+                <div class="flex-1 bg-green-300"></div>
+              </div>
 
-              <!-- Barra de progresso -->
+              <!-- Barra de progresso (área não preenchida) -->
               <div
-                class="absolute top-0 left-0 h-full bg-gray-200 transition-all duration-500"
+                class="absolute top-0 left-0 h-full bg-neutral-200 transition-all duration-500"
                 [style.width.%]="100 - comparativeStats()!.patient_percentile!">
               </div>
 
               <!-- Indicador de posição -->
               <div
-                class="absolute top-0 h-full w-1 bg-gray-900 shadow-lg transition-all duration-500"
+                class="absolute top-0 h-full w-1 bg-neutral-900 shadow-lg transition-all duration-500"
                 [style.left.%]="comparativeStats()!.patient_percentile!"
                 [attr.title]="'Percentil ' + comparativeStats()!.patient_percentile!.toFixed(0)">
-                <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-900 rounded-full"></div>
-                <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-900 rounded-full"></div>
+                <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-neutral-900 rounded-full"></div>
+                <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-neutral-900 rounded-full"></div>
               </div>
             </div>
-            <p class="text-sm text-gray-600 text-center mt-2">Você está melhor que <span class="font-bold text-violet-700">{{ comparativeStats()!.patient_percentile!.toFixed(0) }}%</span> dos pacientes</p>
+            <p class="text-sm text-neutral-600 text-center mt-2">Você está melhor que <span class="font-bold text-pink-700">{{ comparativeStats()!.patient_percentile!.toFixed(0) }}%</span> dos pacientes</p>
           </div>
         </div>
         } @else {
-        <p class="text-center text-gray-500 py-8">Dados insuficientes</p>
+        <p class="text-center text-neutral-500 py-8">Dados insuficientes</p>
         }
       </div>
     </div>
 
     <!-- Gráfico de Linha: Você vs Faixa Etária vs Região -->
-    <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900">Comparação por Faixa Etária e Região</h3>
+        <h3 class="text-lg font-semibold text-neutral-900">Comparação por Faixa Etária e Região</h3>
         <div class="flex items-center space-x-2">
-          <label for="regionFilter" class="text-sm text-gray-700">Região:</label>
-          <select id="regionFilter" [ngModel]="regionFilter()" (ngModelChange)="onRegionFilterChange($event)" class="rounded-md border-gray-300 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+          <label for="regionFilter" class="text-sm text-neutral-700">Região:</label>
+          <select id="regionFilter" [ngModel]="regionFilter()" (ngModelChange)="onRegionFilterChange($event)" class="rounded-lg border-neutral-300 text-sm shadow-sm focus:border-pink-300 focus:ring-pink-200">
             <option value="city">Cidade</option>
             <option value="state">Estado</option>
             <option value="country">País</option>
@@ -151,35 +180,35 @@
     <!-- Grid 2: Comparação por Gênero + Comparação Regional + Card Ranking -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Gráfico de Barras Horizontais: Por Gênero -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Comparação por Gênero</h3>
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <h3 class="text-lg font-semibold text-neutral-900 mb-4">Comparação por Gênero</h3>
         <div class="relative" style="height: 250px;">
           <canvas baseChart [data]="horizontalBarChartData" [options]="horizontalBarChartOptions" [type]="horizontalBarChartType"></canvas>
         </div>
       </div>
 
       <!-- Card Multi-Regional -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Comparação Regional</h3>
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <h3 class="text-lg font-semibold text-neutral-900 mb-4">Comparação Regional</h3>
         <div class="space-y-4">
           @if (comparativeStats()!.regional_avg.city !== null) {
           <div>
             <div class="flex justify-between text-sm mb-1">
-              <span class="text-gray-700">Cidade ({{ comparativeStats()!.demographics.city }})</span>
+              <span class="text-neutral-700">Cidade ({{ comparativeStats()!.demographics.city }})</span>
               <span class="font-semibold">{{ comparativeStats()!.regional_avg.city!.toFixed(2) }}</span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-violet-600 h-2 rounded-full" [style.width.%]="(comparativeStats()!.regional_avg.city! * 100)"></div>
+            <div class="w-full bg-neutral-200 rounded-full h-2">
+              <div class="bg-pink-600 h-2 rounded-full" [style.width.%]="(comparativeStats()!.regional_avg.city! * 100)"></div>
             </div>
           </div>
           }
           @if (comparativeStats()!.regional_avg.state !== null) {
           <div>
             <div class="flex justify-between text-sm mb-1">
-              <span class="text-gray-700">Estado ({{ comparativeStats()!.demographics.state }})</span>
+              <span class="text-neutral-700">Estado ({{ comparativeStats()!.demographics.state }})</span>
               <span class="font-semibold">{{ comparativeStats()!.regional_avg.state!.toFixed(2) }}</span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="w-full bg-neutral-200 rounded-full h-2">
               <div class="bg-blue-600 h-2 rounded-full" [style.width.%]="(comparativeStats()!.regional_avg.state! * 100)"></div>
             </div>
           </div>
@@ -187,47 +216,47 @@
           @if (comparativeStats()!.regional_avg.country !== null) {
           <div>
             <div class="flex justify-between text-sm mb-1">
-              <span class="text-gray-700">País ({{ comparativeStats()!.demographics.country }})</span>
+              <span class="text-neutral-700">País ({{ comparativeStats()!.demographics.country }})</span>
               <span class="font-semibold">{{ comparativeStats()!.regional_avg.country!.toFixed(2) }}</span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="w-full bg-neutral-200 rounded-full h-2">
               <div class="bg-green-600 h-2 rounded-full" [style.width.%]="(comparativeStats()!.regional_avg.country! * 100)"></div>
             </div>
           </div>
           }
           <div>
             <div class="flex justify-between text-sm mb-1">
-              <span class="text-gray-700 font-bold">Você</span>
-              <span class="font-bold text-violet-700">{{ comparativeStats()!.patient_avg_score.toFixed(2) }}</span>
+              <span class="text-neutral-700 font-bold">Você</span>
+              <span class="font-bold text-pink-700">{{ comparativeStats()!.patient_avg_score.toFixed(2) }}</span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-violet-700 h-2 rounded-full" [style.width.%]="(comparativeStats()!.patient_avg_score * 100)"></div>
+            <div class="w-full bg-neutral-200 rounded-full h-2">
+              <div class="bg-pink-700 h-2 rounded-full" [style.width.%]="(comparativeStats()!.patient_avg_score * 100)"></div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Card Medalhão/Ranking -->
-      <div class="bg-gradient-to-br from-violet-50 to-purple-50 rounded-lg shadow-md p-6 border-2 border-violet-200">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 text-center">Sua Posição</h3>
+      <div class="bg-pink-50 rounded-2xl shadow-sm border-2 border-pink-200 p-6">
+        <h3 class="text-lg font-semibold text-neutral-900 mb-4 text-center">Sua Posição</h3>
         @if (comparativeStats()!.patient_percentile !== null) {
         <div class="text-center">
           <div class="text-6xl mb-3">{{ getPercentileMedal(comparativeStats()!.patient_percentile) || '🏅' }}</div>
-          <p class="text-2xl font-bold text-violet-700 mb-2">{{ getPercentileLabel(comparativeStats()!.patient_percentile) }}</p>
-          <p class="text-sm text-gray-700">Percentil {{ comparativeStats()!.patient_percentile!.toFixed(0) }}º</p>
-          <div class="mt-4 pt-4 border-t border-violet-200">
-            <p class="text-xs text-gray-600">Faixa Etária: {{ comparativeStats()!.demographics.age_group }} anos</p>
-            <p class="text-xs text-gray-600 mt-1">Pacientes na sua faixa: {{ comparativeStats()!.total_patients_in_age_group }}</p>
+          <p class="text-2xl font-bold text-pink-700 mb-2">{{ getPercentileLabel(comparativeStats()!.patient_percentile) }}</p>
+          <p class="text-sm text-neutral-700">Percentil {{ comparativeStats()!.patient_percentile!.toFixed(0) }}º</p>
+          <div class="mt-4 pt-4 border-t border-pink-200">
+            <p class="text-xs text-neutral-600">Faixa Etária: {{ comparativeStats()!.demographics.age_group }} anos</p>
+            <p class="text-xs text-neutral-600 mt-1">Pacientes na sua faixa: {{ comparativeStats()!.total_patients_in_age_group }}</p>
           </div>
         </div>
         } @else {
-        <p class="text-center text-gray-500 py-8">Dados insuficientes</p>
+        <p class="text-center text-neutral-500 py-8">Dados insuficientes</p>
         }
       </div>
     </div>
 
     <!-- Informações sobre Privacidade -->
-    <div class="bg-blue-50/50 border border-blue-200 rounded-2xl p-6 shadow-md">
+    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6 shadow-sm">
       <div class="flex items-start space-x-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 border-2 border-blue-200 flex-shrink-0">
           <svg class="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,8 +264,8 @@
           </svg>
         </div>
         <div class="flex-1">
-          <h4 class="text-sm font-bold text-gray-900 mb-2">Sobre as Estatísticas Comparativas</h4>
-          <p class="text-sm text-gray-700">
+          <h4 class="text-sm font-bold text-neutral-900 mb-2">Sobre as Estatísticas Comparativas</h4>
+          <p class="text-sm text-neutral-700">
             • Todas as comparações são feitas de forma anônima e agregada<br>
             • Apenas pacientes que autorizaram o compartilhamento de dados são incluídos nas estatísticas<br>
             • Você pode alterar suas preferências de compartilhamento nas Configurações<br>

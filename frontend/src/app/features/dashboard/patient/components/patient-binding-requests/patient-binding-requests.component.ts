@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService } from '../../../services/doctor.service';
@@ -7,7 +7,9 @@ import { DoctorProfileModalComponent } from '../../../../../shared/components/do
 import { Doctor } from '../../../../../core/models/doctor.model';
 import { BindingRequestResponse, isBindingDoctor, UserType } from '../../../../../core/models/binding-request.model';
 import { firstValueFrom } from 'rxjs';
-import { NotificationService } from '../../../../../core/services/notification.service';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 
 @Component({
   selector: 'app-patient-binding-requests',
@@ -16,13 +18,15 @@ import { NotificationService } from '../../../../../core/services/notification.s
     CommonModule,
     FormsModule,
     DoctorProfileModalComponent,
+    BadgeComponent,
+    TooltipDirective,
   ],
   templateUrl: './patient-binding-requests.component.html',
 })
-export class PatientBindingRequestsComponent {
+export class PatientBindingRequestsComponent implements OnInit {
   private medicService = inject(DoctorService);
   private bindingService = inject(BindingService);
-  private notificationService = inject(NotificationService);
+  private toastService = inject(ToastService);
 
   searchTerm = signal<string>('');
   specialty = signal<string>('');
@@ -180,14 +184,13 @@ export class PatientBindingRequestsComponent {
   acceptRequest(requestId: number): void {
     this.bindingService.acceptBindingRequest(requestId).subscribe({
       next: () => {
-        this.notificationService.success('Solicitação aceita com sucesso', 3000);
+        this.toastService.success('Solicitação aceita com sucesso!');
         this.loadRequests();
         this.loadLinkedDoctors();
       },
       error: (err) => {
-        this.notificationService.error(
-          `Erro ao aceitar solicitação: ${err.error?.detail || 'Tente novamente'}`,
-          5000
+        this.toastService.error(
+          err.error?.detail || 'Erro ao aceitar solicitação. Tente novamente.'
         );
       },
     });
@@ -196,13 +199,12 @@ export class PatientBindingRequestsComponent {
   rejectRequest(requestId: number): void {
     this.bindingService.rejectBindingRequest(requestId).subscribe({
       next: () => {
-        this.notificationService.success('Solicitação recusada', 3000);
+        this.toastService.success('Solicitação recusada com sucesso!');
         this.loadRequests();
       },
       error: (err) => {
-        this.notificationService.error(
-          `Erro ao recusar solicitação: ${err.error?.detail || 'Tente novamente'}`,
-          5000
+        this.toastService.error(
+          err.error?.detail || 'Erro ao recusar solicitação. Tente novamente.'
         );
       },
     });
@@ -235,7 +237,7 @@ export class PatientBindingRequestsComponent {
 
     this.bindingService.requestBinding(doctorId).subscribe({
       next: () => {
-        this.notificationService.success('Solicitação enviada com sucesso', 3000);
+        this.toastService.success('Convite enviado com sucesso!');
         this.searchResults.update((doctors) =>
           doctors.map((d) =>
             d.id === doctorId ? { ...d, status: 'pending' } : d
@@ -245,9 +247,8 @@ export class PatientBindingRequestsComponent {
         this.closeModal();
       },
       error: (err) => {
-        this.notificationService.error(
-          `Erro ao enviar solicitação: ${err.error?.detail || 'Tente novamente'}`,
-          5000
+        this.toastService.error(
+          err.error?.detail || 'Erro ao enviar convite. Tente novamente.'
         );
         this.closeModal();
       },
@@ -257,5 +258,18 @@ export class PatientBindingRequestsComponent {
   // Helper method to safely get specialty from user
   getSpecialty(user: any): string {
     return isBindingDoctor(user) ? user.specialty : '';
+  }
+
+  getSpecialtyBadgeVariant(specialty: string): 'pink' | 'blue' | 'yellow' | 'neutral' {
+    const specialtyMap: Record<string, 'pink' | 'blue' | 'yellow' | 'neutral'> = {
+      'Neurologia': 'pink',
+      'Cardiologia': 'blue',
+      'Ortopedia': 'blue',
+      'Clínica Geral': 'yellow',
+      'Pediatria': 'pink',
+      'Psiquiatria': 'yellow',
+      'Geriatria': 'yellow',
+    };
+    return specialtyMap[specialty] || 'neutral';
   }
 }

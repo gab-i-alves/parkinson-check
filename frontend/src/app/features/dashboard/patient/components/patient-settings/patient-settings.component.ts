@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../../../core/services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../../environments/environment';
+import { ToastService } from '../../../../../shared/services/toast.service';
 
 interface PrivacySettings {
   share_data_for_statistics: boolean;
@@ -18,11 +19,11 @@ interface PrivacySettings {
 export class PatientSettingsComponent implements OnInit {
   private http = inject(HttpClient);
   private userService = inject(UserService);
+  private toastService = inject(ToastService);
 
   readonly isLoading = signal<boolean>(true);
   readonly isSaving = signal<boolean>(false);
   readonly shareDataForStatistics = signal<boolean>(true);
-  readonly saveSuccess = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
 
   ngOnInit(): void {
@@ -49,7 +50,6 @@ export class PatientSettingsComponent implements OnInit {
 
   savePrivacySettings(): void {
     this.isSaving.set(true);
-    this.saveSuccess.set(false);
     this.errorMessage.set(null);
 
     const settings: PrivacySettings = {
@@ -61,12 +61,13 @@ export class PatientSettingsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isSaving.set(false);
-          this.saveSuccess.set(true);
-          setTimeout(() => this.saveSuccess.set(false), 3000);
+          this.toastService.success('Configurações salvas com sucesso!');
         },
         error: (err) => {
           console.error('Erro ao salvar configurações:', err);
-          this.errorMessage.set('Erro ao salvar configurações. Tente novamente.');
+          this.toastService.error(
+            err.error?.detail || 'Erro ao salvar configurações. Tente novamente.'
+          );
           this.isSaving.set(false);
         },
       });

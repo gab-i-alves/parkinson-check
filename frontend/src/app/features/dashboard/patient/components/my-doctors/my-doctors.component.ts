@@ -6,7 +6,9 @@ import { BindingService } from '../../../../../core/services/binding.service';
 import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
 import { DoctorProfileModalComponent } from '../../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 import { Doctor } from '../../../../../core/models/doctor.model';
-import { NotificationService } from '../../../../../core/services/notification.service';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 
 @Component({
   selector: 'app-my-doctors',
@@ -16,13 +18,15 @@ import { NotificationService } from '../../../../../core/services/notification.s
     FormsModule,
     ConfirmationModalComponent,
     DoctorProfileModalComponent,
+    BadgeComponent,
+    TooltipDirective,
   ],
   templateUrl: './my-doctors.component.html',
 })
 export class MyDoctorsComponent implements OnInit {
   private medicService = inject(DoctorService);
   private bindingService = inject(BindingService);
-  private notificationService = inject(NotificationService);
+  private toastService = inject(ToastService);
 
   doctors = signal<Doctor[]>([]);
   isLoading = signal<boolean>(false);
@@ -199,6 +203,18 @@ export class MyDoctorsComponent implements OnInit {
     }
   }
 
+  previousPage(): void {
+    if (this.currentPage() > 1) {
+      this.goToPage(this.currentPage() - 1);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.goToPage(this.currentPage() + 1);
+    }
+  }
+
   get paginationInfo(): string {
     const start = (this.currentPage() - 1) * this.pageSize() + 1;
     const end = Math.min(this.currentPage() * this.pageSize(), this.totalDoctors());
@@ -239,16 +255,30 @@ export class MyDoctorsComponent implements OnInit {
         // Reapply filters and pagination
         this.applyFiltersAndPagination();
 
-        this.notificationService.success('Médico desvinculado com sucesso', 3000);
+        this.toastService.success('Médico desvinculado com sucesso');
 
         this.isUnlinkModalVisible.set(false);
         this.doctorToUnlink.set(null);
       },
       error: (err: any) => {
-        this.notificationService.error('Ocorreu um erro ao desvincular o médico', 5000);
+        this.toastService.error(
+          err.error?.detail || 'Erro ao desvincular médico. Tente novamente.'
+        );
         console.error(err);
         this.isUnlinkModalVisible.set(false);
       },
     });
+  }
+
+  getSpecialtyBadgeVariant(specialty: string): 'pink' | 'blue' | 'yellow' | 'neutral' {
+    const specialtyMap: Record<string, 'pink' | 'blue' | 'yellow' | 'neutral'> = {
+      'Neurologia': 'pink',
+      'Cardiologia': 'blue',
+      'Ortopedia': 'blue',
+      'Clínica Geral': 'yellow',
+      'Pediatria': 'pink',
+      'Psiquiatria': 'yellow',
+    };
+    return specialtyMap[specialty] || 'neutral';
   }
 }
