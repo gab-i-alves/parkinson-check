@@ -28,6 +28,12 @@ def login(login_form: LoginFormRequest, session: Session):
             HTTPStatus.UNAUTHORIZED, detail="Verifique as credenciais de acesso."
         )
 
+    if not user.is_active:
+        raise HTTPException(
+            HTTPStatus.FORBIDDEN,
+            detail="Sua conta não está ativa, verifique o email ou entre em contato com o suporte"
+        )
+
     token_data = create_access_token(data={"sub": login_form.email})
 
     user_response = UserResponse(

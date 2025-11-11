@@ -152,10 +152,39 @@ export class SidebarComponent implements OnInit, OnDestroy {
     },
   ];
 
+  private adminLinks: NavLink[] = [
+    {
+      path: 'admin',
+      label: 'Dashboard',
+      icon: 'home',
+      disabled: false,
+    },
+    {
+      path: 'users',
+      label: 'Gerenciar Usuários',
+      icon: 'users',
+      disabled: false,
+    },
+    {
+      path: 'doctors',
+      label: 'Gerenciar Médicos',
+      icon: 'users',
+      disabled: false,
+    },
+    {
+      path: 'approve',
+      label: 'Aprovar Cadastros',
+      icon: 'chart',
+      disabled: false,
+    },
+  ];
+
   readonly navLinks = computed(() => {
     const currentUser = this.user();
     if (currentUser?.role === 'medico') {
       return this.doctorLinks;
+    } else if (currentUser?.role === 'admin') {
+      return this.adminLinks;
     }
     return this.patientLinks;
   });

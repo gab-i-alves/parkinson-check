@@ -27,6 +27,10 @@ class User:
     )
     address_id: Mapped[int] = mapped_column(ForeignKey("address.id"))
     address: Mapped["Address"] = relationship(init=False, back_populates="users")
+    is_active: Mapped[bool] = mapped_column(nullable=False, default=True, server_default="true")
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), init=False, nullable=False, server_default="CURRENT_TIMESTAMP"
+    )
     reset_token: Mapped[str | None] = mapped_column(init=False, nullable=True, default=None)
     reset_token_expiry: Mapped[datetime | None] = mapped_column(
         TIMESTAMP(timezone=True), init=False, nullable=True, default=None
@@ -85,3 +89,15 @@ class Bind:
         PG_ENUM(UserType, name="user_type_enum", create_type=False),
         nullable=False
     )
+
+
+@table_registry.mapped_as_dataclass
+class Admin(User):
+    __tablename__ = "admin"
+
+    id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True, init=False)
+    is_superuser: Mapped[bool] = mapped_column(default=True, nullable=False)
+
+    __mapper_args__ = {
+        "polymorphic_identity": UserType.ADMIN,
+    }

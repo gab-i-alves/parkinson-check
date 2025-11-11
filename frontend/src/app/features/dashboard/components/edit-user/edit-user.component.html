@@ -1,0 +1,142 @@
+<div class="w-full max-w-xl mx-auto">
+  <div class="rounded-lg bg-white p-6 shadow-sm md:p-8">
+    <div class="text-center">
+      <h2 class="mt-4 text-2xl font-semibold text-gray-900">
+        Edição de perfil
+      </h2>
+      <p class="mt-2 text-base text-gray-600">
+        Insira os novos Dados de {{ user()!.name }}
+      </p>
+    </div>
+
+    <form
+      [formGroup]="editForm"
+      (ngSubmit)="onSubmit()"
+      class="mt-8 space-y-8"
+      novalidate
+    >
+      <div
+        *ngIf="apiError"
+        #apiErrorDiv
+        class="rounded-md bg-red-50 p-4"
+        tabindex="-1"
+      >
+        <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
+      </div>
+
+      <section>
+        <h3 class="text-lg font-semibold text-gray-800">Dados do usuário</h3>
+        <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label
+              for="new_name"
+              class="block text-sm font-medium text-gray-700"
+              >Nome Completo</label
+            >
+            <input
+              id="new_name"
+              name="new_name"
+              formControlName="name"
+              type="text"
+              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+              placeholder="Digite o nome do usuário"
+            />
+            <div
+              *ngIf="
+                editForm.get('name')?.invalid &&
+                (editForm.get('name')?.touched)
+              "
+              class="mt-1 text-xs text-red-600"
+            >
+              <span *ngIf="editForm.get('name')?.errors?.['minlength']"
+                >O nome deve ter pelo menos 3 caracteres.</span
+              >
+            </div>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label
+              for="new_email"
+              class="block text-sm font-medium text-gray-700"
+              >E-mail</label
+            >
+            <input
+              id="new_email"
+              name="new_email"
+              type="email"
+              formControlName="email"
+              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-violet-500 focus:outline-none focus:ring-violet-500 sm:text-sm"
+              placeholder="Digite o novo email"
+            />
+            <div
+              *ngIf="
+                editForm.get('email')?.invalid &&
+                (editForm.get('email')?.touched)
+              "
+              class="mt-1 text-xs text-red-600"
+            >
+              <span *ngIf="editForm.get('email')?.errors?.['email']"
+                >Por favor, insira um e-mail válido.</span
+              >
+            </div>
+          </div>
+
+          <div>
+            <label for="cpf" class="block text-sm font-medium text-gray-700"
+              >CPF: {{ (user()!.cpf) }}</label
+            >
+          </div>
+
+          <div>
+            <label for="type" class="block text-sm font-medium text-gray-700"
+              >Tipo: {{ getUserTypeLabel(Number(user()!.role)) }}</label
+            >
+          </div>
+
+          <div>
+            <label for="is_active" class="block text-sm font-medium text-gray-700"
+              >Status: {{getStatusLabel(user()!.status!)}}</label
+            >
+            <div class="flex items-center"><a
+                (click)="initiateStatusChange(user()!)"
+                class="text-violet-600 hover:text-violet-900"
+                >Ativar/Desativar</a
+              >
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <div
+        class="flex items-center justify-end space-x-4 border-t border-gray-200 pt-6"
+      >
+        <button
+          type="submit"
+          [disabled]="editForm.invalid || isLoading"
+          class="rounded-md border border-transparent bg-violet-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+        >
+          <svg
+            *ngIf="isLoading"
+            class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+          ></svg>
+          <span *ngIf="!isLoading">Salvar</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+@if (isStatusModalVisible() && userToToggleStatus(); as user) {
+<app-confirmation-modal
+  [title]="'Alterar Status'"
+  [message]="
+    'Tem a certeza que alterar o status de <strong>' +
+    user.name +
+    '</strong>? <br>'
+  "
+  [confirmButtonText]="'Sim, Alterar'"
+  (confirm)="confirmStatusChange()"
+  (cancel)="cancelStatusChange()"
+></app-confirmation-modal>
+}
