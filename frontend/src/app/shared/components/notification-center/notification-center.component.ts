@@ -94,7 +94,7 @@ export class NotificationCenterComponent implements OnInit {
       [NotificationType.BIND_REQUEST]: 'text-blue-600',
       [NotificationType.BIND_ACCEPTED]: 'text-green-600',
       [NotificationType.BIND_REJECTED]: 'text-red-600',
-      [NotificationType.BIND_REVERSED]: 'text-gray-600',
+      [NotificationType.BIND_REVERSED]: 'text-neutral-600',
     };
     return colors[type];
   }

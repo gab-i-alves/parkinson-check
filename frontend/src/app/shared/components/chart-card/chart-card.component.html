@@ -1,94 +1,14 @@
-<div class="rounded-lg bg-white p-4 shadow-md flex flex-col h-full">
-  <h3 class="border-b border-gray-200 pb-2 font-semibold text-gray-800 text-sm">
+<div class="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 h-full flex flex-col">
+  <h3 class="text-sm font-semibold text-neutral-900 mb-4">
     {{ title }}
   </h3>
-  <div class="mt-4 flex-grow flex items-center justify-center">
-    @switch (chartType) { @case ('pie') {
-    <div class="flex items-center space-x-6">
-      <div
-        class="w-36 h-36 rounded-full"
-        style="
-          background-image: conic-gradient(
-            #10b981 0% 55%,
-            #f59e0b 55% 85%,
-            #ef4444 85% 100%
-          );
-        "
-      ></div>
-      <ul class="space-y-2 text-sm text-gray-600">
-        <li class="flex items-center">
-          <span class="w-3 h-3 mr-2 rounded-full bg-emerald-500"></span>
-          Estável (55%)
-        </li>
-        <li class="flex items-center">
-          <span class="w-3 h-3 mr-2 rounded-full bg-amber-500"></span>
-          Atenção (30%)
-        </li>
-        <li class="flex items-center">
-          <span class="w-3 h-3 mr-2 rounded-full bg-red-500"></span>
-          Crítico (15%)
-        </li>
-      </ul>
-    </div>
-    } @case ('bar') {
-    <div class="w-full h-full flex flex-col justify-end">
-      <div
-        class="flex-grow flex items-end justify-around space-x-4 border-b border-gray-200 px-2"
-      >
-        <div class="w-8 bg-sky-500 rounded-t-sm" style="height: 70%"></div>
-        <div class="w-8 bg-sky-500 rounded-t-sm" style="height: 90%"></div>
-        <div class="w-8 bg-sky-500 rounded-t-sm" style="height: 60%"></div>
-        <div class="w-8 bg-sky-500 rounded-t-sm" style="height: 75%"></div>
+  <div class="flex-grow relative" style="min-height: 250px;">
+    @if (data) {
+      <canvas #chartCanvas></canvas>
+    } @else {
+      <div class="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
+        Sem dados disponíveis
       </div>
-      <div
-        class="flex justify-around space-x-4 px-2 pt-1 text-xs text-gray-500"
-      >
-        <span class="w-8 text-center">30-45</span>
-        <span class="w-8 text-center">46-60</span>
-        <span class="w-8 text-center">61-75</span>
-        <span class="w-8 text-center">75+</span>
-      </div>
-    </div>
-    } @case ('line') {
-    <div class="w-full h-full flex items-center justify-center">
-      <svg class="w-full h-full" viewBox="0 0 100 50">
-        <line
-          x1="10"
-          y1="5"
-          x2="10"
-          y2="45"
-          stroke="#d1d5db"
-          stroke-width="0.5"
-        />
-        <line
-          x1="10"
-          y1="45"
-          x2="95"
-          y2="45"
-          stroke="#d1d5db"
-          stroke-width="0.5"
-        />
-
-        <polyline
-          fill="none"
-          stroke="#6366f1"
-          stroke-width="1.5"
-          points="
-               15,35
-               35,25
-               55,30
-               75,20
-               95,15
-             "
-        />
-
-        <circle cx="15" cy="35" r="1.5" fill="#6366f1" />
-        <circle cx="35" cy="25" r="1.5" fill="#6366f1" />
-        <circle cx="55" cy="30" r="1.5" fill="#6366f1" />
-        <circle cx="75" cy="20" r="1.5" fill="#6366f1" />
-        <circle cx="95" cy="15" r="1.5" fill="#6366f1" />
-      </svg>
-    </div>
-    } }
+    }
   </div>
 </div>

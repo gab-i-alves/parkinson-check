@@ -1,8 +1,7 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -25,9 +24,9 @@ export interface PatientProfile {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PatientProfileModalComponent {
-  @Input() patient: PatientProfile | null = null;
-  @Input() isVisible: boolean = false;
-  @Output() close = new EventEmitter<void>();
+  patient = input<PatientProfile | null>(null);
+  isVisible = input<boolean>(false);
+  close = output<void>();
 
   onClose(): void {
     this.close.emit();
@@ -52,9 +51,9 @@ export class PatientProfileModalComponent {
       critical: 'bg-red-100 text-red-800',
       pending: 'bg-yellow-100 text-yellow-800',
       linked: 'bg-green-100 text-green-800',
-      unlinked: 'bg-gray-100 text-gray-800',
+      unlinked: 'bg-neutral-100 text-neutral-600',
     };
-    return status ? classMap[status] || 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-800';
+    return status ? classMap[status] || 'bg-neutral-100 text-neutral-600' : 'bg-neutral-100 text-neutral-600';
   }
 
   formatDate(dateString?: string): string {

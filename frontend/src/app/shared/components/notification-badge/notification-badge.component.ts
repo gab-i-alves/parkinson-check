@@ -11,7 +11,7 @@ import { BackendNotificationService } from '../../../core/services/backend-notif
     <div class="relative">
       <button
         (click)="toggleNotifications()"
-        class="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-md"
+        class="relative p-2 text-neutral-600 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-pink-200 rounded-md"
         [attr.aria-label]="'Notificações' + (unreadCount() > 0 ? ' (' + unreadCount() + ' não lidas)' : '')"
       >
         <!-- Bell icon -->

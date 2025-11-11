@@ -1,16 +1,25 @@
-@if (isVisible && doctor) {
+@if (isVisible() && doctor()) {
+<!-- Backdrop with fadeIn animation -->
 <div
   (click)="onClose()"
-  class="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity"
+  class="fixed inset-0 z-40 bg-neutral-900/60 backdrop-blur-sm animate-fadeIn"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="doctor-profile-title"
 ></div>
 
+<!-- Modal Container -->
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
   <div
-    class="relative w-full max-w-md transform rounded-lg bg-white p-6 shadow-xl transition-all"
+    class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl animate-slideUp overflow-hidden"
   >
+    <!-- Close Button with Tooltip -->
     <button
       (click)="onClose()"
-      class="absolute top-3 right-3 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+      [appTooltip]="'Fechar'"
+      [tooltipPosition]="'left'"
+      class="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white/90 backdrop-blur-sm border border-neutral-300 rounded-lg hover:bg-neutral-50 hover:text-neutral-900 hover:border-neutral-400 transition-all shadow-sm"
+      aria-label="Fechar modal"
     >
       <svg
         class="h-5 w-5"
@@ -27,42 +36,93 @@
       </svg>
     </button>
 
-    <div class="text-center">
-      <h3 class="text-2xl font-bold text-gray-900">{{ doctor.name }}</h3>
-      <p class="mt-1 text-base text-primary">{{ doctor.expertise_area }}</p>
-
-      <div class="mt-6 space-y-3 text-left text-gray-600">
-        <p><strong>CRM:</strong> {{ doctor.crm }}</p>
-        <p><strong>Localização:</strong> {{ doctor.location }}</p>
-        <p>
-          <strong>Status:</strong> @switch (doctor.status) { @case ('pending') {
-          <span class="font-medium text-yellow-600">Solicitação Pendente</span>
-          } @case ('linked') {
-          <span class="font-medium text-green-600">Vinculado</span> } @default {
-          <span class="font-medium text-gray-500">Não Vinculado</span> } }
-        </p>
+    <!-- Header with colored background -->
+    <div class="bg-pink-50 px-6 pt-8 pb-6 text-center">
+      <!-- Avatar with Initials -->
+      <div class="flex justify-center mb-4">
+        <div class="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-pink-200 to-pink-300 text-neutral-900 text-2xl font-bold shadow-lg ring-4 ring-white">
+          {{ getInitials() }}
+        </div>
       </div>
 
-      <div class="mt-8">
-        @if(doctor.status === 'unlinked' || !doctor.status) {
+      <!-- Doctor Name -->
+      <h3 id="doctor-profile-title" class="text-2xl font-bold text-neutral-900">
+        {{ doctor()!.name }}
+      </h3>
+
+      <!-- Expertise Area Badge -->
+      <div class="mt-2 flex justify-center">
+        <app-badge variant="pink">{{ doctor()!.expertise_area }}</app-badge>
+      </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="px-6 py-5 space-y-4">
+      <!-- CRM with Tooltip -->
+      <div class="flex items-center justify-between py-2 border-b border-neutral-200">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-medium text-neutral-700">CRM</span>
+          <svg
+            class="w-4 h-4 text-neutral-400 cursor-help"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            [appTooltip]="'Conselho Regional de Medicina - Registro profissional do médico'"
+            [tooltipPosition]="'top'"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <span class="text-sm text-neutral-900 font-semibold">{{ doctor()!.crm }}</span>
+      </div>
+
+      <!-- Location -->
+      <div class="flex items-center justify-between py-2 border-b border-neutral-200">
+        <span class="text-sm font-medium text-neutral-700">Localização</span>
+        <span class="text-sm text-neutral-900">{{ doctor()!.location }}</span>
+      </div>
+
+      <!-- Status with Badge -->
+      <div class="flex items-center justify-between py-2">
+        <span class="text-sm font-medium text-neutral-700">Status</span>
+        <app-badge [variant]="getStatusBadgeVariant()">
+          {{ getStatusText() }}
+        </app-badge>
+      </div>
+    </div>
+
+    <!-- Footer with Action Button -->
+    <div class="bg-neutral-50 px-6 py-4">
+      @if(doctor()!.status === 'unlinked' || !doctor()!.status) {
         <button
           (click)="onRequestLink()"
-          class="w-full rounded-lg bg-violet-700 px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+          [disabled]="isRequesting()"
+          class="w-full rounded-lg bg-neutral-900 px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:bg-neutral-800 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-700 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          [appTooltip]="'Enviar solicitação de vínculo para este médico'"
+          [tooltipPosition]="'top'"
         >
-          Solicitar Vínculo
+          @if (isRequesting()) {
+            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Enviando...</span>
+          } @else {
+            <span>Solicitar Vínculo</span>
+          }
         </button>
-        } @else {
+      } @else {
         <button
-          class="w-full cursor-not-allowed rounded-lg bg-gray-300 px-6 py-2.5 text-base font-semibold text-gray-500 shadow-sm"
+          disabled
+          class="w-full cursor-not-allowed rounded-lg bg-neutral-300 px-6 py-2.5 text-base font-semibold text-neutral-500 shadow-sm"
         >
           {{
-            doctor.status === "pending"
+            doctor()!.status === "pending"
               ? "Solicitação Pendente"
               : "Médico Vinculado"
           }}
         </button>
-        }
-      </div>
+      }
     </div>
   </div>
 </div>

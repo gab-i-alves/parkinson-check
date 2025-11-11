@@ -1,16 +1,26 @@
-@if (isVisible) {
+@if (isVisible()) {
+<!-- Backdrop with fadeIn animation -->
 <div
-  (click)="onClose()"
-  class="fixed inset-0 z-50 bg-black bg-opacity-50 transition-opacity duration-300 ease-out"
+  (click)="onBackdropClick()"
+  (keydown)="onKeyDown($event)"
+  tabindex="-1"
+  class="fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-sm animate-fadeIn"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="'feedback-title'"
 ></div>
 
+<!-- Modal Container -->
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
   <div
-    class="relative w-full max-w-md transform rounded-lg bg-white p-8 shadow-2xl transition-all duration-300 ease-out animate-scale-in"
+    class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl animate-slideUp overflow-hidden"
+    (click)="$event.stopPropagation()"
   >
+    <!-- Close Button -->
     <button
       (click)="onClose()"
-      class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+      class="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white/90 backdrop-blur-sm border border-neutral-300 rounded-lg hover:bg-neutral-50 hover:text-neutral-900 hover:border-neutral-400 transition-all shadow-sm"
+      aria-label="Fechar feedback"
     >
       <svg
         class="h-5 w-5"
@@ -27,15 +37,16 @@
       </svg>
     </button>
 
-    <div class="text-center">
-      <!-- Icon -->
+    <!-- Content -->
+    <div class="p-8 text-center">
+      <!-- Icon with subtle animation -->
       <div
-        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full {{
-          iconConfig.bgClass
-        }} animate-bounce-small"
+        [ngClass]="config.bgClass"
+        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full animate-bounce-gentle"
       >
         <svg
-          class="h-10 w-10 {{ iconConfig.iconClass }}"
+          [ngClass]="config.iconClass"
+          class="h-10 w-10"
           fill="none"
           viewBox="0 0 24 24"
           stroke-width="2"
@@ -44,26 +55,66 @@
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            [attr.d]="iconConfig.iconPath"
+            [attr.d]="config.iconPath"
           />
         </svg>
       </div>
 
       <!-- Title -->
-      <h3 class="mt-6 text-2xl font-bold text-gray-900">{{ title }}</h3>
+      <h3 id="feedback-title" class="mt-6 text-2xl font-bold text-neutral-900">
+        {{ title() }}
+      </h3>
 
       <!-- Message -->
-      <p class="mt-3 text-base text-gray-600 leading-relaxed">{{ message }}</p>
+      <p class="mt-3 text-base text-neutral-600 leading-relaxed">
+        {{ message() }}
+      </p>
 
-      <!-- Button -->
-      <button
-        (click)="onClose()"
-        class="mt-8 w-full rounded-lg px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 {{
-          buttonClass
-        }}"
-      >
-        {{ buttonText }}
-      </button>
+      <!-- Optional Details List -->
+      @if (details() && details().length > 0) {
+        <div class="mt-4 text-left bg-neutral-50 rounded-lg p-4">
+          <ul class="space-y-2">
+            @for (detail of details(); track detail) {
+              <li class="flex items-start gap-2 text-sm text-neutral-700">
+                <svg class="w-5 h-5 text-neutral-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span>{{ detail }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    <!-- Footer with Actions -->
+    <div class="bg-neutral-50 px-8 py-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+      @if (secondaryAction()) {
+        <button
+          (click)="onSecondary()"
+          class="inline-flex w-full justify-center items-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-neutral-700 shadow-sm border border-neutral-300 hover:bg-neutral-50 hover:border-neutral-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 sm:w-auto"
+        >
+          {{ secondaryAction() }}
+        </button>
+      }
+
+      @if (primaryAction()) {
+        <button
+          (click)="onPrimary()"
+          [ngClass]="config.buttonClass"
+          class="inline-flex w-full justify-center items-center rounded-lg px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:w-auto"
+        >
+          {{ primaryAction() }}
+        </button>
+      } @else {
+        <button
+          (click)="onClose()"
+          [ngClass]="config.buttonClass"
+          class="w-full rounded-lg px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+        >
+          {{ buttonText() }}
+        </button>
+      }
     </div>
   </div>
 </div>
