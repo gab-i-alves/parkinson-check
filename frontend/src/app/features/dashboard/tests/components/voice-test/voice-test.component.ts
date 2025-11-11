@@ -17,10 +17,12 @@ import {
 } from '../../../services/voice-test.service';
 import { ClinicalTestService } from '../../../services/clinical-test.service';
 import { CommonModule } from '@angular/common';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-voice-test',
-  imports: [CommonModule],
+  imports: [CommonModule, TooltipDirective, BadgeComponent],
   templateUrl: './voice-test.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -223,7 +225,7 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
     const dataArray = new Uint8Array(bufferLength);
     this.analyser.getByteFrequencyData(dataArray);
 
-    canvasCtx.fillStyle = '#f3f4f6'; 
+    canvasCtx.fillStyle = '#fafafa';
     canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
     const barWidth = (canvas.width / bufferLength) * 1.5;
@@ -232,7 +234,7 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
 
     for (let i = 0; i < bufferLength; i++) {
       barHeight = dataArray[i] / 2;
-      canvasCtx.fillStyle = `rgb(109, 40, 217, ${barHeight / 100})`;
+      canvasCtx.fillStyle = `rgb(219, 39, 119, ${barHeight / 100})`; // pink-600
       canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
       x += barWidth + 1;
     }

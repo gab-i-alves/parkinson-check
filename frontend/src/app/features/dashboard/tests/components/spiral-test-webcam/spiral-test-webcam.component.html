@@ -1,17 +1,12 @@
-<div class="min-h-screen bg-gray-100 relative overflow-hidden">
-  <!-- Background decorativo -->
-  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-violet-200/30 rounded-full filter blur-3xl opacity-50"></div>
-    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-purple-200/30 rounded-full filter blur-3xl opacity-40"></div>
-    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-orange-200/30 rounded-full filter blur-3xl opacity-35"></div>
-  </div>
-
-  <div class="container mx-auto px-6 py-8 space-y-6 relative">
-    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 relative">
+<div class="min-h-screen bg-neutral-50 py-8">
+  <div class="container mx-auto px-6 space-y-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8 relative">
       <!-- Back button icon -->
       <button
+        appTooltip="Voltar para seleção de método"
+        [tooltipPosition]="'left'"
         (click)="goBackToMethodSelection()"
-        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white border border-neutral-200 rounded-full hover:bg-neutral-50 hover:text-neutral-900 transition-all shadow-sm hover:shadow-md"
         aria-label="Voltar"
       >
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,18 +16,18 @@
 
       <div class="flex items-start space-x-4 mb-6">
         <!-- Ícone -->
-        <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-violet-700 shadow-lg flex-shrink-0">
-          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-100 shadow-sm flex-shrink-0 border border-pink-200">
+          <svg class="h-8 w-8 text-pink-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
           </svg>
         </div>
 
         <!-- Conteúdo do Header -->
         <div class="flex-1">
-          <h1 class="text-3xl font-bold text-gray-900">
+          <h1 class="text-3xl font-bold text-neutral-900">
             Teste da Espiral: Desenho com a Câmera
           </h1>
-          <p class="text-sm text-gray-600 mt-1">
+          <p class="text-sm text-neutral-600 mt-1">
             Use o seu dedo indicador para traçar sobre a espiral guia
           </p>
         </div>
@@ -41,64 +36,106 @@
       <!-- Grid de duas colunas -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Coluna Esquerda: Instruções -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
-          <div class="bg-violet-50/50 border border-violet-200 rounded-2xl p-6">
-            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-              <svg class="h-5 w-5 text-violet-700 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
+          <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6 relative overflow-hidden">
+            <!-- Decorative circles pattern -->
+            <div class="absolute top-2 right-2 w-20 h-20 opacity-10">
+              <div class="w-10 h-10 bg-blue-600 rounded-full"></div>
+              <div class="w-8 h-8 bg-blue-400 rounded-full absolute top-6 left-6"></div>
+              <div class="w-6 h-6 bg-blue-300 rounded-full absolute top-10 left-10"></div>
+            </div>
+            <div class="relative z-10">
+              <h2 class="text-lg font-bold text-neutral-900 mb-4 flex items-center">
+                <svg class="h-5 w-5 text-blue-700 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Instruções Importantes</span>
+              </h2>
+              <ul class="space-y-3 text-sm text-neutral-700">
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs mr-3">1</span>
+                  <span>Posicione sua mão de forma que a câmera possa capturá-la claramente</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs mr-3">2</span>
+                  <span>Clique em "Iniciar Desenho" quando estiver pronto</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs mr-3">3</span>
+                  <span>Use seu dedo indicador para traçar sobre a espiral guia exibida</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs mr-3">4</span>
+                  <span>Mantenha o movimento contínuo e suave, seguindo a espiral</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs mr-3">5</span>
+                  <span>Clique em "Parar de Desenhar" quando terminar o traçado</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs mr-3">6</span>
+                  <span>Se necessário, use "Limpar" para recomeçar o desenho</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs mr-3">7</span>
+                  <span>Quando estiver satisfeito, clique em "Enviar para Análise"</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Tips card -->
+          <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-2xl p-4 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10"
+              style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;">
+            </div>
+            <div class="relative z-10 flex items-start gap-3">
+              <svg class="w-5 h-5 text-yellow-700 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
               </svg>
-              Instruções Importantes
-            </h2>
-            <ul class="space-y-3 text-sm text-gray-700">
-              <li class="flex items-start">
-                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">1</span>
-                <span>Posicione sua mão de forma que a câmera possa capturá-la claramente</span>
-              </li>
-              <li class="flex items-start">
-                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">2</span>
-                <span>Clique em "Iniciar Desenho" quando estiver pronto</span>
-              </li>
-              <li class="flex items-start">
-                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">3</span>
-                <span>Use seu dedo indicador para traçar sobre a espiral guia exibida</span>
-              </li>
-              <li class="flex items-start">
-                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">4</span>
-                <span>Mantenha o movimento contínuo e suave, seguindo a espiral</span>
-              </li>
-              <li class="flex items-start">
-                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">5</span>
-                <span>Clique em "Parar de Desenhar" quando terminar o traçado</span>
-              </li>
-              <li class="flex items-start">
-                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">6</span>
-                <span>Se necessário, use "Limpar" para recomeçar o desenho</span>
-              </li>
-              <li class="flex items-start">
-                <span class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold text-xs mr-3">7</span>
-                <span>Quando estiver satisfeito, clique em "Enviar para Análise"</span>
-              </li>
-            </ul>
+              <div>
+                <p class="text-xs font-semibold text-yellow-900 mb-1">Dica Importante</p>
+                <p class="text-xs text-yellow-800">Certifique-se de que há boa iluminação e que seu dedo está bem visível para a câmera durante todo o traçado.</p>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Coluna Direita: Área de Desenho -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
           <div class="space-y-6">
+            <!-- Canvas header -->
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold text-neutral-900">Área de Desenho</h2>
+              <div class="flex items-center gap-2">
+                <app-badge variant="blue">AO VIVO</app-badge>
+                <svg
+                  appTooltip="Seu desenho será capturado em tempo real usando reconhecimento de mão por IA"
+                  [tooltipPosition]="'left'"
+                  class="w-5 h-5 text-neutral-400 cursor-help"
+                  fill="currentColor"
+                  viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </div>
+
             <div class="relative flex justify-center">
               <video #videoElement class="hidden" autoplay playsinline></video>
               <canvas
                 #canvasElement
                 width="640"
                 height="480"
-                class="rounded-2xl border-2 border-gray-300 bg-gray-900 shadow-lg max-w-full h-auto"
+                class="rounded-2xl border-2 border-neutral-300 bg-neutral-900 shadow-lg max-w-full h-auto"
               ></canvas>
             </div>
 
-            <div class="flex justify-center gap-2">
+            <div class="flex justify-center gap-2 flex-wrap">
               <button
+                appTooltip="Começar a capturar o traçado da espiral"
+                [tooltipPosition]="'top'"
                 (click)="startDrawing()"
-                class="inline-flex items-center rounded-lg bg-violet-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-violet-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+                class="inline-flex items-center rounded-full bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
               >
                 <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
@@ -107,8 +144,10 @@
                 <span class="hidden sm:inline">Iniciar</span>
               </button>
               <button
+                appTooltip="Parar a captura do traçado"
+                [tooltipPosition]="'top'"
                 (click)="stopDrawing()"
-                class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-red-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all"
+                class="inline-flex items-center rounded-full bg-pink-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-all"
               >
                 <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -117,8 +156,10 @@
                 <span class="hidden sm:inline">Parar</span>
               </button>
               <button
+                appTooltip="Limpar o desenho e recomeçar"
+                [tooltipPosition]="'top'"
                 (click)="clearCanvas()"
-                class="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+                class="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-neutral-700 bg-white border border-neutral-200 rounded-full shadow-sm hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 transition-all"
               >
                 <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -126,9 +167,11 @@
                 <span class="hidden sm:inline">Limpar</span>
               </button>
               <button
+                appTooltip="Enviar desenho para análise de IA"
+                [tooltipPosition]="'top'"
                 (click)="uploadImage()"
                 [disabled]="uploadStatus() === 'uploading'"
-                class="inline-flex items-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-green-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                class="inline-flex items-center rounded-full bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -144,19 +187,40 @@
 
     @if (feedbackMessage()) {
     <div
-      class="rounded-lg p-4 border"
-      [class.bg-green-50/80]="uploadStatus() === 'success'"
+      class="rounded-2xl p-4 border shadow-sm"
+      [class.bg-green-50]="uploadStatus() === 'success'"
       [class.border-green-200]="uploadStatus() === 'success'"
-      [class.bg-red-50/80]="uploadStatus() === 'error'"
-      [class.border-red-200]="uploadStatus() === 'error'"
-      [class.bg-violet-50/80]="uploadStatus() === 'uploading'"
-      [class.border-violet-200]="uploadStatus() === 'uploading'"
+      [class.bg-pink-50]="uploadStatus() === 'error'"
+      [class.border-pink-200]="uploadStatus() === 'error'"
+      [class.bg-blue-50]="uploadStatus() === 'uploading'"
+      [class.border-blue-200]="uploadStatus() === 'uploading'"
+      [class.bg-neutral-50]="uploadStatus() === 'idle'"
+      [class.border-neutral-200]="uploadStatus() === 'idle'"
     >
-      <div class="flex items-start">
-        <p class="text-sm font-medium"
+      <div class="flex items-start gap-3">
+        @if (uploadStatus() === 'success') {
+        <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        } @else if (uploadStatus() === 'error') {
+        <svg class="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        } @else if (uploadStatus() === 'uploading') {
+        <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        } @else {
+        <svg class="w-5 h-5 text-neutral-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        }
+        <p class="text-sm font-medium flex-1"
            [class.text-green-800]="uploadStatus() === 'success'"
-           [class.text-red-800]="uploadStatus() === 'error'"
-           [class.text-violet-800]="uploadStatus() === 'uploading'">
+           [class.text-pink-800]="uploadStatus() === 'error'"
+           [class.text-blue-800]="uploadStatus() === 'uploading'"
+           [class.text-neutral-800]="uploadStatus() === 'idle'">
           {{ feedbackMessage() }}
         </p>
       </div>
@@ -166,15 +230,15 @@
 
   <!-- Loading Overlay -->
   @if (uploadStatus() === 'uploading') {
-  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4">
+  <div class="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 border border-neutral-200">
       <div class="flex flex-col items-center space-y-4">
         <div class="relative">
-          <div class="w-16 h-16 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin"></div>
+          <div class="w-16 h-16 border-4 border-neutral-200 border-t-neutral-900 rounded-full animate-spin"></div>
         </div>
         <div class="text-center">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Analisando seu desenho</h3>
-          <p class="text-sm text-gray-600">Por favor aguarde...</p>
+          <h3 class="text-lg font-semibold text-neutral-900 mb-2">Analisando seu desenho</h3>
+          <p class="text-sm text-neutral-600">Por favor aguarde...</p>
         </div>
       </div>
     </div>

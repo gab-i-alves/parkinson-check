@@ -14,6 +14,8 @@ import { lastValueFrom } from 'rxjs';
 import { SpiralTestService } from '../../../services/spiral-test.service';
 import { ClinicalTestService } from '../../../services/clinical-test.service';
 import { SpiralTestResponse } from '../../../../../core/models/spiral-test-response.model';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 declare const Hands: any;
 declare const Camera: any;
@@ -21,7 +23,7 @@ declare const Camera: any;
 @Component({
   selector: 'app-spiral-test-webcam',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TooltipDirective, BadgeComponent],
   templateUrl: './spiral-test-webcam.component.html',
 })
 export class SpiralTestWebcamComponent implements AfterViewInit, OnDestroy, OnInit {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
@@ -6,15 +6,17 @@ import { SpiralTestService } from '../../../services/spiral-test.service';
 import { ClinicalTestService } from '../../../services/clinical-test.service';
 import { SpiralTestResponse } from '../../../../../core/models/spiral-test-response.model';
 import { ImagePreviewModalComponent } from '../../../../../shared/components/image-preview-modal/image-preview-modal.component';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-spiral-test-paper',
   standalone: true,
-  imports: [CommonModule, ImagePreviewModalComponent],
+  imports: [CommonModule, ImagePreviewModalComponent, TooltipDirective, BadgeComponent],
   templateUrl: './spiral-test-paper.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpiralTestPaperComponent implements OnInit {
+export class SpiralTestPaperComponent implements OnInit, OnDestroy {
   readonly selectedFile = signal<File | null>(null);
   readonly imagePreviewUrl = signal<string | ArrayBuffer | null>(null);
   readonly uploadStatus = signal<'idle' | 'uploading' | 'success' | 'error'>(
@@ -24,8 +26,16 @@ export class SpiralTestPaperComponent implements OnInit {
   readonly analysisResults = signal<SpiralTestResponse | null>(null);
   readonly showPreviewModal = signal<boolean>(false);
 
+  // Controle de cronômetro
+  readonly isDrawing = signal<boolean>(false);
+  readonly drawDuration = signal<number>(0);
+  readonly elapsedTime = signal<string>('00:00');
+
   private patientId: string | null = null;
   private isClinicalMode = false;
+  private drawStartTime: number = 0;
+  private drawEndTime: number = 0;
+  private timerInterval: any = null;
 
   constructor(
     private spiralTestService: SpiralTestService,
@@ -42,6 +52,10 @@ export class SpiralTestPaperComponent implements OnInit {
     if (this.isClinicalMode) {
       console.log(`Modo clínico ativado para paciente ID: ${this.patientId}`);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.stopTimer();
   }
 
   getModelKeys(results: SpiralTestResponse | null): string[] {
@@ -98,7 +112,7 @@ export class SpiralTestPaperComponent implements OnInit {
 
       if (this.isClinicalMode && this.patientId) {
         // Clinical mode: use ClinicalTestService
-        const drawDuration = 0; // Paper uploads have no draw duration
+        const drawDuration = this.drawDuration(); // Usa duração capturada manualmente
         const method = 1; // PAPER method
 
         response = await lastValueFrom(
@@ -175,5 +189,51 @@ export class SpiralTestPaperComponent implements OnInit {
 
   closePreviewModal(): void {
     this.showPreviewModal.set(false);
+  }
+
+  startDrawing(): void {
+    this.isDrawing.set(true);
+    this.drawStartTime = Date.now();
+    this.startTimer();
+    this.feedbackMessage.set('Cronômetro iniciado. O paciente pode começar a desenhar.');
+  }
+
+  stopDrawing(): void {
+    this.isDrawing.set(false);
+    this.drawEndTime = Date.now();
+    this.stopTimer();
+
+    // Calcular duração final em segundos
+    const duration = Math.floor((this.drawEndTime - this.drawStartTime) / 1000);
+    this.drawDuration.set(duration);
+    this.feedbackMessage.set(`Desenho finalizado! Duração: ${this.elapsedTime()}`);
+  }
+
+  restartDrawing(): void {
+    this.isDrawing.set(false);
+    this.drawStartTime = 0;
+    this.drawEndTime = 0;
+    this.drawDuration.set(0);
+    this.elapsedTime.set('00:00');
+    this.stopTimer();
+    this.feedbackMessage.set('Cronômetro resetado. Pronto para recomeçar.');
+  }
+
+  private startTimer(): void {
+    this.timerInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - this.drawStartTime) / 1000);
+      const minutes = Math.floor(elapsed / 60);
+      const seconds = elapsed % 60;
+      this.elapsedTime.set(
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+      );
+    }, 1000);
+  }
+
+  private stopTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
   }
 }
