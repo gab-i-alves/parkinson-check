@@ -11,6 +11,8 @@ export interface BindingPatient {
   id: number;
   name: string;
   email: string;
+  cpf: string;
+  age: number;
 }
 
 // Doctor information in binding
@@ -18,6 +20,7 @@ export interface BindingDoctor {
   id: number;
   name: string;
   specialty: string;
+  crm: string;
 }
 
 // User type enum
@@ -32,6 +35,7 @@ export interface BindingRequestResponse {
   user: BindingPatient | BindingDoctor;
   status: BindEnum;
   created_by_type?: UserType; // Who created the binding request
+  message?: string; // Optional message when creating binding request
 }
 
 // Legacy interface - kept for backwards compatibility during migration
@@ -47,7 +51,7 @@ export interface BindingRequest {
 
 // Type guard to check if user is a patient
 export function isBindingPatient(user: BindingPatient | BindingDoctor): user is BindingPatient {
-  return 'email' in user;
+  return 'cpf' in user;
 }
 
 // Type guard to check if user is a doctor

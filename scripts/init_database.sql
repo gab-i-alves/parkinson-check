@@ -65,7 +65,8 @@ CREATE TABLE IF NOT EXISTS "bind" (
     "status" bind_enum NOT NULL,
     "doctor_id" INTEGER NOT NULL REFERENCES "doctor"(id),
     "patient_id" INTEGER NOT NULL REFERENCES "patient"(id),
-    "created_by_type" user_type_enum NOT NULL DEFAULT 'PATIENT'
+    "created_by_type" user_type_enum NOT NULL DEFAULT 'PATIENT',
+    "message" TEXT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "test" (

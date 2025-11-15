@@ -78,31 +78,31 @@ INSERT INTO doctor (id, crm, expertise_area, status_approval) VALUES
 -- INSERÇÃO DE VÍNCULOS (BINDS)
 -- ========================================
 
--- Vínculos ATIVOS (médicos vinculados a pacientes)
-INSERT INTO bind (status, doctor_id, patient_id, created_by_type) VALUES
--- Dr. Samuel com pacientes idosos (Parkinson é mais comum em idosos)
-('ACTIVE', 13, 3, 'PATIENT'),  -- Dr. Samuel com Rita (78 anos)
-('ACTIVE', 13, 7, 'PATIENT'),  -- Dr. Samuel com Isabella (72 anos)
-('ACTIVE', 13, 8, 'DOCTOR'),   -- Dr. Samuel com Felipe (75 anos)
+-- -- Vínculos ATIVOS (médicos vinculados a pacientes)
+-- INSERT INTO bind (status, doctor_id, patient_id, created_by_type, message) VALUES
+-- -- Dr. Samuel com pacientes idosos (Parkinson é mais comum em idosos)
+-- ('ACTIVE', 13, 3, 'PATIENT', NULL),  -- Dr. Samuel com Rita (78 anos)
+-- ('ACTIVE', 13, 7, 'PATIENT', NULL),  -- Dr. Samuel com Isabella (72 anos)
+-- ('ACTIVE', 13, 8, 'DOCTOR', 'Gostaria de acompanhar o caso do Sr. Felipe. Tenho experiência com Parkinson inicial.'),   -- Dr. Samuel com Felipe (75 anos)
 
--- Dra. Fernanda com pacientes de meia-idade
-('ACTIVE', 14, 4, 'PATIENT'),  -- Dra. Fernanda com Mariana (42 anos)
-('ACTIVE', 14, 9, 'PATIENT'),  -- Dra. Fernanda com Luiza (47 anos)
-('ACTIVE', 14, 12, 'DOCTOR'),  -- Dra. Fernanda com Rafael (43 anos)
+-- -- Dra. Fernanda com pacientes de meia-idade
+-- ('ACTIVE', 14, 4, 'PATIENT', NULL),  -- Dra. Fernanda com Mariana (42 anos)
+-- ('ACTIVE', 14, 9, 'PATIENT', NULL),  -- Dra. Fernanda com Luiza (47 anos)
+-- ('ACTIVE', 14, 12, 'DOCTOR', 'Rafael tem histórico familiar importante. Gostaria de fazer o acompanhamento preventivo.'),  -- Dra. Fernanda com Rafael (43 anos)
 
--- Dra. Heloisa com pacientes variados
-('ACTIVE', 15, 1, 'PATIENT'),  -- Dra. Heloisa com Bernardo (27 anos)
-('ACTIVE', 15, 2, 'PATIENT'),  -- Dra. Heloisa com Oliver (32 anos)
-('ACTIVE', 15, 10, 'DOCTOR'),  -- Dra. Heloisa com Fabiana (36 anos)
+-- -- Dra. Heloisa com pacientes variados
+-- ('ACTIVE', 15, 1, 'PATIENT', NULL),  -- Dra. Heloisa com Bernardo (27 anos)
+-- ('ACTIVE', 15, 2, 'PATIENT', NULL),  -- Dra. Heloisa com Oliver (32 anos)
+-- ('ACTIVE', 15, 10, 'DOCTOR', 'Fabiana apresenta tremor essencial. Gostaria de acompanhar a evolução.'),  -- Dra. Heloisa com Fabiana (36 anos)
 
--- Vínculos PENDENTES (aguardando aprovação)
-('PENDING', 13, 5, 'PATIENT'),  -- Juliana aguardando Dr. Samuel
-('PENDING', 14, 6, 'PATIENT'),  -- Valentina aguardando Dra. Fernanda
-('PENDING', 15, 11, 'DOCTOR'),  -- Dra. Heloisa solicitou vínculo com Emanuelly
+-- -- Vínculos PENDENTES (aguardando aprovação)
+-- ('PENDING', 13, 5, 'PATIENT', 'Olá Dr. Samuel, tenho histórico familiar de Parkinson e gostaria de iniciar um acompanhamento preventivo. Obrigada!'),  -- Juliana aguardando Dr. Samuel
+-- ('PENDING', 14, 6, 'PATIENT', 'Dra. Fernanda, fui indicada pela minha amiga Mariana. Gostaria muito de ser sua paciente!'),  -- Valentina aguardando Dra. Fernanda
+-- ('PENDING', 15, 11, 'DOCTOR', 'Emanuelly, vi que você tem 18 anos e histórico familiar. Gostaria de oferecer acompanhamento preventivo gratuito.'),  -- Dra. Heloisa solicitou vínculo com Emanuelly
 
--- Vínculos REJEITADOS
-('REJECTED', 13, 1, 'PATIENT'),  -- Dr. Samuel rejeitou Bernardo 
-('REJECTED', 14, 11, 'PATIENT'); -- Dra. Fernanda rejeitou Emanuelly
+-- -- Vínculos REJEITADOS
+-- ('REJECTED', 13, 1, 'PATIENT', 'Dr. Samuel, estou com alguns tremores ocasionais e gostaria de uma avaliação.'),  -- Dr. Samuel rejeitou Bernardo
+-- ('REJECTED', 14, 11, 'PATIENT', 'Dra. Fernanda, tenho 18 anos e minha avó tem Parkinson. Poderia me acompanhar?'); -- Dra. Fernanda rejeitou Emanuelly
 
 -- ========================================
 -- INSERÇÃO DE TESTES CLÍNICOS
