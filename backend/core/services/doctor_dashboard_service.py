@@ -15,7 +15,10 @@ from api.schemas.doctor_dashboard import (
     TestTypeData,
 )
 from core.models import Bind, Patient, Test, User
-from core.enums import BindEnum, TestType, TestStatus
+from core.enums import BindEnum, TestType
+
+# Threshold de classificação (mesmo valor de test_service.py)
+HEALTHY_THRESHOLD = 0.7
 
 
 def _calculate_age(birthdate: datetime) -> int:
@@ -43,7 +46,7 @@ def _calculate_status(avg_score: float | None) -> str:
     """Calcula status do paciente baseado na pontuação média"""
     if avg_score is None:
         return "stable"
-    if avg_score >= 0.7:
+    if avg_score >= HEALTHY_THRESHOLD:
         return "stable"
     elif avg_score >= 0.4:
         return "attention"
@@ -77,7 +80,7 @@ def get_dashboard_overview(session: Session, doctor: User) -> DashboardOverviewR
     for patient_id in patient_ids:
         last_five_tests = (
             session.query(Test.score)
-            .filter(Test.patient_id == patient_id, Test.status == TestStatus.DONE)
+            .filter(Test.patient_id == patient_id)
             .order_by(desc(Test.execution_date))
             .limit(5)
             .all()
@@ -93,7 +96,7 @@ def get_dashboard_overview(session: Session, doctor: User) -> DashboardOverviewR
     # Total de testes
     total_tests = (
         session.query(func.count(Test.id))
-        .filter(Test.patient_id.in_(patient_ids), Test.status == TestStatus.DONE)
+        .filter(Test.patient_id.in_(patient_ids))
         .scalar()
     )
 
@@ -103,7 +106,6 @@ def get_dashboard_overview(session: Session, doctor: User) -> DashboardOverviewR
         session.query(func.count(Test.id))
         .filter(
             Test.patient_id.in_(patient_ids),
-            Test.status == TestStatus.DONE,
             Test.execution_date >= first_day_of_month,
         )
         .scalar()
@@ -112,7 +114,7 @@ def get_dashboard_overview(session: Session, doctor: User) -> DashboardOverviewR
     # Pontuação média de todos os pacientes
     avg_score_result = (
         session.query(func.avg(Test.score))
-        .filter(Test.patient_id.in_(patient_ids), Test.status == TestStatus.DONE)
+        .filter(Test.patient_id.in_(patient_ids))
         .scalar()
     )
     avg_score_all_patients = float(avg_score_result) if avg_score_result else None
@@ -155,7 +157,6 @@ def get_rankings(
             .join(Test, Test.patient_id == Patient.id)
             .filter(
                 Patient.id.in_(patient_ids),
-                Test.status == TestStatus.DONE,
             )
         )
 
@@ -219,7 +220,6 @@ def get_score_evolution(
         )
         .filter(
             Test.patient_id.in_(patient_ids),
-            Test.status == TestStatus.DONE,
             Test.execution_date >= start_date,
         )
     )
@@ -299,7 +299,7 @@ def get_age_group_analysis(session: Session, doctor: User) -> AgeGroupAnalysisRe
         # Buscar testes do paciente
         tests = (
             session.query(Test.score, Test.test_type)
-            .filter(Test.patient_id == patient_id, Test.status == TestStatus.DONE)
+            .filter(Test.patient_id == patient_id)
             .all()
         )
 
@@ -350,7 +350,7 @@ def get_test_distribution(session: Session, doctor: User) -> TestDistributionRes
     # Total de testes
     total_tests = (
         session.query(func.count(Test.id))
-        .filter(Test.patient_id.in_(patient_ids), Test.status == TestStatus.DONE)
+        .filter(Test.patient_id.in_(patient_ids))
         .scalar()
     ) or 0
 
@@ -359,7 +359,6 @@ def get_test_distribution(session: Session, doctor: User) -> TestDistributionRes
         session.query(func.count(Test.id), func.avg(Test.score))
         .filter(
             Test.patient_id.in_(patient_ids),
-            Test.status == TestStatus.DONE,
             Test.test_type == TestType.SPIRAL_TEST,
         )
         .first()
@@ -369,7 +368,6 @@ def get_test_distribution(session: Session, doctor: User) -> TestDistributionRes
         session.query(func.count(Test.id), func.avg(Test.score))
         .filter(
             Test.patient_id.in_(patient_ids),
-            Test.status == TestStatus.DONE,
             Test.test_type == TestType.VOICE_TEST,
         )
         .first()
@@ -379,13 +377,11 @@ def get_test_distribution(session: Session, doctor: User) -> TestDistributionRes
     voice_count = voice_data[0] or 0
 
     # Classificação (healthy vs parkinson)
-    # Assumindo que score >= 0.7 é "healthy" e < 0.7 é "parkinson"
     healthy_count = (
         session.query(func.count(Test.id))
         .filter(
             Test.patient_id.in_(patient_ids),
-            Test.status == TestStatus.DONE,
-            Test.score >= 0.7,
+            Test.score >= HEALTHY_THRESHOLD,
         )
         .scalar()
     ) or 0
@@ -394,8 +390,7 @@ def get_test_distribution(session: Session, doctor: User) -> TestDistributionRes
         session.query(func.count(Test.id))
         .filter(
             Test.patient_id.in_(patient_ids),
-            Test.status == TestStatus.DONE,
-            Test.score < 0.7,
+            Test.score < HEALTHY_THRESHOLD,
         )
         .scalar()
     ) or 0

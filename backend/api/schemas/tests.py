@@ -4,7 +4,7 @@ from typing import Dict, Literal, Optional
 from fastapi import File, Form, UploadFile
 from pydantic import BaseModel, ConfigDict, Field
 
-from core.enums import SpiralMethods, TestStatus, TestType
+from core.enums import SpiralMethods, TestType
 
 
 class SpiralImageSchema(BaseModel):
@@ -80,7 +80,6 @@ class BaseTest(BaseModel):
     id: int
     test_type: TestType
     execution_date: datetime
-    status: TestStatus
     score: float
     patient_id: int
 
@@ -89,6 +88,7 @@ class BaseTest(BaseModel):
 
 class VoiceTestReturn(BaseTest):
     record_duration: float
+    raw_parkinson_probability: Optional[float] = None
 
 
 class ProcessVoiceSchema(BaseModel):
@@ -105,6 +105,11 @@ class ProcessVoiceSchema(BaseModel):
 class SpiralTestReturn(BaseTest):
     draw_duration: float
     method: SpiralMethods
+    model_predictions: Optional[Dict[str, ModelPrediction]] = None
+    avg_parkinson_probability: Optional[float] = None
+    majority_vote: Optional[str] = None
+    healthy_votes: Optional[int] = None
+    parkinson_votes: Optional[int] = None
 
 
 class DetaildTestsReturn(BaseModel):
@@ -277,7 +282,6 @@ class TimelineTestItem(BaseModel):
     execution_date: datetime
     score: float
     classification: Literal["HEALTHY", "PARKINSON"]
-    status: TestStatus
     # Campos específicos de espiral
     draw_duration: Optional[float] = None
     method: Optional[SpiralMethods] = None

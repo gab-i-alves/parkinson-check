@@ -17,7 +17,6 @@ export type {
   TimelineTestItem,
   PatientTimeline,
   TestType as TimelineTestType,
-  TestStatus as TimelineTestStatus,
   SpiralMethod as TimelineSpiralMethod
 } from './patient-timeline.model';
 
@@ -35,8 +34,8 @@ export type {
   VoiceTestDetail,
   SpiralTestDetail,
   PatientInfo,
+  ModelPrediction,
   TestType as DetailTestType,
-  TestStatus as DetailTestStatus,
   SpiralMethod as DetailSpiralMethod,
   Classification
 } from './test-detail.model';

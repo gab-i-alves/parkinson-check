@@ -23,7 +23,7 @@ class TestDoctorService:
             email="joao@doctor.com",
             password="senha123",
             birthdate=date(1980, 5, 10),
-            crm="654321",
+            crm="654321/SP",
             specialty="Cardiologia",
             cep="12345-678",
             street="Rua Médica",
@@ -70,7 +70,7 @@ class TestDoctorService:
             email="maria@example.com",
             password="senha123",
             birthdate=date(1985, 3, 15),
-            crm="999999",
+            crm="999999/RJ",
             specialty="Neurologia",
             cep="11111-111",
             street="Rua",
@@ -101,7 +101,7 @@ class TestDoctorService:
             email="novo@example.com",
             password="senha123",
             birthdate=date(1985, 3, 15),
-            crm="999999",
+            crm="999999/RJ",
             specialty="Neurologia",
             cep="11111-111",
             street="Rua",
@@ -135,7 +135,7 @@ class TestDoctorService:
             email="novo@example.com",
             password="senha123",
             birthdate=date(1985, 3, 15),
-            crm="123456",
+            crm="123456/MG",
             specialty="Neurologia",
             cep="11111-111",
             street="Rua",
@@ -172,7 +172,7 @@ class TestDoctorService:
         mock_session.query.return_value = mock_query
 
         # Act
-        result = doctor_service.get_doctor_by_crm(mock_session, crm="123456")
+        result = doctor_service.get_doctor_by_crm(mock_session, crm="123456/SP")
 
         # Assert
         assert result == sample_doctor
@@ -186,7 +186,7 @@ class TestDoctorService:
         mock_session.query.return_value = mock_query
 
         # Act
-        result = doctor_service.get_doctor_by_crm(mock_session, crm="999999")
+        result = doctor_service.get_doctor_by_crm(mock_session, crm="999999/RJ")
 
         # Assert
         assert result is None
@@ -324,7 +324,7 @@ class TestDoctorService:
             email="pedro@doctor.com",
             password="senha123",
             birthdate=date(1978, 8, 25),
-            crm="777888",
+            crm="777888/PR",
             specialty="Cardiologia",
             cep="99999-999",
             street="Rua Nova",

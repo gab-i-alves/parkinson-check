@@ -10,6 +10,7 @@ import {
   matchPasswordValidator,
   cpfValidator,
   strongPasswordValidator,
+  crmValidator,
 } from '../../../../core/validators/custom-validators';
 import {
   debounceTime,
@@ -94,7 +95,15 @@ export class RegisterComponent implements OnInit {
         cpf: ['', [Validators.required, cpfValidator()]],
         birthdate: ['', [Validators.required]],
         gender: ['', [Validators.required]],
-        crm: ['', [Validators.required]],
+        crm: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.maxLength(10),
+            crmValidator(),
+          ],
+        ],
         expertise_area: ['', [Validators.required]],
 
         // Endereço
