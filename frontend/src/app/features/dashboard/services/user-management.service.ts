@@ -8,6 +8,7 @@ import {
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
+  Gender,
   PaginatedUsers,
   User,
   UserFilters,
@@ -20,6 +21,7 @@ interface UserBackendResponse {
   cpf: string;
   email: string;
   user_type: UserRole;
+  gender: string;
   is_active: boolean;
   location: string;
   created_at: string;
@@ -64,6 +66,7 @@ export class UserManagementService {
       email: backendUser.email,
       cpf: backendUser.cpf,
       role: backendUser.user_type as 'paciente' | 'medico' | 'admin',
+      gender: backendUser.gender as Gender,
       status: backendUser.is_active,
       createdAt: backendUser.created_at,
       location: backendUser.location,

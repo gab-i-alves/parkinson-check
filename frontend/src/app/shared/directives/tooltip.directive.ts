@@ -41,12 +41,17 @@ export class TooltipDirective implements OnDestroy {
   private show(): void {
     this.create();
     this.setPosition();
-    this.renderer.addClass(this.tooltipElement, 'tooltip-show');
+    // Aguardar o próximo frame para garantir que o elemento foi renderizado
+    setTimeout(() => {
+      if (this.tooltipElement) {
+        this.renderer.setStyle(this.tooltipElement, 'opacity', '1');
+      }
+    }, 10);
   }
 
   private hide(): void {
     if (this.tooltipElement) {
-      this.renderer.removeClass(this.tooltipElement, 'tooltip-show');
+      this.renderer.setStyle(this.tooltipElement, 'opacity', '0');
       setTimeout(() => {
         if (this.tooltipElement) {
           this.renderer.removeChild(document.body, this.tooltipElement);
@@ -63,7 +68,6 @@ export class TooltipDirective implements OnDestroy {
     this.renderer.appendChild(this.tooltipElement, text);
 
     // Base styles
-    this.renderer.addClass(this.tooltipElement, 'tooltip');
     this.renderer.setStyle(this.tooltipElement, 'position', 'absolute');
     this.renderer.setStyle(this.tooltipElement, 'padding', '0.5rem 0.75rem');
     this.renderer.setStyle(this.tooltipElement, 'background-color', 'rgb(23, 23, 23)');
@@ -71,7 +75,10 @@ export class TooltipDirective implements OnDestroy {
     this.renderer.setStyle(this.tooltipElement, 'font-size', '0.75rem');
     this.renderer.setStyle(this.tooltipElement, 'border-radius', '0.5rem');
     this.renderer.setStyle(this.tooltipElement, 'z-index', '9999');
-    this.renderer.setStyle(this.tooltipElement, 'white-space', 'nowrap');
+    this.renderer.setStyle(this.tooltipElement, 'max-width', '320px');
+    this.renderer.setStyle(this.tooltipElement, 'white-space', 'normal');
+    this.renderer.setStyle(this.tooltipElement, 'word-wrap', 'break-word');
+    this.renderer.setStyle(this.tooltipElement, 'line-height', '1.4');
     this.renderer.setStyle(this.tooltipElement, 'pointer-events', 'none');
     this.renderer.setStyle(this.tooltipElement, 'opacity', '0');
     this.renderer.setStyle(this.tooltipElement, 'transition', 'opacity 200ms ease-in-out');
