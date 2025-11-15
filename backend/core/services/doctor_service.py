@@ -94,6 +94,7 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListRe
                 specialty=doc.expertise_area,
                 location=f"{doc.address.city}, {doc.address.state}",
                 role=UserType.DOCTOR,
+                gender=doc.gender,
             )
         )
 
@@ -122,6 +123,7 @@ def get_binded_doctors(session: Session, current_user: User) -> list[DoctorListR
                 location=f"{doc.address.city}, {doc.address.state}",
                 role=UserType.DOCTOR,
                 bind_id=bind_id,
+                gender=doc.gender,
             )
         )
     return doctor_list
