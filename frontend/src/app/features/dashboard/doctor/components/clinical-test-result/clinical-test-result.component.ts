@@ -62,8 +62,19 @@ export class ClinicalTestResultComponent implements OnInit {
     return classification === 'PARKINSON' ? 'error' : 'success';
   }
 
+  getClassificationLabel(): string {
+    const classification = this.getClassification();
+    return classification === 'HEALTHY' ? 'Saudável' : 'Parkinson';
+  }
+
   getPredictionVariant(prediction: string): 'success' | 'error' {
     return prediction === 'PARKINSON' ? 'error' : 'success';
+  }
+
+  getPredictionLabel(prediction: string): string {
+    if (prediction === 'HEALTHY') return 'Saudável';
+    if (prediction === 'PARKINSON') return 'Parkinson';
+    return prediction; // fallback para valores inesperados
   }
 
   formatDate(dateString: string): string {

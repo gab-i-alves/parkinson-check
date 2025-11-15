@@ -1,18 +1,7 @@
 <div class="min-h-screen bg-neutral-50 py-8">
   <div class="container mx-auto px-6 space-y-6 relative">
     <!-- Header - Intelly Style -->
-    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8 relative">
-      <!-- Back button -->
-      <button
-        (click)="goBackToMethodSelection()"
-        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 hover:text-neutral-900 transition-all shadow-sm hover:shadow-md"
-        aria-label="Voltar"
-      >
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
       <div class="flex items-start space-x-4">
         <!-- Icon with Intelly colors -->
         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-100 shadow-sm flex-shrink-0 border border-pink-200">
@@ -71,32 +60,24 @@
               </li>
             </ul>
 
-            <div class="mt-6 relative inline-block">
-              <button
+            <div class="mt-6 flex justify-center">
+              <a
+                href="/assets/spiral_template.png"
+                download="spiral_template.png"
                 appTooltip="Baixar template da espiral para imprimir"
                 [tooltipPosition]="'top'"
-                class="inline-flex items-center justify-center"
+                class="inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 transition-all"
               >
-                <a
-                  href="/assets/spiral_template.jpg"
-                  download="spiral_template.jpg"
-                  class="inline-flex items-center rounded-full bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 transition-all"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="mr-2 h-5 w-5"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    class="mr-2 h-5 w-5"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a.75.75 0 01-.75-.75V6.612L7.39 8.26a.75.75 0 11-1.18-1.03l3.25-3.5a.75.75 0 011.18 0l3.25 3.5a.75.75 0 01-1.18 1.03l-1.86-1.648V17.25c0 .414-.336.75-.75.75z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  Baixar Modelo da Espiral
-                </a>
-              </button>
+                  <path fill-rule="evenodd" d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+                </svg>
+                Baixar Modelo da Espiral
+              </a>
             </div>
           </div>
         </div>

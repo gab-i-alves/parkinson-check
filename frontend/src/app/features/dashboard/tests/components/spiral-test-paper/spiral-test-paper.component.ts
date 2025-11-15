@@ -8,6 +8,8 @@ import { SpiralTestResponse } from '../../../../../core/models/spiral-test-respo
 import { ImagePreviewModalComponent } from '../../../../../shared/components/image-preview-modal/image-preview-modal.component';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
 
 @Component({
   selector: 'app-spiral-test-paper',
@@ -25,6 +27,7 @@ export class SpiralTestPaperComponent implements OnInit, OnDestroy {
   readonly feedbackMessage = signal<string | null>(null);
   readonly analysisResults = signal<SpiralTestResponse | null>(null);
   readonly showPreviewModal = signal<boolean>(false);
+  readonly patientName = signal<string>('Carregando...');
 
   // Controle de cronômetro
   readonly isDrawing = signal<boolean>(false);
@@ -40,6 +43,8 @@ export class SpiralTestPaperComponent implements OnInit, OnDestroy {
   constructor(
     private spiralTestService: SpiralTestService,
     private clinicalTestService: ClinicalTestService,
+    private doctorDashboardService: DoctorDashboardService,
+    private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -49,13 +54,33 @@ export class SpiralTestPaperComponent implements OnInit, OnDestroy {
     this.patientId = this.route.snapshot.paramMap.get('patientId');
     this.isClinicalMode = !!this.patientId;
 
-    if (this.isClinicalMode) {
+    if (this.isClinicalMode && this.patientId) {
       console.log(`Modo clínico ativado para paciente ID: ${this.patientId}`);
+      this.loadPatientName(Number(this.patientId));
     }
   }
 
   ngOnDestroy(): void {
     this.stopTimer();
+  }
+
+  private loadPatientName(patientId: number): void {
+    this.doctorDashboardService.getPatientsPage(1, 100).subscribe({
+      next: (result) => {
+        const patient = result.patients.find((p) => +p.id === patientId);
+        if (patient) {
+          this.patientName.set(patient.name);
+          const currentUrl = this.router.url;
+          this.breadcrumbService.updateBreadcrumb(currentUrl, patient.name);
+        } else {
+          this.patientName.set('Paciente não encontrado');
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar paciente:', err);
+        this.patientName.set('Erro ao carregar nome');
+      },
+    });
   }
 
   getModelKeys(results: SpiralTestResponse | null): string[] {

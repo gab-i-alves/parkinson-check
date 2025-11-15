@@ -19,6 +19,8 @@ import { ClinicalTestService } from '../../../services/clinical-test.service';
 import { CommonModule } from '@angular/common';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
 
 @Component({
   selector: 'app-voice-test',
@@ -32,6 +34,7 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
   readonly analysisResults = signal<VoiceTestResponse | null>(null);
   readonly recordedAudioUrl = signal<SafeUrl | undefined>(undefined);
   readonly isSubmitting = signal<boolean>(false);
+  readonly patientName = signal<string>('Carregando...');
 
   private recordedAudioBlob: Blob | undefined;
   private recordingSubscription: Subscription | undefined;
@@ -48,6 +51,8 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
   // Context detection
   private route = inject(ActivatedRoute);
   private clinicalTestService = inject(ClinicalTestService);
+  private doctorDashboardService = inject(DoctorDashboardService);
+  private breadcrumbService = inject(BreadcrumbService);
   private patientId: string | null = null;
   private isClinicalMode = false;
 
@@ -62,10 +67,11 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
     this.patientId = this.route.snapshot.paramMap.get('patientId');
     this.isClinicalMode = !!this.patientId;
 
-    if (this.isClinicalMode) {
+    if (this.isClinicalMode && this.patientId) {
       console.log(
         `Modo clínico ativado para paciente ID: ${this.patientId}`
       );
+      this.loadPatientName(Number(this.patientId));
     }
 
     this.recordingSubscription = this.voiceTestService.recording$.subscribe(
@@ -201,6 +207,25 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
     this.recordedAudioBlob = undefined;
     this.analysisResults.set(null);
     this.feedbackMessage.set(null);
+  }
+
+  private loadPatientName(patientId: number): void {
+    this.doctorDashboardService.getPatientsPage(1, 100).subscribe({
+      next: (result) => {
+        const patient = result.patients.find((p) => +p.id === patientId);
+        if (patient) {
+          this.patientName.set(patient.name);
+          const currentUrl = this.router.url;
+          this.breadcrumbService.updateBreadcrumb(currentUrl, patient.name);
+        } else {
+          this.patientName.set('Paciente não encontrado');
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar paciente:', err);
+        this.patientName.set('Erro ao carregar nome');
+      },
+    });
   }
 
   private initVisualizer(stream: MediaStream): void {

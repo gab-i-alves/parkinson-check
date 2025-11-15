@@ -18,13 +18,12 @@ import {
   PatientNeedingAttention,
 } from '../../../../../core/models/doctor-dashboard.model';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
-import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-doctor-dashboard',
   standalone: true,
-  imports: [CommonModule, DashboardChart, FormsModule, TooltipDirective, BadgeComponent],
+  imports: [CommonModule, DashboardChart, FormsModule, TooltipDirective],
   templateUrl: './doctor-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -49,10 +48,6 @@ export class DoctorDashboardComponent implements OnInit {
   readonly patientsNeedingAttention = signal<PatientNeedingAttention[]>([]);
   readonly rankings = signal<any>(null);
 
-  // Navigation signals
-  readonly selectedTab = signal<'overview' | 'analysis' | 'patients'>('overview');
-  readonly expandedAccordion = signal<string | null>('age-performance');
-
   // Chart.js configurations
   // 1. Evolução de Scores (Linha)
   public scoreEvolutionChartData: ChartConfiguration['data'] = { datasets: [], labels: [] };
@@ -64,17 +59,7 @@ export class DoctorDashboardComponent implements OnInit {
   public statusDistributionChartOptions: ChartConfiguration['options'] = {};
   public statusDistributionChartType: ChartType = 'doughnut';
 
-  // 3. Performance por Idade (Barra Horizontal)
-  public agePerformanceChartData: ChartConfiguration['data'] = { datasets: [], labels: [] };
-  public agePerformanceChartOptions: ChartConfiguration['options'] = {};
-  public agePerformanceChartType: ChartType = 'bar';
-
-  // 4. Pacientes por Status (Barra Vertical Empilhada)
-  public patientStatusChartData: ChartConfiguration['data'] = { datasets: [], labels: [] };
-  public patientStatusChartOptions: ChartConfiguration['options'] = {};
-  public patientStatusChartType: ChartType = 'bar';
-
-  // 5. Frequência de Testes (Área)
+  // 3. Frequência de Testes (Área)
   public testFrequencyChartData: ChartConfiguration['data'] = { datasets: [], labels: [] };
   public testFrequencyChartOptions: ChartConfiguration['options'] = {};
   public testFrequencyChartType: ChartType = 'line';
@@ -116,23 +101,7 @@ export class DoctorDashboardComponent implements OnInit {
       error: (err) => console.error('Erro ao carregar distribuição:', err),
     });
 
-    // 4. Carregar análise por faixa etária (barra horizontal)
-    this.doctorDashboardDataService.getAgeGroupAnalysis().subscribe({
-      next: (analysis) => {
-        this.setupAgePerformanceChart(analysis);
-      },
-      error: (err) => console.error('Erro ao carregar análise por idade:', err),
-    });
-
-    // 5. Carregar overview novamente para pacientes por status
-    this.doctorDashboardDataService.getDashboardOverview().subscribe({
-      next: (overview) => {
-        this.setupPatientStatusChart(overview);
-      },
-      error: (err) => console.error('Erro ao carregar status:', err),
-    });
-
-    // 6. Carregar evolução para frequência de testes (área)
+    // 4. Carregar evolução para frequência de testes (área)
     this.doctorDashboardDataService.getScoreEvolution('month', 'all').subscribe({
       next: (evolution) => {
         this.setupTestFrequencyChart(evolution);
@@ -140,7 +109,7 @@ export class DoctorDashboardComponent implements OnInit {
       error: (err) => console.error('Erro ao carregar frequência:', err),
     });
 
-    // 7. Carregar rankings invertidos (pacientes que precisam atenção)
+    // 5. Carregar rankings invertidos (pacientes que precisam atenção)
     this.doctorDashboardDataService.getRankings('overall', 5).subscribe({
       next: (rankings) => {
         this.loadPatientsNeedingAttention(rankings);
@@ -256,85 +225,7 @@ export class DoctorDashboardComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // 3. Gráfico de Performance por Faixa Etária (Barra Horizontal)
-  private setupAgePerformanceChart(analysis: any) {
-    const ageGroups = analysis.age_groups;
-    this.agePerformanceChartData = {
-      labels: ageGroups.map((g: any) => g.age_range),
-      datasets: [
-        {
-          data: ageGroups.map((g: any) => g.avg_score),
-          label: 'Score Médio',
-          backgroundColor: 'rgba(180, 212, 255, 0.8)', // blue-200
-          borderColor: 'rgb(180, 212, 255)',
-          borderWidth: 2,
-        },
-      ],
-    };
-
-    this.agePerformanceChartOptions = {
-      indexAxis: 'y' as const,
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        title: { display: false },
-      },
-      scales: {
-        x: { beginAtZero: true, max: 1, title: { display: true, text: 'Score' } },
-      },
-    };
-
-    this.cdr.markForCheck();
-  }
-
-  // 4. Gráfico de Pacientes por Status (Barra Vertical)
-  private setupPatientStatusChart(overview: any) {
-    const status = overview.patients_by_status || { stable: 0, attention: 0, critical: 0 };
-    this.patientStatusChartData = {
-      labels: ['Status dos Pacientes'],
-      datasets: [
-        {
-          label: 'Estável',
-          data: [status.stable],
-          backgroundColor: 'rgba(34, 197, 94, 0.8)',
-          borderColor: 'rgb(34, 197, 94)',
-          borderWidth: 2,
-        },
-        {
-          label: 'Atenção',
-          data: [status.attention],
-          backgroundColor: 'rgba(251, 191, 36, 0.8)',
-          borderColor: 'rgb(251, 191, 36)',
-          borderWidth: 2,
-        },
-        {
-          label: 'Crítico',
-          data: [status.critical],
-          backgroundColor: 'rgba(239, 68, 68, 0.8)',
-          borderColor: 'rgb(239, 68, 68)',
-          borderWidth: 2,
-        },
-      ],
-    };
-
-    this.patientStatusChartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'top', labels: { usePointStyle: true } },
-        title: { display: false },
-      },
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Quantidade' } },
-      },
-    };
-
-    this.cdr.markForCheck();
-  }
-
-  // 5. Gráfico de Frequência de Testes (Área)
+  // 3. Gráfico de Frequência de Testes (Área)
   private setupTestFrequencyChart(evolution: any) {
     const timeSeries = evolution.time_series;
     this.testFrequencyChartData = {
@@ -370,19 +261,6 @@ export class DoctorDashboardComponent implements OnInit {
   // Método para navegar para detalhes do paciente
   viewPatientDetails(patientId: number) {
     this.router.navigate(['/dashboard/doctor/patient', patientId]);
-  }
-
-  // Métodos de navegação
-  selectTab(tab: 'overview' | 'analysis' | 'patients') {
-    this.selectedTab.set(tab);
-  }
-
-  toggleAccordion(chartId: string) {
-    if (this.expandedAccordion() === chartId) {
-      this.expandedAccordion.set(null);
-    } else {
-      this.expandedAccordion.set(chartId);
-    }
   }
 
   // Método para gerar iniciais do nome do paciente

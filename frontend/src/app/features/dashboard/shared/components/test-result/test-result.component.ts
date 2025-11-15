@@ -92,6 +92,12 @@ export class TestResultComponent implements OnInit {
     return 'neutral';
   }
 
+  getPredictionLabel(prediction: string): string {
+    if (prediction === 'HEALTHY') return 'Saudável';
+    if (prediction === 'PARKINSON') return 'Parkinson';
+    return prediction; // fallback para valores inesperados
+  }
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleString('pt-BR', {

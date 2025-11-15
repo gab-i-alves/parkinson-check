@@ -23,10 +23,13 @@ def predict_audio(file_path: str):
 
         probability_pd = model.predict_proba(features_2d)[0][1]
 
+        # Traduzir o label para português
+        label_traduzido = "Saudável" if prediction_label == "HC" else "Parkinson"
+
         analysis_text = (
             f"A análise vocal indica uma probabilidade de {probability_pd:.2%} "
             f"de apresentar características associadas à Doença de Parkinson. "
-            f"O modelo classificou a amostra como '{prediction_label}'."
+            f"O modelo classificou a amostra como {label_traduzido}."
         )
 
         return {"score": float(probability_pd), "analysis": analysis_text}

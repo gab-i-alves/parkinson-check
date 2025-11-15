@@ -16,6 +16,8 @@ import { ClinicalTestService } from '../../../services/clinical-test.service';
 import { SpiralTestResponse } from '../../../../../core/models/spiral-test-response.model';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
 
 declare const Hands: any;
 declare const Camera: any;
@@ -41,6 +43,8 @@ export class SpiralTestWebcamComponent implements AfterViewInit, OnDestroy, OnIn
   // Context detection
   private route = inject(ActivatedRoute);
   private clinicalTestService = inject(ClinicalTestService);
+  private doctorDashboardService = inject(DoctorDashboardService);
+  private breadcrumbService = inject(BreadcrumbService);
   private patientId: string | null = null;
   private isClinicalMode = false;
 
@@ -56,6 +60,7 @@ export class SpiralTestWebcamComponent implements AfterViewInit, OnDestroy, OnIn
   );
   readonly feedbackMessage = signal<string | null>(null);
   readonly analysisResults = signal<SpiralTestResponse | null>(null);
+  readonly patientName = signal<string>('Carregando...');
 
   constructor(
     private spiralTestService: SpiralTestService,
@@ -67,11 +72,31 @@ export class SpiralTestWebcamComponent implements AfterViewInit, OnDestroy, OnIn
     this.patientId = this.route.snapshot.paramMap.get('patientId');
     this.isClinicalMode = !!this.patientId;
 
-    if (this.isClinicalMode) {
+    if (this.isClinicalMode && this.patientId) {
       console.log(
         `Modo clínico ativado para paciente ID: ${this.patientId}`
       );
+      this.loadPatientName(Number(this.patientId));
     }
+  }
+
+  private loadPatientName(patientId: number): void {
+    this.doctorDashboardService.getPatientsPage(1, 100).subscribe({
+      next: (result) => {
+        const patient = result.patients.find((p) => +p.id === patientId);
+        if (patient) {
+          this.patientName.set(patient.name);
+          const currentUrl = this.router.url;
+          this.breadcrumbService.updateBreadcrumb(currentUrl, patient.name);
+        } else {
+          this.patientName.set('Paciente não encontrado');
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar paciente:', err);
+        this.patientName.set('Erro ao carregar nome');
+      },
+    });
   }
 
   ngAfterViewInit(): void {

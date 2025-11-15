@@ -42,33 +42,7 @@
 
   <div class="container mx-auto px-6 py-6 space-y-5 relative">
 
-    <!-- Tabs Navigation -->
-    <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
-      <button
-        (click)="selectTab('overview')"
-        [class]="selectedTab() === 'overview' ? 'px-4 py-1.5 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-1.5 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-      >
-        Visão Geral
-      </button>
-      <button
-        (click)="selectTab('analysis')"
-        [class]="selectedTab() === 'analysis' ? 'px-4 py-1.5 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-1.5 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-      >
-        Análises Detalhadas
-      </button>
-      <button
-        (click)="selectTab('patients')"
-        [class]="selectedTab() === 'patients' ? 'px-4 py-1.5 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-1.5 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-      >
-        <span>Pacientes em Atenção</span>
-        @if (patientsNeedingAttention().length > 0) {
-          <span class="ml-2 px-2 py-0.5 bg-red-200 text-red-900 rounded-full text-xs font-semibold">{{ patientsNeedingAttention().length }}</span>
-        }
-      </button>
-    </div>
-
-    <!-- TAB 1: VISÃO GERAL -->
-    @if (selectedTab() === 'overview') {
+    <!-- VISÃO GERAL -->
     <div class="space-y-5">
       <!-- KPIs Coloridos com Padrões -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -80,7 +54,10 @@
               <div class="flex items-center gap-2">
                 <p class="text-xs font-medium text-neutral-700">Total de Pacientes</p>
                 <button
-                  appTooltip="Número total de pacientes cadastrados"
+                  type="button"
+                  class="inline-flex items-center justify-center p-1 rounded hover:bg-yellow-200/50 transition-colors"
+                  aria-label="Informações sobre total de pacientes"
+                  [appTooltip]="'Conta todos os pacientes que possuem vínculo ativo com você no sistema'"
                   [tooltipPosition]="'top'"
                 >
                   <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -103,7 +80,10 @@
               <div class="flex items-center gap-2">
                 <p class="text-xs font-medium text-neutral-700">Testes Este Mês</p>
                 <button
-                  appTooltip="Total de testes realizados no mês atual"
+                  type="button"
+                  class="inline-flex items-center justify-center p-1 rounded hover:bg-pink-200/50 transition-colors"
+                  aria-label="Informações sobre testes este mês"
+                  [appTooltip]="'Quantidade de testes com status \'concluído\' realizados desde o dia 1º do mês atual'"
                   [tooltipPosition]="'top'"
                 >
                   <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -127,7 +107,10 @@
               <div class="flex items-center gap-2">
                 <p class="text-xs font-medium text-neutral-700">Score Médio</p>
                 <button
-                  appTooltip="Média de performance geral (0-100)"
+                  type="button"
+                  class="inline-flex items-center justify-center p-1 rounded hover:bg-blue-200/50 transition-colors"
+                  aria-label="Informações sobre score médio"
+                  [appTooltip]="'Média aritmética de todos os scores de testes concluídos (escala 0-100). Calculado a partir de todos os testes realizados por seus pacientes'"
                   [tooltipPosition]="'top'"
                 >
                   <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -160,7 +143,10 @@
               <div class="flex items-center gap-2">
                 <p class="text-xs font-medium text-neutral-700">Precisam Atenção</p>
                 <button
-                  appTooltip="Pacientes com scores baixos"
+                  type="button"
+                  class="inline-flex items-center justify-center p-1 rounded hover:bg-green-200/50 transition-colors"
+                  aria-label="Informações sobre pacientes que precisam atenção"
+                  [appTooltip]="'Pacientes cuja média dos últimos 5 testes está abaixo de 70%. Classificação: Saudável (≥70%), Em Atenção (40-70%), Crítico (<40%)'"
                   [tooltipPosition]="'top'"
                 >
                   <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -180,7 +166,10 @@
               <div class="flex items-center gap-2">
                 <p class="text-xs font-medium text-neutral-700">Taxa de Adesão</p>
                 <button
-                  appTooltip="% de pacientes realizando testes"
+                  type="button"
+                  class="inline-flex items-center justify-center p-1 rounded hover:bg-yellow-200/50 transition-colors"
+                  aria-label="Informações sobre taxa de adesão"
+                  [appTooltip]="'Percentual calculado pela fórmula: (Testes Este Mês ÷ Total de Pacientes) × 100. Indica quantos testes em média cada paciente realizou no mês'"
                   [tooltipPosition]="'top'"
                 >
                   <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -204,7 +193,10 @@
               <div class="flex items-center gap-2">
                 <p class="text-xs font-medium text-neutral-700">Novos Pacientes</p>
                 <button
-                  appTooltip="Pacientes cadastrados este mês"
+                  type="button"
+                  class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-200/50 transition-colors"
+                  aria-label="Informações sobre novos pacientes"
+                  [appTooltip]="'Quantidade de pacientes que iniciaram vínculo ativo com você desde o dia 1º do mês atual'"
                   [tooltipPosition]="'top'"
                 >
                   <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -223,167 +215,37 @@
         <!-- Gráfico 1: Evolução de Scores -->
         <app-dashboard-chart
           title="Evolução de Scores"
+          description="Mostra a evolução temporal do score médio de todos os seus pacientes. Os dados são agrupados por dia, calculando a média aritmética dos scores dos testes concluídos em cada data"
           [chartData]="scoreEvolutionChartData"
           [chartOptions]="scoreEvolutionChartOptions"
           [chartType]="scoreEvolutionChartType"
           height="280px"
+          [showExportButton]="false"
         ></app-dashboard-chart>
 
         <!-- Gráfico 2: Distribuição por Status -->
         <app-dashboard-chart
           title="Distribuição por Status"
+          description="Classifica os testes concluídos em duas categorias baseado no score: 'Saudável' (score ≥ 70%) e 'Parkinson' (score < 70%). Mostra a proporção percentual de cada categoria"
           [chartData]="statusDistributionChartData"
           [chartOptions]="statusDistributionChartOptions"
           [chartType]="statusDistributionChartType"
           height="280px"
+          [showExportButton]="false"
         ></app-dashboard-chart>
 
         <!-- Gráfico 3: Frequência de Testes -->
         <app-dashboard-chart
           title="Frequência de Testes"
+          description="Exibe a quantidade total de testes concluídos ao longo do tempo. Os dados são agrupados por dia, somando todos os testes realizados em cada data"
           [chartData]="testFrequencyChartData"
           [chartOptions]="testFrequencyChartOptions"
           [chartType]="testFrequencyChartType"
           height="280px"
+          [showExportButton]="false"
         ></app-dashboard-chart>
       </div>
     </div>
-    }
-
-    <!-- TAB 2: ANÁLISES DETALHADAS (Accordion) -->
-    @if (selectedTab() === 'analysis') {
-    <div class="space-y-3">
-      <!-- Accordion Item 1: Performance por Idade -->
-      <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-        <button
-          (click)="toggleAccordion('age-performance')"
-          class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
-        >
-          <h3 class="text-base font-semibold text-neutral-900">Performance por Faixa Etária</h3>
-          @if (expandedAccordion() === 'age-performance') {
-            <svg class="w-5 h-5 text-neutral-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-            </svg>
-          } @else {
-            <svg class="w-5 h-5 text-neutral-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          }
-        </button>
-        @if (expandedAccordion() === 'age-performance') {
-        <div class="px-5 pb-5 border-t border-neutral-100">
-          <app-dashboard-chart
-            title=""
-            [chartData]="agePerformanceChartData"
-            [chartOptions]="agePerformanceChartOptions"
-            [chartType]="agePerformanceChartType"
-            height="300px"
-          ></app-dashboard-chart>
-        </div>
-        }
-      </div>
-
-      <!-- Accordion Item 2: Pacientes por Status -->
-      <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-        <button
-          (click)="toggleAccordion('patient-status')"
-          class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
-        >
-          <h3 class="text-base font-semibold text-neutral-900">Pacientes por Status de Atenção</h3>
-          @if (expandedAccordion() === 'patient-status') {
-            <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-            </svg>
-          } @else {
-            <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          }
-        </button>
-        @if (expandedAccordion() === 'patient-status') {
-        <div class="px-5 pb-5 border-t border-neutral-100">
-          <app-dashboard-chart
-            title=""
-            [chartData]="patientStatusChartData"
-            [chartOptions]="patientStatusChartOptions"
-            [chartType]="patientStatusChartType"
-            height="300px"
-          ></app-dashboard-chart>
-        </div>
-        }
-      </div>
-    </div>
-    }
-
-    <!-- TAB 3: LISTA EXPANDIDA DE PACIENTES -->
-    @if (selectedTab() === 'patients') {
-    <div class="space-y-5">
-      <!-- Header -->
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-neutral-900">Pacientes que Precisam de Atenção</h2>
-      </div>
-
-      <!-- Lista completa -->
-      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
-        <ul class="divide-y divide-neutral-200">
-          @for (patient of patientsNeedingAttention(); track patient.patient_id) {
-          <li
-            class="px-6 py-5 hover:bg-pink-50/50 transition-colors cursor-pointer"
-            (click)="viewPatientDetails(patient.patient_id)"
-          >
-            <div class="flex items-start justify-between gap-4">
-              <div class="flex-1">
-                <div class="flex items-center gap-3 mb-2">
-                  <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center font-semibold text-neutral-900 text-sm">
-                    {{ getPatientInitials(patient.patient_name) }}
-                  </div>
-                  <div>
-                    <p class="font-semibold text-neutral-900">{{ patient.patient_name }}</p>
-                    <p class="text-sm text-neutral-600">Último teste: {{ patient.last_test_date }}</p>
-                  </div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mt-3">
-                  <div>
-                    <p class="text-xs text-neutral-500">Score Médio</p>
-                    <p class="text-sm font-semibold text-neutral-900">{{ (patient.avg_score * 100).toFixed(0) }}</p>
-                  </div>
-                  <div>
-                    <p class="text-xs text-neutral-500">Total de Testes</p>
-                    <p class="text-sm font-semibold text-neutral-900">{{ patient.total_tests }}</p>
-                  </div>
-                  <div>
-                    <p class="text-xs text-neutral-500">Status</p>
-                    @if (patient.status === 'critical') {
-                      <app-badge variant="error">Crítico</app-badge>
-                    } @else {
-                      <app-badge variant="warning">Atenção</app-badge>
-                    }
-                  </div>
-                </div>
-              </div>
-              <svg class="w-5 h-5 text-neutral-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </div>
-          </li>
-          }
-          @if (patientsNeedingAttention().length === 0) {
-          <li class="px-6 py-16 text-center">
-            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <h4 class="text-lg font-semibold text-neutral-900 mb-2">Excelente trabalho!</h4>
-            <p class="text-sm text-neutral-600 max-w-md mx-auto">
-              Todos os seus pacientes estão com scores adequados. Continue o ótimo acompanhamento!
-            </p>
-          </li>
-          }
-        </ul>
-      </div>
-    </div>
-    }
   </div>
 </div>
 }
