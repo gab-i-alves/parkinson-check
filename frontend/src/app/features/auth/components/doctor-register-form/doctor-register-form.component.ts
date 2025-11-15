@@ -101,7 +101,7 @@ export class DoctorRegisterFormComponent {
   getFieldsForCurrentStep(): string[] {
     switch (this.currentStep) {
       case 1: // Dados Pessoais
-        return ['name', 'cpf', 'birthdate'];
+        return ['name', 'cpf', 'birthdate', 'gender'];
       case 2: // Dados Profissionais
         return ['crm', 'expertise_area'];
       case 3: // Endereço

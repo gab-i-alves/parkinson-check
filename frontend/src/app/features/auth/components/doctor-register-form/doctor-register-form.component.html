@@ -289,6 +289,45 @@
         </div>
       </div>
     </div>
+
+    <div>
+      <label
+        for="gender_medico"
+        class="block text-sm font-medium text-neutral-900 mb-2"
+      >
+        Gênero
+      </label>
+      <select
+        id="gender_medico"
+        name="gender_medico"
+        formControlName="gender"
+        required
+        class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+      >
+        <option value="" disabled selected>Selecione seu gênero</option>
+        <option value="MALE">Masculino</option>
+        <option value="FEMALE">Feminino</option>
+        <option value="PREFER_NOT_TO_SAY">Prefiro não informar</option>
+      </select>
+      <div
+        *ngIf="
+          doctorForm.get('gender')?.invalid &&
+          (doctorForm.get('gender')?.touched || buttonTouched)
+        "
+        class="mt-2 text-xs text-red-600 flex items-center"
+      >
+        <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="doctorForm.get('gender')?.errors?.['required']">
+          Campo obrigatório.
+        </span>
+      </div>
+    </div>
   </div>
 
   <!-- Step 2: Dados Profissionais -->

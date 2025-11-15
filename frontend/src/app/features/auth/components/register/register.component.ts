@@ -59,6 +59,7 @@ export class RegisterComponent implements OnInit {
         name: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required, cpfValidator()]],
         birthdate: ['', [Validators.required]],
+        gender: ['', [Validators.required]],
 
         // Endereço
         cep: ['', [Validators.required]],
@@ -92,6 +93,7 @@ export class RegisterComponent implements OnInit {
         name: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required, cpfValidator()]],
         birthdate: ['', [Validators.required]],
+        gender: ['', [Validators.required]],
         crm: ['', [Validators.required]],
         expertise_area: ['', [Validators.required]],
 
