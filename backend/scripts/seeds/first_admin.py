@@ -6,6 +6,7 @@ Uso: python scripts/seed_admin.py
 from sqlalchemy import create_engine, literal
 from sqlalchemy.orm import Session
 from core.models import Admin, UserType # Adicionar UserType
+from core.enums import Gender
 from core.security.security import get_password_hash
 from infra.settings import Settings
 from datetime import date # Adicionar date
@@ -23,6 +24,7 @@ def create_first_admin():
             email="pcheck.noreply@gmail.com",
             cpf="00000000000",
             birthdate=date(1990, 1, 1),
+            gender=Gender.PREFER_NOT_TO_SAY,
             hashed_password=get_password_hash("Admin@123"),
             user_type=UserType.ADMIN,
             is_superuser=True,

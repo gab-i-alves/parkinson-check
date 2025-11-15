@@ -1,5 +1,7 @@
 CREATE TYPE user_type_enum AS ENUM ('PATIENT', 'DOCTOR');
 
+CREATE TYPE gender_enum AS ENUM ('MALE', 'FEMALE', 'PREFER_NOT_TO_SAY');
+
 CREATE TYPE bind_enum AS ENUM ('PENDING', 'ACTIVE', 'REVERSED', 'REJECTED');
 
 CREATE TYPE test_status_enum AS ENUM ('DONE', 'VIEWED', 'NOTED');
@@ -31,6 +33,7 @@ CREATE TABLE IF NOT EXISTS "user" (
   "hashed_password" varchar(255) NOT NULL,
   "cpf" char(11) UNIQUE NOT NULL,
   "birthdate" TIMESTAMP NOT NULL,
+  "gender" gender_enum NOT NULL,
   "address_id" integer NOT NULL REFERENCES "address" ("id"),
   "reset_token" varchar(255) DEFAULT NULL,
   "reset_token_expiry" TIMESTAMPTZ DEFAULT NULL,

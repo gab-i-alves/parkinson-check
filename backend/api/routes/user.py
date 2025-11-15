@@ -33,6 +33,7 @@ def get_user_me(
         name=current_user.name,
         email=current_user.email,
         role=current_user.user_type,
+        gender=current_user.gender,
     )
 
 

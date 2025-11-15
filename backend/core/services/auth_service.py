@@ -37,7 +37,7 @@ def login(login_form: LoginFormRequest, session: Session):
     token_data = create_access_token(data={"sub": login_form.email})
 
     user_response = UserResponse(
-        id=user.id, name=user.name, email=user.email, role=user.user_type
+        id=user.id, name=user.name, email=user.email, role=user.user_type, gender=user.gender
     )
 
     return TokenResponse(access_token=token_data, user=user_response)

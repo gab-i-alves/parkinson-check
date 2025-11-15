@@ -42,6 +42,7 @@ def create_admin(admin: AdminSchema, session: Session):
         email=admin.email,
         hashed_password=get_password_hash(admin.password),
         birthdate=admin.birthdate,
+        gender=admin.gender,
         user_type=UserType.ADMIN,
         address_id=address.id,
         is_superuser=True,

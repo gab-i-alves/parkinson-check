@@ -5,7 +5,7 @@ from sqlalchemy import TIMESTAMP, ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.enums import BindEnum, UserType
+from core.enums import BindEnum, Gender, UserType
 from core.models.table_registry import table_registry
 
 if TYPE_CHECKING:
@@ -21,6 +21,9 @@ class User:
     cpf: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     birthdate: Mapped[date] = mapped_column(nullable=False)
+    gender: Mapped[Gender] = mapped_column(
+        PG_ENUM(Gender, name="gender_enum", create_type=True), nullable=False
+    )
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     user_type: Mapped[UserType] = mapped_column(
         "type", PG_ENUM(UserType, name="user_type_enum", create_type=True), nullable=False

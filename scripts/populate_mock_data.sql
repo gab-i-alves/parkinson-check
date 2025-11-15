@@ -35,28 +35,28 @@ INSERT INTO address (cep, street, number, neighborhood, city, state) VALUES
 -- Senha hash: $argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA
 -- Senha original: #Password01
 
-INSERT INTO "user" (type, name, email, hashed_password, cpf, birthdate, address_id, is_active) VALUES
-('PATIENT', 'Bernardo Thiago Miguel Cavalcanti', 'bernardo_cavalcanti@marktechbr.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '89972327388', '1998-07-13 00:00:00', 1, TRUE),
-('PATIENT', 'Oliver Victor da Rosa', 'oliver-darosa88@grupoarteoficio.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '62247722407', '1993-10-27 00:00:00', 2, TRUE),
-('PATIENT', 'Rita Cecília Mendes', 'rita-mendes96@original-veiculos.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '82817024940', '1947-07-08 00:00:00', 3, TRUE),
-('PATIENT', 'Mariana Luzia Liz Freitas', 'mariana_freitas@maccropropaganda.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '72681917581', '1983-01-16 00:00:00', 4, TRUE),
-('PATIENT', 'Juliana Lúcia Sabrina da Costa', 'julianaluciadacosta@eletrovip.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '39946661713', '2000-02-25 00:00:00', 5, TRUE),
-('PATIENT', 'Valentina Lorena Alves', 'valentinalorenaalves@yahoo.com.ar', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '02337673987', '2000-06-08 00:00:00', 6, TRUE),
-('PATIENT', 'Isabella Mariane Aparecida Araújo', 'isabella.mariane.araujo@rafaeladson.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '48596317902', '1953-01-23 00:00:00', 7, TRUE),
-('PATIENT', 'Felipe Carlos Ramos', 'felipe.carlos.ramos@ozsurfing.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '40706852788', '1950-08-27 00:00:00', 8, TRUE),
-('PATIENT', 'Luiza Isabelle Emanuelly Aragão', 'luiza-aragao94@securitycontrol.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '32526424097', '1978-04-05 00:00:00', 9, TRUE),
-('PATIENT', 'Fabiana Renata Viana', 'fabianarenataviana@profiledesign.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '95261069033', '1989-05-21 00:00:00', 10, TRUE),
-('PATIENT', 'Emanuelly Josefa Nunes', 'emanuelly_nunes@vieiradarocha.adv.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '92891450566', '2007-07-16 00:00:00', 11, TRUE),
-('PATIENT', 'Rafael Murilo Thomas Almeida', 'rafael-almeida80@vectrausinagem.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '27164365091', '1982-03-25 00:00:00', 12, TRUE);
+INSERT INTO "user" (type, name, email, hashed_password, cpf, birthdate, gender, address_id, is_active) VALUES
+('PATIENT', 'Bernardo Thiago Miguel Cavalcanti', 'bernardo_cavalcanti@marktechbr.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '89972327388', '1998-07-13 00:00:00', 'MALE', 1, TRUE),
+('PATIENT', 'Oliver Victor da Rosa', 'oliver-darosa88@grupoarteoficio.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '62247722407', '1993-10-27 00:00:00', 'MALE', 2, TRUE),
+('PATIENT', 'Rita Cecília Mendes', 'rita-mendes96@original-veiculos.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '82817024940', '1947-07-08 00:00:00', 'FEMALE', 3, TRUE),
+('PATIENT', 'Mariana Luzia Liz Freitas', 'mariana_freitas@maccropropaganda.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '72681917581', '1983-01-16 00:00:00', 'FEMALE', 4, TRUE),
+('PATIENT', 'Juliana Lúcia Sabrina da Costa', 'julianaluciadacosta@eletrovip.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '39946661713', '2000-02-25 00:00:00', 'FEMALE', 5, TRUE),
+('PATIENT', 'Valentina Lorena Alves', 'valentinalorenaalves@yahoo.com.ar', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '02337673987', '2000-06-08 00:00:00', 'FEMALE', 6, TRUE),
+('PATIENT', 'Isabella Mariane Aparecida Araújo', 'isabella.mariane.araujo@rafaeladson.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '48596317902', '1953-01-23 00:00:00', 'FEMALE', 7, TRUE),
+('PATIENT', 'Felipe Carlos Ramos', 'felipe.carlos.ramos@ozsurfing.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '40706852788', '1950-08-27 00:00:00', 'MALE', 8, TRUE),
+('PATIENT', 'Luiza Isabelle Emanuelly Aragão', 'luiza-aragao94@securitycontrol.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '32526424097', '1978-04-05 00:00:00', 'FEMALE', 9, TRUE),
+('PATIENT', 'Fabiana Renata Viana', 'fabianarenataviana@profiledesign.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '95261069033', '1989-05-21 00:00:00', 'FEMALE', 10, TRUE),
+('PATIENT', 'Emanuelly Josefa Nunes', 'emanuelly_nunes@vieiradarocha.adv.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '92891450566', '2007-07-16 00:00:00', 'FEMALE', 11, TRUE),
+('PATIENT', 'Rafael Murilo Thomas Almeida', 'rafael-almeida80@vectrausinagem.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '27164365091', '1982-03-25 00:00:00', 'MALE', 12, TRUE);
 
 -- ========================================
 -- INSERÇÃO DE USUÁRIOS MÉDICOS (3 médicos)
 -- ========================================
 
-INSERT INTO "user" (type, name, email, hashed_password, cpf, birthdate, address_id, is_active) VALUES
-('DOCTOR', 'Dr. Samuel César Julio Castro', 'samuel_cesar_castro@projetti.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '21950092410', '1992-07-07 00:00:00', 13, TRUE),
-('DOCTOR', 'Dra. Fernanda Flávia Melissa Carvalho', 'fernanda_flavia_carvalho@cbsdobrasil.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '51675617600', '1966-10-27 00:00:00', 14, TRUE),
-('DOCTOR', 'Dra. Heloisa Giovana Malu Pereira', 'heloisa_pereira@castromobile.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '29852779303', '1974-11-08 00:00:00', 15, TRUE);
+INSERT INTO "user" (type, name, email, hashed_password, cpf, birthdate, gender, address_id, is_active) VALUES
+('DOCTOR', 'Dr. Samuel César Julio Castro', 'samuel_cesar_castro@projetti.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '21950092410', '1992-07-07 00:00:00', 'MALE', 13, TRUE),
+('DOCTOR', 'Dra. Fernanda Flávia Melissa Carvalho', 'fernanda_flavia_carvalho@cbsdobrasil.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '51675617600', '1966-10-27 00:00:00', 'FEMALE', 14, TRUE),
+('DOCTOR', 'Dra. Heloisa Giovana Malu Pereira', 'heloisa_pereira@castromobile.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '29852779303', '1974-11-08 00:00:00', 'FEMALE', 15, TRUE);
 
 -- ========================================
 -- INSERÇÃO DE PACIENTES (referencia user)

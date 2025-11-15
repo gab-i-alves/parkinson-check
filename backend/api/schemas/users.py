@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-from core.enums import UserType
+from core.enums import Gender, UserType
 
 
 class UserSchema(BaseModel):
@@ -16,6 +16,7 @@ class UserSchema(BaseModel):
     cpf: str
     email: EmailStr
     password: str
+    gender: Gender
 
     cep: str
     street: str
@@ -31,6 +32,7 @@ class UserResponse(BaseModel):
     name: str
     email: EmailStr
     role: UserType
+    gender: Gender
 
 
 class DoctorSchema(UserSchema):
