@@ -214,27 +214,36 @@
             </div>
           </div>
 
-          <!-- Action Button -->
-          <button
-            (click)="requestLink(doctor.id)"
-            [disabled]="
-              doctor.status === 'pending' ||
-              doctor.status === 'linked'
-            "
-            [class]="
-              doctor.status === 'unlinked'
-                ? 'inline-flex items-center px-4 py-2 border border-pink-200 text-sm font-semibold rounded-lg text-pink-700 bg-pink-50 hover:bg-pink-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-200 transition-all'
-                : 'inline-flex items-center px-4 py-2 border border-neutral-200 text-sm font-semibold rounded-lg text-neutral-400 bg-neutral-50 cursor-not-allowed'
-            "
-          >
-            @if (doctor.status === 'unlinked') {
-            <span>Enviar Convite</span>
-            } @else if (doctor.status === 'pending') {
-            <span>Pendente</span>
-            } @else {
-            <span>Vinculado</span>
-            }
-          </button>
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-2">
+            <button
+              (click)="viewDoctorProfile(doctor)"
+              class="inline-flex items-center px-4 py-2 border border-neutral-200 text-sm font-semibold rounded-lg text-neutral-700 bg-white hover:bg-neutral-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-200 transition-all"
+            >
+              <span>Ver Perfil</span>
+            </button>
+
+            <button
+              (click)="openInviteModal(doctor)"
+              [disabled]="
+                doctor.status === 'pending' ||
+                doctor.status === 'linked'
+              "
+              [class]="
+                doctor.status === 'unlinked'
+                  ? 'inline-flex items-center px-4 py-2 border border-pink-200 text-sm font-semibold rounded-lg text-pink-700 bg-pink-50 hover:bg-pink-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-200 transition-all'
+                  : 'inline-flex items-center px-4 py-2 border border-neutral-200 text-sm font-semibold rounded-lg text-neutral-400 bg-neutral-50 cursor-not-allowed'
+              "
+            >
+              @if (doctor.status === 'unlinked') {
+              <span>Enviar Convite</span>
+              } @else if (doctor.status === 'pending') {
+              <span>Pendente</span>
+              } @else {
+              <span>Vinculado</span>
+              }
+            </button>
+          </div>
         </div>
         }
       </div>
@@ -321,6 +330,11 @@
               <p class="text-xs text-neutral-600">
                 {{ getSpecialty(request.user) }}
               </p>
+              @if (request.message) {
+              <p class="text-xs text-neutral-500 italic mt-1 border-l-2 border-neutral-300 pl-2">
+                "{{ request.message }}"
+              </p>
+              }
             </div>
 
             <!-- Status Badge -->
@@ -385,6 +399,11 @@
               <p class="text-xs text-neutral-600">
                 {{ getSpecialty(request.user) }}
               </p>
+              @if (request.message) {
+              <p class="text-xs text-neutral-500 italic mt-1 border-l-2 border-neutral-300 pl-2">
+                "{{ request.message }}"
+              </p>
+              }
             </div>
 
             <!-- Status Badge -->
@@ -425,6 +444,7 @@
 <app-doctor-profile-modal
   [isVisible]="isModalVisible()"
   [doctor]="selectedDoctor()"
+  [showMessageField]="showModalMessageField()"
   (close)="closeModal()"
-  (requestLink)="requestLink($event)"
+  (requestLink)="requestLinkWithMessage($event)"
 ></app-doctor-profile-modal>
