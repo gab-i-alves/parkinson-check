@@ -174,6 +174,7 @@ def get_binded_patients(session: Session, current_user: User) -> list[PatientLis
                 bind_id=bind_id,
                 age=age,
                 status=status,
+                gender=patient.gender,
             )
         )
     return patient_list
@@ -402,6 +403,7 @@ def get_patients(session: Session, doctor: User, parameters: GetPatientsSchema) 
                 bind_id=None,
                 age=age,
                 status=status,
+                gender=patient.gender,
             )
         )
 
