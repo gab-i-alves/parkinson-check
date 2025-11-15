@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
 
 @Component({
   selector: 'app-clinical-test-type-selection',
@@ -13,6 +14,7 @@ export class ClinicalTestTypeSelectionComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private doctorDashboardService = inject(DoctorDashboardService);
+  private breadcrumbService = inject(BreadcrumbService);
 
   readonly patientId = signal<number | null>(null);
   readonly patientName = signal<string>('Carregando...');
@@ -31,6 +33,8 @@ export class ClinicalTestTypeSelectionComponent implements OnInit {
         const patient = result.patients.find((p) => +p.id === patientId);
         if (patient) {
           this.patientName.set(patient.name);
+          const currentUrl = this.router.url;
+          this.breadcrumbService.updateBreadcrumb(currentUrl, patient.name);
         } else {
           this.patientName.set('Paciente não encontrado');
         }
