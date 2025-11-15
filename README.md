@@ -64,6 +64,7 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento local:
     ```
 
 6.  **Acesse as aplicações:**
+
     - **Front-end (Angular):** [http://localhost:4200](http://localhost:4200)
     - **Back-end (FastAPI Docs):** [http://localhost:8000/docs](http://localhost:8000/docs)
 
@@ -75,6 +76,7 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento local:
     ```bash
     docker exec parkinson-check-backend-1 sh -c "cd /app && PYTHONPATH=/app python scripts/seeds/first_admin.py"
     ```
+
     - Alternativamente, abra a interface do docker, e nela o **terminal do container do backend (Exec tab)**, e então execute:
 
     ```bash
@@ -156,7 +158,7 @@ E cliquei em "Entre no sistema"
 1. **Login seguro**
 
    - Dado que estou na tela de login
-   - Quando preencho e-mail/CPF e senha corretamente
+   - Quando preencho e-mail e senha corretamente
    - Então o sistema valida meus dados e permite o acesso
 
 2. **Redirecionamento apropriado**
@@ -182,11 +184,9 @@ E cliquei em "Entre no sistema"
 
 ## Critérios de Aceitação
 
-- Formulário específico para usuários
-- Validação de dados
-- Confirmação por e-mail
+- Formulário multi-etapas para usuários
+- Validação de dados e formatos
 - Armazenamento seguro
-- Conclusão do cadastro
 
 ### Detalhamento dos Critérios
 
@@ -194,34 +194,35 @@ E cliquei em "Entre no sistema"
 Dado que não tenho cadastro  
 E cliquei em "Cadastre-se como Usuário"
 
-1. **Formulário específico para usuários**
+1. **Formulário multi-etapas para usuários**
 
    - Dado que estou na tela de cadastro
-   - Quando preencho todos os campos obrigatórios e informo um CEP válido
-   - Então o sistema preenche automaticamente os campos de endereço
+   - Quando preencho os dados em 3 etapas (dados pessoais, endereço e segurança)
+   - Então o sistema valida cada etapa antes de permitir avançar para a próxima
 
-2. **Validação de dados**
+2. **Validação de dados e formatos**
 
    - Dado que inseri meus dados pessoais
-   - Quando o sistema verifica o formato e duplicidade
-   - Então exibe mensagem de erro caso encontre problemas ou permite prosseguir
+   - Quando o sistema verifica o formato, duplicidade e validade dos dados
+   - Então valida CPF com algoritmo de dígitos verificadores, verifica e-mail único, e exibe mensagem de erro caso encontre problemas ou permite prosseguir
 
-3. **Confirmação por e-mail**
+3. **Validação de senha forte**
 
-   - Dado que concluí o preenchimento do formulário
-   - Quando clico em "Cadastrar"
-   - Então recebo um e-mail com link de ativação da conta
+   - Dado que estou definindo minha senha
+   - Quando digito a senha e sua confirmação
+   - Então o sistema exige mínimo 8 caracteres com pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial, e valida se a confirmação corresponde à senha
 
-4. **Armazenamento seguro**
+4. **Preenchimento automático de endereço**
 
-   - Dado que defini minha senha
+   - Dado que estou na etapa de endereço
+   - Quando informo um CEP válido
+   - Então o sistema preenche automaticamente os campos de logradouro, bairro, cidade e estado
+
+5. **Armazenamento seguro**
+
+   - Dado que completei todas as etapas do cadastro
    - Quando o sistema registra meu cadastro
-   - Então armazena a senha de forma criptografada e protege meus dados pessoais
-
-5. **Conclusão do cadastro**
-   - Dado que cliquei no link de ativação recebido por e-mail
-   - Quando o sistema confirma minha conta
-   - Então sou redirecionado para a tela inicial com mensagem de boas-vindas
+   - Então armazena a senha de forma criptografada, protege meus dados pessoais e permite login imediato
 
 ---
 
@@ -229,7 +230,7 @@ E cliquei em "Cadastre-se como Usuário"
 
 ## História do Usuário
 
-**Sendo** um usuário (paciente)  
+**Sendo** um paciente
 **Quero** realizar o teste da espiral em um modo de prática  
 **Para** me familiarizar com o exercício e ter um feedback imediato sobre meu desempenho.
 
@@ -343,6 +344,53 @@ E naveguei até a seção de testes
    - Dado que o sistema concluiu a análise
    - Quando os resultados são processados
    - Então visualizo métricas vocais com explicações sobre os indicadores analisados
+
+---
+
+# HU005 – Visualizar Resultados Individuais
+
+## História do Usuário
+
+**Sendo** paciente  
+**Quero** visualizar detalhadamente os resultados de cada teste clínico realizado em consultório  
+**Para** entender minha condição e acompanhar as avaliações oficiais feitas pelo meu médico.
+
+## Critérios de Aceitação
+
+- Acesso ao resultado clínico
+- Apresentação completa dos dados
+- Visualização de feedback médico
+- Download de mídia
+
+### Detalhamento dos Critérios
+
+**Critério de contexto:**  
+Dado que estou logado no sistema  
+E realizei ao menos um teste clínico em consultório
+
+1. **Acesso ao resultado clínico**
+
+   - Dado que estou na página de histórico de testes
+   - Quando seleciono um teste específico da lista
+   - Então o sistema exibe a página de detalhes daquele teste clínico
+
+2. **Apresentação completa dos dados**
+
+   - Dado que acessei um teste específico
+   - Quando a página carrega completamente
+   - Então visualizo data, hora, tipo de teste, score, classificação, duração da execução e a mídia original (imagem da espiral ou áudio da voz)
+
+3. **Visualização de feedback médico**
+
+   - Dado que estou na página de resultado individual
+   - Quando um médico vinculado já analisou meu teste
+   - Então visualizo suas anotações e recomendações sobre aquele resultado
+   - E cada anotação exibe o nome do médico, CRM, categoria e data de criação
+
+4. **Download de mídia**
+   - Dado que estou visualizando um teste com mídia
+   - Quando clico no botão de download
+   - Então o sistema permite baixar a imagem ou áudio original do teste
 
 ---
 
