@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, LargeBinary, String, func
-from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
+from sqlalchemy import ForeignKey, Integer, LargeBinary, String, func
+from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.enums import SpiralMethods, TestStatus, TestType
+from core.enums import SpiralMethods, TestType
 from core.models.table_registry import table_registry
 
 if TYPE_CHECKING:
@@ -20,9 +20,6 @@ class Test:
     execution_date: Mapped[datetime] = mapped_column(init=False, default=func.now())
     test_type: Mapped[TestType] = mapped_column(
         "type", PG_ENUM(TestType, name="test_type_enum", create_type=True)
-    )
-    status: Mapped[TestStatus] = mapped_column(
-        "status", PG_ENUM(TestStatus, name="test_status_enum", create_type=True)
     )
     score: Mapped[float] = mapped_column(nullable=False)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"))
@@ -55,6 +52,9 @@ class VoiceTest(Test):
     voice_audio_content_type: Mapped[str | None] = mapped_column(
         String, nullable=True, default=None, doc="Content-Type do arquivo (ex: audio/webm)"
     )
+    raw_parkinson_probability: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Probabilidade original de Parkinson retornada pelo modelo (0.0-1.0)"
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": TestType.VOICE_TEST,
@@ -80,6 +80,23 @@ class SpiralTest(Test):
     )
     spiral_image_content_type: Mapped[str | None] = mapped_column(
         String, nullable=True, default=None, doc="Content-Type do arquivo (ex: image/png)"
+    )
+
+    # Campos para armazenar resultados dos modelos
+    model_predictions: Mapped[dict | None] = mapped_column(
+        JSONB, nullable=True, default=None, doc="Previsões individuais dos 11 modelos em formato JSON"
+    )
+    avg_parkinson_probability: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Média das probabilidades de Parkinson de todos os modelos (0.0-1.0)"
+    )
+    majority_vote: Mapped[str | None] = mapped_column(
+        String(20), nullable=True, default=None, doc="Decisão por voto majoritário: HEALTHY ou PARKINSON"
+    )
+    healthy_votes: Mapped[int | None] = mapped_column(
+        Integer, nullable=True, default=None, doc="Quantidade de modelos que classificaram como Healthy"
+    )
+    parkinson_votes: Mapped[int | None] = mapped_column(
+        Integer, nullable=True, default=None, doc="Quantidade de modelos que classificaram como Parkinson"
     )
 
     __mapper_args__ = {
