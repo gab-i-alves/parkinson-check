@@ -92,6 +92,7 @@ class Bind:
         PG_ENUM(UserType, name="user_type_enum", create_type=False),
         nullable=False
     )
+    message: Mapped[str | None] = mapped_column(nullable=True, default=None)
 
 
 @table_registry.mapped_as_dataclass
