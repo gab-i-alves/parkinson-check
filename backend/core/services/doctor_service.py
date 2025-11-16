@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from api.schemas.users import DoctorListResponse, DoctorSchema, GetDoctorsSchema
+from core.enums.doctor_enum import DoctorStatus
 from core.models import Bind, Doctor, User
 from core.security.security import get_password_hash
 
@@ -52,7 +53,7 @@ def create_doctor(doctor: DoctorSchema, session: Session):
         user_type=UserType.DOCTOR,
         crm=doctor.crm,
         expertise_area=doctor.specialty,  # NÃO ALTERAR
-        status_approval=True,
+        status=DoctorStatus.PENDING,
         hashed_password=get_password_hash(doctor.password),
         address_id=address.id,  # NÃO ALTERAR
     )

@@ -2,6 +2,7 @@ from datetime import date, datetime
 from unittest.mock import MagicMock
 
 import pytest
+from core.enums.doctor_enum import DoctorStatus
 from faker import Faker
 
 from core.enums import BindEnum, UserType
@@ -63,7 +64,7 @@ def sample_doctor(sample_address):
         address_id=sample_address.id,
         crm="123456",
         expertise_area="Neurologia",
-        status_approval=True,
+        status=DoctorStatus.APPROVED,
     )
     doctor.id = 2
     doctor.address = sample_address

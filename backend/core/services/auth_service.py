@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 
 from api.schemas.auth import LoginFormRequest
 from api.schemas.token import TokenResponse, UserResponse
+from backend.core.enums.doctor_enum import DoctorStatus
+from core.models.users import Doctor
 from core.security.security import verify_password
 from core.services.email_service import (
     send_password_reset_email_background,
@@ -33,6 +35,19 @@ def login(login_form: LoginFormRequest, session: Session):
             HTTPStatus.FORBIDDEN,
             detail="Sua conta não está ativa, verifique o email ou entre em contato com o suporte"
         )
+        
+    if isinstance(user, Doctor):
+        if user.status != DoctorStatus.APPROVED:
+            detail_message = "Sua conta está pendente de aprovação."
+            if user.status == DoctorStatus.REJECTED:
+                detail_message = "Seu cadastro foi rejeitado."
+            elif user.status == DoctorStatus.SUSPENDED:
+                detail_message = "Sua conta está suspensa."
+            
+            raise HTTPException(
+                HTTPStatus.FORBIDDEN,
+                detail=f"{detail_message} Entre em contato com o suporte."
+            )
 
     token_data = create_access_token(data={"sub": login_form.email})
 
