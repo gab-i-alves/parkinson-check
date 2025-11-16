@@ -39,15 +39,16 @@ export class DoctorService {
     }
 
     return this.http
-      .get<Doctor[]>(BASE_URL, {
+      .get<any[]>(BASE_URL, {
         ...this.getHttpOptions(),
         params: params,
       })
       .pipe(
-        map((resp: HttpResponse<Doctor[]>) => {
+        map((resp: HttpResponse<any[]>) => {
           if (resp.status === 200 && resp.body) {
             return resp.body.map((doctor) => ({
               ...doctor,
+              expertise_area: doctor.specialty || doctor.expertise_area,
               bindingId: doctor.bind_id,
             }));
           }
@@ -64,10 +65,11 @@ export class DoctorService {
     return this.http
       .get<any[]>('/api/users/linked_doctors', this.getHttpOptions())
       .pipe(
-        map((resp: HttpResponse<Doctor[]>) => {
+        map((resp: HttpResponse<any[]>) => {
           if (resp.status === 200 && resp.body) {
             const doctors = resp.body.map((item) => ({
               ...item,
+              expertise_area: item.specialty || item.expertise_area,
               bindingId: item.bind_id, // Mapeia bind_id para bindingId
             }));
             return doctors;

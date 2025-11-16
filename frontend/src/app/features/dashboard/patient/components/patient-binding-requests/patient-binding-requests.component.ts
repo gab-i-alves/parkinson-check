@@ -218,7 +218,7 @@ export class PatientBindingRequestsComponent implements OnInit {
         name: user.name,
         expertise_area: user.specialty,
         crm: user.crm,
-        location: '', // Location not available in binding requests
+        location: user.location || '',
         status: 'pending' // Status is pending since viewing from binding requests
       };
       this.selectedDoctor.set(doctor);

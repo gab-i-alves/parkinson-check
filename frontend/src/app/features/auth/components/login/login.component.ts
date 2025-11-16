@@ -127,6 +127,7 @@ export class LoginComponent implements OnInit {
     const credentials: LoginForm = {
       email: this.loginForm.value.email!,
       password: this.loginForm.value.password!,
+      remember: this.loginForm.value.remember ?? false,
     };
 
     console.log('Dados do formulário:', credentials);

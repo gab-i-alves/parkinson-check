@@ -84,6 +84,14 @@
           </div>
           <span class="text-sm text-neutral-900 font-semibold">{{ doctor()!.crm }}</span>
         </div>
+
+        <!-- Location -->
+        @if (doctor()!.location) {
+        <div class="flex items-center justify-between py-2 border-b border-neutral-200">
+          <span class="text-sm font-medium text-neutral-700">Localização</span>
+          <span class="text-sm text-neutral-900">{{ doctor()!.location }}</span>
+        </div>
+        }
       }
 
       <!-- Patient-specific fields -->
@@ -106,9 +114,17 @@
 
         <!-- Age -->
         @if (doctor()!.age && doctor()!.age! > 0) {
-        <div class="flex items-center justify-between py-2">
+        <div class="flex items-center justify-between py-2 border-b border-neutral-200">
           <span class="text-sm font-medium text-neutral-700">Idade</span>
           <span class="text-sm text-neutral-900">{{ doctor()!.age }} anos</span>
+        </div>
+        }
+
+        <!-- Location -->
+        @if (doctor()!.location) {
+        <div class="flex items-center justify-between py-2">
+          <span class="text-sm font-medium text-neutral-700">Localização</span>
+          <span class="text-sm text-neutral-900">{{ doctor()!.location }}</span>
         </div>
         }
       }

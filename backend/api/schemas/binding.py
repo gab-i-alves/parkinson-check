@@ -27,6 +27,7 @@ class BindingPatient(BaseModel):
     email: EmailStr
     cpf: str
     age: int
+    location: str
 
 
 class BindingDoctor(BaseModel):
@@ -34,6 +35,7 @@ class BindingDoctor(BaseModel):
     name: str
     specialty: str
     crm: str
+    location: str
 
 
 class BindingRequestResponse(BaseModel):

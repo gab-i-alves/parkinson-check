@@ -13,6 +13,7 @@ export interface BindingPatient {
   email: string;
   cpf: string;
   age: number;
+  location: string;
 }
 
 // Doctor information in binding
@@ -21,6 +22,7 @@ export interface BindingDoctor {
   name: string;
   specialty: string;
   crm: string;
+  location: string;
 }
 
 // User type enum
