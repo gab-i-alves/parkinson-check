@@ -1,8 +1,9 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+from core.enums.doctor_enum import DoctorStatus
 from core.enums import Gender, UserType
 
 
@@ -61,6 +62,10 @@ class DoctorListResponse(UserResponse):
     crm: str
     location: str
     bind_id: Optional[int] = None
+    status: Optional[DoctorStatus] = None
+    reason: Optional[str] = None
+    approved_by: Optional[str] = None
+    approval_date: Optional[datetime] = None
 
 
 # TODO: ADICIONAR MAIS DADOS PARA O USUÁRIO COMO ALERGIAS, MEDICAMENTOS, ETC...

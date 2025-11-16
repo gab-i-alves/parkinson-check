@@ -160,7 +160,9 @@ async def change_doctor_status(
     new_status: DoctorStatus,
     reason: str,
     session: Session = Depends(get_session),
+    current_admin: User = Depends(get_current_user)
+    
 ):
     
-    return doctor_management_service.change_doctor_status(doctor_id, session, new_status, reason)
+    return doctor_management_service.change_doctor_status(doctor_id, session, current_admin, new_status, reason)
 

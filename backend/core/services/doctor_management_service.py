@@ -127,7 +127,7 @@ def reject_doctor(doctor_id: int, session: Session, reason: str, current_admin: 
     
     return doctor
 
-def change_doctor_status(doctor_id: int, session: Session, new_status: DoctorStatus, reason: str, current_admin: User = Depends(get_current_user)) -> Doctor:
+def change_doctor_status(doctor_id: int, session: Session, current_admin: User, new_status: DoctorStatus, reason: str, ) -> Doctor:
     doctor = session.query(Doctor).filter(Doctor.id == doctor_id).first()
     if not doctor:
         raise HTTPException(HTTPStatus.NOT_FOUND, detail="Médico não encontrado")
