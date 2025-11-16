@@ -44,7 +44,7 @@ export class DoctorRegisterFormComponent {
     { value: 'Ortopedia', label: 'Ortopedia', icon: '🦴' },
     { value: 'Psiquiatria', label: 'Psiquiatria', icon: '🧘' },
     { value: 'Clínica Geral', label: 'Clínica Geral', icon: '👨‍⚕️' },
-    { value: 'Outra', label: 'Outra', icon: '📋' }
+    { value: 'Outra', label: 'Outra', icon: '📋' },
   ];
 
   // Document upload
@@ -54,13 +54,15 @@ export class DoctorRegisterFormComponent {
   } = {
     'crm-front': null,
     'crm-back': null,
-    'proof': null
+    proof: null,
   };
 
   // DECISÃO DE ARQUITETURA: Uso de @Output para comunicar com o pai.
   // Em vez de conter a lógica de submissão, ele emite um evento.
   // Isso desacopla o componente da lógica de negócio (ex: chamadas de API).
   @Output() formSubmit = new EventEmitter<void>();
+
+  @Output() filesChange = new EventEmitter<{ [key: string]: File | null }>();
 
   // Navegação entre steps
   nextStep(): void {
@@ -161,7 +163,7 @@ export class DoctorRegisterFormComponent {
     const labels: { [key: string]: string } = {
       'crm-front': 'CRM Frente',
       'crm-back': 'CRM Verso',
-      'proof': 'Comprovante'
+      proof: 'Comprovante',
     };
     return labels[tab] || '';
   }
@@ -178,13 +180,20 @@ export class DoctorRegisterFormComponent {
       }
 
       // Validate file type
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+      const validTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'application/pdf',
+      ];
       if (!validTypes.includes(file.type)) {
         alert('Formato de arquivo inválido. Use JPG, PNG ou PDF.');
         return;
       }
 
       this.uploadedFiles[this.activeDocumentTab] = file;
+
+      this.filesChange.emit(this.uploadedFiles);
 
       // Reset input
       input.value = '';
@@ -193,6 +202,8 @@ export class DoctorRegisterFormComponent {
 
   removeFile(tab: string): void {
     this.uploadedFiles[tab] = null;
+
+    this.filesChange.emit(this.uploadedFiles);
   }
 
   formatFileSize(bytes: number): string {
@@ -200,6 +211,6 @@ export class DoctorRegisterFormComponent {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   }
 }

@@ -8,10 +8,10 @@ CREATE TYPE experience_level_enum AS ENUM (
   'JUNIOR', 'INTERMEDIATE', 'SENIOR', 'EXPERT'
 );
 CREATE TYPE document_type_enum AS ENUM (
-  'crm_certificate', 'diploma', 'identity', 'cpf_document', 'proof_of_address', 'other'
+  'CRM_CERTIFICATE', 'DIPLOMA', 'IDENTITY', 'CPF_DOCUMENT', 'PROOF_OF_ADDRESS', 'OTHER'
 );
 CREATE TYPE activity_type_enum AS ENUM (
-  'registration', 'login', 'status_change', 'patient_link', 'test_conducted', 'note_added', 'profile_update'
+  'REGISTRATION', 'LOGIN', 'STATUS_CHANGE', 'PATIENT_LINK', 'TEST_CONDUCED', 'NOTE_ADDED', 'PROFILE_UPDATE'
 );
 
 ALTER TABLE doctor

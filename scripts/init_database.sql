@@ -21,10 +21,10 @@ CREATE TYPE experience_level_enum AS ENUM (
   'JUNIOR', 'INTERMEDIATE', 'SENIOR', 'EXPERT'
 );
 CREATE TYPE document_type_enum AS ENUM (
-  'crm_certificate', 'diploma', 'identity', 'cpf_document', 'proof_of_address', 'other'
+  'CRM_CERTIFICATE', 'DIPLOMA', 'IDENTITY', 'CPF_DOCUMENT', 'PROOF_OF_ADDRESS', 'OTHER'
 );
 CREATE TYPE activity_type_enum AS ENUM (
-  'registration', 'login', 'status_change', 'patient_link', 'test_conducted', 'note_added', 'profile_update'
+  'REGISTRATION', 'LOGIN', 'STATUS_CHANGE', 'PATIENT_LINK', 'TEST_CONDUCED', 'NOTE_ADDED', 'PROFILE_UPDATE'
 );
 
 CREATE TABLE IF NOT EXISTS "address" (
@@ -131,6 +131,20 @@ CREATE TABLE IF NOT EXISTS "notification" (
   "bind_id" INTEGER DEFAULT NULL,
   "read" BOOLEAN NOT NULL DEFAULT FALSE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "doctor_document" (
+  "id" SERIAL PRIMARY KEY,
+  "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
+  "document_type" document_type_enum NOT NULL DEFAULT 'CRM_CERTIFICATE',
+  "file_name" VARCHAR(255) NOT NULL,
+  "file_path" VARCHAR(500) NOT NULL,
+  "file_size" INTEGER NOT NULL,  -- em bytes
+  "mime_type" VARCHAR(100) NOT NULL,
+  "uploaded_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "verified" BOOLEAN NOT NULL DEFAULT FALSE,
+  "verified_by_admin_id" INTEGER REFERENCES "admin" ("id"),
+  "verified_at" TIMESTAMPTZ
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()

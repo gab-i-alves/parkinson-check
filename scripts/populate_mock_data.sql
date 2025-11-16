@@ -57,7 +57,7 @@ INSERT INTO "user" (type, name, email, hashed_password, cpf, birthdate, gender, 
 ('DOCTOR', 'Dr. Samuel César Julio Castro', 'samuel_cesar_castro@projetti.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '21950092410', '1992-07-07 00:00:00', 'MALE', 13, TRUE),
 ('DOCTOR', 'Dra. Fernanda Flávia Melissa Carvalho', 'fernanda_flavia_carvalho@cbsdobrasil.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '51675617600', '1966-10-27 00:00:00', 'FEMALE', 14, TRUE),
 ('DOCTOR', 'Dra. Heloisa Giovana Malu Pereira', 'heloisa_pereira@castromobile.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '29852779303', '1974-11-08 00:00:00', 'FEMALE', 15, TRUE),
-('ADMIN', 'Administrador', 'pcheck.noreply@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$ChGMK7vOQS8OJJBFDHCMdQ$DJLgov3btGM8DNiTKXuTH4Kf5I4phyhXMCTy2dpebqM', '00000000000', '1990-01-01 00:00:00', 'FEMALE', 1, TRUE);
+('ADMIN', 'Administrador', 'pcheck.noreply@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '00000000000', '1990-01-01 00:00:00', 'FEMALE', 1, TRUE);
 
 -- ========================================
 -- INSERÇÃO DE PACIENTES (referencia user)
