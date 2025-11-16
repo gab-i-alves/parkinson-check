@@ -13,6 +13,7 @@ import { BadgeComponent } from '../../../../../shared/components/badge/badge.com
 
 interface PatientWithBinding extends Patient {
   bindingStatus?: 'none' | 'pending' | 'linked';
+  location?: string;
 }
 
 @Component({
@@ -41,10 +42,17 @@ export class BindingRequestsComponent implements OnInit {
   // Busca de pacientes
   searchTerm = signal<string>('');
   statusFilter = signal<string>('');
+  testTypeFilter = signal<string>('');
   searchResults = signal<PatientWithBinding[]>([]);
   isLoadingSearch = signal<boolean>(false);
   sortBy = signal<'name' | 'age' | 'lastTestDate'>('name');
   sortOrder = signal<'asc' | 'desc'>('asc');
+
+  // Paginação
+  currentPage = signal<number>(1);
+  pageSize = signal<number>(10);
+  pageSizeOptions = [10, 25, 50];
+  Math = Math;
 
   ngOnInit(): void {
     this.loadRequests();
@@ -255,6 +263,32 @@ export class BindingRequestsComponent implements OnInit {
     return labels[status];
   }
 
+  getFilterStatusLabel(): string {
+    const filter = this.statusFilter();
+    if (!filter) return '';
+    const labels: Record<string, string> = {
+      stable: 'Estável',
+      attention: 'Atenção',
+      critical: 'Crítico',
+    };
+    return labels[filter] || filter;
+  }
+
+  getTestTypeLabel(testType?: string): string {
+    if (!testType) return 'N/A';
+    const labels: Record<string, string> = {
+      spiral: 'Espiral',
+      voice: 'Voz',
+    };
+    return labels[testType] || testType;
+  }
+
+  formatDate(date?: string): string {
+    if (!date) return 'N/A';
+    const d = new Date(date);
+    return d.toLocaleDateString('pt-BR');
+  }
+
   getStatusVariant(status?: PatientStatus): 'success' | 'warning' | 'error' | 'neutral' {
     if (!status) return 'neutral';
     const variants: Record<PatientStatus, 'success' | 'warning' | 'error'> = {
@@ -292,6 +326,20 @@ export class BindingRequestsComponent implements OnInit {
     }
   }
 
+  viewPatientFromSearch(patient: PatientWithBinding): void {
+    const patientProfile: ProfileData = {
+      id: patient.id,
+      name: patient.name,
+      email: patient.email || '',
+      cpf: patient.cpf,
+      age: patient.age,
+      location: patient.location,
+    };
+    this.selectedPatient.set(patientProfile);
+    this.showModalMessageField.set(false);
+    this.isPatientProfileModalVisible.set(true);
+  }
+
   closePatientProfile(): void {
     this.isPatientProfileModalVisible.set(false);
     this.selectedPatient.set(null);
@@ -301,5 +349,47 @@ export class BindingRequestsComponent implements OnInit {
   // Helper method to safely get email from user
   getEmail(user: any): string {
     return isBindingPatient(user) ? user.email : '';
+  }
+
+  // Paginação computed
+  totalPages(): number {
+    return Math.ceil(this.searchResults().length / this.pageSize());
+  }
+
+  paginatedResults(): PatientWithBinding[] {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    return this.searchResults().slice(start, end);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(page => page + 1);
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(page => page - 1);
+    }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const value = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.pageSize.set(value);
+    this.currentPage.set(1); // Reset to first page
+  }
+
+  clearFilters(): void {
+    this.searchTerm.set('');
+    this.statusFilter.set('');
+    this.testTypeFilter.set('');
+    this.currentPage.set(1);
   }
 }
