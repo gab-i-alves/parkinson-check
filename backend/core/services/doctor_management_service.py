@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session, joinedload
 from fastapi import Depends, HTTPException
 from http import HTTPStatus
-from backend.core.models.doctor_utils import DoctorActivityLog
+from core.models.doctor_utils import DoctorActivityLog
 from core.security.security import get_current_user
 from core.enums.doctor_enum import ActivityType, DoctorStatus
 
@@ -47,7 +47,7 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListRe
 
 def get_pending_doctors(session: Session) -> list[DoctorListResponse]:
     doctor_query = session.query(Doctor).options(joinedload(Doctor.address))
-    doctor_query = doctor_query.filter_by(Doctor.status == DoctorStatus.PENDING)
+    doctor_query = doctor_query.filter(Doctor.status == DoctorStatus.PENDING)
 
     doctors = doctor_query.all()
 
@@ -76,32 +76,54 @@ def get_pending_doctors(session: Session) -> list[DoctorListResponse]:
 
     return doctor_list
 
-def approve_doctor(doctor_id: int, session: Session, current_admin: User = Depends(get_current_user)) -> Doctor:
+def get_doctor_by_id(doctor_id: int, session: Session) -> Doctor:
+    doctor = session.query(Doctor).filter(Doctor.id == doctor_id).first()
+    if not doctor:
+        raise HTTPException(HTTPStatus.NOT_FOUND, detail="Médico não encontrado")
+        
+    return doctor
+
+def approve_doctor(doctor_id: int, session: Session, current_admin: User) -> Doctor:
     doctor = session.query(Doctor).filter(Doctor.id == doctor_id).first()
     if not doctor:
         raise HTTPException(HTTPStatus.NOT_FOUND, detail="Médico não encontrado")
     
-    if doctor.status == DoctorStatus.APPROVED:
-        raise HTTPException(HTTPStatus.CONFLICT, detail="O médico já foi aprovado")
+    if doctor.status != DoctorStatus.PENDING:
+        if doctor.status == DoctorStatus.APPROVED:
+            raise HTTPException(HTTPStatus.CONFLICT, detail="O médico já foi aprovado")
+        else:
+            raise HTTPException(HTTPStatus.BAD_REQUEST, detail="O médico não consta como pendente")
+        
         
     doctor.status = DoctorStatus.APPROVED
     doctor.approved_by_admin_id = current_admin.id
     doctor.approval_date = datetime.now()
     
+    session.add(doctor)
+    session.commit()
+    session.refresh(doctor)
+    
     return doctor
 
-def reject_doctor(doctor_id: int, session: Session, reason: str, current_admin: User = Depends(get_current_user)) -> Doctor:
+def reject_doctor(doctor_id: int, session: Session, reason: str, current_admin: User) -> Doctor:
     doctor = session.query(Doctor).filter(Doctor.id == doctor_id).first()
     if not doctor:
         raise HTTPException(HTTPStatus.NOT_FOUND, detail="Médico não encontrado")
     
-    if doctor.status == DoctorStatus.REJECTED:
-        raise HTTPException(HTTPStatus.CONFLICT, detail="O médico já foi rejeitado, motivo:" + doctor.rejection_reason)
+    if doctor.status != DoctorStatus.PENDING:
+        if doctor.status == DoctorStatus.REJECTED:
+            raise HTTPException(HTTPStatus.CONFLICT, detail="O médico já foi rejeitado, motivo:" + doctor.rejection_reason)
+        else:
+            raise HTTPException(HTTPStatus.BAD_REQUEST, detail="O médico não consta como pendente")
         
     doctor.status = DoctorStatus.REJECTED
     doctor.rejection_reason = reason
     doctor.approved_by_admin_id = current_admin.id
     doctor.approval_date = datetime.now()
+    
+    session.add(doctor)
+    session.commit()
+    session.refresh(doctor)
     
     return doctor
 
@@ -110,10 +132,21 @@ def change_doctor_status(doctor_id: int, session: Session, new_status: DoctorSta
     if not doctor:
         raise HTTPException(HTTPStatus.NOT_FOUND, detail="Médico não encontrado")
     
+    if doctor.status == new_status:
+        raise HTTPException(HTTPStatus.CONFLICT, detail="O médico já está nesse estado")
+    
+    if doctor.status == DoctorStatus.PENDING:
+        if new_status != DoctorStatus.REJECTED and new_status != DoctorStatus.APPROVED:
+            raise HTTPException(HTTPStatus.BAD_REQUEST, detail="O médico está pendente, aprove-o ou rejeite-o")
+
         
     doctor.status = new_status
     doctor.rejection_reason = reason
     doctor.approved_by_admin_id = current_admin.id
     doctor.approval_date = datetime.now()
+    
+    session.add(doctor)
+    session.commit()
+    session.refresh(doctor)
     
     return doctor

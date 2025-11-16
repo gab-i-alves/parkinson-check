@@ -1,4 +1,4 @@
-CREATE TYPE user_type_enum AS ENUM ('PATIENT', 'DOCTOR');
+CREATE TYPE user_type_enum AS ENUM ('PATIENT', 'DOCTOR', 'ADMIN');
 
 CREATE TYPE gender_enum AS ENUM ('MALE', 'FEMALE', 'PREFER_NOT_TO_SAY');
 
@@ -13,6 +13,19 @@ CREATE TYPE spiral_methods_enum AS ENUM ('WEBCAM', 'PAPER');
 CREATE TYPE note_category_enum AS ENUM ('OBSERVATION', 'RECOMMENDATION', 'ALERT');
 
 CREATE TYPE notification_type_enum AS ENUM ('BIND_REQUEST', 'BIND_ACCEPTED', 'BIND_REJECTED', 'BIND_REVERSED');
+
+CREATE TYPE doctor_status_enum AS ENUM (
+  'PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED', 'IN_REVIEW'
+);
+CREATE TYPE experience_level_enum AS ENUM (
+  'JUNIOR', 'INTERMEDIATE', 'SENIOR', 'EXPERT'
+);
+CREATE TYPE document_type_enum AS ENUM (
+  'crm_certificate', 'diploma', 'identity', 'cpf_document', 'proof_of_address', 'other'
+);
+CREATE TYPE activity_type_enum AS ENUM (
+  'registration', 'login', 'status_change', 'patient_link', 'test_conducted', 'note_added', 'profile_update'
+);
 
 CREATE TABLE IF NOT EXISTS "address" (
   "id" SERIAL PRIMARY KEY,
@@ -57,7 +70,11 @@ CREATE TABLE IF NOT EXISTS "doctor" (
   "id" integer PRIMARY KEY  REFERENCES "user" ("id"),
   "crm" char(8) UNIQUE NOT NULL,
   "expertise_area" varchar(50),
-  "status_approval" boolean
+  "status" doctor_status_enum NOT NULL DEFAULT 'PENDING',
+  "experience_level" experience_level_enum NOT NULL DEFAULT 'JUNIOR',
+  "approval_date" TIMESTAMPTZ,
+  "rejection_reason" varchar(50),
+  "approved_by_admin_id" INTEGER REFERENCES "admin"(id)
 );
 
 CREATE TABLE IF NOT EXISTS "bind" (

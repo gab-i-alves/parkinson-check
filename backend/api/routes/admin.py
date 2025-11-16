@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from core.services import doctor_management_service
 from core.enums.doctor_enum import DoctorStatus
 from core.enums.user_enum import UserType
-from core.security.security import anonymizeCPF, get_admin_user
+from core.security.security import anonymizeCPF, get_admin_user, get_current_user
 from infra.db.connection import get_session
 from core.models import User, Doctor, Patient 
 from core.services import user_management_service
@@ -126,20 +126,21 @@ async def list_pending_doctors(
     doctors = doctor_management_service.get_pending_doctors(session)
     return doctors
 
-@router.get("/doctors/{doctor_id}", response_model=list[DoctorListResponse])
+@router.get("/doctors/{doctor_id}", response_model=Doctor)
 async def search_doctor(
         doctor_id: int,
         session: Session = Depends(get_session),
 ):
-    doctors = doctor_management_service.get_doctors(session, doctor_id)
+    doctors = doctor_management_service.get_doctor_by_id(doctor_id, session)
     return doctors
 
 @router.post("/doctors/{doctor_id}/approve", response_model=Doctor)
 async def approve_doctor(
         doctor_id: int,
         session: Session = Depends(get_session),
+        current_admin: User = Depends(get_current_user)
 ):
-    doctor = doctor_management_service.approve_doctor(doctor_id, session)
+    doctor = doctor_management_service.approve_doctor(doctor_id, session, current_admin)
     return doctor
 
 @router.post("/doctors/{doctor_id}/reject", response_model=Doctor)
@@ -147,8 +148,9 @@ async def reject_doctor(
         doctor_id: int,
         reason: str,
         session: Session = Depends(get_session),
+        current_admin: User = Depends(get_current_user)
 ):
-    doctor = doctor_management_service.reject_doctor(doctor_id, session, reason)
+    doctor = doctor_management_service.reject_doctor(doctor_id, session, current_admin, reason)
     return doctor
 
 

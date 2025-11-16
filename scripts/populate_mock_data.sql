@@ -56,7 +56,8 @@ INSERT INTO "user" (type, name, email, hashed_password, cpf, birthdate, gender, 
 INSERT INTO "user" (type, name, email, hashed_password, cpf, birthdate, gender, address_id, is_active) VALUES
 ('DOCTOR', 'Dr. Samuel César Julio Castro', 'samuel_cesar_castro@projetti.com', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '21950092410', '1992-07-07 00:00:00', 'MALE', 13, TRUE),
 ('DOCTOR', 'Dra. Fernanda Flávia Melissa Carvalho', 'fernanda_flavia_carvalho@cbsdobrasil.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '51675617600', '1966-10-27 00:00:00', 'FEMALE', 14, TRUE),
-('DOCTOR', 'Dra. Heloisa Giovana Malu Pereira', 'heloisa_pereira@castromobile.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '29852779303', '1974-11-08 00:00:00', 'FEMALE', 15, TRUE);
+('DOCTOR', 'Dra. Heloisa Giovana Malu Pereira', 'heloisa_pereira@castromobile.com.br', '$argon2id$v=19$m=65536,t=3,p=4$gWHuKVL6TFqFa7FingrMFQ$hNuyVn7Tyo8DbivrsweK5SxMJTkxMxQCd57kldpqnEA', '29852779303', '1974-11-08 00:00:00', 'FEMALE', 15, TRUE),
+('ADMIN', 'Administrador', 'pcheck.noreply@gmail.com', '$argon2id$v=19$m=65536,t=3,p=4$ChGMK7vOQS8OJJBFDHCMdQ$DJLgov3btGM8DNiTKXuTH4Kf5I4phyhXMCTy2dpebqM', '00000000000', '1990-01-01 00:00:00', 'FEMALE', 1, TRUE);
 
 -- ========================================
 -- INSERÇÃO DE PACIENTES (referencia user)
@@ -69,10 +70,17 @@ INSERT INTO patient (id) VALUES
 -- INSERÇÃO DE MÉDICOS (referencia user + CRM)
 -- ========================================
 
-INSERT INTO doctor (id, crm, expertise_area, status_approval) VALUES
-(13, 'SC123456', 'Neurologia', TRUE),
-(14, 'PA789012', 'Geriatria', TRUE),
-(15, 'PB345678', 'Neurologia', TRUE);
+INSERT INTO doctor (id, crm, expertise_area, "status") VALUES
+(13, 'SC123456', 'Neurologia', 'APPROVED'),
+(14, 'PA789012', 'Geriatria', 'APPROVED'),
+(15, 'PB345678', 'Neurologia', 'PENDING');
+
+-- ========================================
+-- INSERÇÃO DO ADMIN (referencia user)
+-- ========================================
+
+INSERT INTO admin (id, is_superuser) VALUES
+(16, TRUE);
 
 -- ========================================
 -- INSERÇÃO DE VÍNCULOS (BINDS)

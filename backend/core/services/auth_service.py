@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from api.schemas.auth import LoginFormRequest
 from api.schemas.token import TokenResponse, UserResponse
-from backend.core.enums.doctor_enum import DoctorStatus
+from core.enums.doctor_enum import DoctorStatus
 from core.models.users import Doctor
 from core.security.security import verify_password
 from core.services.email_service import (
