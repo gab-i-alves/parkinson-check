@@ -18,6 +18,11 @@ def login(
 
     print(f"AMBIENTE DETETADO: '{settings.ENVIRONMENT}'")
 
+    # Define max_age do cookie baseado no remember_me
+    # Se remember_me=True, cookie persiste por 30 dias
+    # Se remember_me=False, cookie é de sessão (expira ao fechar navegador)
+    max_age = settings.REMEMBER_ME_EXPIRE_DAYS * 24 * 60 * 60 if form.remember_me else None
+
     if settings.ENVIRONMENT == "production":
         print("A APLICAR CONFIGURAÇÕES DE PRODUÇÃO PARA O COOKIE.")
         # Configurações para produção (Railway)
@@ -27,6 +32,7 @@ def login(
             httponly=True,
             secure=True,  # Obrigatório para samesite="none"
             samesite="none",  # Permite o envio entre subdomínios
+            max_age=max_age,  # Define a duração do cookie
         )
     else:
         print("A APLICAR CONFIGURAÇÕES DE DESENVOLVIMENTO PARA O COOKIE.")
@@ -37,6 +43,7 @@ def login(
             httponly=True,
             secure=False,
             samesite="lax",  # "lax" é suficiente e seguro para localhost
+            max_age=max_age,  # Define a duração do cookie
         )
 
     return token.user
