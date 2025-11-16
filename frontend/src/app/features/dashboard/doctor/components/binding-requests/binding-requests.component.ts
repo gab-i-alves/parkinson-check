@@ -280,6 +280,7 @@ export class BindingRequestsComponent implements OnInit {
         email: request.user.email,
         cpf: request.user.cpf,
         age: request.user.age,
+        location: request.user.location || '',
       };
       console.log('Patient profile criado:', patientProfile);
       this.selectedPatient.set(patientProfile);
