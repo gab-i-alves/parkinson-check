@@ -133,6 +133,14 @@ export const DASHBOARD_ROUTES: Routes = [
           ),
       },
       {
+        path: 'approve/:id',
+        canActivate: [authGuard(['admin'])],
+        loadComponent: () =>
+          import('./components/doctor-approval/doctor-approval.component').then(
+            (c) => c.DoctorApprovalComponent
+          ),
+      },
+      {
         path: 'users/edit/:id',
         canActivate: [authGuard(['admin'])],
         loadComponent: () =>

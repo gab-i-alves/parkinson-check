@@ -1,0 +1,303 @@
+@if (isLoading()) {
+<div class="flex h-64 items-center justify-center">
+  <div class="text-center">
+    <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-pink-600 border-r-transparent"></div>
+    <p class="mt-2 text-sm text-gray-500">Carregando...</p>
+  </div>
+</div>
+} @else if (doctor(); as doc) {
+<div class="space-y-6">
+  <!-- Header with back button -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <button
+        type="button"
+        (click)="goBack()"
+        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+      >
+        <svg class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Voltar
+      </button>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Aprovação de Médico</h1>
+        <p class="mt-1 text-sm text-gray-500">Revise as informações e documentação</p>
+      </div>
+    </div>
+    <app-badge [variant]="getStatusBadgeVariant(doc.status)">
+      {{ getStatusLabel(doc.status) }}
+    </app-badge>
+  </div>
+
+  <!-- Doctor Info Card -->
+  <div class="overflow-hidden rounded-lg bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+      <h3 class="text-lg font-medium leading-6 text-gray-900">Dados do Médico</h3>
+      <p class="mt-1 text-sm text-gray-500">Informações fornecidas no cadastro</p>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Nome Completo</dt>
+          <dd class="mt-1 text-sm font-semibold text-gray-900">{{ doc.name }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Email</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.email }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">CPF</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.cpf }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">CRM</dt>
+          <dd class="mt-1 text-sm font-semibold text-blue-600">{{ doc.crm }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Área de Atuação</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.expertise_area || 'Não informado' }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Localização</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.location || 'Não informado' }}</dd>
+        </div>
+        @if (doc.birthdate) {
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Data de Nascimento</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ formatDate(doc.birthdate) }}</dd>
+        </div>
+        }
+        @if (doc.gender) {
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Gênero</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.gender }}</dd>
+        </div>
+        }
+      </dl>
+    </div>
+  </div>
+
+  <!-- Documents Card -->
+  <div class="overflow-hidden rounded-lg bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-medium leading-6 text-gray-900">Documentação Enviada</h3>
+          <p class="mt-1 text-sm text-gray-500">Verificação de credenciais profissionais</p>
+        </div>
+        <span class="inline-flex items-center rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800">
+          {{ documents().length }} documento(s)
+        </span>
+      </div>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <button
+        type="button"
+        (click)="openDocumentModal()"
+        class="w-full inline-flex items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-white px-4 py-6 text-sm font-medium text-gray-700 hover:border-purple-400 hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors"
+      >
+        <svg class="mr-2 h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <span class="text-base">Visualizar Todos os Documentos ({{ documents().length }})</span>
+      </button>
+
+      @if (documents().length > 0) {
+      <div class="mt-4">
+        <p class="text-xs text-gray-500 text-center">
+          Clique para abrir a galeria de documentos, visualizar previews e fazer download
+        </p>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Verification Checklist Card -->
+  <div class="overflow-hidden rounded-lg bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gradient-to-r from-yellow-50 to-orange-50">
+      <h3 class="text-lg font-medium leading-6 text-gray-900">Checklist de Verificação</h3>
+      <p class="mt-1 text-sm text-gray-500">Itens a serem verificados antes da aprovação</p>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <ul class="space-y-3">
+        <li class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <p class="ml-3 text-sm text-gray-700">Validar CRM através de consulta ao Conselho Regional de Medicina</p>
+        </li>
+        <li class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <p class="ml-3 text-sm text-gray-700">Verificar autenticidade dos documentos enviados</p>
+        </li>
+        <li class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <p class="ml-3 text-sm text-gray-700">Confirmar que todos os dados estão corretos e completos</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="overflow-hidden rounded-lg bg-white shadow">
+    <div class="px-6 py-5 sm:p-6">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <button
+          type="button"
+          (click)="openRejectModal()"
+          class="inline-flex items-center justify-center rounded-md border-2 border-red-300 bg-white px-6 py-3 text-base font-medium text-red-700 shadow-sm hover:bg-red-50 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
+        >
+          <svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Rejeitar Cadastro
+        </button>
+        <button
+          type="button"
+          (click)="openApproveModal()"
+          class="inline-flex items-center justify-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+        >
+          <svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Aprovar Cadastro
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Document Viewer Modal -->
+<app-document-viewer-modal
+  [documents]="documents()"
+  [doctorId]="doc.id"
+  [isOpen]="isDocumentModalOpen()"
+  (close)="closeDocumentModal()"
+  (download)="downloadDocument($event)"
+/>
+
+<!-- Approval Confirmation Modal -->
+@if (isApproveModalOpen()) {
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+  (click)="closeApproveModal()"
+>
+  <div
+    class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="mb-4">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+        <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mt-3 text-center text-lg font-medium text-gray-900">
+        Confirmar Aprovação
+      </h3>
+      <p class="mt-2 text-center text-sm text-gray-500">
+        Você está prestes a aprovar o cadastro de <strong>{{ doc.name }}</strong>.
+      </p>
+      <p class="mt-2 text-center text-sm text-gray-500">
+        Um email de notificação será enviado automaticamente.
+      </p>
+    </div>
+
+    <div class="flex space-x-3">
+      <button
+        type="button"
+        (click)="closeApproveModal()"
+        class="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        (click)="confirmApproval()"
+        class="flex-1 rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+      >
+        Confirmar Aprovação
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Rejection Modal with Mandatory Reason -->
+@if (isRejectModalOpen()) {
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+  (click)="closeRejectModal()"
+>
+  <div
+    class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="mb-4">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+        <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h3 class="mt-3 text-center text-lg font-medium text-gray-900">
+        Rejeitar Cadastro
+      </h3>
+      <p class="mt-2 text-center text-sm text-gray-500">
+        Você está prestes a rejeitar o cadastro de <strong>{{ doc.name }}</strong>.
+      </p>
+    </div>
+
+    <div class="mb-4">
+      <label for="rejectionReason" class="block text-sm font-medium text-gray-700 mb-2">
+        Motivo da Rejeição <span class="text-red-600">*</span>
+      </label>
+      <textarea
+        id="rejectionReason"
+        rows="4"
+        [(ngModel)]="rejectionReason"
+        required
+        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+        placeholder="Descreva detalhadamente o motivo da rejeição. Este motivo será enviado por email ao médico."
+      ></textarea>
+      <p class="mt-1 text-xs text-gray-500">Campo obrigatório - o médico receberá este motivo por email</p>
+    </div>
+
+    <div class="flex space-x-3">
+      <button
+        type="button"
+        (click)="closeRejectModal()"
+        class="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        (click)="confirmRejection()"
+        [disabled]="!rejectionReason || rejectionReason.trim() === ''"
+        class="flex-1 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Confirmar Rejeição
+      </button>
+    </div>
+  </div>
+</div>
+}
+} @else {
+<div class="text-center py-12">
+  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  <p class="mt-4 text-sm text-gray-500">Médico não encontrado</p>
+</div>
+}
