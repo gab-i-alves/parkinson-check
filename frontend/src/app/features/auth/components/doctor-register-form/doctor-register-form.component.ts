@@ -47,6 +47,11 @@ export class DoctorRegisterFormComponent {
     { value: 'Outra', label: 'Outra', icon: '📋' },
   ];
 
+  // CRM mask patterns
+  crmMaskPatterns = {
+    'S': { pattern: new RegExp('[A-Z]') }
+  };
+
   // Document upload
   activeDocumentTab: 'crm-front' | 'crm-back' | 'proof' = 'crm-front';
   uploadedFiles: {

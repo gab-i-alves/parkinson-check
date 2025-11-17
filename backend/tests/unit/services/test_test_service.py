@@ -6,7 +6,7 @@ import pytest
 from fastapi import HTTPException, UploadFile
 
 from api.schemas.tests import SpiralImageSchema
-from core.enums import BindEnum, TestStatus, TestType
+from core.enums import BindEnum, TestType
 from core.models import Bind, SpiralTest, Test, VoiceTest
 from core.services import test_service
 
@@ -162,7 +162,7 @@ class TestTestService:
         test1.patient_id = sample_patient.id
         test1.score = 0.75
         test1.execution_date = "2023-10-01"
-        test1.test_type = TestStatus.DONE
+        test1.test_type = TestType.VOICE_TEST
 
         mock_bind_query = MagicMock()
         mock_bind_query.filter.return_value.all.return_value = [active_bind]
@@ -240,7 +240,6 @@ class TestTestService:
         voice_test.id = 1
         voice_test.test_type = TestType.VOICE_TEST
         voice_test.execution_date = datetime.now().date()
-        voice_test.status = TestStatus.DONE
         voice_test.score = 0.85
         voice_test.patient_id = sample_patient.id
         voice_test.record_duration = 5.5
@@ -249,7 +248,6 @@ class TestTestService:
         spiral_test.id = 2
         spiral_test.test_type = TestType.SPIRAL_TEST
         spiral_test.execution_date = datetime.now().date()
-        spiral_test.status = TestStatus.DONE
         spiral_test.score = 0.92
         spiral_test.patient_id = sample_patient.id
         spiral_test.draw_duration = 10.3

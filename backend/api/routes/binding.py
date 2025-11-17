@@ -33,7 +33,7 @@ def get_pending_binding_requests(
 def request_binding(
     request: RequestBinding, user: CurrentUser, session: Session = Depends(get_session)
 ):
-    return bind_service.send_bind_request(user, session, request.user_id)
+    return bind_service.send_bind_request(user, session, request.user_id, request.message)
 
 
 @router.post("/{binding_id}/accept", response_model=Bind)

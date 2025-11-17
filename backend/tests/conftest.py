@@ -103,12 +103,11 @@ def sample_bind(sample_doctor, sample_patient):
 @pytest.fixture
 def sample_voice_test(sample_patient):
     """Fixture para criar um teste de voz de exemplo."""
-    from core.enums import TestStatus, TestType
+    from core.enums import TestType
 
     # Create base Test attributes first
     test = VoiceTest(
         test_type=TestType.VOICE_TEST,
-        status=TestStatus.DONE,
         score=0.75,
         patient_id=sample_patient.id,
         record_duration=5.5,
@@ -121,11 +120,10 @@ def sample_voice_test(sample_patient):
 @pytest.fixture
 def sample_spiral_test(sample_patient):
     """Fixture para criar um teste de espiral de exemplo."""
-    from core.enums import SpiralMethods, TestStatus, TestType
+    from core.enums import SpiralMethods, TestType
 
     test = SpiralTest(
         test_type=TestType.SPIRAL_TEST,
-        status=TestStatus.DONE,
         score=0.82,
         patient_id=sample_patient.id,
         draw_duration=12.3,

@@ -343,8 +343,10 @@
           type="text"
           required
           formControlName="crm"
-          placeholder="00000-UF"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          mask="000000/SS"
+          [patterns]="crmMaskPatterns"
+          placeholder="123456/SP"
+          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm uppercase"
         />
         <div
           *ngIf="
@@ -362,6 +364,18 @@
           </svg>
           <span *ngIf="doctorForm.get('crm')?.errors?.['required']">
             Campo obrigatório.
+          </span>
+          <span *ngIf="doctorForm.get('crm')?.errors?.['minlength']">
+            CRM deve ter no mínimo 8 caracteres.
+          </span>
+          <span *ngIf="doctorForm.get('crm')?.errors?.['maxlength']">
+            CRM deve ter no máximo 10 caracteres.
+          </span>
+          <span *ngIf="doctorForm.get('crm')?.errors?.['crmInvalidFormat']">
+            {{ doctorForm.get('crm')?.errors?.['crmInvalidFormat'].message }}
+          </span>
+          <span *ngIf="doctorForm.get('crm')?.errors?.['crmInvalidState']">
+            {{ doctorForm.get('crm')?.errors?.['crmInvalidState'].message }}
           </span>
         </div>
       </div>

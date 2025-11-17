@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { DoctorService } from '../../../services/doctor.service';
 import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
 import { BindingService } from '../../../../../core/services/binding.service';
-import { BindingRequestResponse, isBindingPatient } from '../../../../../core/models/binding-request.model';
+import { BindingRequestResponse, isBindingPatient, UserType } from '../../../../../core/models/binding-request.model';
 import { Patient, PatientStatus } from '../../../../../core/models/patient.model';
-import { PatientProfileModalComponent, PatientProfile } from '../../../../../shared/components/patient-profile-modal/patient-profile-modal.component';
+import { DoctorProfileModalComponent, ProfileData } from '../../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 import { firstValueFrom } from 'rxjs';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
@@ -18,7 +18,7 @@ interface PatientWithBinding extends Patient {
 @Component({
   selector: 'app-binding-requests',
   standalone: true,
-  imports: [CommonModule, PatientProfileModalComponent, CpfPipe, BadgeComponent],
+  imports: [CommonModule, DoctorProfileModalComponent, CpfPipe, BadgeComponent],
   templateUrl: './binding-requests.component.html',
 })
 export class BindingRequestsComponent implements OnInit {
@@ -35,7 +35,8 @@ export class BindingRequestsComponent implements OnInit {
 
   // Modal de perfil
   isPatientProfileModalVisible = signal<boolean>(false);
-  selectedPatient = signal<PatientProfile | null>(null);
+  selectedPatient = signal<ProfileData | null>(null);
+  showModalMessageField = signal<boolean>(false);
 
   // Busca de pacientes
   searchTerm = signal<string>('');
@@ -53,14 +54,13 @@ export class BindingRequestsComponent implements OnInit {
     this.isLoading.set(true);
     this.bindingService.getPendingBindingRequests().subscribe({
       next: (data) => {
-        // Filter only requests from patients (received by doctor)
-        const received = data.filter(req => isBindingPatient(req.user));
+        // Filter requests created BY patients (received by doctor)
+        const received = data.filter(req => req.created_by_type === UserType.PATIENT);
         this.requests.set(received);
 
-        // For now, sent requests are not separately loaded
-        // The backend unified endpoint returns all pending requests
-        // We could filter by status or implement separate endpoint if needed
-        this.sentRequests.set([]);
+        // Filter requests created BY doctor (sent to patients)
+        const sent = data.filter(req => req.created_by_type === UserType.DOCTOR);
+        this.sentRequests.set(sent);
 
         this.isLoading.set(false);
       },
@@ -185,6 +185,45 @@ export class BindingRequestsComponent implements OnInit {
     this.searchResults.set(sortedPatients);
   }
 
+  openInviteModal(patient: PatientWithBinding): void {
+    const patientProfile: ProfileData = {
+      id: patient.id,
+      name: patient.name,
+      email: patient.email || '',
+      cpf: patient.cpf,
+      age: patient.age,
+    };
+    this.selectedPatient.set(patientProfile);
+    this.showModalMessageField.set(true);
+    this.isPatientProfileModalVisible.set(true);
+  }
+
+  sendInviteWithMessage(event: { doctorId: number | string; message?: string }): void {
+    const { doctorId: patientId, message } = event;
+    const numericId = typeof patientId === 'string' ? parseInt(patientId, 10) : patientId;
+
+    this.bindingService.requestBinding(numericId, message).subscribe({
+      next: () => {
+        this.toastService.success('Convite enviado com sucesso!');
+        // Update patient status in the list
+        this.searchResults.update((patients) =>
+          patients.map((p) =>
+            p.id === patientId ? { ...p, bindingStatus: 'pending' as const } : p
+          )
+        );
+        this.loadRequests(); // Reload requests to show in "Enviadas" tab
+        this.closePatientProfile();
+      },
+      error: (err) => {
+        this.toastService.error(
+          `Erro ao enviar convite: ${err.error?.detail || 'Tente novamente'}`
+        );
+        this.closePatientProfile();
+      },
+    });
+  }
+
+  // Keep for backward compatibility (direct button clicks without message)
   sendInvite(patientId: string): void {
     const numericId = typeof patientId === 'string' ? parseInt(patientId, 10) : patientId;
 
@@ -227,21 +266,36 @@ export class BindingRequestsComponent implements OnInit {
   }
 
   viewPatientProfile(request: BindingRequestResponse): void {
+    console.log('=== DEBUG viewPatientProfile ===');
+    console.log('Request completo:', request);
+    console.log('User:', request.user);
+    console.log('Tem CPF?', 'cpf' in request.user);
+    console.log('isBindingPatient?', isBindingPatient(request.user));
+
     if (isBindingPatient(request.user)) {
-      const patientProfile: PatientProfile = {
+      console.log('Entrou no if - criando patientProfile');
+      const patientProfile: ProfileData = {
         id: request.user.id.toString(),
         name: request.user.name,
         email: request.user.email,
-        status: 'pending',
+        cpf: request.user.cpf,
+        age: request.user.age,
+        location: request.user.location || '',
       };
+      console.log('Patient profile criado:', patientProfile);
       this.selectedPatient.set(patientProfile);
+      this.showModalMessageField.set(false);
       this.isPatientProfileModalVisible.set(true);
+      console.log('Sinais setados - modal deveria abrir');
+    } else {
+      console.log('NÃO entrou no if - tipo não é BindingPatient');
     }
   }
 
   closePatientProfile(): void {
     this.isPatientProfileModalVisible.set(false);
     this.selectedPatient.set(null);
+    this.showModalMessageField.set(false);
   }
 
   // Helper method to safely get email from user

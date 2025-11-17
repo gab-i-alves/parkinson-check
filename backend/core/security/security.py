@@ -112,9 +112,12 @@ def get_user_from_token(token: str, session: Session):
         raise CREDENTIAL_EXCEPTION
 
 
-def create_access_token(data: dict) -> TokenResponse:
-    expire_minutes = Settings().ACCESS_TOKEN_EXPIRE_MINUTES
-    expire = datetime.now(tz=timezone.utc) + timedelta(minutes=expire_minutes)
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> TokenResponse:
+    if expires_delta:
+        expire = datetime.now(tz=timezone.utc) + expires_delta
+    else:
+        expire_minutes = Settings().ACCESS_TOKEN_EXPIRE_MINUTES
+        expire = datetime.now(tz=timezone.utc) + timedelta(minutes=expire_minutes)
 
     data.update({"exp": expire})
 

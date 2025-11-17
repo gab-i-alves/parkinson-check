@@ -20,6 +20,7 @@ from core.services.user_service import (
     set_reset_token,
     update_password,
 )
+from infra.settings import settings
 
 from ..security.security import create_access_token
 
@@ -53,7 +54,13 @@ def login(login_form: LoginFormRequest, session: Session):
             doctor_management_service.log_activity(user.id, ActivityType.LOGIN, "Médico entrou no sistema", session)
             
 
-    token_data = create_access_token(data={"sub": login_form.email})
+    # Define a expiração do token baseado no remember_me
+    if login_form.remember_me:
+        expires_delta = timedelta(days=settings.REMEMBER_ME_EXPIRE_DAYS)
+    else:
+        expires_delta = None  # Usa o padrão (ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    token_data = create_access_token(data={"sub": login_form.email}, expires_delta=expires_delta)
 
     user_response = UserResponse(
         id=user.id, name=user.name, email=user.email, role=user.user_type, gender=user.gender

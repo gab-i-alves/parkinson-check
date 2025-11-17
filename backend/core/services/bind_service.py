@@ -14,6 +14,7 @@ from core.enums import BindEnum, NotificationType, UserType
 from core.models import Bind, Patient, User
 from core.models.users import Doctor
 from core.services import notification_service, doctor_management_service
+from core.services.patient_service import calculate_age
 
 
 def get_pending_bind_requests(user: User, session: Session) -> list[BindingRequestResponse]:
@@ -37,9 +38,13 @@ def get_pending_bind_requests(user: User, session: Session) -> list[BindingReque
                     id=bind.patient_id,
                     name=patients_dict[bind.patient_id].name,
                     email=patients_dict[bind.patient_id].email,
+                    cpf=patients_dict[bind.patient_id].cpf,
+                    age=calculate_age(patients_dict[bind.patient_id].birthdate),
+                    location=patients_dict[bind.patient_id].location,
                 ),
                 status=bind.status,
-                created_by_type=bind.created_by_type,
+                created_by_type=bind.created_by_type.name if bind.created_by_type else None,
+                message=bind.message,
             )
             for bind in bindings
             if bind.patient_id in patients_dict
@@ -65,9 +70,12 @@ def get_pending_bind_requests(user: User, session: Session) -> list[BindingReque
                     id=bind.doctor_id,
                     name=doctors_dict[bind.doctor_id].name,
                     specialty=doctors_dict[bind.doctor_id].expertise_area,
+                    crm=doctors_dict[bind.doctor_id].crm,
+                    location=doctors_dict[bind.doctor_id].location,
                 ),
                 status=bind.status,
-                created_by_type=bind.created_by_type,
+                created_by_type=bind.created_by_type.name if bind.created_by_type else None,
+                message=bind.message,
             )
             for bind in bindings
             if bind.doctor_id in doctors_dict
@@ -75,7 +83,7 @@ def get_pending_bind_requests(user: User, session: Session) -> list[BindingReque
         return response
 
 
-def send_bind_request(user: User, session: Session, user_to_bind: int) -> Bind:
+def send_bind_request(user: User, session: Session, user_to_bind: int, message: str | None = None) -> Bind:
     if user.id == user_to_bind:
         raise HTTPException(
             HTTPStatus.BAD_REQUEST, detail="Não é possível vincular-se a si mesmo."
@@ -112,6 +120,7 @@ def send_bind_request(user: User, session: Session, user_to_bind: int) -> Bind:
 
     if inactive_bind:
         inactive_bind.status = BindEnum.PENDING
+        inactive_bind.message = message
         db_bind = inactive_bind
     else:
         target_user = session.query(User).filter(User.id == user_to_bind).first()
@@ -128,11 +137,11 @@ def send_bind_request(user: User, session: Session, user_to_bind: int) -> Bind:
 
         if user.user_type == UserType.DOCTOR:
             db_bind = Bind(
-                doctor_id=user.id, patient_id=user_to_bind, status=BindEnum.PENDING, created_by_type=UserType.DOCTOR
+                doctor_id=user.id, patient_id=user_to_bind, status=BindEnum.PENDING, created_by_type=UserType.DOCTOR, message=message
             )
         else:
             db_bind = Bind(
-                doctor_id=user_to_bind, patient_id=user.id, status=BindEnum.PENDING, created_by_type=UserType.PATIENT
+                doctor_id=user_to_bind, patient_id=user.id, status=BindEnum.PENDING, created_by_type=UserType.PATIENT, message=message
             )
 
     session.add(db_bind)

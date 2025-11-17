@@ -1,5 +1,4 @@
 export type TestType = 'SPIRAL_TEST' | 'VOICE_TEST';
-export type TestStatus = 'DONE' | 'PENDING' | 'FAILED';
 export type SpiralMethod = 'PAPER' | 'WEBCAM';
 
 export interface TimelineTestItem {
@@ -8,7 +7,6 @@ export interface TimelineTestItem {
   execution_date: string; // ISO datetime string
   score: number;
   classification: 'HEALTHY' | 'PARKINSON';
-  status: TestStatus;
   // Spiral-specific fields
   draw_duration?: number;
   method?: SpiralMethod;

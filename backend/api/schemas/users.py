@@ -1,7 +1,8 @@
 from datetime import date, datetime
 from typing import Optional
+import re
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from core.enums.doctor_enum import DoctorStatus
 from core.enums import Gender, UserType
@@ -37,8 +38,45 @@ class UserResponse(BaseModel):
 
 
 class DoctorSchema(UserSchema):
-    crm: str
+    crm: str = Field(
+        ...,
+        min_length=8,
+        max_length=10,
+        description="CRM no formato NNNNNN/UF",
+        examples=["123456/SP", "12345/RJ"]
+    )
     specialty: str = Field(..., alias="expertise_area")
+
+    @field_validator('crm')
+    @classmethod
+    def validate_crm(cls, v: str) -> str:
+        """Valida formato CRM brasileiro: NNNNNN/UF"""
+
+        # Remove espaços extras e converte para maiúsculas
+        crm = v.strip().upper()
+
+        # Validar formato básico: 5-6 dígitos + barra + 2 letras
+        pattern = r'^(\d{5,6})/([A-Z]{2})$'
+        match = re.match(pattern, crm)
+
+        if not match:
+            raise ValueError(
+                'CRM deve estar no formato NNNNNN/UF (ex: 123456/SP ou 12345/RJ)'
+            )
+
+        number, state = match.groups()
+
+        # Validar se o estado é válido (todos os estados brasileiros)
+        valid_states = {
+            'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+            'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+            'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+        }
+
+        if state not in valid_states:
+            raise ValueError(f'Estado {state} não é válido para CRM brasileiro')
+
+        return crm
 
 
 class GetDoctorsSchema(BaseModel):

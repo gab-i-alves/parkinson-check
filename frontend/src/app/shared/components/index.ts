@@ -8,5 +8,4 @@ export * from './layout/sidebar/sidebar.component';
 export * from './notification-badge/notification-badge.component';
 export * from './notification-center/notification-center.component';
 export * from './notification-container/notification-container.component';
-export * from './patient-profile-modal/patient-profile-modal.component';
 export * from './stat-card/stat-card.component';
