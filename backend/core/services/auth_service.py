@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 
 from api.schemas.auth import LoginFormRequest
 from api.schemas.token import TokenResponse, UserResponse
-from core.enums.doctor_enum import DoctorStatus
+from core.services import doctor_management_service
+from core.enums.doctor_enum import ActivityType, DoctorStatus
 from core.models.users import Doctor
 from core.security.security import verify_password
 from core.services.email_service import (
@@ -48,6 +49,9 @@ def login(login_form: LoginFormRequest, session: Session):
                 HTTPStatus.FORBIDDEN,
                 detail=f"{detail_message} Entre em contato com o suporte."
             )
+        else:
+            doctor_management_service.log_activity(user.id, ActivityType.LOGIN, "Médico entrou no sistema", session)
+            
 
     token_data = create_access_token(data={"sub": login_form.email})
 

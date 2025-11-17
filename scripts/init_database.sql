@@ -24,7 +24,7 @@ CREATE TYPE document_type_enum AS ENUM (
   'CRM_CERTIFICATE', 'DIPLOMA', 'IDENTITY', 'CPF_DOCUMENT', 'PROOF_OF_ADDRESS', 'OTHER'
 );
 CREATE TYPE activity_type_enum AS ENUM (
-  'REGISTRATION', 'LOGIN', 'STATUS_CHANGE', 'PATIENT_LINK', 'TEST_CONDUCED', 'NOTE_ADDED', 'PROFILE_UPDATE'
+  'REGISTRATION', 'LOGIN', 'STATUS_CHANGE', 'PATIENT_BOUND', 'PATIENT_UNBOUND', 'NOTE_ADDED', 'NOTE_UPDATED', 'NOTE_DELETED'
 );
 
 CREATE TABLE IF NOT EXISTS "address" (
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS "doctor" (
   "crm" char(8) UNIQUE NOT NULL,
   "expertise_area" varchar(50),
   "status" doctor_status_enum NOT NULL DEFAULT 'PENDING',
-  "experience_level" experience_level_enum NOT NULL DEFAULT 'JUNIOR',
+  "experience_level" experience_level_enum DEFAULT 'JUNIOR',
   "approval_date" TIMESTAMPTZ,
   "rejection_reason" varchar(50),
   "approved_by_admin_id" INTEGER REFERENCES "admin"(id)
@@ -146,6 +146,15 @@ CREATE TABLE IF NOT EXISTS "doctor_document" (
   "verified_by_admin_id" INTEGER REFERENCES "admin" ("id"),
   "verified_at" TIMESTAMPTZ
 );
+
+CREATE TABLE IF NOT EXISTS "doctor_activity_log" (
+  "id" SERIAL PRIMARY KEY,
+  "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
+  "activity_type" activity_type_enum NOT NULL,
+  "description" TEXT NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_doctor_activity_doctor_id ON doctor_activity_log(doctor_id);
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

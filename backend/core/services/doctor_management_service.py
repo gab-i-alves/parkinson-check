@@ -103,6 +103,8 @@ def approve_doctor(doctor_id: int, session: Session, current_admin: User) -> Doc
     session.commit()
     session.refresh(doctor)
     
+    log_activity(doctor.id, ActivityType.STATUS_CHANGE, "O status do Médico foi alterado de " + DoctorStatus.PENDING + "para " + doctor.status, session)
+    
     return doctor
 
 def reject_doctor(doctor_id: int, session: Session, reason: str, current_admin: User) -> Doctor:
@@ -125,6 +127,8 @@ def reject_doctor(doctor_id: int, session: Session, reason: str, current_admin: 
     session.commit()
     session.refresh(doctor)
     
+    log_activity(doctor.id, ActivityType.STATUS_CHANGE, "O status do Médico foi alterado de " + DoctorStatus.PENDING + "para " + doctor.status, session)
+    
     return doctor
 
 def change_doctor_status(doctor_id: int, session: Session, current_admin: User, new_status: DoctorStatus, reason: str, ) -> Doctor:
@@ -139,7 +143,7 @@ def change_doctor_status(doctor_id: int, session: Session, current_admin: User, 
         if new_status != DoctorStatus.REJECTED and new_status != DoctorStatus.APPROVED:
             raise HTTPException(HTTPStatus.BAD_REQUEST, detail="O médico está pendente, aprove-o ou rejeite-o")
 
-        
+    old_status = doctor.status    
     doctor.status = new_status
     doctor.rejection_reason = reason
     doctor.approved_by_admin_id = current_admin.id
@@ -149,4 +153,20 @@ def change_doctor_status(doctor_id: int, session: Session, current_admin: User, 
     session.commit()
     session.refresh(doctor)
     
+    log_activity(doctor.id, ActivityType.STATUS_CHANGE, "O status do Médico foi alterado de " + old_status + "para " + doctor.status, session)
+    
     return doctor
+
+def log_activity(doctor_id: int, type: ActivityType, description: str, session: Session) -> DoctorActivityLog:
+    
+    db_activity = DoctorActivityLog(
+        doctor_id=doctor_id,
+        activity_type=type,
+        description=description,        
+    )
+    
+    session.add(db_activity)
+    session.commit()
+    session.refresh(db_activity)
+    
+    return db_activity
