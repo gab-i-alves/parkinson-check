@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
-from core.services import file_service
+from core.services import file_service, email_service
 from core.models.doctor_utils import DoctorDocument
 from core.services import doctor_management_service
 from core.enums.doctor_enum import DoctorStatus
 from core.enums.user_enum import UserType
 from core.security.security import anonymizeCPF, get_admin_user, get_current_user
 from infra.db.connection import get_session
-from core.models import User, Doctor, Patient 
+from core.models import User, Doctor, Patient
 from core.services import user_management_service
 from api.schemas.users import (
     DoctorListResponse,
@@ -16,8 +16,8 @@ from api.schemas.users import (
     UserFilterSchema,
     UpdateUserSchema,
     ChangeUserStatusSchema,
-    PatientSchema, 
-    UserResponse 
+    PatientSchema,
+    UserResponse
 )
 from http import HTTPStatus 
 
@@ -156,20 +156,39 @@ async def search_doctor_documents_info(
 @router.post("/doctors/{doctor_id}/approve", response_model=Doctor)
 async def approve_doctor(
         doctor_id: int,
+        background_tasks: BackgroundTasks,
         session: Session = Depends(get_session),
         current_admin: User = Depends(get_current_user)
 ):
     doctor = doctor_management_service.approve_doctor(doctor_id, session, current_admin)
+
+    # Enviar email de aprovação
+    await email_service.send_doctor_approval_email_background(
+        background_tasks,
+        doctor.email,
+        doctor.name
+    )
+
     return doctor
 
 @router.post("/doctors/{doctor_id}/reject", response_model=Doctor)
 async def reject_doctor(
         doctor_id: int,
         reason: str,
+        background_tasks: BackgroundTasks,
         session: Session = Depends(get_session),
         current_admin: User = Depends(get_current_user)
 ):
-    doctor = doctor_management_service.reject_doctor(doctor_id, session, current_admin, reason)
+    doctor = doctor_management_service.reject_doctor(doctor_id, session, reason, current_admin)
+
+    # Enviar email de rejeição
+    await email_service.send_doctor_rejection_email_background(
+        background_tasks,
+        doctor.email,
+        doctor.name,
+        reason
+    )
+
     return doctor
 
 
@@ -178,10 +197,21 @@ async def change_doctor_status(
     doctor_id: int,
     new_status: DoctorStatus,
     reason: str,
+    background_tasks: BackgroundTasks,
     session: Session = Depends(get_session),
     current_admin: User = Depends(get_current_user)
-    
+
 ):
-    
-    return doctor_management_service.change_doctor_status(doctor_id, session, current_admin, new_status, reason)
+    doctor = doctor_management_service.change_doctor_status(doctor_id, session, current_admin, new_status, reason)
+
+    # Enviar email de mudança de status
+    await email_service.send_doctor_status_change_email_background(
+        background_tasks,
+        doctor.email,
+        doctor.name,
+        new_status.value,
+        reason if reason else None
+    )
+
+    return doctor
 
