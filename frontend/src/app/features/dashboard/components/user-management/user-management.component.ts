@@ -11,10 +11,11 @@ import {
 } from '../../../../core/models/user.model';
 import { RouterLink } from '@angular/router';
 import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-user-management',
-  imports: [RouterLink, ConfirmationModalComponent],
+  imports: [RouterLink, ConfirmationModalComponent, FormsModule],
   templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent implements OnInit {
@@ -31,12 +32,13 @@ export class UserManagementComponent implements OnInit {
   totalPages = signal<number>(1);
   totalUsers = signal<number>(0);
 
-  pageSizeOptions = [10, 25, 50];
+  pageSizeOptions = [10, 25, 50, 100];
 
   readonly Math = Math;
 
   isStatusModalVisible = signal<boolean>(false);
   userToToggleStatus = signal<User | null>(null);
+  deactivationReason: string = '';
 
   private searchSubject = new Subject<string>();
 
@@ -225,20 +227,20 @@ export class UserManagementComponent implements OnInit {
   cancelStatusChange(): void {
     this.userToToggleStatus.set(null);
     this.isStatusModalVisible.set(false);
+    this.deactivationReason = '';
   }
 
-  confirmStatusChange(): void {
+  confirmStatusChange(reason?: string): void {
     const userToToggleStatus = this.userToToggleStatus();
     if (!userToToggleStatus) {
       return;
     }
 
     const is_active = !userToToggleStatus.status;
-    const reason = ''; // implementar motivo de desativação
 
     const statusData: ChangeStatusData = {
       is_active,
-      reason,
+      reason: reason || '',
     };
 
     this.userManagementService
@@ -251,11 +253,13 @@ export class UserManagementComponent implements OnInit {
 
           this.isStatusModalVisible.set(false);
           this.userToToggleStatus.set(null);
+          this.deactivationReason = '';
         },
         error: (err) => {
           alert('Ocorreu um erro ao alterar o status do usuário.');
           console.error(err);
           this.isStatusModalVisible.set(false);
+          this.deactivationReason = '';
         },
       });
   }

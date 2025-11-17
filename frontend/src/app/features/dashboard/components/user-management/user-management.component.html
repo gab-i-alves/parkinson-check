@@ -425,15 +425,70 @@
 </div>
 
 @if (isStatusModalVisible() && userToToggleStatus(); as user) {
-<app-confirmation-modal
-  [title]="'Alterar Status'"
-  [message]="
-    'Tem a certeza que alterar o status de <strong>' +
-    user.name +
-    '</strong>? <br>'
-  "
-  [confirmButtonText]="'Sim, Alterar'"
-  (confirm)="confirmStatusChange()"
-  (cancel)="cancelStatusChange()"
-></app-confirmation-modal>
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+  (click)="cancelStatusChange()"
+>
+  <div
+    class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="mb-4">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100">
+        <svg
+          class="h-6 w-6 text-yellow-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"
+          />
+        </svg>
+      </div>
+      <h3 class="mt-3 text-center text-lg font-medium text-gray-900">
+        Alterar Status
+      </h3>
+      <p class="mt-2 text-center text-sm text-gray-500">
+        Tem a certeza que deseja alterar o status de <strong>{{ user.name }}</strong>?
+      </p>
+    </div>
+
+    @if (user.status) {
+    <div class="mb-4">
+      <label for="deactivationReason" class="block text-sm font-medium text-gray-700 mb-2">
+        Motivo da desativação (opcional)
+      </label>
+      <textarea
+        id="deactivationReason"
+        rows="3"
+        #reasonInput
+        [(ngModel)]="deactivationReason"
+        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+        placeholder="Informe o motivo da desativação..."
+      ></textarea>
+    </div>
+    }
+
+    <div class="flex space-x-3">
+      <button
+        type="button"
+        (click)="cancelStatusChange()"
+        class="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        (click)="confirmStatusChange(deactivationReason)"
+        class="flex-1 rounded-md border border-transparent bg-yellow-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+      >
+        Sim, Alterar
+      </button>
+    </div>
+  </div>
+</div>
 }
