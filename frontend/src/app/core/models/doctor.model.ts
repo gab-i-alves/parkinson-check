@@ -30,3 +30,15 @@ export interface DoctorFilters {
   approval_status?: DoctorStatus | '';
   searchQuery?: string;
 }
+
+export interface DoctorDocument {
+  id: number;
+  doctor_id: number;
+  document_type: string;
+  file_name: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
+  uploaded_at: string;
+  verified: boolean;
+}

@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { Doctor, DoctorFilters, DoctorStatus, PaginatedDoctors, UserType } from '@core/models';
+import { Doctor, DoctorDocument, DoctorFilters, DoctorStatus, PaginatedDoctors, UserType } from '@core/models';
 
 interface DoctorBackendResponse {
   id: number;
@@ -205,4 +205,14 @@ getDoctorById(userId: number): Observable<DoctorBackendResponse | null> {
       status
     );
   }
+
+  getDoctorDocuments(doctorId: number): Observable<DoctorDocument[]> {
+    return this.http.get<DoctorDocument[]>(`${this.apiUrl}/admin/doctors/${doctorId}/documents-info`);
+  }
+
+  downloadDocument(doctorId: number, documentId: number): Observable<Blob> {
+  return this.http.get(`${this.apiUrl}/admin/doctors/${doctorId}/documents/${documentId}`, {
+    responseType: 'blob'
+  });
+}
 }

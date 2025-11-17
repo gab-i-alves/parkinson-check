@@ -1,6 +1,10 @@
+from http import HTTPStatus
 import os
 import uuid
 from fastapi import UploadFile, HTTPException
+from fastapi.responses import FileResponse
+from core.models.doctor_utils import DoctorDocument
+from sqlalchemy.orm import Session
 from infra.settings import Settings # Assumindo que usa Pydantic Settings
 
 settings = Settings()
@@ -36,3 +40,44 @@ def save_uploaded_file(
         "file_size": file_size,
         "mime_type": file.content_type
     }
+    
+def get_doctor_document(
+    doctor_id: int, 
+    file_id: int, 
+    session: Session
+) -> list[FileResponse] :
+    file_info = get_doctor_document_info(doctor_id, file_id, session)
+    
+    if not os.path.exists(file_info.file_path):
+        raise HTTPException(
+            HTTPStatus.NOT_FOUND,
+            detail="Não foi encontrado o arquivo especificado",
+        )
+        
+    return FileResponse(
+        path=file_info.file_path,
+        filename=file_info.file_name,
+        media_type=file_info.mime_type
+    )
+
+def get_doctor_documents_info(
+    doctor_id: int, 
+    session: Session
+) -> list[DoctorDocument] :
+    
+    files = session.query(DoctorDocument).filter(DoctorDocument.doctor_id == doctor_id).all()
+    
+    if not files:
+        raise HTTPException(
+            HTTPStatus.NOT_FOUND,
+            detail="Não foram encontrados documentos vinculados ao médico...",
+        )
+    
+    return files
+
+def get_doctor_document_info(
+    doctor_id: int, 
+    file_id: int, 
+    session: Session
+) -> list[DoctorDocument] :
+    return session.query(DoctorDocument).filter(DoctorDocument.doctor_id == doctor_id and DoctorDocument.id == file_id).first()

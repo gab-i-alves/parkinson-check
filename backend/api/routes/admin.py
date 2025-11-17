@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from core.services import file_service
+from core.models.doctor_utils import DoctorDocument
 from core.services import doctor_management_service
 from core.enums.doctor_enum import DoctorStatus
 from core.enums.user_enum import UserType
@@ -133,6 +135,23 @@ async def search_doctor(
 ):
     doctors = doctor_management_service.get_doctor_by_id(doctor_id, session)
     return doctors
+
+@router.get("/doctors/{doctor_id}/documents/{file_id}")
+async def search_doctor_documents(
+        doctor_id: int,
+        file_id: int,
+        session: Session = Depends(get_session),
+):
+    document = file_service.get_doctor_document(doctor_id, file_id, session)
+    return document
+
+@router.get("/doctors/{doctor_id}/documents-info", response_model=list[DoctorDocument])
+async def search_doctor_documents_info(
+        doctor_id: int,
+        session: Session = Depends(get_session),
+):
+    documents = file_service.get_doctor_documents_info(doctor_id, session)
+    return documents
 
 @router.post("/doctors/{doctor_id}/approve", response_model=Doctor)
 async def approve_doctor(
