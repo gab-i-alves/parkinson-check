@@ -125,6 +125,14 @@ export const DASHBOARD_ROUTES: Routes = [
           ),
       },
       {
+        path: 'doctors/:id',
+        canActivate: [authGuard(['admin'])],
+        loadComponent: () =>
+          import('./components/doctor-detail/doctor-detail.component').then(
+            (c) => c.DoctorDetailComponent
+          ),
+      },
+      {
         path: 'users/edit/:id',
         canActivate: [authGuard(['admin'])],
         loadComponent: () =>

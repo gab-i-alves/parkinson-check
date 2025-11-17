@@ -1,0 +1,217 @@
+@if (isLoading()) {
+<div class="flex h-64 items-center justify-center">
+  <div class="text-center">
+    <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-pink-600 border-r-transparent"></div>
+    <p class="mt-2 text-sm text-gray-500">Carregando...</p>
+  </div>
+</div>
+} @else if (doctor(); as doc) {
+<div class="space-y-6">
+  <!-- Header with back button -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <button
+        type="button"
+        (click)="goBack()"
+        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+      >
+        <svg class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Voltar
+      </button>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Detalhes do Médico</h1>
+        <p class="mt-1 text-sm text-gray-500">Informações completas e histórico</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Doctor Info Card -->
+  <div class="overflow-hidden rounded-lg bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gray-50">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Informações Pessoais</h3>
+        <app-badge [variant]="getStatusBadgeVariant(doc.status)">
+          {{ getStatusLabel(doc.status) }}
+        </app-badge>
+      </div>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Nome Completo</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.name }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Email</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.email }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">CPF</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.cpf }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">CRM</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.crm }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Área de Atuação</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.expertise_area || 'Não informado' }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Nível de Experiência</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ getExperienceLevelLabel(doc.experience_level) }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Localização</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.location || 'Não informado' }}</dd>
+        </div>
+        @if (doc.approval_date) {
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Data de Aprovação</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ doc.approval_date }}</dd>
+        </div>
+        }
+        @if (doc.rejection_reason) {
+        <div class="sm:col-span-2">
+          <dt class="text-sm font-medium text-gray-500">Motivo da Rejeição</dt>
+          <dd class="mt-1 text-sm text-red-600">{{ doc.rejection_reason }}</dd>
+        </div>
+        }
+      </dl>
+    </div>
+  </div>
+
+  <!-- Actions Card -->
+  <div class="overflow-hidden rounded-lg bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gray-50">
+      <h3 class="text-lg font-medium leading-6 text-gray-900">Ações</h3>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <button
+          type="button"
+          (click)="openDocumentModal()"
+          class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+        >
+          <svg class="mr-2 h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Ver Documentos ({{ documents().length }})
+        </button>
+        <button
+          type="button"
+          (click)="openStatusModal()"
+          class="inline-flex items-center justify-center rounded-md border border-transparent bg-pink-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+        >
+          <svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Alterar Status
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Timeline Card -->
+  <div class="overflow-hidden rounded-lg bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gray-50">
+      <h3 class="text-lg font-medium leading-6 text-gray-900">Histórico de Atividades</h3>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <app-activity-timeline [activities]="activities()" />
+    </div>
+  </div>
+</div>
+
+<!-- Document Viewer Modal -->
+<app-document-viewer-modal
+  [documents]="documents()"
+  [doctorId]="doc.id"
+  [isOpen]="isDocumentModalOpen()"
+  (close)="closeDocumentModal()"
+  (download)="downloadDocument($event)"
+/>
+
+<!-- Status Change Modal -->
+@if (isStatusModalOpen()) {
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+  (click)="closeStatusModal()"
+>
+  <div
+    class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="mb-4">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+        <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mt-3 text-center text-lg font-medium text-gray-900">
+        Alterar Status do Médico
+      </h3>
+      <p class="mt-2 text-center text-sm text-gray-500">
+        Selecione o novo status para <strong>{{ doc.name }}</strong>
+      </p>
+    </div>
+
+    <div class="mb-4">
+      <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+        Novo Status
+      </label>
+      <select
+        id="status"
+        [(ngModel)]="selectedStatus"
+        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+      >
+        <option value="PENDING">Pendente</option>
+        <option value="APPROVED">Aprovado</option>
+        <option value="REJECTED">Rejeitado</option>
+        <option value="SUSPENDED">Suspenso</option>
+        <option value="IN_REVIEW">Em Revisão</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label for="reason" class="block text-sm font-medium text-gray-700 mb-2">
+        Motivo da Alteração
+      </label>
+      <textarea
+        id="reason"
+        rows="3"
+        [(ngModel)]="statusChangeReason"
+        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+        placeholder="Descreva o motivo da alteração de status..."
+      ></textarea>
+    </div>
+
+    <div class="flex space-x-3">
+      <button
+        type="button"
+        (click)="closeStatusModal()"
+        class="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        (click)="confirmStatusChange()"
+        class="flex-1 rounded-md border border-transparent bg-pink-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+      >
+        Confirmar
+      </button>
+    </div>
+  </div>
+</div>
+}
+} @else {
+<div class="text-center py-12">
+  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  <p class="mt-4 text-sm text-gray-500">Médico não encontrado</p>
+</div>
+}
