@@ -343,7 +343,8 @@
           type="text"
           required
           formControlName="crm"
-          mask="000000/SS"
+          mask="000000/AA"
+          [specialCharacters]="['/']"
           [patterns]="crmMaskPatterns"
           placeholder="123456/SP"
           class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm uppercase"

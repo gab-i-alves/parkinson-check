@@ -49,7 +49,7 @@ export class DoctorRegisterFormComponent {
 
   // CRM mask patterns
   crmMaskPatterns = {
-    'S': { pattern: new RegExp('[A-Z]') }
+    'A': { pattern: new RegExp('[A-Za-z]') }
   };
 
   // Document upload
