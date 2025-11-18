@@ -152,6 +152,14 @@ export class RegisterComponent implements OnInit {
   private cleanFormData(formData: any): any {
     const cleanedData = { ...formData };
 
+    // Remove confirmPassword (not needed in backend)
+    delete cleanedData.confirmPassword;
+
+    // Convert gender to number (backend expects 1, 2, or 3)
+    if (cleanedData.gender) {
+      cleanedData.gender = parseInt(cleanedData.gender, 10);
+    }
+
     // Remove formatting from CPF (dots and dashes)
     if (cleanedData.cpf) {
       cleanedData.cpf = cleanedData.cpf.replace(/[^\d]/g, '');
@@ -241,6 +249,12 @@ export class RegisterComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         console.error('Erro no cadastro do médico:', err);
+        console.error('=== DETALHES COMPLETOS DO ERRO 422 ===');
+        console.error('Status:', err.status);
+        console.error('Error object:', err.error);
+        console.error('Error detail:', err.error?.detail);
+        console.error('Validation errors:', JSON.stringify(err.error, null, 2));
+        console.error('=====================================');
         this.apiError = err.error?.detail || 'Ocorreu um erro no cadastro.';
         this.isLoading = false;
         this.doctorRegisterForm.enable();
@@ -249,43 +263,40 @@ export class RegisterComponent implements OnInit {
   }
 
   private uploadDoctorDocuments(doctorId: number): void {
-    const uploadPromises = [];
+    const uploadPromises: Promise<any>[] = [];
 
-    const crm_front = this.doctorFiles['crm-front'];
-    if (crm_front) {
-      uploadPromises.push(
-        this.authService
-          .sendDoctorDocumentation({ doctorId, crm_front })
-          .toPromise()
-      );
-    }
+    // Map frontend file keys to backend DocumentType enum values
+    const fileTypeMapping: { [key: string]: string } = {
+      'crm-front': 'crm_certificate',
+      'crm-back': 'diploma',
+      'proof': 'proof_of_address'
+    };
 
-    const crm_back = this.doctorFiles['crm-back'];
-    if (this.doctorFiles['crm-back']) {
-      uploadPromises.push(
-        this.authService
-          .sendDoctorDocumentation({ doctorId, crm_back })
-          .toPromise()
-      );
-    }
+    // Upload each file with the correct document_type using the public registration endpoint
+    Object.keys(this.doctorFiles).forEach((fileKey) => {
+      const file = this.doctorFiles[fileKey];
+      if (file) {
+        const formData = new FormData();
+        formData.append('document_type', fileTypeMapping[fileKey]);
+        formData.append('file', file);
 
-    const proof = this.doctorFiles['proof'];
-    if (this.doctorFiles['proof']) {
-      uploadPromises.push(
-        this.authService
-          .sendDoctorDocumentation({ doctorId, crm_back })
-          .toPromise()
-      );
-    }
+        console.log(`[Register] Uploading ${fileKey} (${fileTypeMapping[fileKey]}) for doctor ID ${doctorId}:`, file.name);
 
-    // Executar todos os uploads em paralelo
+        uploadPromises.push(
+          this.authService
+            .sendRegistrationDocumentation(doctorId, formData)
+            .toPromise()
+        );
+      }
+    });
+
+    // Execute all uploads in parallel
     Promise.all(uploadPromises)
       .then(() => {
-        console.log('Todos os documentos foram enviados com sucesso!');
-        
+        console.log('[Register] All documents uploaded successfully!');
       })
       .catch((error) => {
-        console.error('Erro ao enviar documentos:', error);
+        console.error('[Register] Error uploading documents:', error);
         this.apiError =
           'Cadastro criado, mas houve erro no envio dos documentos. Entre em contato com o suporte.';
       })
