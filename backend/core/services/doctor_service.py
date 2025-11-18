@@ -66,10 +66,10 @@ def create_doctor(doctor: DoctorSchema, session: Session):
     session.add(db_doctor)
     session.commit()
     session.refresh(db_doctor)
-    
+
     doctor_management_service.log_activity(db_doctor.id, ActivityType.REGISTRATION, "Médico se registrou no sistema", session)
-    
-    return doctor
+
+    return {"id": db_doctor.id, "message": "Doctor registered successfully"}
 
 
 def get_doctor_by_crm(session: Session, crm: str) -> Doctor:
