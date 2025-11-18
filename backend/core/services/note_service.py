@@ -54,7 +54,7 @@ def create_note(note: NoteSchema, session: Session, user: User) -> NoteResponse:
         .first()
     )
     
-    doctor_management_service.log_activity(note_with_doctor.doctor_id, ActivityType.NOTE_ADDED, "Médico adicionou a nota" + note_with_doctor.id + " ao teste " + note_with_doctor.test_id, session)
+    doctor_management_service.log_activity(note_with_doctor.doctor_id, ActivityType.NOTE_ADDED, f"Médico adicionou a nota {note_with_doctor.id} ao teste {note_with_doctor.test_id}", session)
 
     return note_with_doctor
 
@@ -133,7 +133,7 @@ def update_note(
         .first()
     )
     
-    doctor_management_service.log_activity(note_with_doctor.doctor_id, ActivityType.NOTE_UPDATED, "Médico atualizou a nota" + note_with_doctor.id + ", do teste " + note_with_doctor.test_id, session)
+    doctor_management_service.log_activity(note_with_doctor.doctor_id, ActivityType.NOTE_UPDATED, f"Médico atualizou a nota {note_with_doctor.id}, do teste {note_with_doctor.test_id}", session)
 
     return note_with_doctor
 
@@ -152,5 +152,5 @@ def delete_note(note_id: int, user: User, session: Session):
     session.delete(db_note)
     session.commit()
     
-    doctor_management_service.log_activity(user.id, ActivityType.NOTE_DELETED, "Médico deletou a nota" + note_id, session)
+    doctor_management_service.log_activity(user.id, ActivityType.NOTE_DELETED, f"Médico deletou a nota {note_id}", session)
     

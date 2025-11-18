@@ -306,3 +306,15 @@
     }
   }
 </style>
+
+<!-- Feedback Modal -->
+@if (showFeedbackModal()) {
+  <app-feedback-modal
+    [isVisible]="showFeedbackModal()"
+    [type]="feedbackType()"
+    [title]="feedbackTitle()"
+    [message]="feedbackModalMessage()"
+    [buttonText]="'OK'"
+    (close)="showFeedbackModal.set(false)"
+  />
+}

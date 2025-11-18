@@ -57,10 +57,7 @@ export class VoiceTestService {
       return stream;
     } catch (err) {
       console.error('Erro ao acessar o microfone:', err);
-      alert(
-        'Não foi possível acessar o microfone. Verifique as permissões do navegador.'
-      );
-      return undefined;
+      throw new Error('Não foi possível acessar o microfone. Verifique as permissões do navegador.');
     }
   }
 
