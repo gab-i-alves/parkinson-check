@@ -106,10 +106,19 @@ export class AuthService {
     );
   }
 
-  sendDoctorDocumentation(uploadData: any): Observable<any> {
+  sendDoctorDocumentation(formData: FormData): Observable<any> {
     return this.http.post<any>(
       `${this.apiUrl}/upload/doctor-document`,
-      uploadData
+      formData
+    );
+  }
+
+  sendRegistrationDocumentation(doctorId: number, formData: FormData): Observable<any> {
+    // Add doctor_id to the FormData for the public registration endpoint
+    formData.append('doctor_id', doctorId.toString());
+    return this.http.post<any>(
+      `${this.apiUrl}/upload/register-doctor-document`,
+      formData
     );
   }
 }
