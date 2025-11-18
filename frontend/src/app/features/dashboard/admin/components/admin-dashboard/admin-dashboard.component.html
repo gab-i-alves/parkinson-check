@@ -1,349 +1,217 @@
-<!-- Tabs Navigation -->
-<div class="mb-6 border-b border-neutral-200">
-  <nav class="-mb-px flex gap-2" aria-label="Tabs">
-    <button
-      (click)="setActiveTab('overview')"
-      [class.border-pink-200]="activeTab() === 'overview'"
-      [class.text-neutral-900]="activeTab() === 'overview'"
-      [class.border-transparent]="activeTab() !== 'overview'"
-      [class.text-neutral-600]="activeTab() !== 'overview'"
-      class="group inline-flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors hover:border-pink-100 hover:text-neutral-900"
-    >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-      Visão Geral
-    </button>
-
-    <button
-      (click)="setActiveTab('pending')"
-      [class.border-yellow-200]="activeTab() === 'pending'"
-      [class.text-neutral-900]="activeTab() === 'pending'"
-      [class.border-transparent]="activeTab() !== 'pending'"
-      [class.text-neutral-600]="activeTab() !== 'pending'"
-      class="group inline-flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors hover:border-yellow-100 hover:text-neutral-900"
-    >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      Pendentes
-      @if (adminStats()?.pending_doctors && adminStats()!.pending_doctors > 0) {
-        <span class="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-yellow-200 px-2 text-xs font-semibold text-yellow-800">
-          {{ adminStats()!.pending_doctors }}
-        </span>
-      }
-    </button>
-
-    <button
-      (click)="setActiveTab('activity')"
-      [class.border-blue-200]="activeTab() === 'activity'"
-      [class.text-neutral-900]="activeTab() === 'activity'"
-      [class.border-transparent]="activeTab() !== 'activity'"
-      [class.text-neutral-600]="activeTab() !== 'activity'"
-      class="group inline-flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors hover:border-blue-100 hover:text-neutral-900"
-    >
-      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      Atividades
-    </button>
-  </nav>
-</div>
-
-<!-- Loading Skeletons -->
 @if (isLoading()) {
-  <div class="space-y-8" @fadeIn>
-    <!-- Skeleton for Charts -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div class="animate-pulse rounded-2xl bg-white p-6 shadow-sm">
-        <div class="mb-4 h-6 w-48 rounded bg-neutral-200"></div>
-        <div class="h-64 rounded bg-neutral-100"></div>
-      </div>
-      <div class="animate-pulse rounded-2xl bg-white p-6 shadow-sm">
-        <div class="mb-4 h-6 w-48 rounded bg-neutral-200"></div>
-        <div class="h-64 rounded bg-neutral-100"></div>
-      </div>
+<!-- Skeleton Loading State -->
+<div class="min-h-screen bg-neutral-50 relative overflow-hidden">
+  <div class="container mx-auto px-6 py-8 space-y-8">
+    <!-- Header Skeleton -->
+    <div class="animate-pulse">
+      <div class="h-10 bg-neutral-200 rounded-xl w-64"></div>
     </div>
 
-    <!-- Skeleton for Stat Cards -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      @for (i of [1, 2, 3, 4]; track i) {
-        <div class="animate-pulse rounded-2xl bg-white p-6 shadow-sm">
-          <div class="mb-3 h-10 w-10 rounded-full bg-neutral-200"></div>
-          <div class="mb-2 h-4 w-24 rounded bg-neutral-200"></div>
-          <div class="h-8 w-16 rounded bg-neutral-200"></div>
+    <!-- KPIs Skeleton -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 animate-pulse">
+          <div class="h-4 bg-neutral-200 rounded w-3/4 mb-4"></div>
+          <div class="h-8 bg-neutral-200 rounded w-1/2"></div>
         </div>
       }
     </div>
 
-    <!-- Skeleton for List -->
-    <div class="animate-pulse rounded-2xl bg-white p-6 shadow-sm">
-      <div class="mb-4 h-6 w-48 rounded bg-neutral-200"></div>
-      @for (i of [1, 2, 3]; track i) {
-        <div class="mb-4 flex items-center gap-4 border-b border-neutral-100 pb-4">
-          <div class="h-3 w-3 rounded-full bg-neutral-200"></div>
-          <div class="h-4 flex-1 rounded bg-neutral-200"></div>
-          <div class="h-4 w-4 rounded bg-neutral-200"></div>
-        </div>
-      }
-    </div>
-  </div>
-}
-
-<!-- Overview Tab -->
-@if (!isLoading() && activeTab() === 'overview') {
-  <div class="space-y-8" @fadeIn>
-
-    <!-- Stats Section -->
-    <section>
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-neutral-900">Informações do Sistema</h2>
-        <span
-          class="inline-flex items-center gap-1 text-xs text-neutral-500"
-          [appTooltip]="'Estatísticas atualizadas em tempo real'"
-          tooltipPosition="left"
-        >
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </span>
-      </div>
-
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-
-        <!-- Total Users Card -->
-        <div
-          class="group cursor-pointer rounded-2xl bg-white p-6 shadow-sm transition-all hover:shadow-md"
-          (click)="navigateToStatDetail('users')"
-          @fadeIn
-        >
-          <div class="mb-4 flex items-center justify-between">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-pink-100">
-              <svg class="h-6 w-6 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
-            <svg
-              class="h-5 w-5 text-neutral-400 opacity-0 transition-opacity group-hover:opacity-100"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-          <div>
-            <p class="mb-1 text-sm font-medium text-neutral-600">Total de Usuários</p>
-            <p class="text-3xl font-bold text-neutral-900">{{ adminStats()?.total_users || 0 }}</p>
-          </div>
-        </div>
-
-        <!-- Total Patients Card -->
-        <div
-          class="group cursor-pointer rounded-2xl bg-white p-6 shadow-sm transition-all hover:shadow-md"
-          (click)="navigateToStatDetail('patients')"
-          @fadeIn
-        >
-          <div class="mb-4 flex items-center justify-between">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-              <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <svg
-              class="h-5 w-5 text-neutral-400 opacity-0 transition-opacity group-hover:opacity-100"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-          <div>
-            <p class="mb-1 text-sm font-medium text-neutral-600">Total de Pacientes</p>
-            <p class="text-3xl font-bold text-neutral-900">{{ adminStats()?.total_patients || 0 }}</p>
-          </div>
-        </div>
-
-        <!-- Total Doctors Card -->
-        <div
-          class="group cursor-pointer rounded-2xl bg-white p-6 shadow-sm transition-all hover:shadow-md"
-          (click)="navigateToStatDetail('doctors')"
-          @fadeIn
-        >
-          <div class="mb-4 flex items-center justify-between">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-              <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-            </div>
-            <svg
-              class="h-5 w-5 text-neutral-400 opacity-0 transition-opacity group-hover:opacity-100"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-          <div>
-            <p class="mb-1 text-sm font-medium text-neutral-600">Total de Médicos</p>
-            <p class="text-3xl font-bold text-neutral-900">{{ adminStats()?.total_doctors || 0 }}</p>
-          </div>
-        </div>
-
-        <!-- Pending Doctors Card -->
-        <div
-          class="group cursor-pointer rounded-2xl bg-white p-6 shadow-sm transition-all hover:shadow-md"
-          (click)="navigateToStatDetail('pending')"
-          @fadeIn
-        >
-          <div class="mb-4 flex items-center justify-between">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100">
-              <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <svg
-              class="h-5 w-5 text-neutral-400 opacity-0 transition-opacity group-hover:opacity-100"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-          <div>
-            <p class="mb-1 text-sm font-medium text-neutral-600">Pendentes de Aprovação</p>
-            <p class="text-3xl font-bold text-neutral-900">{{ adminStats()?.pending_doctors || 0 }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-}
-
-<!-- Pending Tab -->
-@if (!isLoading() && activeTab() === 'pending') {
-  <div class="space-y-6" @fadeIn>
-
-    <!-- Search Bar -->
-    <div class="rounded-2xl bg-white p-4 shadow-sm">
-      <div class="relative">
-        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-          <svg class="h-5 w-5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <input
-          type="text"
-          [value]="searchTerm()"
-          (input)="onSearchChange($any($event.target).value)"
-          placeholder="Buscar médicos pendentes..."
-          class="w-full rounded-full border-2 border-neutral-200 bg-neutral-50 py-3 pl-11 pr-4 text-sm text-neutral-900 placeholder-neutral-500 transition-colors focus:border-pink-200 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
-        />
+    <!-- Pending Doctors Skeleton -->
+    <div class="space-y-4">
+      <div class="h-8 bg-neutral-200 rounded w-48 animate-pulse"></div>
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 animate-pulse">
+        <div class="h-4 bg-neutral-200 rounded w-3/4 mb-4"></div>
+        <div class="h-64 bg-neutral-100 rounded-xl"></div>
       </div>
     </div>
+  </div>
+</div>
+} @else {
+<div class="min-h-screen bg-neutral-50 relative">
+  <!-- Background decorativo -->
+  <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+    <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-pink-200/20 rounded-full filter blur-3xl"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-blue-200/20 rounded-full filter blur-3xl"></div>
+    <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-yellow-200/20 rounded-full filter blur-3xl"></div>
+  </div>
 
-    <!-- Pending Doctors List -->
-    @if (hasPendingDoctors()) {
-      <div class="rounded-2xl bg-white shadow-sm">
-        <div class="border-b border-neutral-200 p-4">
-          <h3 class="flex items-center gap-2 text-lg font-semibold text-neutral-900">
-            Médicos Pendentes de Aprovação
-            <app-badge [variant]="'warning'">{{ filteredDoctors().length }}</app-badge>
-          </h3>
-        </div>
+  <div class="container mx-auto px-6 py-8 space-y-8 relative">
 
-        <ul class="divide-y divide-neutral-100" [@listAnimation]="filteredDoctors().length">
-          @for (doctor of filteredDoctors(); track doctor.id) {
-            <li class="transition-colors hover:bg-neutral-50">
-              <a
-                routerLink="/dashboard/approve/{{ doctor.id }}"
-                class="flex items-center gap-4 p-4"
+    <!-- SEÇÃO 1: VISÃO GERAL DO SISTEMA -->
+    <div class="space-y-5">
+      <h2 class="text-xl font-bold text-neutral-900">Visão Geral do Sistema</h2>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- KPI 1: Total de Usuários - AZUL -->
+        <div class="bg-blue-100 rounded-2xl shadow-sm border border-blue-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <p class="text-xs font-medium text-neutral-700">Total de Usuários</p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center p-1 rounded hover:bg-blue-200/50 transition-colors"
+                aria-label="Informações sobre total de usuários"
+                [appTooltip]="'Soma de todos os usuários cadastrados no sistema (pacientes + médicos + administradores)'"
+                [tooltipPosition]="'top'"
               >
-                <!-- Status Indicator -->
-                <div
-                  class="h-3 w-3 flex-shrink-0 rounded-full bg-yellow-400"
-                  [appTooltip]="'Aguardando aprovação'"
-                  tooltipPosition="right"
-                ></div>
-
-                <!-- Doctor Info -->
-                <div class="flex-1">
-                  <p class="font-medium text-neutral-900">{{ doctor.name }}</p>
-                  <p class="text-sm text-neutral-600">{{ doctor.email }}</p>
-                </div>
-
-                <!-- Badge -->
-                <app-badge [variant]="'warning'">Pendente</app-badge>
-
-                <!-- Arrow Icon -->
-                <svg
-                  class="h-5 w-5 flex-shrink-0 text-neutral-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
-              </a>
-            </li>
-          }
-        </ul>
+              </button>
+            </div>
+            <div class="flex flex-col items-center text-center space-y-1">
+              <p class="text-4xl font-bold text-neutral-900">{{ adminStats()?.total_users || 0 }}</p>
+              <p class="text-sm text-neutral-600">usuários cadastrados</p>
+            </div>
+          </div>
+        </div>
 
-        <div class="border-t border-neutral-200 p-4">
-          <a
-            routerLink="/dashboard/admin/doctors"
-            class="flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
-          >
-            Ver todos os médicos
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        <!-- KPI 2: Total de Pacientes - ROSA -->
+        <div class="bg-pink-100 rounded-2xl shadow-sm border border-pink-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
+          <svg class="absolute bottom-0 right-0 w-24 h-24 opacity-20" viewBox="0 0 200 200">
+            <path d="M0,100 Q50,50 100,100 T200,100 L200,200 L0,200 Z" fill="currentColor"/>
+          </svg>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <p class="text-xs font-medium text-neutral-700">Total de Pacientes</p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center p-1 rounded hover:bg-pink-200/50 transition-colors"
+                aria-label="Informações sobre total de pacientes"
+                [appTooltip]="'Quantidade total de pacientes cadastrados no sistema'"
+                [tooltipPosition]="'top'"
+              >
+                <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col items-center text-center space-y-1">
+              <p class="text-4xl font-bold text-neutral-900">{{ adminStats()?.total_patients || 0 }}</p>
+              <p class="text-sm text-neutral-600">pacientes no sistema</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 3: Total de Médicos - VERDE -->
+        <div class="bg-green-100 rounded-2xl shadow-sm border border-green-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
+          <div class="absolute top-2 right-2 w-16 h-16 opacity-20">
+            <div class="w-8 h-8 bg-current rounded-full"></div>
+            <div class="w-5 h-5 bg-current rounded-full absolute top-3 left-6"></div>
+          </div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <p class="text-xs font-medium text-neutral-700">Total de Médicos</p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center p-1 rounded hover:bg-green-200/50 transition-colors"
+                aria-label="Informações sobre total de médicos"
+                [appTooltip]="'Quantidade total de médicos aprovados e ativos no sistema'"
+                [tooltipPosition]="'top'"
+              >
+                <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col items-center text-center space-y-1">
+              <p class="text-4xl font-bold text-neutral-900">{{ adminStats()?.total_doctors || 0 }}</p>
+              <p class="text-sm text-neutral-600">médicos aprovados</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 4: Pendentes de Aprovação - AMARELO -->
+        <div class="bg-yellow-100 rounded-2xl shadow-sm border border-yellow-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10">
+            <svg class="absolute top-3 right-3 w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
-          </a>
+          </div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <p class="text-xs font-medium text-neutral-700">Pendentes de Aprovação</p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center p-1 rounded hover:bg-yellow-200/50 transition-colors"
+                aria-label="Informações sobre médicos pendentes"
+                [appTooltip]="'Médicos que se cadastraram no sistema e estão aguardando aprovação administrativa para começar a usar a plataforma'"
+                [tooltipPosition]="'top'"
+              >
+                <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col items-center text-center space-y-1">
+              <p class="text-4xl font-bold text-neutral-900">{{ adminStats()?.pending_doctors || 0 }}</p>
+              <p class="text-sm text-neutral-600">aguardando aprovação</p>
+            </div>
+          </div>
         </div>
       </div>
-    } @else {
-      <!-- Empty State -->
-      <div class="rounded-2xl bg-white p-12 text-center shadow-sm" @fadeIn>
-        <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-          <svg class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h3 class="mb-2 text-lg font-semibold text-neutral-900">Tudo em dia!</h3>
-        <p class="mb-6 text-neutral-600">Não há médicos pendentes de aprovação no momento.</p>
-        <a
-          routerLink="/dashboard/admin/doctors"
-          class="inline-flex items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
-        >
-          Ver todos os médicos
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </a>
-      </div>
-    }
-  </div>
-}
+    </div>
 
-<!-- Activity Tab -->
-@if (!isLoading() && activeTab() === 'activity') {
-  <div class="space-y-6" @fadeIn>
-    <div class="rounded-2xl bg-white p-6 shadow-sm">
-      <h3 class="mb-4 text-lg font-semibold text-neutral-900">Histórico de Atividades</h3>
+    <!-- SEÇÃO 2: MÉDICOS PENDENTES DE APROVAÇÃO -->
+    <div class="space-y-5">
+      <h2 class="text-xl font-bold text-neutral-900">Médicos Pendentes de Aprovação</h2>
 
-      <!-- Placeholder for Activity Timeline -->
-      <div class="flex flex-col items-center justify-center py-12 text-center">
-        <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-          <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+      <div class="grid grid-cols-1 gap-6">
+        <!-- Card de Médicos Pendentes -->
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <h3 class="text-lg font-semibold text-neutral-900">Aguardando Aprovação</h3>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-100 transition-colors"
+              aria-label="Informações sobre médicos pendentes"
+              [appTooltip]="'Lista de médicos cadastrados que precisam ser aprovados antes de acessar o sistema'"
+              [tooltipPosition]="'top'"
+            >
+              <svg class="w-4 h-4 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          @if (hasPendingDoctors()) {
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+              @for (doctor of pendentDoctors(); track doctor.id) {
+                <div class="border border-neutral-200 rounded-lg p-3 hover:bg-neutral-50 transition-colors cursor-pointer" (click)="viewDoctorDetails(doctor.id)">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-semibold text-sm">
+                        {{ getDoctorInitials(doctor.name) }}
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-sm font-semibold text-neutral-900">{{ doctor.name }}</p>
+                        <p class="text-xs text-neutral-500">{{ doctor.email }}</p>
+                      </div>
+                    </div>
+                    <span class="text-xs px-2 py-1 rounded-full border bg-yellow-100 text-yellow-800 border-yellow-200">
+                      Pendente
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-neutral-600">CRM:</span>
+                    <span class="font-medium text-neutral-900">{{ doctor.crm }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="text-center py-12 text-neutral-500">
+              <svg class="w-12 h-12 mx-auto mb-3 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="text-sm">Nenhum médico pendente de aprovação</p>
+            </div>
+          }
         </div>
-        <p class="text-sm font-medium text-neutral-600">Timeline de atividades em desenvolvimento</p>
-        <p class="mt-1 text-xs text-neutral-500">Em breve você verá todas as ações administrativas aqui</p>
       </div>
     </div>
   </div>
+</div>
 }

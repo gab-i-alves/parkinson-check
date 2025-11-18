@@ -47,6 +47,12 @@ export class DoctorDashboardComponent implements OnInit {
   });
   readonly patientsNeedingAttention = signal<PatientNeedingAttention[]>([]);
   readonly rankings = signal<any>(null);
+  readonly ageGroupAnalysis = signal<any>(null);
+  readonly testDistribution = signal<any>(null);
+
+  // Filtros
+  readonly periodFilter = signal<'week' | 'month' | 'quarter' | 'year'>('month');
+  readonly testTypeFilter = signal<'all' | 'spiral' | 'voice'>('all');
 
   // Chart.js configurations
   // 1. Evolução de Scores (Linha)
@@ -66,6 +72,20 @@ export class DoctorDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loadDashboardData();
+  }
+
+  onFilterChange() {
+    const period = this.periodFilter();
+    const testType = this.testTypeFilter();
+
+    // Recarregar gráficos com novos filtros
+    this.doctorDashboardDataService.getScoreEvolution(period, testType).subscribe({
+      next: (evolution) => {
+        this.setupScoreEvolutionChart(evolution);
+        this.setupTestFrequencyChart(evolution);
+      },
+      error: (err) => console.error('Erro ao aplicar filtros:', err),
+    });
   }
 
   private loadDashboardData() {
@@ -113,12 +133,30 @@ export class DoctorDashboardComponent implements OnInit {
     this.doctorDashboardDataService.getRankings('overall', 5).subscribe({
       next: (rankings) => {
         this.loadPatientsNeedingAttention(rankings);
-        this.isLoading.set(false);
-        this.toastService.success('Dashboard carregado com sucesso!', 'Sucesso');
       },
       error: (err) => {
         console.error('Erro ao carregar rankings:', err);
         this.toastService.error('Erro ao carregar dados de pacientes', 'Erro');
+      },
+    });
+
+    // 6. Carregar análise por faixa etária (CA5)
+    this.doctorDashboardDataService.getAgeGroupAnalysis().subscribe({
+      next: (analysis) => {
+        this.ageGroupAnalysis.set(analysis);
+      },
+      error: (err) => console.error('Erro ao carregar análise etária:', err),
+    });
+
+    // 7. Carregar distribuição de testes por tipo (CA5)
+    this.doctorDashboardDataService.getTestDistribution().subscribe({
+      next: (distribution) => {
+        this.testDistribution.set(distribution);
+        this.isLoading.set(false);
+        this.toastService.success('Dashboard carregado com sucesso!', 'Sucesso');
+      },
+      error: (err) => {
+        console.error('Erro ao carregar distribuição:', err);
         this.isLoading.set(false);
       },
     });
@@ -271,5 +309,29 @@ export class DoctorDashboardComponent implements OnInit {
       .join('')
       .substring(0, 2)
       .toUpperCase();
+  }
+
+  // Método para obter classe de badge de status
+  getStatusBadgeClass(status: string): string {
+    switch (status) {
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'attention':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      default:
+        return 'bg-green-100 text-green-800 border-green-200';
+    }
+  }
+
+  // Método para obter label de status
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'critical':
+        return 'Crítico';
+      case 'attention':
+        return 'Atenção';
+      default:
+        return 'Estável';
+    }
   }
 }
