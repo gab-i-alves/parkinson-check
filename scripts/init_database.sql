@@ -146,6 +146,30 @@ COMMENT ON TABLE "admin" IS 'Dados específicos de administradores do sistema (e
 COMMENT ON COLUMN "admin"."is_superuser" IS 'Indica se possui privilégios de superusuário';
 
 -- -----------------------------------------------------
+-- Tabela: user_status_audit
+-- -----------------------------------------------------
+-- Registra histórico de mudanças de status de usuários
+CREATE TABLE IF NOT EXISTS "user_status_audit" (
+  "id" SERIAL PRIMARY KEY,
+  "user_id" INTEGER NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+  "changed_by_admin_id" INTEGER NOT NULL REFERENCES "admin" ("id") ON DELETE SET NULL,
+  "is_active" BOOLEAN NOT NULL,
+  "reason" TEXT,
+  "changed_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE "user_status_audit" IS 'Auditoria de mudanças de status (ativo/inativo) dos usuários';
+COMMENT ON COLUMN "user_status_audit"."user_id" IS 'ID do usuário que teve o status alterado';
+COMMENT ON COLUMN "user_status_audit"."changed_by_admin_id" IS 'ID do administrador que realizou a alteração';
+COMMENT ON COLUMN "user_status_audit"."is_active" IS 'Novo status do usuário após a mudança';
+COMMENT ON COLUMN "user_status_audit"."reason" IS 'Motivo da alteração de status (especialmente importante para desativações)';
+COMMENT ON COLUMN "user_status_audit"."changed_at" IS 'Data e hora da alteração de status';
+
+-- Índices para melhor performance em consultas de auditoria
+CREATE INDEX IF NOT EXISTS idx_user_status_audit_user_id ON "user_status_audit" ("user_id");
+CREATE INDEX IF NOT EXISTS idx_user_status_audit_changed_at ON "user_status_audit" ("changed_at" DESC);
+
+-- -----------------------------------------------------
 -- Tabela: doctor
 -- -----------------------------------------------------
 -- Extensão de usuário para médicos

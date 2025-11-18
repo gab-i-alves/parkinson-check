@@ -185,11 +185,110 @@ class UserFilterSchema(BaseModel):
 
 
 class UpdateUserSchema(BaseModel):
+    """Schema para atualização de dados do usuário pelo administrador"""
+    # Dados pessoais
     name: Optional[str] = None
     email: Optional[EmailStr] = None
-    # Campos que admin pode editar (sem senha)
+    birthdate: Optional[date] = None
+    gender: Optional[Gender] = None
+
+    # Endereço
+    cep: Optional[str] = Field(None, pattern=r'^\d{8}$')
+    street: Optional[str] = None
+    number: Optional[str] = None
+    complement: Optional[str] = None
+    neighborhood: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
 
 
 class ChangeUserStatusSchema(BaseModel):
     is_active: bool
     reason: Optional[str] = None  # motivo da desativação
+
+
+class ChangeDoctorStatusSchema(BaseModel):
+    status: str  # DoctorStatus enum value
+    reason: Optional[str] = None
+
+
+class CreateUserByAdminSchema(BaseModel):
+    """
+    Schema para criação de usuários pelo administrador.
+    Suporta criação de Pacientes, Médicos e Administradores.
+    """
+    user_type: UserType
+
+    # Campos comuns a todos os tipos
+    name: str = Field(..., alias="fullname", min_length=3)
+    email: EmailStr
+    cpf: str = Field(..., pattern=r'^\d{11}$')
+    password: str = Field(..., min_length=6)
+    birthdate: date
+    gender: Gender
+
+    # Endereço
+    cep: str = Field(..., pattern=r'^\d{8}$')
+    street: str
+    number: str
+    complement: Optional[str] = None
+    neighborhood: str
+    city: str
+    state: str
+
+    # Campos específicos de médico (obrigatórios se user_type == DOCTOR)
+    crm: Optional[str] = Field(None, min_length=8, max_length=10)
+    expertise_area: Optional[str] = Field(None, alias="specialty")
+
+    # Campo específico de admin
+    is_superuser: Optional[bool] = False
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
+
+    @field_validator('crm')
+    @classmethod
+    def validate_crm_for_doctor(cls, v: Optional[str], info) -> Optional[str]:
+        """Valida CRM se for médico"""
+        # Acessar user_type dos dados sendo validados
+        data = info.data
+        user_type = data.get('user_type')
+
+        if user_type == UserType.DOCTOR:
+            if not v:
+                raise ValueError('CRM é obrigatório para médicos')
+
+            # Validar formato CRM
+            crm = v.strip().upper()
+            pattern = r'^(\d{5,6})/([A-Z]{2})$'
+            match = re.match(pattern, crm)
+
+            if not match:
+                raise ValueError('CRM deve estar no formato NNNNNN/UF (ex: 123456/SP)')
+
+            number, state = match.groups()
+            valid_states = {
+                'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+                'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+                'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+            }
+
+            if state not in valid_states:
+                raise ValueError(f'Estado {state} não é válido para CRM brasileiro')
+
+            return crm
+
+        return v
+
+    @field_validator('expertise_area')
+    @classmethod
+    def validate_expertise_for_doctor(cls, v: Optional[str], info) -> Optional[str]:
+        """Valida área de especialidade se for médico"""
+        data = info.data
+        user_type = data.get('user_type')
+
+        if user_type == UserType.DOCTOR and not v:
+            raise ValueError('Área de especialidade é obrigatória para médicos')
+
+        return v

@@ -66,13 +66,8 @@ def get_doctor_documents_info(
 ) -> list[DoctorDocument] :
     
     files = session.query(DoctorDocument).filter(DoctorDocument.doctor_id == doctor_id).all()
-    
-    if not files:
-        raise HTTPException(
-            HTTPStatus.NOT_FOUND,
-            detail="Não foram encontrados documentos vinculados ao médico...",
-        )
-    
+
+    # Return empty list instead of raising 404 when no documents found
     return files
 
 def get_doctor_document_info(

@@ -5,7 +5,7 @@ from core.models.doctor_utils import DoctorDocument
 from core.services import doctor_management_service
 from core.enums.doctor_enum import DoctorStatus
 from core.enums.user_enum import UserType
-from core.security.security import anonymizeCPF, get_admin_user, get_current_user
+from core.security.security import get_admin_user, get_current_user
 from infra.db.connection import get_session
 from core.models import User, Doctor, Patient
 from core.services import user_management_service
@@ -16,8 +16,10 @@ from api.schemas.users import (
     UserFilterSchema,
     UpdateUserSchema,
     ChangeUserStatusSchema,
+    ChangeDoctorStatusSchema,
     PatientSchema,
-    UserResponse
+    UserResponse,
+    CreateUserByAdminSchema
 )
 from http import HTTPStatus 
 
@@ -58,7 +60,7 @@ async def list_users(
             id=user.id,
             name=user.name,
             email=user.email,
-            cpf=anonymizeCPF(user.cpf),
+            cpf=user.cpf,
             user_type=user.user_type,
             is_active=user.is_active,
             created_at=user.created_at.isoformat(),
@@ -69,7 +71,7 @@ async def list_users(
 
     return users_response
 
-@router.get("/users/{user_id}", response_model=User) 
+@router.get("/users/{user_id}", response_model=User)
 async def get_user_detail(
     user_id: int,
     session: Session = Depends(get_session),
@@ -77,18 +79,21 @@ async def get_user_detail(
 ):
     """Retorna detalhes completos de um usuário."""
     user = user_management_service.get_user_by_id(user_id, session)
-    
-    user.cpf = anonymizeCPF(user.cpf, False)
-    
+
     return user
 
 @router.post("/users", status_code=HTTPStatus.CREATED)
 async def create_user(
-    user_data: PatientSchema, # Assumindo criação de Paciente
+    user_data: CreateUserByAdminSchema,
     session: Session = Depends(get_session),
     current_admin: User = Depends(get_admin_user())
 ):
-    """Admin cria novo usuário."""
+    """
+    Admin cria novo usuário (Paciente, Médico ou Administrador).
+
+    O tipo de usuário é determinado pelo campo user_type.
+    Campos específicos (como CRM para médicos) são validados automaticamente.
+    """
     return user_management_service.create_user_by_admin(user_data, session)
 
 @router.put("/users/{user_id}", response_model=User)
@@ -108,8 +113,8 @@ async def change_status(
     session: Session = Depends(get_session),
     current_admin: User = Depends(get_admin_user())
 ):
-    """Ativa ou desativa usuário."""
-    return user_management_service.change_user_status(user_id, status_data, session)
+    """Ativa ou desativa usuário e registra em auditoria."""
+    return user_management_service.change_user_status(user_id, status_data, current_admin, session)
 
 @router.get("/doctors", response_model=list[DoctorListResponse])
 async def list_doctors(
@@ -195,14 +200,21 @@ async def reject_doctor(
 @router.patch("/doctors/{doctor_id}/status", response_model=Doctor)
 async def change_doctor_status(
     doctor_id: int,
-    new_status: DoctorStatus,
-    reason: str,
+    status_data: ChangeDoctorStatusSchema,
     background_tasks: BackgroundTasks,
     session: Session = Depends(get_session),
     current_admin: User = Depends(get_current_user)
-
 ):
-    doctor = doctor_management_service.change_doctor_status(doctor_id, session, current_admin, new_status, reason)
+    # Convert string to DoctorStatus enum
+    new_status = DoctorStatus(status_data.status)
+
+    doctor = doctor_management_service.change_doctor_status(
+        doctor_id,
+        session,
+        current_admin,
+        new_status,
+        status_data.reason or ""
+    )
 
     # Enviar email de mudança de status
     await email_service.send_doctor_status_change_email_background(
@@ -210,8 +222,30 @@ async def change_doctor_status(
         doctor.email,
         doctor.name,
         new_status.value,
-        reason if reason else None
+        status_data.reason if status_data.reason else None
     )
 
+    return doctor
+
+@router.patch("/doctors/{doctor_id}/details")
+async def update_doctor_details(
+    doctor_id: int,
+    expertise_area: str | None = None,
+    experience_level: str | None = None,
+    session: Session = Depends(get_session),
+    current_admin: User = Depends(get_current_user)
+):
+    """Admin atualiza área de atuação e nível de experiência do médico."""
+    doctor = session.get(Doctor, doctor_id)
+    if not doctor:
+        raise HTTPException(HTTPStatus.NOT_FOUND, detail="Médico não encontrado")
+
+    if expertise_area is not None:
+        doctor.expertise_area = expertise_area
+    if experience_level is not None:
+        doctor.experience_level = experience_level
+
+    session.commit()
+    session.refresh(doctor)
     return doctor
 
