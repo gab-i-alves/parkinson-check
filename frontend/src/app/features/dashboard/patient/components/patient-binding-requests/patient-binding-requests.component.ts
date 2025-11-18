@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService } from '../../../services/doctor.service';
@@ -28,10 +28,17 @@ export class PatientBindingRequestsComponent implements OnInit {
 
   searchTerm = signal<string>('');
   specialty = signal<string>('');
+  locationFilter = signal<string>('');
   searchResults = signal<Doctor[]>([]);
   isLoading = signal<boolean>(false);
   sortBy = signal<'name' | 'expertise_area' | 'location'>('name');
   sortOrder = signal<'asc' | 'desc'>('asc');
+
+  // Paginação
+  currentPage = signal<number>(1);
+  pageSize = signal<number>(10);
+  pageSizeOptions = [10, 25, 50];
+  Math = Math;
 
   isModalVisible = signal<boolean>(false);
   selectedDoctor = signal<Doctor | null>(null);
@@ -41,6 +48,15 @@ export class PatientBindingRequestsComponent implements OnInit {
   sentRequests = signal<BindingRequestResponse[]>([]);
   receivedRequests = signal<BindingRequestResponse[]>([]);
   activeTab = signal<'sent' | 'received'>('sent');
+
+  // Computed signals para opções dinâmicas de filtros
+  availableLocations = computed(() => {
+    const locations = new Set<string>();
+    this.searchResults().forEach(doc => {
+      if (doc.location) locations.add(doc.location);
+    });
+    return Array.from(locations).sort();
+  });
 
   ngOnInit(): void {
     this.loadLinkedDoctors();
@@ -293,5 +309,47 @@ export class PatientBindingRequestsComponent implements OnInit {
       'Geriatria': 'yellow',
     };
     return specialtyMap[specialty] || 'neutral';
+  }
+
+  // Paginação computed
+  totalPages(): number {
+    return Math.ceil(this.searchResults().length / this.pageSize());
+  }
+
+  paginatedResults(): Doctor[] {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    return this.searchResults().slice(start, end);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(page => page + 1);
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(page => page - 1);
+    }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const value = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.pageSize.set(value);
+    this.currentPage.set(1); // Reset to first page
+  }
+
+  clearFilters(): void {
+    this.searchTerm.set('');
+    this.specialty.set('');
+    this.locationFilter.set('');
+    this.currentPage.set(1);
   }
 }
