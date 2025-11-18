@@ -1,14 +1,20 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DoctorManagementService } from '../../services/doctor-management.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DoctorManagementService } from '../../../services/doctor-management.service';
 import {
   DocumentViewerModalComponent,
   DoctorDocument
-} from '../../../../shared/components/document-viewer-modal/document-viewer-modal.component';
-import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
+} from '../../../../../shared/components/document-viewer-modal/document-viewer-modal.component';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { FormsModule } from '@angular/forms';
-import { ToastService } from '../../../../shared/services/toast.service';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
+import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { formatDate } from '../../../shared/utils/display-helpers';
+import { ActivityTimelineComponent, Activity } from '../../../../../shared/components/activity-timeline/activity-timeline.component';
 
 interface DoctorForApproval {
   id: number;
@@ -29,16 +35,20 @@ interface DoctorForApproval {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     DocumentViewerModalComponent,
     BadgeComponent,
-    FormsModule
+    FormsModule,
+    CpfPipe,
+    ConfirmationModalComponent,
+    TooltipDirective,
+    ActivityTimelineComponent
   ],
   templateUrl: './doctor-approval.component.html',
 })
 export class DoctorApprovalComponent implements OnInit {
   doctor = signal<DoctorForApproval | null>(null);
   documents = signal<DoctorDocument[]>([]);
+  activities = signal<Activity[]>([]);
   isLoading = signal<boolean>(true);
 
   isDocumentModalOpen = signal<boolean>(false);
@@ -64,15 +74,27 @@ export class DoctorApprovalComponent implements OnInit {
 
   loadDoctorDetails(doctorId: number): void {
     this.isLoading.set(true);
-    this.doctorManagementService.getDoctors().subscribe({
-      next: (response) => {
-        const doctor = response.doctors.find(d => d.id === doctorId);
+    this.doctorManagementService.getDoctorById(doctorId).subscribe({
+      next: (doctor: any) => {
         if (doctor) {
-          this.doctor.set(doctor as DoctorForApproval);
+          this.doctor.set({
+            id: doctor.id,
+            name: doctor.name,
+            email: doctor.email,
+            cpf: doctor.cpf || '',
+            crm: doctor.crm,
+            expertise_area: doctor.specialty,
+            experience_level: doctor.experience_level || '',
+            status: doctor.status,
+            location: doctor.location
+          });
+
+          // Create timeline activities based on doctor data
+          this.createTimelineActivities(doctor);
         }
         this.isLoading.set(false);
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Erro ao carregar detalhes do médico:', err);
         this.toastService.error('Erro ao carregar detalhes do médico');
         this.isLoading.set(false);
@@ -82,10 +104,10 @@ export class DoctorApprovalComponent implements OnInit {
 
   loadDoctorDocuments(doctorId: number): void {
     this.doctorManagementService.getDoctorDocuments(doctorId).subscribe({
-      next: (docs) => {
+      next: (docs: DoctorDocument[]) => {
         this.documents.set(docs);
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Erro ao carregar documentos:', err);
       }
     });
@@ -101,7 +123,7 @@ export class DoctorApprovalComponent implements OnInit {
 
   downloadDocument(event: { doctorId: number; documentId: number }): void {
     this.doctorManagementService.downloadDocument(event.doctorId, event.documentId).subscribe({
-      next: (blob) => {
+      next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -112,7 +134,7 @@ export class DoctorApprovalComponent implements OnInit {
         document.body.removeChild(a);
         this.toastService.success('Download iniciado com sucesso');
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Erro ao baixar documento:', err);
         this.toastService.error('Erro ao baixar documento');
       }
@@ -131,13 +153,13 @@ export class DoctorApprovalComponent implements OnInit {
     const doctor = this.doctor();
     if (!doctor) return;
 
-    this.doctorManagementService.approveDoctor(doctor.id).subscribe({
+    this.doctorManagementService.approveDoctor(doctor.id, {}).subscribe({
       next: () => {
         this.toastService.success('Médico aprovado com sucesso! Email de notificação enviado.');
         this.closeApproveModal();
         this.router.navigate(['/dashboard/doctors']);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao aprovar médico:', err);
         this.toastService.error('Erro ao aprovar médico');
         this.closeApproveModal();
@@ -169,7 +191,7 @@ export class DoctorApprovalComponent implements OnInit {
         this.closeRejectModal();
         this.router.navigate(['/dashboard/doctors']);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao rejeitar médico:', err);
         this.toastService.error('Erro ao rejeitar médico');
         this.closeRejectModal();
@@ -200,9 +222,52 @@ export class DoctorApprovalComponent implements OnInit {
   }
 
   formatDate(dateString: string | undefined): string {
-    if (!dateString) return 'Não informado';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
+    return formatDate(dateString || null);
+  }
+
+  createTimelineActivities(doctor: any): void {
+    const activities: Activity[] = [];
+
+    // Registration activity
+    if (doctor.created_at || doctor.registration_date) {
+      activities.push({
+        id: 1,
+        activity_type: 'REGISTRATION',
+        description: `Cadastro realizado no sistema como médico ${doctor.specialty ? 'da área de ' + doctor.specialty : ''}`,
+        created_at: doctor.created_at || doctor.registration_date
+      });
+    }
+
+    // Status change activity if not pending
+    if (doctor.status && doctor.status !== 'PENDING') {
+      const statusDescriptions: Record<string, string> = {
+        'IN_REVIEW': 'Cadastro em revisão pela equipe administrativa',
+        'APPROVED': 'Cadastro aprovado - acesso ao sistema liberado',
+        'REJECTED': 'Cadastro rejeitado',
+        'SUSPENDED': 'Cadastro suspenso'
+      };
+
+      activities.push({
+        id: 2,
+        activity_type: 'STATUS_CHANGE',
+        description: statusDescriptions[doctor.status] || `Status alterado para ${doctor.status}`,
+        created_at: doctor.updated_at || doctor.created_at || new Date().toISOString()
+      });
+    }
+
+    // Documents uploaded
+    if (this.documents().length > 0) {
+      activities.push({
+        id: 3,
+        activity_type: 'NOTE_ADDED',
+        description: `${this.documents().length} documento(s) enviado(s) para verificação`,
+        created_at: doctor.created_at || new Date().toISOString()
+      });
+    }
+
+    this.activities.set(activities.sort((a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    ));
   }
 
   goBack(): void {

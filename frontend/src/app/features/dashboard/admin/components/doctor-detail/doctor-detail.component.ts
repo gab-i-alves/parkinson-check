@@ -1,18 +1,22 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DoctorManagementService } from '../../services/doctor-management.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DoctorManagementService } from '../../../services/doctor-management.service';
 import {
   DocumentViewerModalComponent,
   DoctorDocument
-} from '../../../../shared/components/document-viewer-modal/document-viewer-modal.component';
+} from '../../../../../shared/components/document-viewer-modal/document-viewer-modal.component';
 import {
   ActivityTimelineComponent,
   Activity
-} from '../../../../shared/components/activity-timeline/activity-timeline.component';
-import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
+} from '../../../../../shared/components/activity-timeline/activity-timeline.component';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { FormsModule } from '@angular/forms';
-import { ToastService } from '../../../../shared/services/toast.service';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { formatDate } from '../../../shared/utils/display-helpers';
 
 interface DoctorDetail {
   id: number;
@@ -34,11 +38,12 @@ interface DoctorDetail {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     DocumentViewerModalComponent,
     ActivityTimelineComponent,
     BadgeComponent,
-    FormsModule
+    FormsModule,
+    CpfPipe,
+    TooltipDirective
   ],
   templateUrl: './doctor-detail.component.html',
 })
@@ -50,9 +55,12 @@ export class DoctorDetailComponent implements OnInit {
 
   isDocumentModalOpen = signal<boolean>(false);
   isStatusModalOpen = signal<boolean>(false);
+  isEditingDetails = signal<boolean>(false);
 
   selectedStatus: string = '';
   statusChangeReason: string = '';
+  editedExpertiseArea: string = '';
+  editedExperienceLevel: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -71,16 +79,31 @@ export class DoctorDetailComponent implements OnInit {
 
   loadDoctorDetails(doctorId: number): void {
     this.isLoading.set(true);
-    this.doctorManagementService.getDoctors().subscribe({
-      next: (response) => {
-        const doctor = response.doctors.find(d => d.id === doctorId);
+    this.doctorManagementService.getDoctorById(doctorId).subscribe({
+      next: (doctor: any) => {
         if (doctor) {
-          this.doctor.set(doctor as DoctorDetail);
+          this.doctor.set({
+            id: doctor.id,
+            name: doctor.name,
+            email: doctor.email,
+            cpf: doctor.cpf || '',
+            crm: doctor.crm,
+            expertise_area: doctor.specialty,
+            experience_level: doctor.experience_level || '',
+            status: doctor.status,
+            location: doctor.location,
+            approval_date: doctor.approval_date,
+            rejection_reason: doctor.reason,
+            approved_by_admin_id: undefined
+          });
           this.selectedStatus = doctor.status;
+
+          // Create timeline activities based on doctor data
+          this.createTimelineActivities(doctor);
         }
         this.isLoading.set(false);
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Erro ao carregar detalhes do médico:', err);
         this.toastService.error('Erro ao carregar detalhes do médico');
         this.isLoading.set(false);
@@ -90,10 +113,10 @@ export class DoctorDetailComponent implements OnInit {
 
   loadDoctorDocuments(doctorId: number): void {
     this.doctorManagementService.getDoctorDocuments(doctorId).subscribe({
-      next: (docs) => {
+      next: (docs: DoctorDocument[]) => {
         this.documents.set(docs);
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Erro ao carregar documentos:', err);
       }
     });
@@ -109,7 +132,7 @@ export class DoctorDetailComponent implements OnInit {
 
   downloadDocument(event: { doctorId: number; documentId: number }): void {
     this.doctorManagementService.downloadDocument(event.doctorId, event.documentId).subscribe({
-      next: (blob) => {
+      next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -120,7 +143,7 @@ export class DoctorDetailComponent implements OnInit {
         document.body.removeChild(a);
         this.toastService.success('Download iniciado com sucesso');
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Erro ao baixar documento:', err);
         this.toastService.error('Erro ao baixar documento');
       }
@@ -138,16 +161,28 @@ export class DoctorDetailComponent implements OnInit {
 
   confirmStatusChange(): void {
     const doctor = this.doctor();
-    if (!doctor) return;
+    if (!doctor || !doctor.id) {
+      console.error('Doctor or doctor ID is undefined');
+      this.toastService.error('Erro: ID do médico não encontrado');
+      return;
+    }
 
-    // TODO: Implementar chamada ao service quando o endpoint estiver pronto
-    console.log('Mudando status para:', this.selectedStatus, 'Motivo:', this.statusChangeReason);
+    const statusData = {
+      status: this.selectedStatus as any,
+      reason: this.statusChangeReason || undefined
+    };
 
-    this.closeStatusModal();
-    this.toastService.success('Status atualizado com sucesso');
-
-    // Recarregar detalhes
-    this.loadDoctorDetails(doctor.id);
+    this.doctorManagementService.changeDoctorStatus(doctor.id, statusData).subscribe({
+      next: () => {
+        this.toastService.success('Status atualizado com sucesso');
+        this.closeStatusModal();
+        this.loadDoctorDetails(doctor.id);
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar status:', error);
+        this.toastService.error('Erro ao atualizar status do médico');
+      }
+    });
   }
 
   getStatusBadgeVariant(status: string): any {
@@ -180,6 +215,94 @@ export class DoctorDetailComponent implements OnInit {
       'EXPERT': 'Especialista'
     };
     return labels[level] || level;
+  }
+
+  formatDateDisplay(dateString: string | undefined): string {
+    return formatDate(dateString || null);
+  }
+
+  startEditingDetails(): void {
+    const doctor = this.doctor();
+    if (doctor) {
+      this.editedExpertiseArea = doctor.expertise_area || '';
+      this.editedExperienceLevel = doctor.experience_level || '';
+      this.isEditingDetails.set(true);
+    }
+  }
+
+  cancelEditingDetails(): void {
+    this.isEditingDetails.set(false);
+    this.editedExpertiseArea = '';
+    this.editedExperienceLevel = '';
+  }
+
+  saveDetails(): void {
+    const doctor = this.doctor();
+    if (!doctor) return;
+
+    const details: any = {};
+    if (this.editedExpertiseArea) details.expertise_area = this.editedExpertiseArea;
+    if (this.editedExperienceLevel) details.experience_level = this.editedExperienceLevel;
+
+    this.doctorManagementService.updateDoctorDetails(doctor.id, details).subscribe({
+      next: () => {
+        this.toastService.success('Dados atualizados com sucesso');
+        this.isEditingDetails.set(false);
+        this.loadDoctorDetails(doctor.id);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Erro ao atualizar dados:', error);
+        this.toastService.error('Erro ao atualizar dados do médico');
+      }
+    });
+  }
+
+  createTimelineActivities(doctor: any): void {
+    const activities: Activity[] = [];
+
+    // Registration activity
+    if (doctor.created_at || doctor.registration_date) {
+      activities.push({
+        id: 1,
+        activity_type: 'REGISTRATION',
+        description: `Cadastro realizado no sistema como médico${doctor.specialty ? ' da área de ' + doctor.specialty : ''}`,
+        created_at: doctor.created_at || doctor.registration_date
+      });
+    }
+
+    // Status change activities based on current status
+    if (doctor.status) {
+      const statusDescriptions: Record<string, string> = {
+        'IN_REVIEW': 'Cadastro em revisão pela equipe administrativa',
+        'APPROVED': 'Cadastro aprovado - acesso ao sistema liberado',
+        'REJECTED': 'Cadastro rejeitado',
+        'SUSPENDED': 'Cadastro suspenso'
+      };
+
+      if (doctor.status !== 'PENDING' && statusDescriptions[doctor.status]) {
+        activities.push({
+          id: 2,
+          activity_type: 'STATUS_CHANGE',
+          description: statusDescriptions[doctor.status],
+          created_at: doctor.updated_at || doctor.approval_date || doctor.created_at || new Date().toISOString()
+        });
+      }
+    }
+
+    // Documents uploaded
+    if (this.documents().length > 0) {
+      activities.push({
+        id: 3,
+        activity_type: 'NOTE_ADDED',
+        description: `${this.documents().length} documento(s) enviado(s) para verificação`,
+        created_at: doctor.created_at || new Date().toISOString()
+      });
+    }
+
+    // Sort by date (most recent first)
+    this.activities.set(activities.sort((a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    ));
   }
 
   goBack(): void {

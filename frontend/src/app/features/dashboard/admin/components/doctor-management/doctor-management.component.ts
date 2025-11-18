@@ -1,16 +1,27 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { User, UserRole, UserFilters, Doctor, DoctorStatus, DoctorFilters } from '@core/models';
 import {
   ChangeStatusData,
   DoctorManagementService,
 } from '@features/dashboard/services/doctor-management.service';
-import { ConfirmationModalComponent } from '@shared/components';
 import { Subject } from 'rxjs';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { formatDate } from '../../../shared/utils/display-helpers';
+import { ToastService } from '../../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-doctor-management',
-  imports: [RouterLink, ConfirmationModalComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    FormsModule,
+    BadgeComponent,
+    TooltipDirective
+  ],
   templateUrl: './doctor-management.component.html',
 })
 export class DoctorManagementComponent implements OnInit {
@@ -36,7 +47,10 @@ export class DoctorManagementComponent implements OnInit {
 
   private searchSubject = new Subject<string>();
 
-  constructor(private doctorManagementService: DoctorManagementService) {}
+  constructor(
+    private doctorManagementService: DoctorManagementService,
+    private toastService: ToastService
+  ) {}
 
   public Number = Number;
 
@@ -178,9 +192,40 @@ export class DoctorManagementComponent implements OnInit {
     this.loadUsers();
   }
 
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
+  formatDateDisplay(dateString: string | null | undefined): string {
+    return formatDate(dateString || null);
+  }
+
+  getStatusBadgeVariant(status: string): any {
+    const variants: Record<string, any> = {
+      'PENDING': 'warning',
+      'pendente': 'warning',
+      'APPROVED': 'success',
+      'aprovado(a)': 'success',
+      'REJECTED': 'error',
+      'rejeitado(a)': 'error',
+      'SUSPENDED': 'error',
+      'suspenso(a)': 'error',
+      'IN_REVIEW': 'info',
+      'em_revisao': 'info'
+    };
+    return variants[status] || 'neutral';
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      'PENDING': 'Pendente',
+      'pendente': 'Pendente',
+      'APPROVED': 'Aprovado',
+      'aprovado(a)': 'Aprovado',
+      'REJECTED': 'Rejeitado',
+      'rejeitado(a)': 'Rejeitado',
+      'SUSPENDED': 'Suspenso',
+      'suspenso(a)': 'Suspenso',
+      'IN_REVIEW': 'Em Revisão',
+      'em_revisao': 'Em Revisão'
+    };
+    return labels[status] || status;
   }
 
   initiateStatusChange(doctor: Doctor): void {

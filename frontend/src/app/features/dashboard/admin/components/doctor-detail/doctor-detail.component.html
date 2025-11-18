@@ -1,8 +1,95 @@
 @if (isLoading()) {
-<div class="flex h-64 items-center justify-center">
-  <div class="text-center">
-    <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-pink-600 border-r-transparent"></div>
-    <p class="mt-2 text-sm text-gray-500">Carregando...</p>
+<!-- Skeleton Loading State -->
+<div class="space-y-6 animate-pulse">
+  <!-- Header Skeleton -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <div class="h-10 w-24 bg-gray-200 rounded-md"></div>
+      <div>
+        <div class="h-8 w-64 bg-gray-200 rounded"></div>
+        <div class="mt-2 h-4 w-56 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Doctor Info Card Skeleton -->
+  <div class="overflow-hidden rounded-xl bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-blue-50">
+      <div class="flex items-center justify-between">
+        <div class="h-6 w-48 bg-blue-200 rounded"></div>
+        <div class="h-6 w-24 bg-blue-200 rounded-full"></div>
+      </div>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <div class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+        <div>
+          <div class="h-4 w-32 bg-gray-200 rounded"></div>
+          <div class="mt-1 h-5 w-48 bg-gray-300 rounded"></div>
+        </div>
+        <div>
+          <div class="h-4 w-24 bg-gray-200 rounded"></div>
+          <div class="mt-1 h-5 w-56 bg-gray-300 rounded"></div>
+        </div>
+        <div>
+          <div class="h-4 w-16 bg-gray-200 rounded"></div>
+          <div class="mt-1 h-5 w-40 bg-gray-300 rounded"></div>
+        </div>
+        <div>
+          <div class="h-4 w-20 bg-gray-200 rounded"></div>
+          <div class="mt-1 h-5 w-32 bg-gray-300 rounded"></div>
+        </div>
+        <div>
+          <div class="h-4 w-36 bg-gray-200 rounded"></div>
+          <div class="mt-1 h-5 w-44 bg-gray-300 rounded"></div>
+        </div>
+        <div>
+          <div class="h-4 w-44 bg-gray-200 rounded"></div>
+          <div class="mt-1 h-5 w-32 bg-gray-300 rounded"></div>
+        </div>
+        <div>
+          <div class="h-4 w-28 bg-gray-200 rounded"></div>
+          <div class="mt-1 h-5 w-36 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions Card Skeleton -->
+  <div class="overflow-hidden rounded-xl bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-purple-50">
+      <div class="h-6 w-32 bg-purple-200 rounded"></div>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="h-10 bg-gray-200 rounded-full"></div>
+        <div class="h-10 bg-gray-200 rounded-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline Card Skeleton -->
+  <div class="overflow-hidden rounded-xl bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-green-50">
+      <div class="h-6 w-52 bg-green-200 rounded"></div>
+    </div>
+    <div class="px-6 py-5 sm:p-6">
+      <div class="space-y-4">
+        <div class="flex items-start">
+          <div class="h-8 w-8 bg-gray-200 rounded-full"></div>
+          <div class="ml-4 flex-1">
+            <div class="h-4 w-3/4 bg-gray-200 rounded"></div>
+            <div class="mt-2 h-3 w-1/2 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+        <div class="flex items-start">
+          <div class="h-8 w-8 bg-gray-200 rounded-full"></div>
+          <div class="ml-4 flex-1">
+            <div class="h-4 w-2/3 bg-gray-200 rounded"></div>
+            <div class="mt-2 h-3 w-1/3 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 } @else if (doctor(); as doc) {
@@ -14,6 +101,8 @@
         type="button"
         (click)="goBack()"
         class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+        appTooltip="Voltar para a lista de médicos"
+        tooltipPosition="bottom"
       >
         <svg class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -28,20 +117,54 @@
   </div>
 
   <!-- Doctor Info Card -->
-  <div class="overflow-hidden rounded-lg bg-white shadow">
-    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gray-50">
+  <div class="overflow-hidden rounded-xl bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-blue-50">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-medium leading-6 text-gray-900">Informações Pessoais</h3>
-        <app-badge [variant]="getStatusBadgeVariant(doc.status)">
-          {{ getStatusLabel(doc.status) }}
-        </app-badge>
+        <div>
+          <h3 class="text-lg font-medium leading-6 text-gray-900">Informações Pessoais</h3>
+          <p class="mt-1 text-sm text-gray-500">Dados cadastrais do médico</p>
+        </div>
+        <div class="flex items-center gap-3">
+          @if (isEditingDetails()) {
+            <button
+              (click)="saveDetails()"
+              class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Salvar
+            </button>
+            <button
+              (click)="cancelEditingDetails()"
+              class="inline-flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+          } @else {
+            <button
+              (click)="startEditingDetails()"
+              class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+              appTooltip="Editar área de atuação e nível de experiência"
+              tooltipPosition="left"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Editar Dados
+            </button>
+          }
+          <app-badge [variant]="getStatusBadgeVariant(doc.status)">
+            {{ getStatusLabel(doc.status) }}
+          </app-badge>
+        </div>
       </div>
     </div>
     <div class="px-6 py-5 sm:p-6">
       <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
         <div>
           <dt class="text-sm font-medium text-gray-500">Nome Completo</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ doc.name }}</dd>
+          <dd class="mt-1 text-sm font-semibold text-gray-900">{{ doc.name }}</dd>
         </div>
         <div>
           <dt class="text-sm font-medium text-gray-500">Email</dt>
@@ -49,19 +172,43 @@
         </div>
         <div>
           <dt class="text-sm font-medium text-gray-500">CPF</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ doc.cpf }}</dd>
+          <dd class="mt-1 text-sm text-gray-900">{{ (doc.cpf | cpf) || 'Não informado' }}</dd>
         </div>
         <div>
           <dt class="text-sm font-medium text-gray-500">CRM</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ doc.crm }}</dd>
+          <dd class="mt-1 text-sm font-semibold text-blue-600">{{ doc.crm }}</dd>
         </div>
         <div>
           <dt class="text-sm font-medium text-gray-500">Área de Atuação</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ doc.expertise_area || 'Não informado' }}</dd>
+          @if (isEditingDetails()) {
+            <select
+              [(ngModel)]="editedExpertiseArea"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+            >
+              <option value="">Selecione</option>
+              <option value="Geriatria">Geriatria</option>
+              <option value="Neurologia">Neurologia</option>
+              <option value="Outra">Outra</option>
+            </select>
+          } @else {
+            <dd class="mt-1 text-sm text-gray-900">{{ doc.expertise_area || 'Não informado' }}</dd>
+          }
         </div>
         <div>
           <dt class="text-sm font-medium text-gray-500">Nível de Experiência</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ getExperienceLevelLabel(doc.experience_level) }}</dd>
+          @if (isEditingDetails()) {
+            <select
+              [(ngModel)]="editedExperienceLevel"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+            >
+              <option value="">Selecione</option>
+              <option value="junior">Júnior</option>
+              <option value="mid">Pleno</option>
+              <option value="senior">Sênior</option>
+            </select>
+          } @else {
+            <dd class="mt-1 text-sm text-gray-900">{{ getExperienceLevelLabel(doc.experience_level) }}</dd>
+          }
         </div>
         <div>
           <dt class="text-sm font-medium text-gray-500">Localização</dt>
@@ -70,7 +217,7 @@
         @if (doc.approval_date) {
         <div>
           <dt class="text-sm font-medium text-gray-500">Data de Aprovação</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ doc.approval_date }}</dd>
+          <dd class="mt-1 text-sm text-gray-900">{{ formatDateDisplay(doc.approval_date) }}</dd>
         </div>
         }
         @if (doc.rejection_reason) {
@@ -84,26 +231,37 @@
   </div>
 
   <!-- Actions Card -->
-  <div class="overflow-hidden rounded-lg bg-white shadow">
-    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gray-50">
-      <h3 class="text-lg font-medium leading-6 text-gray-900">Ações</h3>
+  <div class="overflow-hidden rounded-xl bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-purple-50">
+      <div>
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Ações</h3>
+        <p class="mt-1 text-sm text-gray-500">Opções de gerenciamento do médico</p>
+      </div>
     </div>
     <div class="px-6 py-5 sm:p-6">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <button
           type="button"
           (click)="openDocumentModal()"
-          class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+          class="inline-flex items-center justify-center rounded-full border-2 border-dashed border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-all"
+          appTooltip="Visualizar e fazer download dos documentos enviados pelo médico"
+          tooltipPosition="top"
         >
           <svg class="mr-2 h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Ver Documentos ({{ documents().length }})
+          <span>Ver Documentos</span>
+          <span class="ml-2 inline-flex items-center rounded-full bg-pink-200 px-2.5 py-0.5 text-xs font-medium text-neutral-900">
+            {{ documents().length }}
+          </span>
         </button>
         <button
           type="button"
           (click)="openStatusModal()"
-          class="inline-flex items-center justify-center rounded-md border border-transparent bg-pink-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+          [disabled]="!doctor() || !doctor()?.id"
+          class="inline-flex items-center justify-center rounded-full border border-transparent bg-purple-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          appTooltip="Alterar o status de aprovação do médico no sistema"
+          tooltipPosition="top"
         >
           <svg class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -115,9 +273,12 @@
   </div>
 
   <!-- Activity Timeline Card -->
-  <div class="overflow-hidden rounded-lg bg-white shadow">
-    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-gray-50">
-      <h3 class="text-lg font-medium leading-6 text-gray-900">Histórico de Atividades</h3>
+  <div class="overflow-hidden rounded-xl bg-white shadow">
+    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-green-50">
+      <div>
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Histórico de Atividades</h3>
+        <p class="mt-1 text-sm text-gray-500">Timeline do processo de cadastro e revisão</p>
+      </div>
     </div>
     <div class="px-6 py-5 sm:p-6">
       <app-activity-timeline [activities]="activities()" />
@@ -137,71 +298,93 @@
 <!-- Status Change Modal -->
 @if (isStatusModalOpen()) {
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/60 backdrop-blur-sm animate-fadeIn"
   (click)="closeStatusModal()"
+  role="alertdialog"
+  aria-modal="true"
+  aria-labelledby="status-modal-title"
 >
   <div
-    class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+    class="relative w-full max-w-lg mx-4 rounded-xl bg-white shadow-2xl animate-slideUp"
     (click)="$event.stopPropagation()"
   >
-    <div class="mb-4">
-      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-        <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+    <!-- Modal Content -->
+    <div class="p-6">
+      <div class="flex items-start space-x-4">
+        <!-- Icon -->
+        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 sm:mx-0 sm:h-10 sm:w-10">
+          <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <!-- Content -->
+        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
+          <h3 class="text-lg font-semibold leading-6 text-neutral-900" id="status-modal-title">
+            Alterar Status do Médico
+          </h3>
+          <div class="mt-2">
+            <p class="text-sm text-neutral-600">
+              Selecione o novo status para <strong>{{ doc.name }}</strong>
+            </p>
+          </div>
+        </div>
       </div>
-      <h3 class="mt-3 text-center text-lg font-medium text-gray-900">
-        Alterar Status do Médico
-      </h3>
-      <p class="mt-2 text-center text-sm text-gray-500">
-        Selecione o novo status para <strong>{{ doc.name }}</strong>
-      </p>
+
+      <!-- Status Selection -->
+      <div class="mt-6">
+        <label for="status" class="block text-sm font-medium text-neutral-700 mb-2">
+          Novo Status
+        </label>
+        <select
+          id="status"
+          [(ngModel)]="selectedStatus"
+          class="block w-full rounded-lg border-neutral-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+        >
+          <option value="PENDING">Pendente</option>
+          <option value="APPROVED">Aprovado</option>
+          <option value="REJECTED">Rejeitado</option>
+          <option value="SUSPENDED">Suspenso</option>
+          <option value="IN_REVIEW">Em Revisão</option>
+        </select>
+      </div>
+
+      <!-- Reason Field -->
+      <div class="mt-4">
+        <label for="reason" class="block text-sm font-medium text-neutral-700 mb-2">
+          Motivo da Alteração
+        </label>
+        <textarea
+          id="reason"
+          rows="4"
+          [(ngModel)]="statusChangeReason"
+          class="block w-full rounded-lg border-neutral-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+          placeholder="Descreva o motivo da alteração de status. Esta informação será registrada no histórico."
+        ></textarea>
+        <p class="mt-2 text-xs text-neutral-500">
+          <svg class="inline h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          Recomendado: descreva o motivo para manter um histórico claro
+        </p>
+      </div>
     </div>
 
-    <div class="mb-4">
-      <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-        Novo Status
-      </label>
-      <select
-        id="status"
-        [(ngModel)]="selectedStatus"
-        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-      >
-        <option value="PENDING">Pendente</option>
-        <option value="APPROVED">Aprovado</option>
-        <option value="REJECTED">Rejeitado</option>
-        <option value="SUSPENDED">Suspenso</option>
-        <option value="IN_REVIEW">Em Revisão</option>
-      </select>
-    </div>
-
-    <div class="mb-4">
-      <label for="reason" class="block text-sm font-medium text-gray-700 mb-2">
-        Motivo da Alteração
-      </label>
-      <textarea
-        id="reason"
-        rows="3"
-        [(ngModel)]="statusChangeReason"
-        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-        placeholder="Descreva o motivo da alteração de status..."
-      ></textarea>
-    </div>
-
-    <div class="flex space-x-3">
+    <!-- Footer with actions -->
+    <div class="bg-neutral-50 px-6 py-4 rounded-b-xl flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
       <button
         type="button"
         (click)="closeStatusModal()"
-        class="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+        class="inline-flex w-full justify-center items-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-neutral-700 shadow-sm border border-neutral-300 hover:bg-neutral-50 hover:border-neutral-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 sm:w-auto"
       >
         Cancelar
       </button>
       <button
         type="button"
         (click)="confirmStatusChange()"
-        class="flex-1 rounded-md border border-transparent bg-pink-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+        class="inline-flex w-full justify-center items-center rounded-lg bg-purple-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-purple-700 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:w-auto"
       >
-        Confirmar
+        Confirmar Alteração
       </button>
     </div>
   </div>

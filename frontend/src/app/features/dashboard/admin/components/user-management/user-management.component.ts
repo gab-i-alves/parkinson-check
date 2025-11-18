@@ -1,21 +1,34 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   ChangeStatusData,
   UserManagementService,
-} from '../../services/user-management.service';
+} from '../../../services/user-management.service';
 import { Subject } from 'rxjs';
 import {
   User,
   UserFilters,
   UserRole,
-} from '../../../../core/models/user.model';
+} from '../../../../../core/models/user.model';
 import { RouterLink } from '@angular/router';
-import { ConfirmationModalComponent } from '../../../../shared/components/confirmation-modal/confirmation-modal.component';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
+import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { formatDate } from '../../../shared/utils/display-helpers';
 
 @Component({
   selector: 'app-user-management',
-  imports: [RouterLink, ConfirmationModalComponent, FormsModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    FormsModule,
+    BadgeComponent,
+    TooltipDirective,
+    CpfPipe
+  ],
   templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent implements OnInit {
@@ -24,7 +37,7 @@ export class UserManagementComponent implements OnInit {
   searchQuery = signal<string>('');
   selectedStatus = signal<number>(0);
   selectedUserType = signal<UserRole | ''>('');
-  sortBy = signal<'id' | 'name' | 'type' | 'status'>('id');
+  sortBy = signal<'name' | 'type' | 'status'>('name');
   sortOrder = signal<'asc' | 'desc'>('asc');
 
   currentPage = signal<number>(1);
@@ -42,7 +55,10 @@ export class UserManagementComponent implements OnInit {
 
   private searchSubject = new Subject<string>();
 
-  constructor(private userManagementService: UserManagementService) {}
+  constructor(
+    private userManagementService: UserManagementService,
+    private toastService: ToastService
+  ) {}
 
   public Number = Number;
 
@@ -62,7 +78,7 @@ export class UserManagementComponent implements OnInit {
     this.userManagementService
       .getUsersPage(this.currentPage(), this.pageSize(), filters)
       .subscribe({
-        next: (result) => {
+        next: (result: any) => {
           const sortedUsers = this.sortUsers(result.users);
           this.users.set(sortedUsers);
           this.totalPages.set(result.totalPages);
@@ -70,7 +86,7 @@ export class UserManagementComponent implements OnInit {
 
           this.isLoading.set(false);
         },
-        error: (err) => {
+        error: (err: HttpErrorResponse) => {
           console.error('Erro ao carregar usuários:', err);
           this.isLoading.set(false);
         },
@@ -85,9 +101,6 @@ export class UserManagementComponent implements OnInit {
       let comparison = 0;
 
       switch (this.sortBy()) {
-        case 'id':
-          comparison = a.id - b.id;
-          break;
         case 'name':
           comparison = a.name.localeCompare(b.name);
           break;
@@ -107,7 +120,6 @@ export class UserManagementComponent implements OnInit {
 
   onSortChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value as
-      | 'id'
       | 'name'
       | 'type'
       | 'status';
@@ -197,11 +209,11 @@ export class UserManagementComponent implements OnInit {
   }
 
   getStatusLabel(status: boolean): string {
-    return status ? 'ativo' : 'inativo';
+    return status ? 'Ativo' : 'Inativo';
   }
 
-  getStatusClass(status: boolean): string {
-    return status ? ' text-green-800' : ' text-red-800';
+  getStatusBadgeVariant(status: boolean): any {
+    return status ? 'success' : 'error';
   }
 
   getUserTypeLabel(userRole?: number): string {
@@ -214,9 +226,18 @@ export class UserManagementComponent implements OnInit {
     return labels[userRole];
   }
 
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
+  getUserTypeBadgeVariant(userRole?: number): any {
+    if (!userRole) return 'neutral';
+    const variants: Record<number, any> = {
+      1: 'info',      // Paciente - blue
+      2: 'success',   // Médico - green
+      3: 'warning',   // Administrador - yellow
+    };
+    return variants[userRole] || 'neutral';
+  }
+
+  formatDateDisplay(dateString: string | null | undefined): string {
+    return formatDate(dateString || null);
   }
 
   initiateStatusChange(user: User): void {
@@ -249,14 +270,14 @@ export class UserManagementComponent implements OnInit {
         next: () => {
           this.loadUsers();
 
-          alert('Status do Usuário alterado');
+          this.toastService.success('Status do usuário alterado com sucesso');
 
           this.isStatusModalVisible.set(false);
           this.userToToggleStatus.set(null);
           this.deactivationReason = '';
         },
-        error: (err) => {
-          alert('Ocorreu um erro ao alterar o status do usuário.');
+        error: (err: HttpErrorResponse) => {
+          this.toastService.error('Erro ao alterar o status do usuário');
           console.error(err);
           this.isStatusModalVisible.set(false);
           this.deactivationReason = '';
