@@ -2,6 +2,7 @@ from .address import Address
 from .note import Note
 from .notification import Notification
 from .tests import SpiralTest, Test, VoiceTest
+from .user_audit import UserStatusAudit
 from .users import Bind, Doctor, Patient, User, Admin, UserType
 
 __all__ = [
@@ -17,4 +18,5 @@ __all__ = [
     "SpiralTest",
     "Note",
     "Notification",
+    "UserStatusAudit",
 ]

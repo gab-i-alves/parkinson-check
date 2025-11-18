@@ -9,10 +9,11 @@ from api.schemas.binding import (
     BindingPatient,
     BindingRequestResponse,
 )
+from core.enums.doctor_enum import ActivityType
 from core.enums import BindEnum, NotificationType, UserType
 from core.models import Bind, Patient, User
 from core.models.users import Doctor
-from core.services import notification_service
+from core.services import notification_service, doctor_management_service
 from core.services.patient_service import calculate_age
 
 
@@ -206,6 +207,8 @@ def accept_bind_request(user: User, session: Session, bind_id: int) -> Bind:
     session.add(bind_to_accept)
     session.commit()
     session.refresh(bind_to_accept)
+    
+    doctor_management_service.log_activity(bind_to_accept.doctor_id, ActivityType.PATIENT_BOUND, "Médico foi vinculado ao paciente " + bind_to_accept.patient_id, session)
 
     return bind_to_accept
 
@@ -292,3 +295,5 @@ def unbind_users(user: User, session: Session, bind_id: int):
     )
     session.add(bind_to_reverse)
     session.commit()
+    
+    doctor_management_service.log_activity(bind_to_reverse.doctor_id, ActivityType.PATIENT_UNBOUND, "Médico foi desvinculado do paciente " + bind_to_reverse.patient_id, session)

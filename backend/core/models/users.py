@@ -5,6 +5,7 @@ from sqlalchemy import TIMESTAMP, ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from core.enums.doctor_enum import DoctorStatus, ExperienceLevel
 from core.enums import BindEnum, Gender, UserType
 from core.models.table_registry import table_registry
 
@@ -56,8 +57,21 @@ class Doctor(User):
     id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True, init=False)
     crm: Mapped[str] = mapped_column(nullable=False)
     expertise_area: Mapped[str] = mapped_column(nullable=False)
-    status_approval: Mapped[bool] = mapped_column(nullable=False)
-
+    approval_date: Mapped[datetime | None] = mapped_column(nullable=True)
+    rejection_reason: Mapped[str | None] = mapped_column(nullable=True)
+    approved_by_admin_id: Mapped[int | None] = mapped_column(
+        ForeignKey("admin.id"), nullable=True, init=False
+    )
+    status: Mapped[DoctorStatus] = mapped_column(
+        PG_ENUM(DoctorStatus, name="doctor_status_enum", create_type=False), # create_type=False pois a migration cria
+        default=DoctorStatus.PENDING,
+        nullable=False
+    )
+    experience_level: Mapped[ExperienceLevel | None] = mapped_column(
+        PG_ENUM(ExperienceLevel, name="experience_level_enum", create_type=False),
+        nullable=True, default="junior"
+    )
+    
     __mapper_args__ = {
         "polymorphic_identity": UserType.DOCTOR,
     }

@@ -34,6 +34,22 @@ COMMENT ON TYPE note_category_enum IS 'Categoria da nota: OBSERVATION (observaç
 CREATE TYPE notification_type_enum AS ENUM ('BIND_REQUEST', 'BIND_ACCEPTED', 'BIND_REJECTED', 'BIND_REVERSED');
 COMMENT ON TYPE notification_type_enum IS 'Tipo de notificação: BIND_REQUEST (solicitação de vínculo), BIND_ACCEPTED (vínculo aceito), BIND_REJECTED (vínculo rejeitado), BIND_REVERSED (vínculo desfeito)';
 
+-- Status de aprovação do médico
+CREATE TYPE doctor_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED', 'IN_REVIEW');
+COMMENT ON TYPE doctor_status_enum IS 'Status de aprovação do médico no sistema';
+
+-- Nível de experiência do médico
+CREATE TYPE experience_level_enum AS ENUM ('JUNIOR', 'INTERMEDIATE', 'SENIOR', 'EXPERT');
+COMMENT ON TYPE experience_level_enum IS 'Nível de experiência profissional do médico';
+
+-- Tipo de documento enviado pelo médico
+CREATE TYPE document_type_enum AS ENUM ('CRM_CERTIFICATE', 'DIPLOMA', 'IDENTITY', 'CPF_DOCUMENT', 'PROOF_OF_ADDRESS', 'OTHER');
+COMMENT ON TYPE document_type_enum IS 'Tipo de documento: CRM_CERTIFICATE (certificado CRM), DIPLOMA, IDENTITY (identidade), CPF_DOCUMENT, PROOF_OF_ADDRESS (comprovante de residência), OTHER (outro)';
+
+-- Tipo de atividade do médico
+CREATE TYPE activity_type_enum AS ENUM ('REGISTRATION', 'LOGIN', 'STATUS_CHANGE', 'PATIENT_BOUND', 'PATIENT_UNBOUND', 'NOTE_ADDED', 'NOTE_UPDATED', 'NOTE_DELETED');
+COMMENT ON TYPE activity_type_enum IS 'Tipo de atividade registrada no histórico do médico';
+
 -- =====================================================
 -- 2. TABLES
 -- =====================================================
@@ -130,6 +146,30 @@ COMMENT ON TABLE "admin" IS 'Dados específicos de administradores do sistema (e
 COMMENT ON COLUMN "admin"."is_superuser" IS 'Indica se possui privilégios de superusuário';
 
 -- -----------------------------------------------------
+-- Tabela: user_status_audit
+-- -----------------------------------------------------
+-- Registra histórico de mudanças de status de usuários
+CREATE TABLE IF NOT EXISTS "user_status_audit" (
+  "id" SERIAL PRIMARY KEY,
+  "user_id" INTEGER NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+  "changed_by_admin_id" INTEGER NOT NULL REFERENCES "admin" ("id") ON DELETE SET NULL,
+  "is_active" BOOLEAN NOT NULL,
+  "reason" TEXT,
+  "changed_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE "user_status_audit" IS 'Auditoria de mudanças de status (ativo/inativo) dos usuários';
+COMMENT ON COLUMN "user_status_audit"."user_id" IS 'ID do usuário que teve o status alterado';
+COMMENT ON COLUMN "user_status_audit"."changed_by_admin_id" IS 'ID do administrador que realizou a alteração';
+COMMENT ON COLUMN "user_status_audit"."is_active" IS 'Novo status do usuário após a mudança';
+COMMENT ON COLUMN "user_status_audit"."reason" IS 'Motivo da alteração de status (especialmente importante para desativações)';
+COMMENT ON COLUMN "user_status_audit"."changed_at" IS 'Data e hora da alteração de status';
+
+-- Índices para melhor performance em consultas de auditoria
+CREATE INDEX IF NOT EXISTS idx_user_status_audit_user_id ON "user_status_audit" ("user_id");
+CREATE INDEX IF NOT EXISTS idx_user_status_audit_changed_at ON "user_status_audit" ("changed_at" DESC);
+
+-- -----------------------------------------------------
 -- Tabela: doctor
 -- -----------------------------------------------------
 -- Extensão de usuário para médicos
@@ -137,7 +177,11 @@ CREATE TABLE IF NOT EXISTS "doctor" (
   "id" INTEGER PRIMARY KEY REFERENCES "user" ("id") ON DELETE CASCADE,
   "crm" VARCHAR(10) UNIQUE NOT NULL,
   "expertise_area" VARCHAR(50),
-  "status_approval" BOOLEAN,
+  "status" doctor_status_enum NOT NULL DEFAULT 'PENDING',
+  "experience_level" experience_level_enum DEFAULT 'JUNIOR',
+  "approval_date" TIMESTAMPTZ,
+  "rejection_reason" VARCHAR(255),
+  "approved_by_admin_id" INTEGER REFERENCES "admin"(id),
   -- Campos de auditoria
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -156,7 +200,10 @@ CREATE TABLE IF NOT EXISTS "doctor" (
 COMMENT ON TABLE "doctor" IS 'Dados específicos de médicos (extends user)';
 COMMENT ON COLUMN "doctor"."crm" IS 'CRM no formato NNNNNN/UF (ex: 123456/SP) - DADO SENSÍVEL LGPD';
 COMMENT ON COLUMN "doctor"."expertise_area" IS 'Área de especialização médica';
-COMMENT ON COLUMN "doctor"."status_approval" IS 'Status de aprovação do médico no sistema';
+COMMENT ON COLUMN "doctor"."status" IS 'Status de aprovação do médico no sistema';
+COMMENT ON COLUMN "doctor"."experience_level" IS 'Nível de experiência profissional do médico';
+COMMENT ON COLUMN "doctor"."approval_date" IS 'Data de aprovação do médico';
+COMMENT ON COLUMN "doctor"."rejection_reason" IS 'Motivo da rejeição do cadastro';
 
 -- -----------------------------------------------------
 -- Tabela: bind
@@ -304,6 +351,43 @@ CREATE TABLE IF NOT EXISTS "notification" (
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- -----------------------------------------------------
+-- Tabela: doctor_document
+-- -----------------------------------------------------
+-- Armazena documentos enviados pelos médicos para verificação
+CREATE TABLE IF NOT EXISTS "doctor_document" (
+  "id" SERIAL PRIMARY KEY,
+  "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
+  "document_type" document_type_enum NOT NULL DEFAULT 'CRM_CERTIFICATE',
+  "file_name" VARCHAR(255) NOT NULL,
+  "file_path" VARCHAR(500) NOT NULL,
+  "file_size" INTEGER NOT NULL,  -- em bytes
+  "mime_type" VARCHAR(100) NOT NULL,
+  "uploaded_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "verified" BOOLEAN NOT NULL DEFAULT FALSE,
+  "verified_by_admin_id" INTEGER REFERENCES "admin" ("id"),
+  "verified_at" TIMESTAMPTZ
+);
+
+COMMENT ON TABLE "doctor_document" IS 'Documentos enviados pelos médicos para verificação';
+COMMENT ON COLUMN "doctor_document"."document_type" IS 'Tipo de documento enviado';
+COMMENT ON COLUMN "doctor_document"."verified" IS 'Indica se o documento foi verificado por um administrador';
+
+-- -----------------------------------------------------
+-- Tabela: doctor_activity_log
+-- -----------------------------------------------------
+-- Histórico de atividades dos médicos no sistema
+CREATE TABLE IF NOT EXISTS "doctor_activity_log" (
+  "id" SERIAL PRIMARY KEY,
+  "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
+  "activity_type" activity_type_enum NOT NULL,
+  "description" TEXT NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE "doctor_activity_log" IS 'Registro de atividades dos médicos no sistema';
+COMMENT ON COLUMN "doctor_activity_log"."activity_type" IS 'Tipo de atividade realizada';
+
 COMMENT ON TABLE "notification" IS 'Notificações do sistema para usuários (vinculações, status, etc)';
 COMMENT ON COLUMN "notification"."bind_id" IS 'ID do vínculo relacionado (se aplicável)';
 COMMENT ON COLUMN "notification"."read" IS 'Indica se a notificação foi lida';
@@ -341,6 +425,9 @@ CREATE INDEX idx_note_not_deleted ON note(id) WHERE deleted_at IS NULL;
 -- Índices para tabela notification
 CREATE INDEX idx_notification_user_unread ON notification(user_id, read, created_at DESC);
 CREATE INDEX idx_notification_user_id ON notification(user_id, created_at DESC);
+
+-- Índices para tabela doctor_activity_log
+CREATE INDEX idx_doctor_activity_doctor_id ON doctor_activity_log(doctor_id);
 
 -- =====================================================
 -- 4. FUNCTIONS AND TRIGGERS

@@ -78,17 +78,6 @@ def get_admin_user():
 def get_password_hash(password: str):
     return pwd_context.hash(password)
 
-def anonymizeCPF(cpf: str, formated: bool = True):
-    cpf_num = re.sub(r'[^0-9]', '', cpf)
-
-
-    if formated:
-        cpf_anonymized = f"{cpf_num[:3]}.***.***-{cpf_num[9:]}"
-    else:
-        cpf_anonymized = f"{cpf_num[:3]}******{cpf_num[9:]}"
-    
-    return cpf_anonymized
-
 
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
@@ -124,13 +113,3 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> T
     encoded_jwt = encode(data, SETTINGS.SECRET_KEY, algorithm=SETTINGS.ALGORITHM)
 
     return encoded_jwt
-
-
-def anonymizeCPF(cpf: str, formated: bool = True):
-    import re
-    cpf_num = re.sub(r'[^0-9]', '', cpf)
-    if formated:
-        cpf_anonymized = f"{cpf_num[:3]}.***.***-{cpf_num[9:]}"
-    else:
-        cpf_anonymized = f"{cpf_num[:3]}******{cpf_num[9:]}"
-    return cpf_anonymized

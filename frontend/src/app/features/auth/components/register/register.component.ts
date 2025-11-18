@@ -46,6 +46,12 @@ export class RegisterComponent implements OnInit {
   isLoading = false;
   apiError: string | null = null;
 
+  doctorFiles: { [key: string]: File | null } = {
+    'crm-front': null,
+    'crm-back': null,
+    proof: null,
+  };
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -170,9 +176,24 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  onDoctorFilesChange(files: { [key: string]: File | null }): void {
+    this.doctorFiles = { ...files };
+    console.log('Arquivos recebidos do filho:', this.doctorFiles);
+  }
+
   onDoctorSubmit(): void {
     if (this.doctorRegisterForm.invalid) {
       this.doctorRegisterForm.markAllAsTouched();
+      return;
+    }
+
+    if (
+      !this.doctorFiles['crm-front'] ||
+      !this.doctorFiles['crm-back'] ||
+      !this.doctorFiles['proof']
+    ) {
+      this.apiError =
+        'Por favor, faça upload de todos os documentos obrigatórios.';
       return;
     }
 
@@ -185,6 +206,9 @@ export class RegisterComponent implements OnInit {
     this.authService.registerDoctor(this.doctorRegisterForm.value).subscribe({
       next: (response: any) => {
         console.log('Cadastro de médico enviado para aprovação!', response);
+
+        this.uploadDoctorDocuments(response.id);
+
         this.router.navigate(['/auth/login'], {
           state: {
             message:
@@ -199,6 +223,53 @@ export class RegisterComponent implements OnInit {
         this.doctorRegisterForm.enable();
       },
     });
+  }
+
+  private uploadDoctorDocuments(doctorId: number): void {
+    const uploadPromises = [];
+
+    const crm_front = this.doctorFiles['crm-front'];
+    if (crm_front) {
+      uploadPromises.push(
+        this.authService
+          .sendDoctorDocumentation({ doctorId, crm_front })
+          .toPromise()
+      );
+    }
+
+    const crm_back = this.doctorFiles['crm-back'];
+    if (this.doctorFiles['crm-back']) {
+      uploadPromises.push(
+        this.authService
+          .sendDoctorDocumentation({ doctorId, crm_back })
+          .toPromise()
+      );
+    }
+
+    const proof = this.doctorFiles['proof'];
+    if (this.doctorFiles['proof']) {
+      uploadPromises.push(
+        this.authService
+          .sendDoctorDocumentation({ doctorId, crm_back })
+          .toPromise()
+      );
+    }
+
+    // Executar todos os uploads em paralelo
+    Promise.all(uploadPromises)
+      .then(() => {
+        console.log('Todos os documentos foram enviados com sucesso!');
+        
+      })
+      .catch((error) => {
+        console.error('Erro ao enviar documentos:', error);
+        this.apiError =
+          'Cadastro criado, mas houve erro no envio dos documentos. Entre em contato com o suporte.';
+      })
+      .finally(() => {
+        this.isLoading = false;
+        this.doctorRegisterForm.enable();
+      });
   }
 
   private setupCepListener(form: FormGroup): void {

@@ -42,23 +42,4 @@ export class AdminDashboardService {
     );
   }
 
-  // private loadPendentDoctors(): Observable<Doctor[]> {
-  //   return this.http
-  //     .get<PatientBackendResponse[]>(
-  //       `${environment.apiUrl}/users/doctors/dashboard`,
-  //       this.getHttpOptions()
-  //     )
-  //     .pipe(
-  //       map((resp: HttpResponse<PatientBackendResponse[]>) => {
-  //         if (resp.status === 200 && resp.body) {
-  //           return resp.body.map((p) => this.mapBackendPatientToFrontend(p));
-  //         }
-  //         return [];
-  //       }),
-  //       catchError((err) => {
-  //         console.error('Erro ao buscar pacientes:', err);
-  //         return throwError(() => err);
-  //       })
-  //     );
-  // }
 }

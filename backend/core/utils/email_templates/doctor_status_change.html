@@ -1,0 +1,64 @@
+<html>
+<body style="margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
+<div style="background: #efefef; border-radius: 10px; padding: 10px; display: flex; align-items: center; justify-content: center;">
+  <div style="margin: 0 auto; width: 90%; text-align: center;">
+
+    <div style="width: 50%; max-width: 42rem; margin-left: auto; margin-right: auto;">
+    <div style="border-radius: 0.5rem; background-color: #ffffff; padding: 1.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+        <div style="text-align: center;">
+        <a style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
+            <div style="height:100%; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 0.5rem; background-color: #6d28d9; margin-right: 0.75rem; text-align: center; vertical-align: middle;">
+            <span style="width: 100%; font-size: 1.5rem; font-weight: 700; color: #ffffff; line-height: 3rem; display: inline-block; vertical-align: middle;">P</span>
+            </div>
+            <h1 style="font-size: 1.875rem; font-weight: 700; color: #1f2937; margin: 0 auto;">ParkinsonCheck</h1>
+        </a>
+        </div>
+
+        <div style="margin: 30px 0; padding: 20px; background-color: #dbeafe; border-radius: 10px;">
+          <svg style="width: 60px; height: 60px; margin: 0 auto; display: block;" fill="#2563eb" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+
+        <h3 style="margin-bottom: 20px; font-size: 1.25rem; color: #2563eb;">Alteração de Status</h3>
+        <p style="margin-bottom: 20px; color: #4b5563;">Olá, <strong>{{doctor_name}}</strong>,</p>
+        <p style="margin-bottom: 20px; color: #4b5563;">
+          Informamos que o status da sua conta foi alterado.
+        </p>
+
+        <div style="margin: 20px 0; padding: 15px; background-color: #e0e7ff; border-radius: 8px;">
+          <p style="margin: 0; font-weight: 600; color: #3730a3;">Novo Status:</p>
+          <p style="margin: 5px 0 0 0; font-size: 1.25rem; font-weight: 700; color: #4338ca;">
+            {% if new_status == 'APPROVED' %}Aprovado
+            {% elif new_status == 'REJECTED' %}Rejeitado
+            {% elif new_status == 'SUSPENDED' %}Suspenso
+            {% elif new_status == 'IN_REVIEW' %}Em Revisão
+            {% elif new_status == 'PENDING' %}Pendente
+            {% else %}{{new_status}}
+            {% endif %}
+          </p>
+        </div>
+
+        {% if reason %}
+        <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-left: 4px solid #f59e0b; text-align: left;">
+          <p style="margin: 0; font-weight: 600; color: #78350f;">Motivo:</p>
+          <p style="margin: 5px 0 0 0; color: #78350f;">{{reason}}</p>
+        </div>
+        {% endif %}
+
+        <p style="margin: 30px 0 20px 0; color: #4b5563;">
+          Para mais informações ou caso tenha dúvidas, entre em contato conosco.
+        </p>
+
+        <a style="display: block; margin: 0 auto; border: none; background-color: #6d28d9; color: white !important; width: 200px; line-height: 24px; padding: 10px; font-size: 20px; border-radius: 10px; cursor: pointer; text-decoration: none; text-align: center;"
+          href="http://localhost:4200/dashboard"
+          target="_blank"
+        >
+          Acessar Plataforma
+        </a>
+    </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
