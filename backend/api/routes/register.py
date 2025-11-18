@@ -18,6 +18,10 @@ def create_patient(patient: PatientSchema, session: Session = Depends(get_sessio
 
 @router.post("/doctor", status_code=HTTPStatus.CREATED)
 def create_doctor(doctor: DoctorSchema, session: Session = Depends(get_session)):
+    import json
+    print("\n=== RECEIVED DOCTOR REGISTRATION DATA ===")
+    print(json.dumps(doctor.model_dump(), indent=2, default=str))
+    print("=========================================\n")
     return doctor_service.create_doctor(doctor, session)
 
 @router.post("/admin", status_code=HTTPStatus.CREATED)
