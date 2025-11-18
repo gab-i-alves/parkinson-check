@@ -100,53 +100,12 @@ export const DASHBOARD_ROUTES: Routes = [
             './patient/components/patient-test-detail/patient-test-detail.component'
           ).then((c) => c.PatientTestDetailComponent),
       },
+      // Admin routes
       {
         path: 'admin',
         canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/admin-dashboard/admin-dashboard.component').then(
-            (c) => c.AdminDashboardComponent
-          ),
-      },
-      {
-        path: 'users',
-        canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/user-management/user-management.component').then(
-            (c) => c.UserManagementComponent
-          ),
-      },
-      {
-        path: 'doctors',
-        canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/doctor-management/doctor-management.component').then(
-            (c) => c.DoctorManagementComponent
-          ),
-      },
-      {
-        path: 'doctors/:id',
-        canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/doctor-detail/doctor-detail.component').then(
-            (c) => c.DoctorDetailComponent
-          ),
-      },
-      {
-        path: 'approve/:id',
-        canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/doctor-approval/doctor-approval.component').then(
-            (c) => c.DoctorApprovalComponent
-          ),
-      },
-      {
-        path: 'users/edit/:id',
-        canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/edit-user/edit-user.component').then(
-            (c) => c.EditUserComponent
-          ),
+        loadChildren: () =>
+          import('./admin/admin.routes').then((r) => r.ADMIN_ROUTES),
       },
     ],
   },
