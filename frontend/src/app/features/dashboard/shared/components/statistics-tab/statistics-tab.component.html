@@ -58,24 +58,6 @@
 } @else {
 <div class="space-y-6">
 
-  <!-- Tabs Pills Navigation - Intelly Style -->
-  <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
-    <button
-      (click)="selectedView.set('cards')"
-      [class]="selectedView() === 'cards' ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-    >
-      Cards
-    </button>
-    <button
-      (click)="selectedView.set('compact')"
-      [class]="selectedView() === 'compact' ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-    >
-      Visão Compacta
-    </button>
-  </div>
-
-  @if (selectedView() === 'cards') {
-
   <!-- Grid de Cards de Estatísticas - Intelly Palette -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
     <!-- Card: Total de Testes - YELLOW -->
@@ -391,76 +373,6 @@
       </div>
     </div>
   </div>
-  }
-
-  @if (selectedView() === 'compact') {
-  <!-- Compact View - Table Style -->
-  <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-neutral-200">
-        <thead class="bg-neutral-50">
-          <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Métrica</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Valor</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Detalhes</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-neutral-100">
-          <tr class="hover:bg-yellow-50/50 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">Total de Testes</td>
-            <td class="px-6 py-4 whitespace-nowrap text-lg font-bold text-neutral-900">{{ statistics.total_tests }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">Espiral: {{ statistics.total_spiral_tests }} | Voz: {{ statistics.total_voice_tests }}</td>
-          </tr>
-          <tr class="hover:bg-pink-50/50 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">Último Teste</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-neutral-900">{{ formatDate(statistics.last_test_date) }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">Há {{ statistics.days_since_last_test }} dia(s)</td>
-          </tr>
-          <tr class="hover:bg-blue-50/50 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">Tendência</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="text-sm font-semibold" [ngClass]="getTrendColor(statistics.trend)">
-                {{ getTrendIcon(statistics.trend) }} {{ getTrendLabel(statistics.trend) }}
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">Variação: {{ statistics.trend_percentage.toFixed(1) }}%</td>
-          </tr>
-          <tr class="hover:bg-neutral-50 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">Intervalo Médio</td>
-            <td class="px-6 py-4 whitespace-nowrap text-lg font-bold text-neutral-900">
-              @if (statistics.avg_test_interval_days !== null) {
-              {{ statistics.avg_test_interval_days.toFixed(0) }} dias
-              } @else {
-              N/A
-              }
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">Entre testes</td>
-          </tr>
-          <tr class="hover:bg-blue-50/50 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">Score Médio (Espiral)</td>
-            <td class="px-6 py-4 whitespace-nowrap text-lg font-bold text-blue-600">{{ formatScore(statistics.avg_spiral_score) }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">Melhor: {{ formatScore(statistics.best_spiral_score) }} | Pior: {{ formatScore(statistics.worst_spiral_score) }}</td>
-          </tr>
-          <tr class="hover:bg-pink-50/50 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">Score Médio (Voz)</td>
-            <td class="px-6 py-4 whitespace-nowrap text-lg font-bold text-pink-600">{{ formatScore(statistics.avg_voice_score) }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">Melhor: {{ formatScore(statistics.best_voice_score) }} | Pior: {{ formatScore(statistics.worst_voice_score) }}</td>
-          </tr>
-          <tr class="hover:bg-green-50/50 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">Saudável</td>
-            <td class="px-6 py-4 whitespace-nowrap text-lg font-bold text-green-600">{{ statistics.healthy_classification_count }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">{{ ((statistics.healthy_classification_count / statistics.total_tests) * 100).toFixed(1) }}% do total</td>
-          </tr>
-          <tr class="hover:bg-red-50/50 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">Parkinson</td>
-            <td class="px-6 py-4 whitespace-nowrap text-lg font-bold text-red-600">{{ statistics.parkinson_classification_count }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">{{ ((statistics.parkinson_classification_count / statistics.total_tests) * 100).toFixed(1) }}% do total</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  }
 
 </div>
 }

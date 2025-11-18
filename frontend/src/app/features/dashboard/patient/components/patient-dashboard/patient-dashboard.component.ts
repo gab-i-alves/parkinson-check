@@ -12,12 +12,13 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { ComparativeStatisticsService } from '../../../../../core/services/comparative-statistics.service';
 import { ComparativeStatistics } from '../../../../../core/models/comparative-statistics.model';
+import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 
 type RegionFilter = 'city' | 'state' | 'country';
 
 @Component({
   selector: 'app-patient-dashboard',
-  imports: [CommonModule, FormsModule, BaseChartDirective],
+  imports: [CommonModule, FormsModule, BaseChartDirective, TooltipDirective],
   templateUrl: './patient-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,7 +36,7 @@ export class PatientDashboardComponent implements OnInit {
 
   public lineChartData: ChartConfiguration['data'] = { datasets: [], labels: [] };
   public lineChartOptions: ChartConfiguration['options'] = {};
-  public lineChartType: ChartType = 'line';
+  public lineChartType: ChartType = 'bar';
 
   public horizontalBarChartData: ChartConfiguration['data'] = { datasets: [], labels: [] };
   public horizontalBarChartOptions: ChartConfiguration['options'] = {};
@@ -107,28 +108,22 @@ export class PatientDashboardComponent implements OnInit {
     const regionalAvg = stats.regional_avg[selectedRegion] || 0;
 
     this.lineChartData = {
-      labels: ['Score Médio'],
+      labels: ['Você', `Faixa ${stats.demographics.age_group} anos`, this.getRegionLabel()],
       datasets: [
         {
-          data: [stats.patient_avg_score],
-          label: 'Você',
-          borderColor: 'rgb(219, 39, 119)',
-          backgroundColor: 'rgba(219, 39, 119, 0.1)',
-          tension: 0.4,
-        },
-        {
-          data: [stats.age_group_avg_score || 0],
-          label: `Média ${stats.demographics.age_group} anos`,
-          borderColor: 'rgb(59, 130, 246)',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          tension: 0.4,
-        },
-        {
-          data: [regionalAvg],
-          label: `Média ${this.getRegionLabel()}`,
-          borderColor: 'rgb(16, 185, 129)',
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-          tension: 0.4,
+          data: [stats.patient_avg_score, stats.age_group_avg_score || 0, regionalAvg],
+          label: 'Score Médio (0-1)',
+          backgroundColor: [
+            'rgba(219, 39, 119, 0.8)',
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+          ],
+          borderColor: [
+            'rgb(219, 39, 119)',
+            'rgb(59, 130, 246)',
+            'rgb(16, 185, 129)',
+          ],
+          borderWidth: 2,
         },
       ],
     };
@@ -137,10 +132,18 @@ export class PatientDashboardComponent implements OnInit {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom' },
+        legend: { display: false },
       },
       scales: {
-        y: { beginAtZero: true, max: 1 },
+        y: {
+          beginAtZero: true,
+          max: 1,
+          ticks: {
+            callback: function(value) {
+              return (Number(value) * 100).toFixed(0);
+            }
+          }
+        },
       },
     };
   }
@@ -203,10 +206,10 @@ export class PatientDashboardComponent implements OnInit {
 
   getPercentileMedal(percentile: number | null): string {
     if (percentile === null) return '';
-    if (percentile >= 90) return '🥇';
-    if (percentile >= 75) return '🥈';
-    if (percentile >= 50) return '🥉';
-    return '';
+    if (percentile >= 75) return '🥇'; // Ouro: Excelente (≥75%)
+    if (percentile >= 50) return '🥈'; // Prata: Bom (50-74%)
+    if (percentile >= 25) return '🥉'; // Bronze: Regular (25-49%)
+    return '📊'; // Ícone neutro: Precisa Atenção (<25%)
   }
 
   getRegionLabel(): string {

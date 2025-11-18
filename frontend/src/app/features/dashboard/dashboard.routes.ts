@@ -100,29 +100,12 @@ export const DASHBOARD_ROUTES: Routes = [
             './patient/components/patient-test-detail/patient-test-detail.component'
           ).then((c) => c.PatientTestDetailComponent),
       },
+      // Admin routes
       {
         path: 'admin',
         canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/admin-dashboard/admin-dashboard.component').then(
-            (c) => c.AdminDashboardComponent
-          ),
-      },
-      {
-        path: 'users',
-        canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/user-management/user-management.component').then(
-            (c) => c.UserManagementComponent
-          ),
-      },
-      {
-        path: 'users/edit/:id',
-        canActivate: [authGuard(['admin'])],
-        loadComponent: () =>
-          import('./components/edit-user/edit-user.component').then(
-            (c) => c.EditUserComponent
-          ),
+        loadChildren: () =>
+          import('./admin/admin.routes').then((r) => r.ADMIN_ROUTES),
       },
     ],
   },

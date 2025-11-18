@@ -40,8 +40,6 @@ export class AnalysisTab implements OnInit {
   readonly allPatients = signal<Patient[]>([]);
   readonly currentPage = signal<number>(1);
   readonly pageSize = 10;
-  readonly selectedTab = signal<'overview' | 'charts' | 'list'>('overview');
-  readonly expandedChart = signal<string | null>('distribution');
   readonly showExportDropdown = signal<boolean>(false);
 
   readonly filters = signal<FilterOptions>({
@@ -229,18 +227,6 @@ export class AnalysisTab implements OnInit {
 
   exportPDF() {
     this.toastService.warning('Funcionalidade de exportação PDF será implementada em breve');
-  }
-
-  selectTab(tab: 'overview' | 'charts' | 'list') {
-    this.selectedTab.set(tab);
-  }
-
-  toggleChart(chartId: string) {
-    if (this.expandedChart() === chartId) {
-      this.expandedChart.set(null);
-    } else {
-      this.expandedChart.set(chartId);
-    }
   }
 
   toggleExportDropdown() {

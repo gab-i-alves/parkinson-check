@@ -38,3 +38,70 @@ async def send_password_reset_email(email_to: str, token: str):
     )
     fm = FastMail(conf)
     await fm.send_message(message)
+
+
+async def send_doctor_approval_email_background(
+    background_tasks: BackgroundTasks, email_to: str, doctor_name: str
+):
+    background_tasks.add_task(send_doctor_approval_email, email_to, doctor_name)
+
+
+async def send_doctor_approval_email(email_to: str, doctor_name: str):
+    context = {"doctor_name": doctor_name}
+
+    template = env.get_template("doctor_approval.html")
+    html_body = template.render(context)
+    message = MessageSchema(
+        subject="ParkinsonCheck - Cadastro Aprovado",
+        recipients=[email_to],
+        body=html_body,
+        subtype=MessageType.html,
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message)
+
+
+async def send_doctor_rejection_email_background(
+    background_tasks: BackgroundTasks, email_to: str, doctor_name: str, reason: str
+):
+    background_tasks.add_task(send_doctor_rejection_email, email_to, doctor_name, reason)
+
+
+async def send_doctor_rejection_email(email_to: str, doctor_name: str, reason: str):
+    context = {"doctor_name": doctor_name, "reason": reason}
+
+    template = env.get_template("doctor_rejection.html")
+    html_body = template.render(context)
+    message = MessageSchema(
+        subject="ParkinsonCheck - Atualização de Cadastro",
+        recipients=[email_to],
+        body=html_body,
+        subtype=MessageType.html,
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message)
+
+
+async def send_doctor_status_change_email_background(
+    background_tasks: BackgroundTasks, email_to: str, doctor_name: str, new_status: str, reason: str = None
+):
+    background_tasks.add_task(send_doctor_status_change_email, email_to, doctor_name, new_status, reason)
+
+
+async def send_doctor_status_change_email(email_to: str, doctor_name: str, new_status: str, reason: str = None):
+    context = {
+        "doctor_name": doctor_name,
+        "new_status": new_status,
+        "reason": reason
+    }
+
+    template = env.get_template("doctor_status_change.html")
+    html_body = template.render(context)
+    message = MessageSchema(
+        subject="ParkinsonCheck - Alteração de Status",
+        recipients=[email_to],
+        body=html_body,
+        subtype=MessageType.html,
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message)

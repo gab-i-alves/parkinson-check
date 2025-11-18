@@ -31,7 +31,13 @@ interface NavLink {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule, RouterLink, RouterLinkActive, TooltipDirective, BadgeComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    RouterLinkActive,
+    TooltipDirective,
+    BadgeComponent,
+  ],
   templateUrl: './sidebar.component.html',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,21 +45,21 @@ interface NavLink {
     trigger('slideDown', [
       transition(':enter', [
         style({ height: 0, opacity: 0 }),
-        animate('200ms ease-out', style({ height: '*', opacity: 1 }))
+        animate('200ms ease-out', style({ height: '*', opacity: 1 })),
       ]),
       transition(':leave', [
-        animate('200ms ease-in', style({ height: 0, opacity: 0 }))
-      ])
+        animate('200ms ease-in', style({ height: 0, opacity: 0 })),
+      ]),
     ]),
     trigger('rotate', [
       transition('false => true', [
-        animate('200ms ease-out', style({ transform: 'rotate(180deg)' }))
+        animate('200ms ease-out', style({ transform: 'rotate(180deg)' })),
       ]),
       transition('true => false', [
-        animate('200ms ease-in', style({ transform: 'rotate(0deg)' }))
-      ])
-    ])
-  ]
+        animate('200ms ease-in', style({ transform: 'rotate(0deg)' })),
+      ]),
+    ]),
+  ],
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
@@ -75,42 +81,42 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: 'Dashboard',
       icon: 'home',
       disabled: false,
-      tooltip: 'Visão geral'
+      tooltip: 'Visão geral',
     },
     {
       path: '/dashboard/tests',
       label: 'Realizar Testes',
       icon: 'clipboard',
       disabled: false,
-      tooltip: 'Iniciar novo teste'
+      tooltip: 'Iniciar novo teste',
     },
     {
       path: '/dashboard/results',
       label: 'Meus Resultados',
       icon: 'chart',
       disabled: false,
-      tooltip: 'Ver histórico de resultados'
+      tooltip: 'Ver histórico de resultados',
     },
     {
       path: '/dashboard/my-doctors',
       label: 'Meus Médicos',
       icon: 'users',
       disabled: false,
-      tooltip: 'Gerenciar médicos'
+      tooltip: 'Gerenciar médicos',
     },
     {
       path: '/dashboard/patient-requests',
       label: 'Solicitações',
       icon: 'clipboard',
       disabled: false,
-      tooltip: 'Ver solicitações pendentes'
+      tooltip: 'Ver solicitações pendentes',
     },
     {
       path: '/dashboard/settings',
       label: 'Configurações',
       icon: 'settings',
       disabled: false,
-      tooltip: 'Configurações da conta'
+      tooltip: 'Configurações da conta',
     },
   ];
 
@@ -120,59 +126,59 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: 'Dashboard',
       icon: 'home',
       disabled: false,
-      tooltip: 'Visão geral'
+      tooltip: 'Visão geral',
     },
     {
       path: '/dashboard/doctor/clinical-test/patient-selection',
       label: 'Realizar Testes',
       icon: 'clipboard',
       disabled: false,
-      tooltip: 'Aplicar testes clínicos'
+      tooltip: 'Aplicar testes clínicos',
     },
-    {
-      path: '/dashboard/doctor/analytics',
-      label: 'Análises',
-      icon: 'chart',
-      disabled: false,
-      tooltip: 'Análises e estatísticas'
-    },
+    // {
+    //   path: '/dashboard/doctor/analytics',
+    //   label: 'Análises',
+    //   icon: 'chart',
+    //   disabled: false,
+    //   tooltip: 'Análises e estatísticas'
+    // },
     {
       path: '/dashboard/doctor/patients',
       label: 'Meus Pacientes',
       icon: 'users',
       disabled: false,
-      tooltip: 'Gerenciar pacientes'
+      tooltip: 'Gerenciar pacientes',
     },
     {
       path: '/dashboard/doctor/binding-requests',
       label: 'Solicitações',
       icon: 'clipboard',
       disabled: false,
-      tooltip: 'Ver solicitações de vínculo'
+      tooltip: 'Ver solicitações de vínculo',
     },
   ];
 
   private adminLinks: NavLink[] = [
     {
-      path: 'admin',
+      path: '/dashboard/admin',
       label: 'Dashboard',
       icon: 'home',
       disabled: false,
     },
     {
-      path: 'users',
+      path: '/dashboard/admin/users',
       label: 'Gerenciar Usuários',
       icon: 'users',
       disabled: false,
     },
     {
-      path: 'doctors',
+      path: '/dashboard/admin/doctors',
       label: 'Gerenciar Médicos',
       icon: 'users',
       disabled: false,
     },
     {
-      path: 'approve',
+      path: '/dashboard/admin/approve',
       label: 'Aprovar Cadastros',
       icon: 'chart',
       disabled: false,
@@ -216,7 +222,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   toggleUserMenu(): void {
-    this.isUserMenuOpen.update(value => !value);
+    this.isUserMenuOpen.update((value) => !value);
   }
 
   navigateToProfile(): void {

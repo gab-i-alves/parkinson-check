@@ -13,9 +13,6 @@ import { BadgeComponent } from '../../../../../shared/components/badge/badge.com
 export class StatisticsTabComponent {
   @Input() statistics: PatientStatistics | null = null;
 
-  // Signal for view toggle
-  readonly selectedView = signal<'cards' | 'compact'>('cards');
-
   formatDate(dateString: string | null): string {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);

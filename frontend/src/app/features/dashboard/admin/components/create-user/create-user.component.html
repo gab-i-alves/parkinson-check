@@ -1,0 +1,386 @@
+<div class="mx-auto max-w-4xl p-6">
+  <!-- Header -->
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-neutral-900">Criar Novo Usuário</h1>
+      <p class="mt-1 text-sm text-neutral-600">Preencha os dados para criar um novo usuário (Paciente, Médico ou Administrador)</p>
+    </div>
+    <button
+      type="button"
+      (click)="goBack()"
+      class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-colors"
+    >
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      Voltar
+    </button>
+  </div>
+
+  <!-- Form Card -->
+  <div class="rounded-2xl bg-white shadow-sm border border-neutral-200">
+    <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="p-6">
+      <!-- Error Message -->
+      @if (apiError) {
+        <div class="mb-6 rounded-lg bg-red-50 border border-red-200 p-4">
+          <div class="flex items-start">
+            <svg class="h-5 w-5 text-red-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- User Type Selection -->
+      <div class="mb-8">
+        <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2">Tipo de Usuário</h2>
+        <div class="grid grid-cols-1 gap-6">
+          <div>
+            <label for="userType" class="block text-sm font-medium text-gray-700">
+              Tipo de Usuário <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="userType"
+              formControlName="userType"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+            >
+              <option value="1">Paciente</option>
+              <option value="2">Médico</option>
+              <option value="3">Administrador</option>
+            </select>
+            <p class="mt-1 text-xs text-gray-500">
+              Selecione o tipo de usuário a ser criado. Campos específicos serão exibidos conforme o tipo selecionado.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Information -->
+      <div class="mb-8">
+        <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2">Dados Pessoais</h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <!-- Nome -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">
+              Nome Completo <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('name')?.invalid && createForm.get('name')?.touched"
+            />
+            @if (createForm.get('name')?.invalid && createForm.get('name')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Nome é obrigatório (mínimo 3 caracteres)</p>
+            }
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">
+              E-mail <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('email')?.invalid && createForm.get('email')?.touched"
+            />
+            @if (createForm.get('email')?.invalid && createForm.get('email')?.touched) {
+              <p class="mt-1 text-sm text-red-600">E-mail inválido</p>
+            }
+          </div>
+
+          <!-- CPF -->
+          <div>
+            <label for="cpf" class="block text-sm font-medium text-gray-700">
+              CPF <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="cpf"
+              formControlName="cpf"
+              placeholder="Apenas números (11 dígitos)"
+              maxlength="11"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('cpf')?.invalid && createForm.get('cpf')?.touched"
+            />
+            @if (createForm.get('cpf')?.invalid && createForm.get('cpf')?.touched) {
+              <p class="mt-1 text-sm text-red-600">CPF deve conter 11 dígitos</p>
+            }
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">
+              Senha <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="password"
+              id="password"
+              formControlName="password"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('password')?.invalid && createForm.get('password')?.touched"
+            />
+            @if (createForm.get('password')?.invalid && createForm.get('password')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Senha é obrigatória (mínimo 6 caracteres)</p>
+            }
+          </div>
+
+          <!-- Birthdate -->
+          <div>
+            <label for="birthdate" class="block text-sm font-medium text-gray-700">
+              Data de Nascimento <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              id="birthdate"
+              formControlName="birthdate"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('birthdate')?.invalid && createForm.get('birthdate')?.touched"
+            />
+            @if (createForm.get('birthdate')?.invalid && createForm.get('birthdate')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Data de nascimento é obrigatória</p>
+            }
+          </div>
+
+          <!-- Gender -->
+          <div>
+            <label for="gender" class="block text-sm font-medium text-gray-700">
+              Sexo <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="gender"
+              formControlName="gender"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('gender')?.invalid && createForm.get('gender')?.touched"
+            >
+              <option value="">Selecione</option>
+              <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
+              <option value="O">Outro</option>
+            </select>
+            @if (createForm.get('gender')?.invalid && createForm.get('gender')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Sexo é obrigatório</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Information -->
+      <div class="mb-8">
+        <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2">Endereço</h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <!-- CEP -->
+          <div>
+            <label for="cep" class="block text-sm font-medium text-gray-700">
+              CEP <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="cep"
+              formControlName="cep"
+              placeholder="Apenas números (8 dígitos)"
+              maxlength="8"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('cep')?.invalid && createForm.get('cep')?.touched"
+            />
+            @if (createForm.get('cep')?.invalid && createForm.get('cep')?.touched) {
+              <p class="mt-1 text-sm text-red-600">CEP deve conter 8 dígitos</p>
+            }
+          </div>
+
+          <!-- Street -->
+          <div>
+            <label for="street" class="block text-sm font-medium text-gray-700">
+              Rua <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="street"
+              formControlName="street"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('street')?.invalid && createForm.get('street')?.touched"
+            />
+            @if (createForm.get('street')?.invalid && createForm.get('street')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Rua é obrigatória</p>
+            }
+          </div>
+
+          <!-- Number -->
+          <div>
+            <label for="number" class="block text-sm font-medium text-gray-700">
+              Número <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="number"
+              formControlName="number"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('number')?.invalid && createForm.get('number')?.touched"
+            />
+            @if (createForm.get('number')?.invalid && createForm.get('number')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Número é obrigatório</p>
+            }
+          </div>
+
+          <!-- Complement -->
+          <div>
+            <label for="complement" class="block text-sm font-medium text-gray-700">
+              Complemento
+            </label>
+            <input
+              type="text"
+              id="complement"
+              formControlName="complement"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+            />
+          </div>
+
+          <!-- Neighborhood -->
+          <div>
+            <label for="neighborhood" class="block text-sm font-medium text-gray-700">
+              Bairro <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="neighborhood"
+              formControlName="neighborhood"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('neighborhood')?.invalid && createForm.get('neighborhood')?.touched"
+            />
+            @if (createForm.get('neighborhood')?.invalid && createForm.get('neighborhood')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Bairro é obrigatório</p>
+            }
+          </div>
+
+          <!-- City -->
+          <div>
+            <label for="city" class="block text-sm font-medium text-gray-700">
+              Cidade <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="city"
+              formControlName="city"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('city')?.invalid && createForm.get('city')?.touched"
+            />
+            @if (createForm.get('city')?.invalid && createForm.get('city')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Cidade é obrigatória</p>
+            }
+          </div>
+
+          <!-- State -->
+          <div>
+            <label for="state" class="block text-sm font-medium text-gray-700">
+              Estado (UF) <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="state"
+              formControlName="state"
+              placeholder="Ex: SP"
+              maxlength="2"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm uppercase"
+              [class.border-red-300]="createForm.get('state')?.invalid && createForm.get('state')?.touched"
+            />
+            @if (createForm.get('state')?.invalid && createForm.get('state')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Estado é obrigatório (2 letras)</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor-specific Fields -->
+      @if (createForm.get('userType')?.value === '2') {
+      <div class="mb-8">
+        <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2 flex items-center gap-2">
+          <svg class="h-5 w-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Dados Profissionais (Médico)
+        </h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <!-- CRM -->
+          <div>
+            <label for="crm" class="block text-sm font-medium text-gray-700">
+              CRM <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="crm"
+              formControlName="crm"
+              placeholder="Ex: 123456/SP"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm uppercase"
+              [class.border-red-300]="createForm.get('crm')?.invalid && createForm.get('crm')?.touched"
+            />
+            @if (createForm.get('crm')?.invalid && createForm.get('crm')?.touched) {
+              <p class="mt-1 text-sm text-red-600">CRM é obrigatório no formato NNNNNN/UF (ex: 123456/SP)</p>
+            }
+            <p class="mt-1 text-xs text-gray-500">
+              Número do CRM seguido de barra e UF (ex: 123456/SP)
+            </p>
+          </div>
+
+          <!-- Área de Especialidade -->
+          <div>
+            <label for="expertise_area" class="block text-sm font-medium text-gray-700">
+              Área de Especialidade <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="expertise_area"
+              formControlName="expertise_area"
+              placeholder="Ex: Neurologia, Cardiologia, Clínica Geral"
+              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              [class.border-red-300]="createForm.get('expertise_area')?.invalid && createForm.get('expertise_area')?.touched"
+            />
+            @if (createForm.get('expertise_area')?.invalid && createForm.get('expertise_area')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Área de especialidade é obrigatória para médicos</p>
+            }
+            <p class="mt-1 text-xs text-gray-500">
+              Informe a principal área de atuação médica
+            </p>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end gap-4 border-t border-neutral-200 pt-6">
+        <button
+          type="button"
+          (click)="goBack()"
+          [disabled]="isLoading"
+          class="rounded-lg px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="isLoading || createForm.invalid"
+          class="inline-flex items-center gap-2 rounded-lg bg-pink-600 px-6 py-2 text-sm font-medium text-white hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (isLoading) {
+            <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Criando...
+          } @else {
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Criar Usuário
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -68,21 +68,6 @@ Siga os passos abaixo para configurar o ambiente de desenvolvimento local:
     - **Front-end (Angular):** [http://localhost:4200](http://localhost:4200)
     - **Back-end (FastAPI Docs):** [http://localhost:8000/docs](http://localhost:8000/docs)
 
-7.  **Configuração do primeiro administrador:**
-    Utilize uma das seguintes abordagens:
-
-    - Voltando ao **primeiro terminal**, execute:
-
-    ```bash
-    docker exec parkinson-check-backend-1 sh -c "cd /app && PYTHONPATH=/app python scripts/seeds/first_admin.py"
-    ```
-
-    - Alternativamente, abra a interface do docker, e nela o **terminal do container do backend (Exec tab)**, e então execute:
-
-    ```bash
-    cd /app && PYTHONPATH=/app python scripts/seeds/first_admin.py
-    ```
-
 ## Roadmap do Produto
 
 ### Visão do Produto

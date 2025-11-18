@@ -9,6 +9,7 @@ from api.schemas.statistics import (
     PatientDemographics,
     RegionalAverages,
 )
+from core.enums.user_enum import Gender
 from core.models.address import Address
 from core.models.tests import Test
 from core.models.users import Patient, User
@@ -32,21 +33,14 @@ def get_age_group(age: int) -> str:
         return "76+"
 
 
-def infer_gender(cpf: str) -> str:
-    """
-    Infere o gênero com base no dígito do CPF (simplificação).
-    Em um sistema real, seria melhor ter um campo explícito de gênero.
-    Por enquanto, usando uma heurística baseada no penúltimo dígito:
-    - Par: feminino
-    - Ímpar: masculino
-    """
-    # Remover caracteres não numéricos
-    cpf_digits = "".join(filter(str.isdigit, cpf))
-    if len(cpf_digits) >= 11:
-        # Penúltimo dígito do CPF
-        penultimate_digit = int(cpf_digits[-2])
-        return "female" if penultimate_digit % 2 == 0 else "male"
-    return "male"  # Default
+def gender_enum_to_string(gender: Gender) -> str:
+    """Converte enum Gender para string usada pela API"""
+    if gender == Gender.MALE:
+        return "male"
+    elif gender == Gender.FEMALE:
+        return "female"
+    else:
+        return "other"
 
 
 def get_comparative_statistics(session: Session, user: User) -> ComparativeStatistics:
@@ -69,7 +63,7 @@ def get_comparative_statistics(session: Session, user: User) -> ComparativeStati
     # Calcular informações demográficas do paciente
     patient_age = calculate_age(patient.birthdate)
     patient_age_group = get_age_group(patient_age)
-    patient_gender = infer_gender(patient.cpf)
+    patient_gender = gender_enum_to_string(patient.gender)
 
     # Calcular score médio do paciente
     patient_avg_query = select(func.avg(Test.score)).where(Test.patient_id == patient.id)
@@ -162,19 +156,15 @@ def get_comparative_statistics(session: Session, user: User) -> ComparativeStati
 
     gender_avg = GenderAverages()
 
-    # Filtrar pacientes por gênero (baseado no CPF)
+    # Filtrar pacientes por gênero (baseado no campo gender do banco)
     male_patients = [
         p_id for p_id in age_group_patient_ids
-        if infer_gender(
-            session.scalar(select(Patient.cpf).where(Patient.id == p_id))
-        ) == "male"
+        if session.scalar(select(Patient.gender).where(Patient.id == p_id)) == Gender.MALE
     ]
 
     female_patients = [
         p_id for p_id in age_group_patient_ids
-        if infer_gender(
-            session.scalar(select(Patient.cpf).where(Patient.id == p_id))
-        ) == "female"
+        if session.scalar(select(Patient.gender).where(Patient.id == p_id)) == Gender.FEMALE
     ]
 
     if male_patients:

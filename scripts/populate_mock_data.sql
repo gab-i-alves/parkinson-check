@@ -145,16 +145,16 @@ INSERT INTO patient (id, share_data_for_statistics) VALUES
 -- INSERÇÃO DE MÉDICOS (referencia user + CRM)
 -- ========================================
 
-INSERT INTO doctor (id, crm, expertise_area, status_approval) VALUES
+INSERT INTO doctor (id, crm, expertise_area, status, experience_level) VALUES
 -- 3 médicos aprovados
-(16, '123456/SC', 'Neurologia', TRUE),
-(17, '789012/PA', 'Geriatria', TRUE),
-(18, '345678/PB', 'Neurologia', TRUE),
+(16, '123456/SC', 'Neurologia', 'APPROVED', 'SENIOR'),
+(17, '789012/PA', 'Geriatria', 'APPROVED', 'EXPERT'),
+(18, '345678/PB', 'Neurologia', 'APPROVED', 'INTERMEDIATE'),
 -- 2 médicos pendentes de aprovação
-(19, '456789/PR', 'Neurologia', FALSE),
-(20, '987654/PE', 'Geriatria', FALSE),
--- 1 médico rejeitado (NULL)
-(21, '112233/CE', 'Cardiologia', NULL);
+(19, '456789/PR', 'Neurologia', 'PENDING', 'JUNIOR'),
+(20, '987654/PE', 'Geriatria', 'PENDING', 'INTERMEDIATE'),
+-- 1 médico rejeitado
+(21, '112233/CE', 'Cardiologia', 'REJECTED', 'JUNIOR');
 
 -- ========================================
 -- INSERÇÃO DE ADMINISTRADORES (referencia user)
