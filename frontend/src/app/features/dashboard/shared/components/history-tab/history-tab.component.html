@@ -31,7 +31,9 @@
     </div>
 
     <!-- Table Skeleton -->
-    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+    <div
+      class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden"
+    >
       <div class="p-4 border-b border-neutral-200">
         <div class="grid grid-cols-7 gap-4">
           @for (item of [1,2,3,4,5,6,7]; track item) {
@@ -59,13 +61,22 @@
       <!-- Background Pattern -->
       <div
         class="absolute inset-0 opacity-10"
-        style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;"
+        style="
+          background-image: radial-gradient(
+            circle,
+            rgb(26, 26, 26) 1px,
+            transparent 1px
+          );
+          background-size: 16px 16px;
+        "
       ></div>
 
       <!-- Decorative Circles -->
       <div class="absolute top-2 right-2 w-16 h-16 opacity-30">
         <div class="w-8 h-8 bg-yellow-600 rounded-full"></div>
-        <div class="w-6 h-6 bg-yellow-400 rounded-full absolute top-4 left-6"></div>
+        <div
+          class="w-6 h-6 bg-yellow-400 rounded-full absolute top-4 left-6"
+        ></div>
       </div>
 
       <!-- Icon -->
@@ -88,14 +99,20 @@
       Nenhum teste realizado
     </h3>
     <p class="text-sm text-neutral-600 mb-6 max-w-md mx-auto">
-      Este paciente ainda não realizou nenhum teste. O histórico de testes aparecerá aqui após a primeira avaliação.
+      Este paciente ainda não realizou nenhum teste. O histórico de testes
+      aparecerá aqui após a primeira avaliação.
     </p>
 
     @if (!isPatientView) {
     <button
       class="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white rounded-xl hover:bg-neutral-800 transition-all shadow-sm hover:shadow-md"
     >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -108,35 +125,27 @@
     }
   </div>
   } @else {
-  <!-- Tabs Pills Navigation -->
-  <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
-    <button
-      (click)="selectedView.set('table')"
-      [class]="selectedView() === 'table' ? 'px-4 py-2 rounded-full bg-white shadow-sm text-neutral-900 font-medium text-sm transition-all' : 'px-4 py-2 rounded-full text-neutral-600 text-sm hover:text-neutral-900 transition-all'"
-    >
-      Tabela
-    </button>
-    <button
-      (click)="selectedView.set('cards')"
-      [class]="selectedView() === 'cards' ? 'px-4 py-2 rounded-full bg-white shadow-sm text-neutral-900 font-medium text-sm transition-all' : 'px-4 py-2 rounded-full text-neutral-600 text-sm hover:text-neutral-900 transition-all'"
-    >
-      Cards
-    </button>
-  </div>
-
   <!-- Enhanced Filter Section -->
   <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <!-- Filter: Tipo de Teste -->
       <div>
-        <label for="filterType" class="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">
+        <label
+          for="filterType"
+          class="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2"
+        >
           Tipo de Teste
           <button
             appTooltip="Filtre por tipo de teste (Espiral ou Voz)"
             [tooltipPosition]="'top'"
             class="text-neutral-500 hover:text-neutral-700 transition-colors"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -170,7 +179,12 @@
             [tooltipPosition]="'top'"
             class="text-neutral-500 hover:text-neutral-700 transition-colors"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -196,7 +210,9 @@
       <div class="flex flex-col justify-end">
         <div class="flex items-center justify-between">
           <p class="text-sm text-neutral-600">
-            <span class="font-semibold text-neutral-900">{{ filteredTests().length }}</span>
+            <span class="font-semibold text-neutral-900">{{
+              filteredTests().length
+            }}</span>
             teste(s) encontrado(s)
           </p>
           @if (filterType() !== 'all' || filterClassification() !== 'all') {
@@ -204,7 +220,12 @@
             (click)="clearFilters()"
             class="text-xs text-pink-600 hover:text-pink-700 font-medium transition-colors flex items-center gap-1"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -229,7 +250,12 @@
         class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium hover:bg-blue-200 transition-colors"
       >
         <span>Tipo: {{ getTestTypeLabel(filterType()) }}</span>
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-3 h-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -243,8 +269,16 @@
         (click)="onFilterClassificationChange('all')"
         class="inline-flex items-center gap-1.5 px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium hover:bg-pink-200 transition-colors"
       >
-        <span>Classificação: {{ getClassificationLabel(filterClassification()) }}</span>
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <span
+          >Classificação:
+          {{ getClassificationLabel(filterClassification()) }}</span
+        >
+        <svg
+          class="w-3 h-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -260,19 +294,34 @@
     <!-- Summary Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Total Tests Card -->
-      <div class="bg-yellow-100 rounded-2xl p-4 relative overflow-hidden border border-yellow-200">
+      <div
+        class="bg-yellow-100 rounded-2xl p-4 relative overflow-hidden border border-yellow-200"
+      >
         <div
           class="absolute inset-0 opacity-10"
-          style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;"
+          style="
+            background-image: radial-gradient(
+              circle,
+              rgb(26, 26, 26) 1px,
+              transparent 1px
+            );
+            background-size: 16px 16px;
+          "
         ></div>
         <div class="relative z-10">
-          <p class="text-xs font-medium text-neutral-700 mb-1">Total de Testes</p>
-          <p class="text-3xl font-bold text-neutral-900">{{ timeline.total_count }}</p>
+          <p class="text-xs font-medium text-neutral-700 mb-1">
+            Total de Testes
+          </p>
+          <p class="text-3xl font-bold text-neutral-900">
+            {{ timeline.total_count }}
+          </p>
         </div>
       </div>
 
       <!-- Average Score Card -->
-      <div class="bg-pink-100 rounded-2xl p-4 relative overflow-hidden border border-pink-200">
+      <div
+        class="bg-pink-100 rounded-2xl p-4 relative overflow-hidden border border-pink-200"
+      >
         <svg
           class="absolute bottom-0 right-0 w-20 h-20 opacity-10 text-neutral-900"
           viewBox="0 0 200 200"
@@ -293,8 +342,9 @@
   </div>
 
   <!-- Table View -->
-  @if (selectedView() === 'table') {
-  <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+  <div
+    class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden"
+  >
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-neutral-200">
         <thead class="bg-neutral-50">
@@ -310,7 +360,12 @@
                   [tooltipPosition]="'top'"
                   class="text-neutral-400 hover:text-neutral-600"
                 >
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    class="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       stroke-linecap="round"
                       stroke-linejoin="round"
@@ -344,7 +399,12 @@
                   [tooltipPosition]="'top'"
                   class="text-neutral-400 hover:text-neutral-600"
                 >
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    class="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       stroke-linecap="round"
                       stroke-linejoin="round"
@@ -378,9 +438,15 @@
         <tbody class="bg-white divide-y divide-neutral-100">
           @for (test of paginatedTests(); track test.test_id; let i = $index) {
           <tr
-            [class]="i % 2 === 0 ? 'hover:bg-yellow-50/30 transition-colors' : 'hover:bg-pink-50/30 transition-colors'"
+            [class]="
+              i % 2 === 0
+                ? 'hover:bg-yellow-50/30 transition-colors'
+                : 'hover:bg-pink-50/30 transition-colors'
+            "
           >
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-neutral-900">
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-neutral-900"
+            >
               #{{ test.test_id }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-700">
@@ -388,10 +454,19 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">
               <span
-                [class]="isSpiralTest(test.test_type) ? 'inline-flex items-center gap-1.5 text-blue-700 font-medium' : 'inline-flex items-center gap-1.5 text-pink-700 font-medium'"
+                [class]="
+                  isSpiralTest(test.test_type)
+                    ? 'inline-flex items-center gap-1.5 text-blue-700 font-medium'
+                    : 'inline-flex items-center gap-1.5 text-pink-700 font-medium'
+                "
               >
                 @if (isSpiralTest(test.test_type)) {
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -400,7 +475,12 @@
                   />
                 </svg>
                 } @else {
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -412,11 +492,15 @@
                 {{ getTestTypeLabel(test.test_type) }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-neutral-900">
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-neutral-900"
+            >
               {{ test.score.toFixed(2) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">
-              <app-badge [variant]="getClassificationBadgeVariant(test.classification)">
+              <app-badge
+                [variant]="getClassificationBadgeVariant(test.classification)"
+              >
                 {{ getClassificationLabel(test.classification) }}
               </app-badge>
             </td>
@@ -429,7 +513,12 @@
                 class="inline-flex items-center gap-2 px-4 py-2 border border-neutral-200 text-sm font-semibold rounded-xl text-neutral-900 bg-white hover:bg-neutral-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 transition-all"
               >
                 Ver Detalhes
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -445,117 +534,6 @@
       </table>
     </div>
   </div>
-  }
-
-  <!-- Cards View -->
-  @if (selectedView() === 'cards') {
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    @for (test of paginatedTests(); track test.test_id) {
-    <div
-      [class]="isSpiralTest(test.test_type) ? 'bg-blue-50 border-blue-200 rounded-2xl shadow-sm border p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden cursor-pointer' : 'bg-pink-50 border-pink-200 rounded-2xl shadow-sm border p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden cursor-pointer'"
-      (click)="viewTestDetails(test.test_id)"
-    >
-      <!-- Background Pattern -->
-      @if (isSpiralTest(test.test_type)) {
-      <div class="absolute top-2 right-2 w-20 h-20 opacity-10">
-        <div class="w-10 h-10 bg-blue-600 rounded-full"></div>
-        <div class="w-8 h-8 bg-blue-400 rounded-full absolute top-6 left-6"></div>
-        <div class="w-6 h-6 bg-blue-300 rounded-full absolute top-10 left-10"></div>
-      </div>
-      } @else {
-      <svg
-        class="absolute bottom-0 right-0 w-24 h-24 opacity-10 text-pink-600"
-        viewBox="0 0 200 200"
-      >
-        <path
-          d="M0,100 Q50,50 100,100 T200,100 L200,200 L0,200 Z"
-          fill="currentColor"
-        />
-      </svg>
-      }
-
-      <div class="relative z-10">
-        <!-- Header: Test ID and Type -->
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-semibold text-neutral-600">#{{ test.test_id }}</span>
-          <span
-            [class]="isSpiralTest(test.test_type) ? 'inline-flex items-center gap-1.5 px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-xs font-medium' : 'inline-flex items-center gap-1.5 px-3 py-1 bg-pink-200 text-pink-800 rounded-full text-xs font-medium'"
-          >
-            @if (isSpiralTest(test.test_type)) {
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            } @else {
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-              />
-            </svg>
-            }
-            {{ getTestTypeLabel(test.test_type) }}
-          </span>
-        </div>
-
-        <!-- Date -->
-        <p class="text-xs text-neutral-600 mb-3">
-          {{ formatDate(test.execution_date) }}
-        </p>
-
-        <!-- Score (Large) -->
-        <div class="mb-4">
-          <p class="text-xs text-neutral-600 mb-1">Score</p>
-          <p class="text-4xl font-bold text-neutral-900">{{ test.score.toFixed(2) }}</p>
-        </div>
-
-        <!-- Classification Badge -->
-        <div class="mb-4">
-          <app-badge [variant]="getClassificationBadgeVariant(test.classification)">
-            {{ getClassificationLabel(test.classification) }}
-          </app-badge>
-        </div>
-
-        <!-- Duration -->
-        <div class="flex items-center gap-2 text-xs text-neutral-600">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>{{ formatDuration(test) }}</span>
-        </div>
-
-        <!-- View Details Arrow -->
-        <div class="absolute top-6 right-6">
-          <svg
-            class="w-5 h-5 text-neutral-400 group-hover:text-neutral-900 transition-colors"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </div>
-      </div>
-    </div>
-    }
-  </div>
-  }
 
   <!-- Enhanced Pagination -->
   @if (totalPages() > 1) {
@@ -585,9 +563,7 @@
     </div>
 
     <!-- Desktop Pagination -->
-    <div
-      class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between"
-    >
+    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
       <div class="flex items-center gap-4">
         <p class="text-sm text-neutral-600">
           Mostrando
@@ -599,7 +575,9 @@
             Math.min(currentPage() * pageSize(), filteredTests().length)
           }}</span>
           de
-          <span class="font-semibold text-neutral-900">{{ filteredTests().length }}</span>
+          <span class="font-semibold text-neutral-900">{{
+            filteredTests().length
+          }}</span>
           resultados
         </p>
         <div class="flex items-center gap-2">
@@ -620,10 +598,7 @@
       </div>
 
       <div>
-        <nav
-          class="isolate inline-flex gap-1"
-          aria-label="Paginação"
-        >
+        <nav class="isolate inline-flex gap-1" aria-label="Paginação">
           <button
             (click)="previousPage()"
             [disabled]="currentPage() === 1"
