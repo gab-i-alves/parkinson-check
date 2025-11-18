@@ -77,11 +77,21 @@ export class TestDetailComponent implements OnInit, OnDestroy {
   readonly isAddingNote = signal<boolean>(false);
   readonly editingNoteId = signal<number | null>(null);
 
+  // Reply mode signals
+  readonly isReplyingToNote = signal<boolean>(false);
+  readonly replyingToNoteId = signal<number | null>(null);
+
   readonly showDeleteNoteModal = signal<boolean>(false);
   readonly noteToDelete = signal<number | null>(null);
 
+  // Organized threaded notes
+  readonly threadedNotes = computed<Note[]>(() => {
+    return this.organizeNotesIntoThreads(this.notes());
+  });
+
   noteForm!: FormGroup;
   editForm!: FormGroup;
+  replyForm!: FormGroup;
 
   // Enum e labels para o template
   readonly NoteCategory = NoteCategory;
@@ -101,6 +111,12 @@ export class TestDetailComponent implements OnInit, OnDestroy {
     });
 
     this.editForm = this.fb.group({
+      content: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(5000)]],
+      patient_view: [false],
+      category: [NoteCategory.OBSERVATION, [Validators.required]],
+    });
+
+    this.replyForm = this.fb.group({
       content: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(5000)]],
       patient_view: [false],
       category: [NoteCategory.OBSERVATION, [Validators.required]],
@@ -208,6 +224,10 @@ export class TestDetailComponent implements OnInit, OnDestroy {
   toggleAddNote(): void {
     this.isAddingNote.set(!this.isAddingNote());
     if (!this.isAddingNote()) {
+      // Close reply form if opening add note form
+      this.isReplyingToNote.set(false);
+      this.replyingToNoteId.set(null);
+    } else {
       this.noteForm.reset({ patient_view: false, category: NoteCategory.OBSERVATION });
     }
   }
@@ -247,6 +267,9 @@ export class TestDetailComponent implements OnInit, OnDestroy {
       patient_view: note.patient_view,
       category: note.category,
     });
+    // Close reply form if opening edit form
+    this.isReplyingToNote.set(false);
+    this.replyingToNoteId.set(null);
   }
 
   cancelEdit(): void {
@@ -368,5 +391,137 @@ export class TestDetailComponent implements OnInit, OnDestroy {
     if (url) {
       URL.revokeObjectURL(url);
     }
+  }
+
+  // ========== THREAD/REPLY FUNCTIONALITY (HU 14 CA2) ==========
+
+  /**
+   * Organizes flat notes array into a hierarchical thread structure
+   * Parent notes (parent_note_id === null) come first with their replies nested
+   * Max depth: 2 levels (parent → reply only, no nested replies)
+   * Reply sort order: newest-first
+   */
+  organizeNotesIntoThreads(notes: Note[]): Note[] {
+    const parentNotes = notes.filter(note => note.parent_note_id === null);
+    const replyNotes = notes.filter(note => note.parent_note_id !== null);
+
+    // Group replies by parent ID
+    const repliesMap = new Map<number, Note[]>();
+    replyNotes.forEach(reply => {
+      const parentId = reply.parent_note_id!;
+      if (!repliesMap.has(parentId)) {
+        repliesMap.set(parentId, []);
+      }
+      repliesMap.get(parentId)!.push(reply);
+    });
+
+    // Sort replies newest-first
+    repliesMap.forEach(replies => {
+      replies.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    });
+
+    // Build result: parent notes sorted newest-first with their replies
+    const result: Note[] = [];
+    parentNotes.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+    parentNotes.forEach(parent => {
+      result.push(parent);
+      const replies = repliesMap.get(parent.id) || [];
+      result.push(...replies);
+    });
+
+    return result;
+  }
+
+  getParentNote(noteId: number): Note | null {
+    return this.notes().find(n => n.id === noteId) || null;
+  }
+
+  getNestingLevel(note: Note): number {
+    if (note.parent_note_id === null) return 0;
+    const parent = this.getParentNote(note.parent_note_id);
+    if (!parent) return 1;
+    return 1 + this.getNestingLevel(parent);
+  }
+
+  getReplyCount(noteId: number): number {
+    return this.notes().filter(n => n.parent_note_id === noteId).length;
+  }
+
+  /**
+   * Get all replies for a specific parent note, sorted newest-first
+   */
+  getRepliesFor(noteId: number): Note[] {
+    const replies = this.notes().filter(n => n.parent_note_id === noteId);
+    return replies.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }
+
+  startReply(note: Note): void {
+    // Prevent replying to replies (max 2 levels: parent → reply only)
+    if (note.parent_note_id !== null) {
+      this.toastService.warning('Não é possível responder a uma resposta. Responda à nota principal.');
+      return;
+    }
+
+    this.isReplyingToNote.set(true);
+    this.replyingToNoteId.set(note.id);
+    this.isAddingNote.set(false);
+    this.editingNoteId.set(null);
+
+    // Inherit patient_view from parent note
+    this.replyForm.reset({
+      patient_view: note.patient_view,
+      category: NoteCategory.OBSERVATION
+    });
+
+    setTimeout(() => {
+      const element = document.getElementById(`note-${note.id}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+  }
+
+  cancelReply(): void {
+    this.isReplyingToNote.set(false);
+    this.replyingToNoteId.set(null);
+    this.replyForm.reset();
+  }
+
+  submitReply(): void {
+    if (this.replyForm.invalid || !this.testId() || !this.replyingToNoteId()) {
+      this.toastService.warning('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    const request: CreateNoteRequest = {
+      content: this.replyForm.value.content,
+      test_id: this.testId()!,
+      parent_note_id: this.replyingToNoteId(),
+      patient_view: this.replyForm.value.patient_view,
+      category: this.replyForm.value.category,
+    };
+
+    this.noteService.createNote(request).subscribe({
+      next: (note) => {
+        this.notes.set([note, ...this.notes()]);
+        this.replyForm.reset({ patient_view: false, category: NoteCategory.OBSERVATION });
+        this.isReplyingToNote.set(false);
+        this.replyingToNoteId.set(null);
+        this.toastService.success('Resposta criada com sucesso!');
+      },
+      error: (err) => {
+        console.error('Erro ao criar resposta:', err);
+        this.toastService.error('Erro ao criar resposta. Tente novamente.');
+      },
+    });
+  }
+
+  isBeingRepliedTo(noteId: number): boolean {
+    return this.replyingToNoteId() === noteId;
+  }
+
+  isReply(note: Note): boolean {
+    return note.parent_note_id !== null;
   }
 }
