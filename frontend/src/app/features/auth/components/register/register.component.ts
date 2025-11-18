@@ -149,6 +149,27 @@ export class RegisterComponent implements OnInit {
     this.apiError = null;
   }
 
+  private cleanFormData(formData: any): any {
+    const cleanedData = { ...formData };
+
+    // Remove formatting from CPF (dots and dashes)
+    if (cleanedData.cpf) {
+      cleanedData.cpf = cleanedData.cpf.replace(/[^\d]/g, '');
+    }
+
+    // Remove formatting from CEP (dash)
+    if (cleanedData.cep) {
+      cleanedData.cep = cleanedData.cep.replace(/[^\d]/g, '');
+    }
+
+    // Clean CRM (trim and uppercase)
+    if (cleanedData.crm) {
+      cleanedData.crm = cleanedData.crm.trim().toUpperCase();
+    }
+
+    return cleanedData;
+  }
+
   onPatientSubmit(): void {
     if (this.patientRegisterForm.invalid) {
       this.patientRegisterForm.markAllAsTouched();
@@ -158,11 +179,12 @@ export class RegisterComponent implements OnInit {
     this.patientRegisterForm.disable();
     this.apiError = null;
 
+    const cleanedData = this.cleanFormData(this.patientRegisterForm.value);
     console.log(
       'Dados do Cadastro (Paciente):',
-      this.patientRegisterForm.value
+      cleanedData
     );
-    this.authService.registerPatient(this.patientRegisterForm.value).subscribe({
+    this.authService.registerPatient(cleanedData).subscribe({
       next: (response: any) => {
         console.log('Cadastro de paciente bem-sucedido!', response);
         this.router.navigate(['/auth/login']);
@@ -201,9 +223,10 @@ export class RegisterComponent implements OnInit {
     this.doctorRegisterForm.disable();
     this.apiError = null;
 
-    console.log('Dados do Cadastro (Médico):', this.doctorRegisterForm.value);
+    const cleanedData = this.cleanFormData(this.doctorRegisterForm.value);
+    console.log('Dados do Cadastro (Médico):', cleanedData);
 
-    this.authService.registerDoctor(this.doctorRegisterForm.value).subscribe({
+    this.authService.registerDoctor(cleanedData).subscribe({
       next: (response: any) => {
         console.log('Cadastro de médico enviado para aprovação!', response);
 

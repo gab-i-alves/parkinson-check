@@ -49,10 +49,6 @@ export class ChartsTabComponent implements OnChanges {
   readonly selectedTestType = signal<'all' | 'spiral' | 'voice'>('all');
   readonly computedStats = signal<ComputedStatistics | null>(null);
 
-  // New signals for enhanced UI
-  readonly selectedView = signal<'overview' | 'detailed'>('overview');
-  readonly expandedAccordion = signal<string | null>('line');
-
   // Line Chart Configuration
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [],
@@ -615,15 +611,6 @@ export class ChartsTabComponent implements OnChanges {
         return 'Piorando';
       default:
         return 'Estável';
-    }
-  }
-
-  // New utility methods for enhanced UI
-  toggleAccordion(chartId: string): void {
-    if (this.expandedAccordion() === chartId) {
-      this.expandedAccordion.set(null);
-    } else {
-      this.expandedAccordion.set(chartId);
     }
   }
 

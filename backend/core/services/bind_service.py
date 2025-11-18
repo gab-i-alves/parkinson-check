@@ -40,7 +40,7 @@ def get_pending_bind_requests(user: User, session: Session) -> list[BindingReque
                     email=patients_dict[bind.patient_id].email,
                     cpf=patients_dict[bind.patient_id].cpf,
                     age=calculate_age(patients_dict[bind.patient_id].birthdate),
-                    location=patients_dict[bind.patient_id].location,
+                    location=f"{patients_dict[bind.patient_id].address.city}, {patients_dict[bind.patient_id].address.state}" if patients_dict[bind.patient_id].address else "Não definido",
                 ),
                 status=bind.status,
                 created_by_type=bind.created_by_type.name if bind.created_by_type else None,
@@ -71,7 +71,7 @@ def get_pending_bind_requests(user: User, session: Session) -> list[BindingReque
                     name=doctors_dict[bind.doctor_id].name,
                     specialty=doctors_dict[bind.doctor_id].expertise_area,
                     crm=doctors_dict[bind.doctor_id].crm,
-                    location=doctors_dict[bind.doctor_id].location,
+                    location=f"{doctors_dict[bind.doctor_id].address.city}, {doctors_dict[bind.doctor_id].address.state}" if doctors_dict[bind.doctor_id].address else "Não definido",
                 ),
                 status=bind.status,
                 created_by_type=bind.created_by_type.name if bind.created_by_type else None,
@@ -208,7 +208,7 @@ def accept_bind_request(user: User, session: Session, bind_id: int) -> Bind:
     session.commit()
     session.refresh(bind_to_accept)
     
-    doctor_management_service.log_activity(bind_to_accept.doctor_id, ActivityType.PATIENT_BOUND, "Médico foi vinculado ao paciente " + bind_to_accept.patient_id, session)
+    doctor_management_service.log_activity(bind_to_accept.doctor_id, ActivityType.PATIENT_BOUND, f"Médico foi vinculado ao paciente {bind_to_accept.patient_id}", session)
 
     return bind_to_accept
 
@@ -296,4 +296,4 @@ def unbind_users(user: User, session: Session, bind_id: int):
     session.add(bind_to_reverse)
     session.commit()
     
-    doctor_management_service.log_activity(bind_to_reverse.doctor_id, ActivityType.PATIENT_UNBOUND, "Médico foi desvinculado do paciente " + bind_to_reverse.patient_id, session)
+    doctor_management_service.log_activity(bind_to_reverse.doctor_id, ActivityType.PATIENT_UNBOUND, f"Médico foi desvinculado do paciente {bind_to_reverse.patient_id}", session)

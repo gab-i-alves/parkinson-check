@@ -29,7 +29,6 @@ export class HistoryTabComponent implements OnChanges {
   readonly currentPage = signal<number>(1);
   readonly pageSize = signal<number>(10);
   readonly pageSizeOptions = [10, 25, 50];
-  readonly selectedView = signal<'table' | 'cards'>('table');
 
   readonly Math = Math;
 
