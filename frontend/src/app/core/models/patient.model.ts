@@ -26,4 +26,5 @@ export interface PatientFilters {
   status?: PatientStatus;
   testType?: TestType;
   searchQuery?: string;
+  is_active?: boolean;
 }

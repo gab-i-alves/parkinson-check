@@ -42,7 +42,8 @@ export class PatientSelectorComponent {
 
   loadPatients(): void {
     this.isLoading.set(true);
-    this.doctorDashboardService.getPatientsPage(1, 100).subscribe({
+    // Filtra apenas pacientes ativos (is_active: true)
+    this.doctorDashboardService.getPatientsPage(1, 100, { is_active: true }).subscribe({
       next: (result) => {
         this.patients.set(result.patients);
         this.isLoading.set(false);

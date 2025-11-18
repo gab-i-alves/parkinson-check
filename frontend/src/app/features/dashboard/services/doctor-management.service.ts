@@ -126,17 +126,15 @@ export class DoctorManagementService {
               false
           );
         }
-        
-        console.log(filters?.area)
+
         if (filters?.area !== undefined && filters?.area !== "") {
-          const area = filters?.area 
+          const area = filters?.area
 
           filteredUsers = filteredUsers.filter(
             (u) => u.expertise_area === area
           );
         }
 
-        console.log(filters?.approval_status)
         if (filters?.approval_status !== undefined && filters?.approval_status !== "") {
           filteredUsers = filteredUsers.filter(
             (u) => (u.approval_status) === (filters.approval_status)
@@ -215,4 +213,12 @@ getDoctorById(userId: number): Observable<DoctorBackendResponse | null> {
     responseType: 'blob'
   });
 }
+
+  updateDoctorDetails(doctorId: number, details: { expertise_area?: string; experience_level?: string }): Observable<any> {
+    return this.http.patch<any>(
+      `${this.apiUrl}/admin/doctors/${doctorId}/details`,
+      null,
+      { params: details as any }
+    );
+  }
 }

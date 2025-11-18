@@ -154,25 +154,25 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   private adminLinks: NavLink[] = [
     {
-      path: 'admin',
+      path: '/dashboard/admin',
       label: 'Dashboard',
       icon: 'home',
       disabled: false,
     },
     {
-      path: 'users',
+      path: '/dashboard/admin/users',
       label: 'Gerenciar Usuários',
       icon: 'users',
       disabled: false,
     },
     {
-      path: 'doctors',
+      path: '/dashboard/admin/doctors',
       label: 'Gerenciar Médicos',
       icon: 'users',
       disabled: false,
     },
     {
-      path: 'approve',
+      path: '/dashboard/admin/approve',
       label: 'Aprovar Cadastros',
       icon: 'chart',
       disabled: false,
