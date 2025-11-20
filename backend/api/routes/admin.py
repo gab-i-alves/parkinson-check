@@ -19,7 +19,8 @@ from api.schemas.users import (
     ChangeDoctorStatusSchema,
     PatientSchema,
     UserResponse,
-    CreateUserByAdminSchema
+    CreateUserByAdminSchema,
+    UpdateDoctorDetailsSchema
 )
 from http import HTTPStatus 
 
@@ -230,20 +231,22 @@ async def change_doctor_status(
 @router.patch("/doctors/{doctor_id}/details")
 async def update_doctor_details(
     doctor_id: int,
-    expertise_area: str | None = None,
-    experience_level: str | None = None,
+    details: UpdateDoctorDetailsSchema,
     session: Session = Depends(get_session),
     current_admin: User = Depends(get_current_user)
 ):
-    """Admin atualiza área de atuação e nível de experiência do médico."""
+    """Admin atualiza detalhes do médico (área de atuação e/ou CRM)."""
+    from fastapi import HTTPException
+
     doctor = session.get(Doctor, doctor_id)
     if not doctor:
         raise HTTPException(HTTPStatus.NOT_FOUND, detail="Médico não encontrado")
 
-    if expertise_area is not None:
-        doctor.expertise_area = expertise_area
-    if experience_level is not None:
-        doctor.experience_level = experience_level
+    if details.expertise_area is not None:
+        doctor.expertise_area = details.expertise_area
+
+    if details.crm is not None:
+        doctor.crm = details.crm
 
     session.commit()
     session.refresh(doctor)
