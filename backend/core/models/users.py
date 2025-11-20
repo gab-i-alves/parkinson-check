@@ -5,7 +5,7 @@ from sqlalchemy import TIMESTAMP, ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.enums.doctor_enum import DoctorStatus, ExperienceLevel
+from core.enums.doctor_enum import DoctorStatus
 from core.enums import BindEnum, Gender, UserType
 from core.models.table_registry import table_registry
 
@@ -67,11 +67,7 @@ class Doctor(User):
         default=DoctorStatus.PENDING,
         nullable=False
     )
-    experience_level: Mapped[ExperienceLevel | None] = mapped_column(
-        PG_ENUM(ExperienceLevel, name="experience_level_enum", create_type=False),
-        nullable=True, default="junior"
-    )
-    
+
     __mapper_args__ = {
         "polymorphic_identity": UserType.DOCTOR,
     }
