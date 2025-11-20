@@ -1,20 +1,8 @@
 <div class="mx-auto max-w-4xl p-6">
   <!-- Header -->
-  <div class="mb-6 flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-neutral-900">Criar Novo Usuário</h1>
-      <p class="mt-1 text-sm text-neutral-600">Preencha os dados para criar um novo usuário (Paciente, Médico ou Administrador)</p>
-    </div>
-    <button
-      type="button"
-      (click)="goBack()"
-      class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-colors"
-    >
-      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-      </svg>
-      Voltar
-    </button>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-neutral-900">Criar Novo Usuário</h1>
+    <p class="mt-1 text-sm text-neutral-600">Preencha os dados para criar um novo usuário (Paciente, Médico ou Administrador)</p>
   </div>
 
   <!-- Form Card -->
@@ -39,13 +27,13 @@
         <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2">Tipo de Usuário</h2>
         <div class="grid grid-cols-1 gap-6">
           <div>
-            <label for="userType" class="block text-sm font-medium text-gray-700">
+            <label for="userType" class="block text-sm font-medium text-neutral-900 mb-2">
               Tipo de Usuário <span class="text-red-500">*</span>
             </label>
             <select
               id="userType"
               formControlName="userType"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             >
               <option value="1">Paciente</option>
               <option value="2">Médico</option>
@@ -64,41 +52,39 @@
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- Nome -->
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">
+            <label for="name" class="block text-sm font-medium text-neutral-900 mb-2">
               Nome Completo <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="name"
               formControlName="name"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('name')?.invalid && createForm.get('name')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('name')?.invalid && createForm.get('name')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Nome é obrigatório (mínimo 3 caracteres)</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Nome é obrigatório (mínimo 3 caracteres)</span></div>
             }
           </div>
 
           <!-- Email -->
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">
+            <label for="email" class="block text-sm font-medium text-neutral-900 mb-2">
               E-mail <span class="text-red-500">*</span>
             </label>
             <input
               type="email"
               id="email"
               formControlName="email"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('email')?.invalid && createForm.get('email')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('email')?.invalid && createForm.get('email')?.touched) {
-              <p class="mt-1 text-sm text-red-600">E-mail inválido</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>E-mail inválido</span></div>
             }
           </div>
 
           <!-- CPF -->
           <div>
-            <label for="cpf" class="block text-sm font-medium text-gray-700">
+            <label for="cpf" class="block text-sm font-medium text-neutral-900 mb-2">
               CPF <span class="text-red-500">*</span>
             </label>
             <input
@@ -107,58 +93,54 @@
               formControlName="cpf"
               placeholder="Apenas números (11 dígitos)"
               maxlength="11"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('cpf')?.invalid && createForm.get('cpf')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('cpf')?.invalid && createForm.get('cpf')?.touched) {
-              <p class="mt-1 text-sm text-red-600">CPF deve conter 11 dígitos</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>CPF deve conter 11 dígitos</span></div>
             }
           </div>
 
           <!-- Password -->
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">
+            <label for="password" class="block text-sm font-medium text-neutral-900 mb-2">
               Senha <span class="text-red-500">*</span>
             </label>
             <input
               type="password"
               id="password"
               formControlName="password"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('password')?.invalid && createForm.get('password')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('password')?.invalid && createForm.get('password')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Senha é obrigatória (mínimo 6 caracteres)</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Senha é obrigatória (mínimo 6 caracteres)</span></div>
             }
           </div>
 
           <!-- Birthdate -->
           <div>
-            <label for="birthdate" class="block text-sm font-medium text-gray-700">
+            <label for="birthdate" class="block text-sm font-medium text-neutral-900 mb-2">
               Data de Nascimento <span class="text-red-500">*</span>
             </label>
             <input
               type="date"
               id="birthdate"
               formControlName="birthdate"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('birthdate')?.invalid && createForm.get('birthdate')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('birthdate')?.invalid && createForm.get('birthdate')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Data de nascimento é obrigatória</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Data de nascimento é obrigatória</span></div>
             }
           </div>
 
           <!-- Gender -->
           <div>
-            <label for="gender" class="block text-sm font-medium text-gray-700">
+            <label for="gender" class="block text-sm font-medium text-neutral-900 mb-2">
               Sexo <span class="text-red-500">*</span>
             </label>
             <select
               id="gender"
               formControlName="gender"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('gender')?.invalid && createForm.get('gender')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             >
               <option value="">Selecione</option>
               <option value="M">Masculino</option>
@@ -166,7 +148,7 @@
               <option value="O">Outro</option>
             </select>
             @if (createForm.get('gender')?.invalid && createForm.get('gender')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Sexo é obrigatório</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Sexo é obrigatório</span></div>
             }
           </div>
         </div>
@@ -178,7 +160,7 @@
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- CEP -->
           <div>
-            <label for="cep" class="block text-sm font-medium text-gray-700">
+            <label for="cep" class="block text-sm font-medium text-neutral-900 mb-2">
               CEP <span class="text-red-500">*</span>
             </label>
             <input
@@ -187,98 +169,93 @@
               formControlName="cep"
               placeholder="Apenas números (8 dígitos)"
               maxlength="8"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('cep')?.invalid && createForm.get('cep')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('cep')?.invalid && createForm.get('cep')?.touched) {
-              <p class="mt-1 text-sm text-red-600">CEP deve conter 8 dígitos</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>CEP deve conter 8 dígitos</span></div>
             }
           </div>
 
           <!-- Street -->
           <div>
-            <label for="street" class="block text-sm font-medium text-gray-700">
+            <label for="street" class="block text-sm font-medium text-neutral-900 mb-2">
               Rua <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="street"
               formControlName="street"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('street')?.invalid && createForm.get('street')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('street')?.invalid && createForm.get('street')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Rua é obrigatória</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Rua é obrigatória</span></div>
             }
           </div>
 
           <!-- Number -->
           <div>
-            <label for="number" class="block text-sm font-medium text-gray-700">
+            <label for="number" class="block text-sm font-medium text-neutral-900 mb-2">
               Número <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="number"
               formControlName="number"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('number')?.invalid && createForm.get('number')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('number')?.invalid && createForm.get('number')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Número é obrigatório</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Número é obrigatório</span></div>
             }
           </div>
 
           <!-- Complement -->
           <div>
-            <label for="complement" class="block text-sm font-medium text-gray-700">
+            <label for="complement" class="block text-sm font-medium text-neutral-900 mb-2">
               Complemento
             </label>
             <input
               type="text"
               id="complement"
               formControlName="complement"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
           </div>
 
           <!-- Neighborhood -->
           <div>
-            <label for="neighborhood" class="block text-sm font-medium text-gray-700">
+            <label for="neighborhood" class="block text-sm font-medium text-neutral-900 mb-2">
               Bairro <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="neighborhood"
               formControlName="neighborhood"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('neighborhood')?.invalid && createForm.get('neighborhood')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('neighborhood')?.invalid && createForm.get('neighborhood')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Bairro é obrigatório</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Bairro é obrigatório</span></div>
             }
           </div>
 
           <!-- City -->
           <div>
-            <label for="city" class="block text-sm font-medium text-gray-700">
+            <label for="city" class="block text-sm font-medium text-neutral-900 mb-2">
               Cidade <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="city"
               formControlName="city"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('city')?.invalid && createForm.get('city')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('city')?.invalid && createForm.get('city')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Cidade é obrigatória</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Cidade é obrigatória</span></div>
             }
           </div>
 
           <!-- State -->
           <div>
-            <label for="state" class="block text-sm font-medium text-gray-700">
+            <label for="state" class="block text-sm font-medium text-neutral-900 mb-2">
               Estado (UF) <span class="text-red-500">*</span>
             </label>
             <input
@@ -288,10 +265,9 @@
               placeholder="Ex: SP"
               maxlength="2"
               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm uppercase"
-              [class.border-red-300]="createForm.get('state')?.invalid && createForm.get('state')?.touched"
             />
             @if (createForm.get('state')?.invalid && createForm.get('state')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Estado é obrigatório (2 letras)</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Estado é obrigatório (2 letras)</span></div>
             }
           </div>
         </div>
@@ -309,7 +285,7 @@
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- CRM -->
           <div>
-            <label for="crm" class="block text-sm font-medium text-gray-700">
+            <label for="crm" class="block text-sm font-medium text-neutral-900 mb-2">
               CRM <span class="text-red-500">*</span>
             </label>
             <input
@@ -318,10 +294,9 @@
               formControlName="crm"
               placeholder="Ex: 123456/SP"
               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm uppercase"
-              [class.border-red-300]="createForm.get('crm')?.invalid && createForm.get('crm')?.touched"
             />
             @if (createForm.get('crm')?.invalid && createForm.get('crm')?.touched) {
-              <p class="mt-1 text-sm text-red-600">CRM é obrigatório no formato NNNNNN/UF (ex: 123456/SP)</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>CRM é obrigatório no formato NNNNNN/UF (ex: 123456/SP)</span></div>
             }
             <p class="mt-1 text-xs text-gray-500">
               Número do CRM seguido de barra e UF (ex: 123456/SP)
@@ -330,7 +305,7 @@
 
           <!-- Área de Especialidade -->
           <div>
-            <label for="expertise_area" class="block text-sm font-medium text-gray-700">
+            <label for="expertise_area" class="block text-sm font-medium text-neutral-900 mb-2">
               Área de Especialidade <span class="text-red-500">*</span>
             </label>
             <input
@@ -338,11 +313,10 @@
               id="expertise_area"
               formControlName="expertise_area"
               placeholder="Ex: Neurologia, Cardiologia, Clínica Geral"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-              [class.border-red-300]="createForm.get('expertise_area')?.invalid && createForm.get('expertise_area')?.touched"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             @if (createForm.get('expertise_area')?.invalid && createForm.get('expertise_area')?.touched) {
-              <p class="mt-1 text-sm text-red-600">Área de especialidade é obrigatória para médicos</p>
+              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Área de especialidade é obrigatória para médicos</span></div>
             }
             <p class="mt-1 text-xs text-gray-500">
               Informe a principal área de atuação médica
@@ -354,14 +328,6 @@
 
       <!-- Action Buttons -->
       <div class="flex items-center justify-end gap-4 border-t border-neutral-200 pt-6">
-        <button
-          type="button"
-          (click)="goBack()"
-          [disabled]="isLoading"
-          class="rounded-lg px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Cancelar
-        </button>
         <button
           type="submit"
           [disabled]="isLoading || createForm.invalid"
