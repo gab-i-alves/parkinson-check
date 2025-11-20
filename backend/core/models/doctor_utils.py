@@ -8,7 +8,7 @@ from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 @table_registry.mapped_as_dataclass
 class DoctorDocument:
     __tablename__ = "doctor_document"
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, autoincrement=True)
     doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"), nullable=False)
     document_type: Mapped[DocumentType] = mapped_column(
         PG_ENUM(DocumentType, name="document_type_enum"), nullable=False

@@ -75,4 +75,4 @@ def get_doctor_document_info(
     file_id: int, 
     session: Session
 ) -> list[DoctorDocument] :
-    return session.query(DoctorDocument).filter(DoctorDocument.doctor_id == doctor_id and DoctorDocument.id == file_id).first()
+    return session.query(DoctorDocument).filter(DoctorDocument.doctor_id == doctor_id, DoctorDocument.id == file_id).first()
