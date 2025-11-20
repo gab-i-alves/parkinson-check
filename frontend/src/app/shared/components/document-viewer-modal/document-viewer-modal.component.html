@@ -57,7 +57,7 @@
       </div>
       } @else {
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        @for (doc of documents(); track doc.id) {
+        @for (doc of documents(); track $index) {
         <div
           class="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
         >
