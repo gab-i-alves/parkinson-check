@@ -51,6 +51,7 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboardData();
+    this.loadPendingDoctors();
   }
 
   loadDashboardData(): void {
@@ -72,8 +73,20 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  loadPendingDoctors(): void {
+    this.adminDashboardService.loadPendingDoctors().subscribe({
+      next: () => {
+        this.cdr.markForCheck();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Erro ao buscar médicos pendentes:', err);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
   viewDoctorDetails(doctorId: number): void {
-    this.router.navigate(['/dashboard/approve', doctorId]);
+    this.router.navigate(['/dashboard/admin/approve', doctorId]);
   }
 
   getDoctorInitials(name: string): string {
