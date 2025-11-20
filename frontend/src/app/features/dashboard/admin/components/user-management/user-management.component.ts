@@ -35,7 +35,7 @@ export class UserManagementComponent implements OnInit {
   users = signal<User[]>([]);
   isLoading = signal<boolean>(false);
   searchQuery = signal<string>('');
-  selectedStatus = signal<number>(0);
+  selectedStatus = signal<number | undefined>(0);
   selectedUserType = signal<UserRole | ''>('');
   sortBy = signal<'name' | 'type' | 'status'>('name');
   sortOrder = signal<'asc' | 'desc'>('asc');
@@ -202,7 +202,7 @@ export class UserManagementComponent implements OnInit {
 
   clearFilters(): void {
     this.searchQuery.set('');
-    this.selectedStatus.set(2);
+    this.selectedStatus.set(undefined);
     this.selectedUserType.set('');
     this.currentPage.set(1);
     this.loadUsers();
