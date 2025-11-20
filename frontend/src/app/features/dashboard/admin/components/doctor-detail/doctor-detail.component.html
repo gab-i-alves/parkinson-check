@@ -94,25 +94,11 @@
 </div>
 } @else if (doctor(); as doc) {
 <div class="space-y-6">
-  <!-- Header with back button -->
+  <!-- Header -->
   <div class="flex items-center justify-between">
-    <div class="flex items-center space-x-4">
-      <button
-        type="button"
-        (click)="goBack()"
-        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
-        appTooltip="Voltar para a lista de médicos"
-        tooltipPosition="bottom"
-      >
-        <svg class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Voltar
-      </button>
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">Detalhes do Médico</h1>
-        <p class="mt-1 text-sm text-gray-500">Informações completas e histórico</p>
-      </div>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Detalhes do Médico</h1>
+      <p class="mt-1 text-sm text-gray-500">Informações completas e histórico</p>
     </div>
   </div>
 
@@ -192,22 +178,6 @@
             </select>
           } @else {
             <dd class="mt-1 text-sm text-gray-900">{{ doc.expertise_area || 'Não informado' }}</dd>
-          }
-        </div>
-        <div>
-          <dt class="text-sm font-medium text-gray-500">Nível de Experiência</dt>
-          @if (isEditingDetails()) {
-            <select
-              [(ngModel)]="editedExperienceLevel"
-              class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-            >
-              <option value="">Selecione</option>
-              <option value="junior">Júnior</option>
-              <option value="mid">Pleno</option>
-              <option value="senior">Sênior</option>
-            </select>
-          } @else {
-            <dd class="mt-1 text-sm text-gray-900">{{ getExperienceLevelLabel(doc.experience_level) }}</dd>
           }
         </div>
         <div>

@@ -101,29 +101,6 @@
 </div>
 } @else if (doctor(); as doc) {
 <div class="space-y-6">
-  <!-- Header with back button -->
-  <div class="flex items-center justify-between">
-    <div class="flex items-center space-x-4">
-      <button
-        type="button"
-        (click)="goBack()"
-        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
-      >
-        <svg class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Voltar
-      </button>
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">Aprovação de Médico</h1>
-        <p class="mt-1 text-sm text-gray-500">Revise as informações e documentação</p>
-      </div>
-    </div>
-    <app-badge [variant]="getStatusBadgeVariant(doc.status)">
-      {{ getStatusLabel(doc.status) }}
-    </app-badge>
-  </div>
-
   <!-- Doctor Info Card -->
   <div class="overflow-hidden rounded-xl bg-white shadow">
     <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-blue-50">
