@@ -183,6 +183,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       icon: 'chart',
       disabled: false,
     },
+    {
+      path: '/dashboard/admin/users/create',
+      label: 'Adicionar Usuários',
+      icon: 'user-plus',
+      disabled: false,
+    },
   ];
 
   readonly navLinks = computed(() => {

@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { User, UserRole, UserFilters, Doctor, DoctorStatus, DoctorFilters } from '@core/models';
 import {
@@ -47,19 +47,37 @@ export class DoctorManagementComponent implements OnInit {
 
   private searchSubject = new Subject<string>();
 
+  // Detectar se está na rota de aprovação
+  isApprovalRoute = signal<boolean>(false);
+
   constructor(
     private doctorManagementService: DoctorManagementService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) {}
 
   public Number = Number;
 
   ngOnInit(): void {
+    // Verificar se está na rota de aprovação
+    this.isApprovalRoute.set(this.router.url.includes('/approve'));
+
+    // Se estiver na rota de aprovação, filtrar apenas pendentes
+    if (this.isApprovalRoute()) {
+      this.selectedStatus.set('pendente');
+    }
+
     this.loadUsers();
   }
 
   loadUsers(): void {
     this.isLoading.set(true);
+
+    // Se estiver na rota de aprovação, usar endpoint de pendentes
+    if (this.isApprovalRoute()) {
+      this.loadPendingDoctors();
+      return;
+    }
 
     const filters: DoctorFilters = {
       searchQuery: this.searchQuery() || undefined,
@@ -83,6 +101,25 @@ export class DoctorManagementComponent implements OnInit {
           this.isLoading.set(false);
         },
       });
+  }
+
+  loadPendingDoctors(): void {
+    this.doctorManagementService.getPendingDoctors().subscribe({
+      next: (doctors) => {
+        if (doctors) {
+          const sortedDoctors = this.sortDoctors(doctors);
+          this.doctors.set(sortedDoctors);
+          this.totalUsers.set(doctors.length);
+          this.totalPages.set(Math.ceil(doctors.length / this.pageSize()));
+        }
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar médicos pendentes:', err);
+        this.toastService.error('Erro ao carregar médicos pendentes');
+        this.isLoading.set(false);
+      },
+    });
   }
 
   sortDoctors(users: Doctor[]): Doctor[] {

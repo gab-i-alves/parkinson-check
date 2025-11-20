@@ -219,6 +219,41 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
         { label: 'Dashboard', path: '/dashboard/doctor' },
         { label: 'Visão Geral', path: '/dashboard/doctor' }
       ],
+      '/dashboard/admin/approve/:id': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Aprovar Cadastros', path: '/dashboard/admin/approve' },
+        { label: 'Carregando...', path: url }
+      ],
+      '/dashboard/admin/approve': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Aprovar Cadastros', path: '/dashboard/admin/approve' }
+      ],
+      '/dashboard/admin/doctors/:id': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Gerenciar Médicos', path: '/dashboard/admin/doctors' },
+        { label: 'Carregando...', path: url }
+      ],
+      '/dashboard/admin/doctors': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Gerenciar Médicos', path: '/dashboard/admin/doctors' }
+      ],
+      '/dashboard/admin/users/edit': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Gerenciar Usuários', path: '/dashboard/admin/users' },
+        { label: 'Carregando...', path: url }
+      ],
+      '/dashboard/admin/users/create': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Adicionar Usuários', path: url }
+      ],
+      '/dashboard/admin/users': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Gerenciar Usuários', path: '/dashboard/admin/users' }
+      ],
+      '/dashboard/admin': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Visão Geral', path: '/dashboard/admin' }
+      ],
       '/dashboard/tests': [
         { label: 'Dashboard', path: '/dashboard' },
         { label: 'Realizar Testes', path: '/dashboard/tests' }

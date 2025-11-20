@@ -212,6 +212,38 @@ class ChangeDoctorStatusSchema(BaseModel):
     reason: Optional[str] = None
 
 
+class UpdateDoctorDetailsSchema(BaseModel):
+    """Schema para atualização de detalhes específicos do médico"""
+    expertise_area: Optional[str] = None
+    crm: Optional[str] = Field(None, min_length=8, max_length=10)
+
+    @field_validator('crm')
+    @classmethod
+    def validate_crm(cls, v: Optional[str]) -> Optional[str]:
+        """Valida formato CRM brasileiro: NNNNNN/UF"""
+        if v is None:
+            return v
+
+        crm = v.strip().upper()
+        pattern = r'^(\d{5,6})/([A-Z]{2})$'
+        match = re.match(pattern, crm)
+
+        if not match:
+            raise ValueError('CRM deve estar no formato NNNNNN/UF (ex: 123456/SP)')
+
+        number, state = match.groups()
+        valid_states = {
+            'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+            'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+            'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+        }
+
+        if state not in valid_states:
+            raise ValueError(f'Estado {state} não é válido para CRM brasileiro')
+
+        return crm
+
+
 class CreateUserByAdminSchema(BaseModel):
     """
     Schema para criação de usuários pelo administrador.

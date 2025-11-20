@@ -1,14 +1,4 @@
 <div class="space-y-6">
-  <!-- Header Section -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Médicos do Sistema</h1>
-      <p class="mt-1 text-sm text-gray-500">
-        Gerencie os médicos e seus documentos
-      </p>
-    </div>
-  </div>
-
   <!-- Filters Card -->
   <div class="overflow-hidden rounded-xl bg-white shadow-sm">
     <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-blue-50">
@@ -352,10 +342,10 @@
               <td
                 class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
               >
-                <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-end gap-2">
                   <a
                     [routerLink]="['/dashboard/admin/doctors/', doctor.id]"
-                    class="inline-flex items-center text-pink-600 hover:text-pink-900 transition-colors"
+                    class="inline-flex items-center px-4 py-2 border border-blue-200 text-sm font-semibold rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 transition-all"
                     appTooltip="Visualizar detalhes completos do médico"
                     tooltipPosition="left"
                   >
@@ -368,7 +358,7 @@
                   <button
                     type="button"
                     (click)="initiateStatusChange(doctor)"
-                    class="inline-flex items-center text-pink-600 hover:text-pink-900 transition-colors"
+                    class="inline-flex items-center px-4 py-2 border border-yellow-200 text-sm font-semibold rounded-lg text-yellow-700 bg-yellow-50 hover:bg-yellow-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-200 transition-all"
                     appTooltip="Modificar o status de aprovação do médico"
                     tooltipPosition="left"
                   >

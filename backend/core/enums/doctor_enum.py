@@ -1,18 +1,12 @@
 from enum import Enum
 
 class DoctorStatus(str, Enum):
-    PENDING = "pending"  
-    APPROVED = "approved"  
-    REJECTED = "rejected"  
-    SUSPENDED = "suspended"  
-    IN_REVIEW = "in_review"  
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    SUSPENDED = "suspended"
+    IN_REVIEW = "in_review"
 
-class ExperienceLevel(str, Enum):
-    JUNIOR = "junior"  
-    INTERMEDIATE = "intermediate"  
-    SENIOR = "senior"  
-    EXPERT = "expert"  
-    
 class DocumentType(str, Enum):
     CRM_CERTIFICATE = 'crm_certificate'
     DIPLOMA = 'diploma'

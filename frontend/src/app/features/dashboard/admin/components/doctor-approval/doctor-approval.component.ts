@@ -6,9 +6,9 @@ import {
   DocumentViewerModalComponent,
   DoctorDocument
 } from '../../../../../shared/components/document-viewer-modal/document-viewer-modal.component';
-import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
 import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
@@ -23,7 +23,6 @@ interface DoctorForApproval {
   cpf: string;
   crm: string;
   expertise_area: string;
-  experience_level: string;
   status: string;
   location: string;
   birthdate?: string;
@@ -36,7 +35,6 @@ interface DoctorForApproval {
   imports: [
     CommonModule,
     DocumentViewerModalComponent,
-    BadgeComponent,
     FormsModule,
     CpfPipe,
     ConfirmationModalComponent,
@@ -61,7 +59,8 @@ export class DoctorApprovalComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private doctorManagementService: DoctorManagementService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
@@ -84,10 +83,12 @@ export class DoctorApprovalComponent implements OnInit {
             cpf: doctor.cpf || '',
             crm: doctor.crm,
             expertise_area: doctor.specialty,
-            experience_level: doctor.experience_level || '',
             status: doctor.status,
             location: doctor.location
           });
+
+          // Atualizar breadcrumb com nome do médico
+          this.breadcrumbService.updateBreadcrumb(this.router.url, doctor.name);
 
           // Create timeline activities based on doctor data
           this.createTimelineActivities(doctor);
@@ -268,9 +269,5 @@ export class DoctorApprovalComponent implements OnInit {
     this.activities.set(activities.sort((a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ));
-  }
-
-  goBack(): void {
-    this.router.navigate(['/dashboard']);
   }
 }

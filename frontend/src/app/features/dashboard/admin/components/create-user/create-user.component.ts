@@ -77,8 +77,20 @@ export class CreateUserComponent implements OnInit {
     this.createForm.disable();
     this.apiError = null;
 
+    // Preparar payload com conversões necessárias
+    const formValue = this.createForm.value;
+    const payload = {
+      ...formValue,
+      user_type: parseInt(formValue.userType, 10),  // Converter para inteiro
+      gender: parseInt(formValue.gender, 10),  // Converter para inteiro
+      fullname: formValue.name  // Adicionar alias para backend
+    };
+
+    // Remover campo userType antigo
+    delete payload.userType;
+
     this.userManagementService
-      .createUser(this.createForm.value)
+      .createUser(payload)
       .subscribe({
         next: (response: any) => {
           console.log('Usuário criado com sucesso:', response);
@@ -94,9 +106,5 @@ export class CreateUserComponent implements OnInit {
           this.createForm.enable();
         },
       });
-  }
-
-  goBack(): void {
-    this.router.navigate(['/dashboard/admin/users']);
   }
 }

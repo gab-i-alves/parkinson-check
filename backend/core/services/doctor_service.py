@@ -58,7 +58,6 @@ def create_doctor(doctor: DoctorSchema, session: Session):
         hashed_password=get_password_hash(doctor.password),
         address_id=address.id,  # NÃO ALTERAR
         gender=doctor.gender,
-        experience_level=None,
         approval_date=None,
         rejection_reason=None
     )

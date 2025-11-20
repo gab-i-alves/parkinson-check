@@ -13,6 +13,7 @@ import {
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
@@ -25,7 +26,6 @@ interface DoctorDetail {
   cpf: string;
   crm: string;
   expertise_area: string;
-  experience_level: string;
   status: string;
   location: string;
   approval_date?: string;
@@ -60,13 +60,13 @@ export class DoctorDetailComponent implements OnInit {
   selectedStatus: string = '';
   statusChangeReason: string = '';
   editedExpertiseArea: string = '';
-  editedExperienceLevel: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private doctorManagementService: DoctorManagementService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
@@ -82,6 +82,8 @@ export class DoctorDetailComponent implements OnInit {
     this.doctorManagementService.getDoctorById(doctorId).subscribe({
       next: (doctor: any) => {
         if (doctor) {
+          console.log('[Doctor Detail] Doctor data received:', doctor);
+          console.log('[Doctor Detail] Doctor ID:', doctor.id);
           this.doctor.set({
             id: doctor.id,
             name: doctor.name,
@@ -89,14 +91,18 @@ export class DoctorDetailComponent implements OnInit {
             cpf: doctor.cpf || '',
             crm: doctor.crm,
             expertise_area: doctor.specialty,
-            experience_level: doctor.experience_level || '',
             status: doctor.status,
             location: doctor.location,
             approval_date: doctor.approval_date,
             rejection_reason: doctor.reason,
             approved_by_admin_id: undefined
           });
+          console.log('[Doctor Detail] Doctor signal set:', this.doctor());
+          console.log('[Doctor Detail] Button should be enabled?', !!this.doctor() && !!this.doctor()?.id);
           this.selectedStatus = doctor.status;
+
+          // Atualizar breadcrumb com nome do médico
+          this.breadcrumbService.updateBreadcrumb(this.router.url, doctor.name);
 
           // Create timeline activities based on doctor data
           this.createTimelineActivities(doctor);
@@ -131,6 +137,13 @@ export class DoctorDetailComponent implements OnInit {
   }
 
   downloadDocument(event: { doctorId: number; documentId: number }): void {
+    // Validate IDs before download
+    if (!event.doctorId || !event.documentId) {
+      console.error('Invalid doctor ID or document ID:', event);
+      this.toastService.error('Erro: IDs inválidos para download');
+      return;
+    }
+
     this.doctorManagementService.downloadDocument(event.doctorId, event.documentId).subscribe({
       next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -207,16 +220,6 @@ export class DoctorDetailComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getExperienceLevelLabel(level: string): string {
-    const labels: Record<string, string> = {
-      'JUNIOR': 'Júnior',
-      'INTERMEDIATE': 'Intermediário',
-      'SENIOR': 'Sênior',
-      'EXPERT': 'Especialista'
-    };
-    return labels[level] || level;
-  }
-
   formatDateDisplay(dateString: string | undefined): string {
     return formatDate(dateString || null);
   }
@@ -225,7 +228,6 @@ export class DoctorDetailComponent implements OnInit {
     const doctor = this.doctor();
     if (doctor) {
       this.editedExpertiseArea = doctor.expertise_area || '';
-      this.editedExperienceLevel = doctor.experience_level || '';
       this.isEditingDetails.set(true);
     }
   }
@@ -233,7 +235,6 @@ export class DoctorDetailComponent implements OnInit {
   cancelEditingDetails(): void {
     this.isEditingDetails.set(false);
     this.editedExpertiseArea = '';
-    this.editedExperienceLevel = '';
   }
 
   saveDetails(): void {
@@ -242,7 +243,6 @@ export class DoctorDetailComponent implements OnInit {
 
     const details: any = {};
     if (this.editedExpertiseArea) details.expertise_area = this.editedExpertiseArea;
-    if (this.editedExperienceLevel) details.experience_level = this.editedExperienceLevel;
 
     this.doctorManagementService.updateDoctorDetails(doctor.id, details).subscribe({
       next: () => {
@@ -303,9 +303,5 @@ export class DoctorDetailComponent implements OnInit {
     this.activities.set(activities.sort((a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ));
-  }
-
-  goBack(): void {
-    this.router.navigate(['/dashboard/doctors']);
   }
 }

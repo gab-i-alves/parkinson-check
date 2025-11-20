@@ -9,6 +9,7 @@ import { BadgeComponent } from '../../../../../shared/components/badge/badge.com
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
 import { formatDate } from '../../../shared/utils/display-helpers';
 
 @Component({
@@ -30,6 +31,8 @@ export class EditUserComponent implements OnInit {
   userToToggleStatus = signal<User | null>(null);
   deactivationReason = signal<string>('');
 
+  isSaveConfirmModalVisible = signal<boolean>(false);
+
   editForm!: FormGroup;
   isLoading = false;
   apiError: string | null = null;
@@ -40,7 +43,8 @@ export class EditUserComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userManagementService: UserManagementService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit(): void {
@@ -73,16 +77,29 @@ loadUser(userId: number) {
   this.userManagementService.getUserById(userId).subscribe({
     next: (user: any) => {
       if (user) {
-        // Salvar dados do usuário
-        this.user.set(this.userManagementService.mapBackendUserToFrontend(user));
-        this.user()!.id = userId;
+        // Salvar dados do usuário diretamente do backend (preserva address)
+        this.user.set({
+          id: userId,
+          name: user.name,
+          email: user.email,
+          cpf: user.cpf,
+          role: user.user_type,
+          gender: user.gender,
+          status: user.is_active,
+          createdAt: user.created_at,
+          location: user.location,
+          address: user.address  // Preservar objeto address do backend
+        } as any);
+
+        // Atualizar breadcrumb com nome do usuário
+        this.breadcrumbService.updateBreadcrumb(this.router.url, user.name);
 
         // Preencher formulário com dados atuais
         this.editForm.patchValue({
           name: user.name || '',
           email: user.email || '',
           birthdate: user.birthdate || '',
-          gender: user.gender || '',
+          gender: user.gender ? user.gender.toString() : '',  // Converter para string
           cep: user.address?.cep || '',
           street: user.address?.street || '',
           number: user.address?.number || '',
@@ -101,22 +118,41 @@ loadUser(userId: number) {
   onSubmit(): void {
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched();
+      this.toastService.error('Por favor, preencha todos os campos obrigatórios corretamente');
       return;
     }
+
+    // Mostrar modal de confirmação ao invés de salvar diretamente
+    this.isSaveConfirmModalVisible.set(true);
+  }
+
+  cancelSave(): void {
+    this.isSaveConfirmModalVisible.set(false);
+  }
+
+  confirmSave(): void {
+    this.isSaveConfirmModalVisible.set(false);
 
     this.isLoading = true;
     this.editForm.disable();
     this.apiError = null;
 
-    console.log('Dados atualizados:', this.editForm.value);
+    // Preparar payload com conversão de tipos
+    const formValue = this.editForm.value;
+    const payload = {
+      ...formValue,
+      gender: formValue.gender ? parseInt(formValue.gender, 10) : undefined  // Converter para inteiro
+    };
+
+    console.log('Dados atualizados:', payload);
 
     this.userManagementService
-      .updateUser(this.user()!.id, this.editForm.value)
+      .updateUser(this.user()!.id, payload)
       .subscribe({
         next: (response: any) => {
           console.log('Edição de perfil realizada', response);
           this.toastService.success('Dados do usuário atualizados com sucesso');
-          this.router.navigate(['/dashboard/users']);
+          this.router.navigate(['/dashboard/admin/users']);
         },
         error: (err: HttpErrorResponse) => {
           console.error('Erro ao atualizar usuário:', err);
@@ -162,12 +198,7 @@ loadUser(userId: number) {
     return formatDate(dateString || null);
   }
 
-  goBack(): void {
-    this.router.navigate(['/dashboard/users']);
-  }
-
-
-    initiateStatusChange(user: User): void {
+  initiateStatusChange(user: User): void {
       this.userToToggleStatus.set(user);
       this.deactivationReason.set('');
       this.isStatusModalVisible.set(true);

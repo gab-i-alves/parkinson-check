@@ -38,10 +38,6 @@ COMMENT ON TYPE notification_type_enum IS 'Tipo de notificação: BIND_REQUEST (
 CREATE TYPE doctor_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED', 'IN_REVIEW');
 COMMENT ON TYPE doctor_status_enum IS 'Status de aprovação do médico no sistema';
 
--- Nível de experiência do médico
-CREATE TYPE experience_level_enum AS ENUM ('JUNIOR', 'INTERMEDIATE', 'SENIOR', 'EXPERT');
-COMMENT ON TYPE experience_level_enum IS 'Nível de experiência profissional do médico';
-
 -- Tipo de documento enviado pelo médico
 CREATE TYPE document_type_enum AS ENUM ('CRM_CERTIFICATE', 'DIPLOMA', 'IDENTITY', 'CPF_DOCUMENT', 'PROOF_OF_ADDRESS', 'OTHER');
 COMMENT ON TYPE document_type_enum IS 'Tipo de documento: CRM_CERTIFICATE (certificado CRM), DIPLOMA, IDENTITY (identidade), CPF_DOCUMENT, PROOF_OF_ADDRESS (comprovante de residência), OTHER (outro)';
@@ -178,7 +174,6 @@ CREATE TABLE IF NOT EXISTS "doctor" (
   "crm" VARCHAR(10) UNIQUE NOT NULL,
   "expertise_area" VARCHAR(50),
   "status" doctor_status_enum NOT NULL DEFAULT 'PENDING',
-  "experience_level" experience_level_enum DEFAULT 'JUNIOR',
   "approval_date" TIMESTAMPTZ,
   "rejection_reason" VARCHAR(255),
   "approved_by_admin_id" INTEGER REFERENCES "admin"(id),
@@ -201,7 +196,6 @@ COMMENT ON TABLE "doctor" IS 'Dados específicos de médicos (extends user)';
 COMMENT ON COLUMN "doctor"."crm" IS 'CRM no formato NNNNNN/UF (ex: 123456/SP) - DADO SENSÍVEL LGPD';
 COMMENT ON COLUMN "doctor"."expertise_area" IS 'Área de especialização médica';
 COMMENT ON COLUMN "doctor"."status" IS 'Status de aprovação do médico no sistema';
-COMMENT ON COLUMN "doctor"."experience_level" IS 'Nível de experiência profissional do médico';
 COMMENT ON COLUMN "doctor"."approval_date" IS 'Data de aprovação do médico';
 COMMENT ON COLUMN "doctor"."rejection_reason" IS 'Motivo da rejeição do cadastro';
 
