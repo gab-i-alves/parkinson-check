@@ -367,24 +367,6 @@ COMMENT ON TABLE "doctor_document" IS 'Documentos enviados pelos médicos para v
 COMMENT ON COLUMN "doctor_document"."document_type" IS 'Tipo de documento enviado';
 COMMENT ON COLUMN "doctor_document"."verified" IS 'Indica se o documento foi verificado por um administrador';
 
--- -----------------------------------------------------
--- Tabela: doctor_activity_log
--- -----------------------------------------------------
--- Histórico de atividades dos médicos no sistema
-CREATE TABLE IF NOT EXISTS "doctor_activity_log" (
-  "id" SERIAL PRIMARY KEY,
-  "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
-  "activity_type" activity_type_enum NOT NULL,
-  "description" TEXT NOT NULL,
-  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-COMMENT ON TABLE "doctor_activity_log" IS 'Registro de atividades dos médicos no sistema';
-COMMENT ON COLUMN "doctor_activity_log"."activity_type" IS 'Tipo de atividade realizada';
-
-COMMENT ON TABLE "notification" IS 'Notificações do sistema para usuários (vinculações, status, etc)';
-COMMENT ON COLUMN "notification"."bind_id" IS 'ID do vínculo relacionado (se aplicável)';
-COMMENT ON COLUMN "notification"."read" IS 'Indica se a notificação foi lida';
 
 -- =====================================================
 -- 3. INDEXES FOR PERFORMANCE
@@ -419,9 +401,6 @@ CREATE INDEX idx_note_not_deleted ON note(id) WHERE deleted_at IS NULL;
 -- Índices para tabela notification
 CREATE INDEX idx_notification_user_unread ON notification(user_id, read, created_at DESC);
 CREATE INDEX idx_notification_user_id ON notification(user_id, created_at DESC);
-
--- Índices para tabela doctor_activity_log
-CREATE INDEX idx_doctor_activity_doctor_id ON doctor_activity_log(doctor_id);
 
 -- =====================================================
 -- 4. FUNCTIONS AND TRIGGERS
