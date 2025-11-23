@@ -67,7 +67,7 @@
           {{ filteredPatients().length }} paciente(s) encontrado(s)
         </p>
 
-        <div class="space-y-3 max-h-96 overflow-y-auto pr-2">
+        <div class="space-y-3 max-h-96 overflow-y-auto pr-2 p-1">
           @for (patient of filteredPatients(); track patient.id) {
           <div
             (click)="selectPatient(patient.id)"
@@ -86,7 +86,7 @@
                   </app-badge>
                   }
                 </div>
-                <p class="text-sm text-neutral-600">CPF: {{ patient.cpf }}</p>
+                <p class="text-sm text-neutral-600">CPF: {{ patient.cpf | cpf }}</p>
                 <p class="text-xs text-neutral-500 mt-1.5">
                   Último teste: {{ formatDate(patient.lastTestDate) }} ({{
                     formatTestType(patient.lastTestType)

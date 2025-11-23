@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
+import re
 
 from fastapi import Cookie, Depends, HTTPException
 from jwt import decode, encode
@@ -7,7 +8,7 @@ from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
 
 from api.schemas.token import TokenResponse
-from core.models import Doctor, Patient, User
+from core.models import Doctor, Patient, User, Admin
 from infra.db.connection import get_session
 from infra.settings import Settings
     
@@ -40,6 +41,9 @@ async def get_current_user(
     elif verify_type == "Doctor":
         if not isinstance(user, Doctor):
             raise HTTPException(HTTPStatus.FORBIDDEN, detail="Usuário sem acesso a rota")
+    elif verify_type == "Admin":
+        if not isinstance(user, Admin):
+            raise HTTPException(HTTPStatus.FORBIDDEN, detail="Usuário sem acesso a rota")
 
     return user
 
@@ -58,6 +62,15 @@ def get_patient_user():
         access_token: str = Cookie(None), session: Session = Depends(get_session)
     ) -> User:
         return await get_current_user(access_token, session, verify_type="Patient")
+
+    return _get_user
+
+def get_admin_user():
+    async def _get_user(
+        access_token: str = Cookie(None), 
+        session: Session = Depends(get_session)
+    ) -> User:
+        return await get_current_user(access_token, session, verify_type="Admin")
 
     return _get_user
 
@@ -88,9 +101,12 @@ def get_user_from_token(token: str, session: Session):
         raise CREDENTIAL_EXCEPTION
 
 
-def create_access_token(data: dict) -> TokenResponse:
-    expire_minutes = Settings().ACCESS_TOKEN_EXPIRE_MINUTES
-    expire = datetime.now(tz=timezone.utc) + timedelta(minutes=expire_minutes)
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> TokenResponse:
+    if expires_delta:
+        expire = datetime.now(tz=timezone.utc) + expires_delta
+    else:
+        expire_minutes = Settings().ACCESS_TOKEN_EXPIRE_MINUTES
+        expire = datetime.now(tz=timezone.utc) + timedelta(minutes=expire_minutes)
 
     data.update({"exp": expire})
 

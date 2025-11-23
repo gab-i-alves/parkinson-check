@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { DoctorService } from '../../../services/doctor.service';
 import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
 import { BindingService } from '../../../../../core/services/binding.service';
-import { BindingRequestResponse, isBindingPatient } from '../../../../../core/models/binding-request.model';
+import { BindingRequestResponse, isBindingPatient, UserType } from '../../../../../core/models/binding-request.model';
 import { Patient, PatientStatus } from '../../../../../core/models/patient.model';
-import { PatientProfileModalComponent, PatientProfile } from '../../../../../shared/components/patient-profile-modal/patient-profile-modal.component';
+import { DoctorProfileModalComponent, ProfileData } from '../../../../../shared/components/doctor-profile-modal/doctor-profile-modal.component';
 import { firstValueFrom } from 'rxjs';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
@@ -13,12 +13,13 @@ import { BadgeComponent } from '../../../../../shared/components/badge/badge.com
 
 interface PatientWithBinding extends Patient {
   bindingStatus?: 'none' | 'pending' | 'linked';
+  location?: string;
 }
 
 @Component({
   selector: 'app-binding-requests',
   standalone: true,
-  imports: [CommonModule, PatientProfileModalComponent, CpfPipe, BadgeComponent],
+  imports: [CommonModule, DoctorProfileModalComponent, CpfPipe, BadgeComponent],
   templateUrl: './binding-requests.component.html',
 })
 export class BindingRequestsComponent implements OnInit {
@@ -35,15 +36,23 @@ export class BindingRequestsComponent implements OnInit {
 
   // Modal de perfil
   isPatientProfileModalVisible = signal<boolean>(false);
-  selectedPatient = signal<PatientProfile | null>(null);
+  selectedPatient = signal<ProfileData | null>(null);
+  showModalMessageField = signal<boolean>(false);
 
   // Busca de pacientes
   searchTerm = signal<string>('');
   statusFilter = signal<string>('');
+  testTypeFilter = signal<string>('');
   searchResults = signal<PatientWithBinding[]>([]);
   isLoadingSearch = signal<boolean>(false);
   sortBy = signal<'name' | 'age' | 'lastTestDate'>('name');
   sortOrder = signal<'asc' | 'desc'>('asc');
+
+  // Paginação
+  currentPage = signal<number>(1);
+  pageSize = signal<number>(10);
+  pageSizeOptions = [10, 25, 50];
+  Math = Math;
 
   ngOnInit(): void {
     this.loadRequests();
@@ -53,14 +62,13 @@ export class BindingRequestsComponent implements OnInit {
     this.isLoading.set(true);
     this.bindingService.getPendingBindingRequests().subscribe({
       next: (data) => {
-        // Filter only requests from patients (received by doctor)
-        const received = data.filter(req => isBindingPatient(req.user));
+        // Filter requests created BY patients (received by doctor)
+        const received = data.filter(req => req.created_by_type === UserType.PATIENT);
         this.requests.set(received);
 
-        // For now, sent requests are not separately loaded
-        // The backend unified endpoint returns all pending requests
-        // We could filter by status or implement separate endpoint if needed
-        this.sentRequests.set([]);
+        // Filter requests created BY doctor (sent to patients)
+        const sent = data.filter(req => req.created_by_type === UserType.DOCTOR);
+        this.sentRequests.set(sent);
 
         this.isLoading.set(false);
       },
@@ -185,6 +193,45 @@ export class BindingRequestsComponent implements OnInit {
     this.searchResults.set(sortedPatients);
   }
 
+  openInviteModal(patient: PatientWithBinding): void {
+    const patientProfile: ProfileData = {
+      id: patient.id,
+      name: patient.name,
+      email: patient.email || '',
+      cpf: patient.cpf,
+      age: patient.age,
+    };
+    this.selectedPatient.set(patientProfile);
+    this.showModalMessageField.set(true);
+    this.isPatientProfileModalVisible.set(true);
+  }
+
+  sendInviteWithMessage(event: { doctorId: number | string; message?: string }): void {
+    const { doctorId: patientId, message } = event;
+    const numericId = typeof patientId === 'string' ? parseInt(patientId, 10) : patientId;
+
+    this.bindingService.requestBinding(numericId, message).subscribe({
+      next: () => {
+        this.toastService.success('Convite enviado com sucesso!');
+        // Update patient status in the list
+        this.searchResults.update((patients) =>
+          patients.map((p) =>
+            p.id === patientId ? { ...p, bindingStatus: 'pending' as const } : p
+          )
+        );
+        this.loadRequests(); // Reload requests to show in "Enviadas" tab
+        this.closePatientProfile();
+      },
+      error: (err) => {
+        this.toastService.error(
+          `Erro ao enviar convite: ${err.error?.detail || 'Tente novamente'}`
+        );
+        this.closePatientProfile();
+      },
+    });
+  }
+
+  // Keep for backward compatibility (direct button clicks without message)
   sendInvite(patientId: string): void {
     const numericId = typeof patientId === 'string' ? parseInt(patientId, 10) : patientId;
 
@@ -216,6 +263,32 @@ export class BindingRequestsComponent implements OnInit {
     return labels[status];
   }
 
+  getFilterStatusLabel(): string {
+    const filter = this.statusFilter();
+    if (!filter) return '';
+    const labels: Record<string, string> = {
+      stable: 'Estável',
+      attention: 'Atenção',
+      critical: 'Crítico',
+    };
+    return labels[filter] || filter;
+  }
+
+  getTestTypeLabel(testType?: string): string {
+    if (!testType) return 'N/A';
+    const labels: Record<string, string> = {
+      spiral: 'Espiral',
+      voice: 'Voz',
+    };
+    return labels[testType] || testType;
+  }
+
+  formatDate(date?: string): string {
+    if (!date) return 'N/A';
+    const d = new Date(date);
+    return d.toLocaleDateString('pt-BR');
+  }
+
   getStatusVariant(status?: PatientStatus): 'success' | 'warning' | 'error' | 'neutral' {
     if (!status) return 'neutral';
     const variants: Record<PatientStatus, 'success' | 'warning' | 'error'> = {
@@ -227,25 +300,96 @@ export class BindingRequestsComponent implements OnInit {
   }
 
   viewPatientProfile(request: BindingRequestResponse): void {
+    console.log('=== DEBUG viewPatientProfile ===');
+    console.log('Request completo:', request);
+    console.log('User:', request.user);
+    console.log('Tem CPF?', 'cpf' in request.user);
+    console.log('isBindingPatient?', isBindingPatient(request.user));
+
     if (isBindingPatient(request.user)) {
-      const patientProfile: PatientProfile = {
+      console.log('Entrou no if - criando patientProfile');
+      const patientProfile: ProfileData = {
         id: request.user.id.toString(),
         name: request.user.name,
         email: request.user.email,
-        status: 'pending',
+        cpf: request.user.cpf,
+        age: request.user.age,
+        location: request.user.location || '',
       };
+      console.log('Patient profile criado:', patientProfile);
       this.selectedPatient.set(patientProfile);
+      this.showModalMessageField.set(false);
       this.isPatientProfileModalVisible.set(true);
+      console.log('Sinais setados - modal deveria abrir');
+    } else {
+      console.log('NÃO entrou no if - tipo não é BindingPatient');
     }
+  }
+
+  viewPatientFromSearch(patient: PatientWithBinding): void {
+    const patientProfile: ProfileData = {
+      id: patient.id,
+      name: patient.name,
+      email: patient.email || '',
+      cpf: patient.cpf,
+      age: patient.age,
+      location: patient.location,
+    };
+    this.selectedPatient.set(patientProfile);
+    this.showModalMessageField.set(false);
+    this.isPatientProfileModalVisible.set(true);
   }
 
   closePatientProfile(): void {
     this.isPatientProfileModalVisible.set(false);
     this.selectedPatient.set(null);
+    this.showModalMessageField.set(false);
   }
 
   // Helper method to safely get email from user
   getEmail(user: any): string {
     return isBindingPatient(user) ? user.email : '';
+  }
+
+  // Paginação computed
+  totalPages(): number {
+    return Math.ceil(this.searchResults().length / this.pageSize());
+  }
+
+  paginatedResults(): PatientWithBinding[] {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    return this.searchResults().slice(start, end);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(page => page + 1);
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(page => page - 1);
+    }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const value = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.pageSize.set(value);
+    this.currentPage.set(1); // Reset to first page
+  }
+
+  clearFilters(): void {
+    this.searchTerm.set('');
+    this.statusFilter.set('');
+    this.testTypeFilter.set('');
+    this.currentPage.set(1);
   }
 }

@@ -1,0 +1,179 @@
+@if (isOpen()) {
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-lg bg-white shadow-xl"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+      <div class="flex items-center">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+          <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-lg font-medium text-gray-900">Documentos do Médico</h3>
+          <p class="text-sm text-gray-500">{{ documents().length }} documento(s) enviado(s)</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="onClose()"
+        class="text-gray-400 hover:text-gray-600 focus:outline-none"
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="overflow-y-auto p-6" style="max-height: calc(90vh - 140px)">
+      @if (documents().length === 0) {
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        <p class="mt-4 text-sm text-gray-500">Nenhum documento enviado ainda</p>
+      </div>
+      } @else {
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        @for (doc of documents(); track $index) {
+        <div
+          class="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+        >
+          <!-- Document preview/icon -->
+          <div class="flex h-48 items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+            @if (doc.mime_type.startsWith('image/')) {
+            <img
+              src="{{ doc.file_path }}"
+              alt="{{ doc.file_name }}"
+              class="max-h-full max-w-full object-contain"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"
+            />
+            <svg
+              class="hidden h-20 w-20 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                [attr.d]="getDocumentIcon(doc.mime_type)"
+              />
+            </svg>
+            } @else {
+            <svg
+              class="h-20 w-20 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                [attr.d]="getDocumentIcon(doc.mime_type)"
+              />
+            </svg>
+            }
+          </div>
+
+          <!-- Document info -->
+          <div class="flex flex-1 flex-col justify-between p-4">
+            <div class="mb-3">
+              <div class="flex items-start justify-between">
+                <h4 class="text-sm font-medium text-gray-900 line-clamp-2">
+                  {{ doc.file_name }}
+                </h4>
+                @if (doc.verified) {
+                <span
+                  class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800"
+                >
+                  <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Verificado
+                </span>
+                }
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                {{ getDocumentTypeLabel(doc.document_type) }}
+              </p>
+              <div class="mt-2 flex items-center text-xs text-gray-500">
+                <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                {{ formatDate(doc.uploaded_at) }}
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Tamanho: {{ formatFileSize(doc.file_size) }}
+              </p>
+            </div>
+
+            <!-- Download button -->
+            <button
+              type="button"
+              (click)="onDownload(doc.id)"
+              class="inline-flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
+              </svg>
+              Baixar
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t border-gray-200 px-6 py-4">
+      <button
+        type="button"
+        (click)="onClose()"
+        class="w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+      >
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>
+}

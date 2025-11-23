@@ -5,7 +5,8 @@ from sqlalchemy import TIMESTAMP, ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM as PG_ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.enums import BindEnum, UserType
+from core.enums.doctor_enum import DoctorStatus
+from core.enums import BindEnum, Gender, UserType
 from core.models.table_registry import table_registry
 
 if TYPE_CHECKING:
@@ -21,12 +22,19 @@ class User:
     cpf: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     birthdate: Mapped[date] = mapped_column(nullable=False)
+    gender: Mapped[Gender] = mapped_column(
+        PG_ENUM(Gender, name="gender_enum", create_type=True), nullable=False
+    )
     hashed_password: Mapped[str] = mapped_column(nullable=False)
     user_type: Mapped[UserType] = mapped_column(
         "type", PG_ENUM(UserType, name="user_type_enum", create_type=True), nullable=False
     )
     address_id: Mapped[int] = mapped_column(ForeignKey("address.id"))
     address: Mapped["Address"] = relationship(init=False, back_populates="users")
+    is_active: Mapped[bool] = mapped_column(init=False, nullable=False, default=True, server_default="true")
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), init=False, nullable=False, server_default="CURRENT_TIMESTAMP"
+    )
     reset_token: Mapped[str | None] = mapped_column(init=False, nullable=True, default=None)
     reset_token_expiry: Mapped[datetime | None] = mapped_column(
         TIMESTAMP(timezone=True), init=False, nullable=True, default=None
@@ -49,7 +57,16 @@ class Doctor(User):
     id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True, init=False)
     crm: Mapped[str] = mapped_column(nullable=False)
     expertise_area: Mapped[str] = mapped_column(nullable=False)
-    status_approval: Mapped[bool] = mapped_column(nullable=False)
+    approval_date: Mapped[datetime | None] = mapped_column(nullable=True)
+    rejection_reason: Mapped[str | None] = mapped_column(nullable=True)
+    approved_by_admin_id: Mapped[int | None] = mapped_column(
+        ForeignKey("admin.id"), nullable=True, init=False
+    )
+    status: Mapped[DoctorStatus] = mapped_column(
+        PG_ENUM(DoctorStatus, name="doctor_status_enum", create_type=False), # create_type=False pois a migration cria
+        default=DoctorStatus.PENDING,
+        nullable=False
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": UserType.DOCTOR,
@@ -85,3 +102,16 @@ class Bind:
         PG_ENUM(UserType, name="user_type_enum", create_type=False),
         nullable=False
     )
+    message: Mapped[str | None] = mapped_column(nullable=True, default=None)
+
+
+@table_registry.mapped_as_dataclass
+class Admin(User):
+    __tablename__ = "admin"
+
+    id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True, init=False)
+    is_superuser: Mapped[bool] = mapped_column(default=True, nullable=False)
+
+    __mapper_args__ = {
+        "polymorphic_identity": UserType.ADMIN,
+    }

@@ -6,7 +6,10 @@ import { User } from '../../../core/models/user.model';
 import { LoginForm } from '../../../core/models/login.model';
 import { UserService } from '../../../core/services/user.service';
 import { environment } from '../../../../environments/environment';
-import { ForgotPasswordRequest, ResetPasswordRequest } from '../../../core/models/reset-password-request.model';
+import {
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from '../../../core/models/reset-password-request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -90,10 +93,32 @@ export class AuthService {
   }
 
   forgotPassword(email: ForgotPasswordRequest): Observable<any> {
-    return this.http.post<ForgotPasswordRequest>(`${this.apiUrl}/auth/forgot-password`, email)
+    return this.http.post<ForgotPasswordRequest>(
+      `${this.apiUrl}/auth/forgot-password`,
+      email
+    );
   }
 
   resetPassword(request: ResetPasswordRequest): Observable<any> {
-    return this.http.post<ResetPasswordRequest>(`${this.apiUrl}/auth/reset-password`, request)
+    return this.http.post<ResetPasswordRequest>(
+      `${this.apiUrl}/auth/reset-password`,
+      request
+    );
+  }
+
+  sendDoctorDocumentation(formData: FormData): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/upload/doctor-document`,
+      formData
+    );
+  }
+
+  sendRegistrationDocumentation(doctorId: number, formData: FormData): Observable<any> {
+    // Add doctor_id to the FormData for the public registration endpoint
+    formData.append('doctor_id', doctorId.toString());
+    return this.http.post<any>(
+      `${this.apiUrl}/upload/register-doctor-document`,
+      formData
+    );
   }
 }

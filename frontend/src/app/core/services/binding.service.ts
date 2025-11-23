@@ -39,12 +39,13 @@ export class BindingService {
   /**
    * Request binding with another user
    * @param userId ID of the user to bind with (doctor or patient)
+   * @param message Optional message to send with the request
    */
-  requestBinding(userId: number): Observable<any> {
+  requestBinding(userId: number, message?: string): Observable<any> {
     return this.http
       .post(
         `${this.baseUrl}/request`,
-        { user_id: userId },
+        { user_id: userId, message: message },
         this.getHttpOptions()
       )
       .pipe(

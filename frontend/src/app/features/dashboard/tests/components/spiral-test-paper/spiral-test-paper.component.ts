@@ -8,11 +8,14 @@ import { SpiralTestResponse } from '../../../../../core/models/spiral-test-respo
 import { ImagePreviewModalComponent } from '../../../../../shared/components/image-preview-modal/image-preview-modal.component';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
+import { WebcamCaptureModalComponent } from '../../../../../shared/components/webcam-capture-modal/webcam-capture-modal.component';
 
 @Component({
   selector: 'app-spiral-test-paper',
   standalone: true,
-  imports: [CommonModule, ImagePreviewModalComponent, TooltipDirective, BadgeComponent],
+  imports: [CommonModule, ImagePreviewModalComponent, TooltipDirective, BadgeComponent, WebcamCaptureModalComponent],
   templateUrl: './spiral-test-paper.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,11 +28,15 @@ export class SpiralTestPaperComponent implements OnInit, OnDestroy {
   readonly feedbackMessage = signal<string | null>(null);
   readonly analysisResults = signal<SpiralTestResponse | null>(null);
   readonly showPreviewModal = signal<boolean>(false);
+  readonly patientName = signal<string>('Carregando...');
 
   // Controle de cronômetro
   readonly isDrawing = signal<boolean>(false);
   readonly drawDuration = signal<number>(0);
   readonly elapsedTime = signal<string>('00:00');
+
+  // Controle do modal de webcam
+  readonly showWebcamModal = signal<boolean>(false);
 
   private patientId: string | null = null;
   private isClinicalMode = false;
@@ -40,6 +47,8 @@ export class SpiralTestPaperComponent implements OnInit, OnDestroy {
   constructor(
     private spiralTestService: SpiralTestService,
     private clinicalTestService: ClinicalTestService,
+    private doctorDashboardService: DoctorDashboardService,
+    private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -49,13 +58,33 @@ export class SpiralTestPaperComponent implements OnInit, OnDestroy {
     this.patientId = this.route.snapshot.paramMap.get('patientId');
     this.isClinicalMode = !!this.patientId;
 
-    if (this.isClinicalMode) {
+    if (this.isClinicalMode && this.patientId) {
       console.log(`Modo clínico ativado para paciente ID: ${this.patientId}`);
+      this.loadPatientName(Number(this.patientId));
     }
   }
 
   ngOnDestroy(): void {
     this.stopTimer();
+  }
+
+  private loadPatientName(patientId: number): void {
+    this.doctorDashboardService.getPatientsPage(1, 100).subscribe({
+      next: (result) => {
+        const patient = result.patients.find((p) => +p.id === patientId);
+        if (patient) {
+          this.patientName.set(patient.name);
+          const currentUrl = this.router.url;
+          this.breadcrumbService.updateBreadcrumb(currentUrl, patient.name);
+        } else {
+          this.patientName.set('Paciente não encontrado');
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar paciente:', err);
+        this.patientName.set('Erro ao carregar nome');
+      },
+    });
   }
 
   getModelKeys(results: SpiralTestResponse | null): string[] {
@@ -189,6 +218,33 @@ export class SpiralTestPaperComponent implements OnInit, OnDestroy {
 
   closePreviewModal(): void {
     this.showPreviewModal.set(false);
+  }
+
+  openWebcamCapture(): void {
+    this.showWebcamModal.set(true);
+  }
+
+  closeWebcamModal(): void {
+    this.showWebcamModal.set(false);
+  }
+
+  onWebcamPhotoCapture(file: File): void {
+    // Processar como se fosse upload de arquivo
+    this.selectedFile.set(file);
+
+    // Gerar preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.imagePreviewUrl.set(e.target?.result || null);
+    };
+    reader.readAsDataURL(file);
+
+    // Feedback
+    this.feedbackMessage.set('Foto capturada com sucesso! Você pode visualizar ou enviar para análise.');
+    this.uploadStatus.set('idle');
+
+    // Fechar modal
+    this.showWebcamModal.set(false);
   }
 
   startDrawing(): void {

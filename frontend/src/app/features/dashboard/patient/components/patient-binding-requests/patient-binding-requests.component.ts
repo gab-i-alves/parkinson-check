@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DoctorService } from '../../../services/doctor.service';
@@ -9,7 +9,6 @@ import { BindingRequestResponse, isBindingDoctor, UserType } from '../../../../.
 import { firstValueFrom } from 'rxjs';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
-import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 
 @Component({
   selector: 'app-patient-binding-requests',
@@ -19,7 +18,6 @@ import { TooltipDirective } from '../../../../../shared/directives/tooltip.direc
     FormsModule,
     DoctorProfileModalComponent,
     BadgeComponent,
-    TooltipDirective,
   ],
   templateUrl: './patient-binding-requests.component.html',
 })
@@ -30,18 +28,35 @@ export class PatientBindingRequestsComponent implements OnInit {
 
   searchTerm = signal<string>('');
   specialty = signal<string>('');
+  locationFilter = signal<string>('');
   searchResults = signal<Doctor[]>([]);
   isLoading = signal<boolean>(false);
   sortBy = signal<'name' | 'expertise_area' | 'location'>('name');
   sortOrder = signal<'asc' | 'desc'>('asc');
 
+  // Paginação
+  currentPage = signal<number>(1);
+  pageSize = signal<number>(10);
+  pageSizeOptions = [10, 25, 50];
+  Math = Math;
+
   isModalVisible = signal<boolean>(false);
   selectedDoctor = signal<Doctor | null>(null);
+  showModalMessageField = signal<boolean>(false);
 
   linkedDoctors = signal<Doctor[]>([]);
   sentRequests = signal<BindingRequestResponse[]>([]);
   receivedRequests = signal<BindingRequestResponse[]>([]);
   activeTab = signal<'sent' | 'received'>('sent');
+
+  // Computed signals para opções dinâmicas de filtros
+  availableLocations = computed(() => {
+    const locations = new Set<string>();
+    this.searchResults().forEach(doc => {
+      if (doc.location) locations.add(doc.location);
+    });
+    return Array.from(locations).sort();
+  });
 
   ngOnInit(): void {
     this.loadLinkedDoctors();
@@ -146,6 +161,7 @@ export class PatientBindingRequestsComponent implements OnInit {
         if (results != null) {
           const doctorsWithStatus = results.map((d) => ({
             ...d,
+            status: 'linked' as const
           }));
           this.linkedDoctors.set(doctorsWithStatus);
         }
@@ -217,11 +233,12 @@ export class PatientBindingRequestsComponent implements OnInit {
         id: user.id,
         name: user.name,
         expertise_area: user.specialty,
-        crm: '',
-        location: '',
-        status: 'unlinked'
+        crm: user.crm,
+        location: user.location || '',
+        status: 'pending' // Status is pending since viewing from binding requests
       };
       this.selectedDoctor.set(doctor);
+      this.showModalMessageField.set(false);
       this.isModalVisible.set(true);
     }
   }
@@ -229,21 +246,37 @@ export class PatientBindingRequestsComponent implements OnInit {
   closeModal(): void {
     this.isModalVisible.set(false);
     this.selectedDoctor.set(null);
+    this.showModalMessageField.set(false);
   }
 
-  requestLink(doctorId: number): void {
-    const doctorInSearch = this.searchResults().find((d) => d.id === doctorId);
+  viewDoctorProfile(doctor: Doctor): void {
+    this.selectedDoctor.set(doctor);
+    this.showModalMessageField.set(false);
+    this.isModalVisible.set(true);
+  }
+
+  openInviteModal(doctor: Doctor): void {
+    this.selectedDoctor.set(doctor);
+    this.showModalMessageField.set(true);
+    this.isModalVisible.set(true);
+  }
+
+  requestLinkWithMessage(event: { doctorId: number | string; message?: string }): void {
+    const { doctorId, message } = event;
+    const numericId = typeof doctorId === 'string' ? parseInt(doctorId, 10) : doctorId;
+    const doctorInSearch = this.searchResults().find((d) => d.id === numericId);
     if (!doctorInSearch || doctorInSearch.status === 'pending') return;
 
-    this.bindingService.requestBinding(doctorId).subscribe({
+    this.bindingService.requestBinding(numericId, message).subscribe({
       next: () => {
         this.toastService.success('Convite enviado com sucesso!');
+        // Mark doctor as pending in search results
         this.searchResults.update((doctors) =>
           doctors.map((d) =>
-            d.id === doctorId ? { ...d, status: 'pending' } : d
+            d.id === numericId ? { ...d, status: 'pending' } : d
           )
         );
-        this.loadRequests();
+        this.loadRequests(); // Reload requests to show in "Enviadas" tab
         this.closeModal();
       },
       error: (err) => {
@@ -253,6 +286,11 @@ export class PatientBindingRequestsComponent implements OnInit {
         this.closeModal();
       },
     });
+  }
+
+  // Keep for backward compatibility (e.g., if called directly from search results)
+  requestLink(doctorId: number): void {
+    this.requestLinkWithMessage({ doctorId });
   }
 
   // Helper method to safely get specialty from user
@@ -271,5 +309,47 @@ export class PatientBindingRequestsComponent implements OnInit {
       'Geriatria': 'yellow',
     };
     return specialtyMap[specialty] || 'neutral';
+  }
+
+  // Paginação computed
+  totalPages(): number {
+    return Math.ceil(this.searchResults().length / this.pageSize());
+  }
+
+  paginatedResults(): Doctor[] {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    return this.searchResults().slice(start, end);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(page => page + 1);
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(page => page - 1);
+    }
+  }
+
+  onPageSizeChange(event: Event): void {
+    const value = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.pageSize.set(value);
+    this.currentPage.set(1); // Reset to first page
+  }
+
+  clearFilters(): void {
+    this.searchTerm.set('');
+    this.specialty.set('');
+    this.locationFilter.set('');
+    this.currentPage.set(1);
   }
 }

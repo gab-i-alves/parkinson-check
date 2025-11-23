@@ -105,3 +105,54 @@ export function strongPasswordValidator(): ValidatorFn {
     return !passwordValid ? { strong: true } : null;
   };
 }
+
+/**
+ * Validador customizado para verificar se o CRM está no formato válido brasileiro.
+ * Formato: NNNNNN/UF (5-6 dígitos + barra + sigla do estado)
+ * @returns Um ValidatorFn que pode ser aplicado a um FormControl.
+ */
+export function crmValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const crm = control.value;
+
+    if (!crm) {
+      return null; // Não valida se vazio (required cuida disso)
+    }
+
+    // Remove espaços e converte para maiúsculas
+    const cleanCrm = crm.trim().toUpperCase();
+
+    // Estados válidos brasileiros
+    const validStates = [
+      'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+      'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+      'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+    ];
+
+    // Formato: NNNNNN/UF ou NNNNN/UF (5-6 dígitos + barra + 2 letras)
+    const crmPattern = /^(\d{5,6})\/([A-Z]{2})$/;
+    const match = cleanCrm.match(crmPattern);
+
+    if (!match) {
+      return {
+        crmInvalidFormat: {
+          value: crm,
+          message: 'Use o formato: 123456/SP ou 12345/RJ'
+        }
+      };
+    }
+
+    const [, , state] = match;
+
+    if (!validStates.includes(state)) {
+      return {
+        crmInvalidState: {
+          value: state,
+          message: `Estado ${state} não é válido`
+        }
+      };
+    }
+
+    return null;
+  };
+}

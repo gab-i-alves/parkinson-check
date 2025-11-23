@@ -1,18 +1,7 @@
 <div class="min-h-screen bg-neutral-50 py-8">
   <div class="container mx-auto px-6 space-y-6 relative">
     <!-- Header - Intelly Style -->
-    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8 relative">
-      <!-- Back button -->
-      <button
-        (click)="goBackToMethodSelection()"
-        class="absolute top-6 right-6 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 hover:text-neutral-900 transition-all shadow-sm hover:shadow-md"
-        aria-label="Voltar"
-      >
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-
+    <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-8">
       <div class="flex items-start space-x-4">
         <!-- Icon with Intelly colors -->
         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-100 shadow-sm flex-shrink-0 border border-pink-200">
@@ -71,32 +60,24 @@
               </li>
             </ul>
 
-            <div class="mt-6 relative inline-block">
-              <button
+            <div class="mt-6 flex justify-center">
+              <a
+                href="/assets/spiral_template.png"
+                download="spiral_template.png"
                 appTooltip="Baixar template da espiral para imprimir"
                 [tooltipPosition]="'top'"
-                class="inline-flex items-center justify-center"
+                class="inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 transition-all"
               >
-                <a
-                  href="/assets/spiral_template.jpg"
-                  download="spiral_template.jpg"
-                  class="inline-flex items-center rounded-full bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 transition-all"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="mr-2 h-5 w-5"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    class="mr-2 h-5 w-5"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10 18a.75.75 0 01-.75-.75V6.612L7.39 8.26a.75.75 0 11-1.18-1.03l3.25-3.5a.75.75 0 011.18 0l3.25 3.5a.75.75 0 01-1.18 1.03l-1.86-1.648V17.25c0 .414-.336.75-.75.75z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  Baixar Modelo da Espiral
-                </a>
-              </button>
+                  <path fill-rule="evenodd" d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+                </svg>
+                Baixar Modelo da Espiral
+              </a>
             </div>
           </div>
         </div>
@@ -212,59 +193,49 @@
             </div>
           </div>
 
-          <!-- Upload Zone -->
-        <div
-          class="relative rounded-2xl border-2 border-dashed border-neutral-300 p-8 text-center transition-all"
-          [class.border-pink-400]="selectedFile()"
-          [class.bg-pink-50/30]="selectedFile()"
-        >
-          <div class="flex flex-col items-center justify-center space-y-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="h-10 w-10 text-neutral-400"
+          <!-- Opções: Fotografar OU Fazer Upload -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <!-- Opção 1: Fotografar -->
+            <button
+              (click)="openWebcamCapture()"
+              class="flex items-center justify-center gap-3 p-6 bg-gradient-to-br from-pink-50 to-pink-100 border-2 border-pink-200 rounded-2xl hover:shadow-lg hover:border-pink-300 transition-all group"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-              />
-            </svg>
-            <p class="text-base text-neutral-700">
-              Arraste e solte sua foto aqui, ou
-              <label
-                for="spiralImageUpload"
-                class="cursor-pointer font-semibold text-pink-600 hover:text-pink-700"
-              >
-                clique para selecionar
-              </label>
-            </p>
-            <div class="flex items-center gap-2">
-              <p class="text-xs text-neutral-500">
-                Apenas arquivos de imagem. Máximo: 5MB.
-              </p>
-              <button
-                appTooltip="Envie uma foto clara da espiral desenhada no papel"
-                [tooltipPosition]="'top'"
-                class="inline-flex"
-              >
-                <svg class="w-3.5 h-3.5 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              <div class="flex items-center justify-center w-12 h-12 bg-pink-200 rounded-full group-hover:bg-pink-300 transition-colors">
+                <svg class="w-6 h-6 text-pink-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-              </button>
-            </div>
+              </div>
+              <div class="text-left">
+                <h3 class="text-sm font-bold text-neutral-900">Fotografar com Webcam</h3>
+                <p class="text-xs text-neutral-600">Capture a foto agora</p>
+              </div>
+            </button>
+
+            <!-- Opção 2: Upload -->
+            <label
+              for="spiralImageUpload"
+              class="flex items-center justify-center gap-3 p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer group"
+            >
+              <div class="flex items-center justify-center w-12 h-12 bg-blue-200 rounded-full group-hover:bg-blue-300 transition-colors">
+                <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                </svg>
+              </div>
+              <div class="text-left">
+                <h3 class="text-sm font-bold text-neutral-900">Fazer Upload de Arquivo</h3>
+                <p class="text-xs text-neutral-600">Selecione da galeria</p>
+              </div>
+            </label>
+
+            <input
+              id="spiralImageUpload"
+              type="file"
+              accept="image/jpeg, image/png"
+              class="hidden"
+              (change)="onFileSelected($event)"
+            />
           </div>
-          <input
-            id="spiralImageUpload"
-            type="file"
-            accept="image/jpeg, image/png"
-            class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-            (change)="onFileSelected($event)"
-          />
-        </div>
 
         <!-- File Info and Actions -->
         @if (selectedFile()) {
@@ -469,3 +440,10 @@
   [fileName]="selectedFile()?.name || ''"
   (close)="closePreviewModal()"
 ></app-image-preview-modal>
+
+<!-- Webcam Capture Modal -->
+<app-webcam-capture-modal
+  [isVisible]="showWebcamModal()"
+  (close)="closeWebcamModal()"
+  (photoCapture)="onWebcamPhotoCapture($event)"
+></app-webcam-capture-modal>

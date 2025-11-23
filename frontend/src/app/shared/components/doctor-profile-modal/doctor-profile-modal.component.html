@@ -50,55 +50,114 @@
         {{ doctor()!.name }}
       </h3>
 
-      <!-- Expertise Area Badge -->
+      <!-- Expertise Area Badge (Doctor only) -->
+      @if (isDoctor()) {
       <div class="mt-2 flex justify-center">
         <app-badge variant="pink">{{ doctor()!.expertise_area }}</app-badge>
       </div>
+      }
+
+      <!-- Email (Patient only) -->
+      @if (isPatient() && doctor()!.email) {
+      <p class="text-sm text-neutral-600 mt-1">{{ doctor()!.email }}</p>
+      }
     </div>
 
     <!-- Content Section -->
     <div class="px-6 py-5 space-y-4">
-      <!-- CRM with Tooltip -->
-      <div class="flex items-center justify-between py-2 border-b border-neutral-200">
-        <div class="flex items-center gap-2">
-          <span class="text-sm font-medium text-neutral-700">CRM</span>
-          <svg
-            class="w-4 h-4 text-neutral-400 cursor-help"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            [appTooltip]="'Conselho Regional de Medicina - Registro profissional do médico'"
-            [tooltipPosition]="'top'"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+      <!-- Doctor-specific fields -->
+      @if (isDoctor()) {
+        <!-- CRM with Tooltip -->
+        <div class="flex items-center justify-between py-2 border-b border-neutral-200">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-medium text-neutral-700">CRM</span>
+            <svg
+              class="w-4 h-4 text-neutral-400 cursor-help"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              [appTooltip]="'Conselho Regional de Medicina - Registro profissional do médico'"
+              [tooltipPosition]="'top'"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <span class="text-sm text-neutral-900 font-semibold">{{ doctor()!.crm }}</span>
         </div>
-        <span class="text-sm text-neutral-900 font-semibold">{{ doctor()!.crm }}</span>
-      </div>
 
-      <!-- Location -->
-      <div class="flex items-center justify-between py-2 border-b border-neutral-200">
-        <span class="text-sm font-medium text-neutral-700">Localização</span>
-        <span class="text-sm text-neutral-900">{{ doctor()!.location }}</span>
-      </div>
+        <!-- Location -->
+        @if (doctor()!.location) {
+        <div class="flex items-center justify-between py-2 border-b border-neutral-200">
+          <span class="text-sm font-medium text-neutral-700">Localização</span>
+          <span class="text-sm text-neutral-900">{{ doctor()!.location }}</span>
+        </div>
+        }
+      }
 
-      <!-- Status with Badge -->
-      <div class="flex items-center justify-between py-2">
-        <span class="text-sm font-medium text-neutral-700">Status</span>
-        <app-badge [variant]="getStatusBadgeVariant()">
-          {{ getStatusText() }}
-        </app-badge>
+      <!-- Patient-specific fields -->
+      @if (isPatient()) {
+        <!-- CPF -->
+        @if (doctor()!.cpf) {
+        <div class="flex items-center justify-between py-2 border-b border-neutral-200">
+          <span class="text-sm font-medium text-neutral-700">CPF</span>
+          <span class="text-sm text-neutral-900 font-semibold">{{ doctor()!.cpf | cpf }}</span>
+        </div>
+        }
+
+        <!-- Email -->
+        @if (doctor()!.email) {
+        <div class="flex items-center justify-between py-2 border-b border-neutral-200">
+          <span class="text-sm font-medium text-neutral-700">Email</span>
+          <span class="text-sm text-neutral-900">{{ doctor()!.email }}</span>
+        </div>
+        }
+
+        <!-- Age -->
+        @if (doctor()!.age && doctor()!.age! > 0) {
+        <div class="flex items-center justify-between py-2 border-b border-neutral-200">
+          <span class="text-sm font-medium text-neutral-700">Idade</span>
+          <span class="text-sm text-neutral-900">{{ doctor()!.age }} anos</span>
+        </div>
+        }
+
+        <!-- Location -->
+        @if (doctor()!.location) {
+        <div class="flex items-center justify-between py-2">
+          <span class="text-sm font-medium text-neutral-700">Localização</span>
+          <span class="text-sm text-neutral-900">{{ doctor()!.location }}</span>
+        </div>
+        }
+      }
+
+      <!-- Message Field (conditional based on parent flag) -->
+      @if(showMessageField()) {
+      <div class="border-t border-neutral-200 pt-4">
+        <label for="binding-message" class="block text-sm font-medium text-neutral-700 mb-2">
+          Mensagem (opcional)
+        </label>
+        <textarea
+          id="binding-message"
+          [(ngModel)]="requestMessage"
+          rows="3"
+          placeholder="Escreva uma mensagem para o médico..."
+          class="w-full px-3 py-2 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent resize-none"
+          maxlength="500"
+        ></textarea>
+        <p class="text-xs text-neutral-500 mt-1">
+          {{ requestMessage().length }}/500 caracteres
+        </p>
       </div>
+      }
     </div>
 
     <!-- Footer with Action Button -->
     <div class="bg-neutral-50 px-6 py-4">
-      @if(doctor()!.status === 'unlinked' || !doctor()!.status) {
+      @if(showMessageField()) {
         <button
           (click)="onRequestLink()"
           [disabled]="isRequesting()"
           class="w-full rounded-lg bg-neutral-900 px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:bg-neutral-800 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-700 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          [appTooltip]="'Enviar solicitação de vínculo para este médico'"
+          [appTooltip]="'Enviar solicitação de vínculo'"
           [tooltipPosition]="'top'"
         >
           @if (isRequesting()) {
@@ -113,14 +172,10 @@
         </button>
       } @else {
         <button
-          disabled
-          class="w-full cursor-not-allowed rounded-lg bg-neutral-300 px-6 py-2.5 text-base font-semibold text-neutral-500 shadow-sm"
+          (click)="onClose()"
+          class="w-full rounded-lg bg-neutral-900 px-6 py-2.5 text-base font-semibold text-white shadow-lg hover:bg-neutral-800 hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-700 focus:ring-offset-2"
         >
-          {{
-            doctor()!.status === "pending"
-              ? "Solicitação Pendente"
-              : "Médico Vinculado"
-          }}
+          Fechar
         </button>
       }
     </div>

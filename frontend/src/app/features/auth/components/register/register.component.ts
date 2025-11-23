@@ -10,6 +10,7 @@ import {
   matchPasswordValidator,
   cpfValidator,
   strongPasswordValidator,
+  crmValidator,
 } from '../../../../core/validators/custom-validators';
 import {
   debounceTime,
@@ -45,6 +46,12 @@ export class RegisterComponent implements OnInit {
   isLoading = false;
   apiError: string | null = null;
 
+  doctorFiles: { [key: string]: File | null } = {
+    'crm-front': null,
+    'crm-back': null,
+    proof: null,
+  };
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -59,6 +66,7 @@ export class RegisterComponent implements OnInit {
         name: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required, cpfValidator()]],
         birthdate: ['', [Validators.required]],
+        gender: ['', [Validators.required]],
 
         // Endereço
         cep: ['', [Validators.required]],
@@ -92,7 +100,16 @@ export class RegisterComponent implements OnInit {
         name: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required, cpfValidator()]],
         birthdate: ['', [Validators.required]],
-        crm: ['', [Validators.required]],
+        gender: ['', [Validators.required]],
+        crm: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.maxLength(10),
+            crmValidator(),
+          ],
+        ],
         expertise_area: ['', [Validators.required]],
 
         // Endereço
@@ -132,6 +149,35 @@ export class RegisterComponent implements OnInit {
     this.apiError = null;
   }
 
+  private cleanFormData(formData: any): any {
+    const cleanedData = { ...formData };
+
+    // Remove confirmPassword (not needed in backend)
+    delete cleanedData.confirmPassword;
+
+    // Convert gender to number (backend expects 1, 2, or 3)
+    if (cleanedData.gender) {
+      cleanedData.gender = parseInt(cleanedData.gender, 10);
+    }
+
+    // Remove formatting from CPF (dots and dashes)
+    if (cleanedData.cpf) {
+      cleanedData.cpf = cleanedData.cpf.replace(/[^\d]/g, '');
+    }
+
+    // Remove formatting from CEP (dash)
+    if (cleanedData.cep) {
+      cleanedData.cep = cleanedData.cep.replace(/[^\d]/g, '');
+    }
+
+    // Clean CRM (trim and uppercase)
+    if (cleanedData.crm) {
+      cleanedData.crm = cleanedData.crm.trim().toUpperCase();
+    }
+
+    return cleanedData;
+  }
+
   onPatientSubmit(): void {
     if (this.patientRegisterForm.invalid) {
       this.patientRegisterForm.markAllAsTouched();
@@ -141,11 +187,12 @@ export class RegisterComponent implements OnInit {
     this.patientRegisterForm.disable();
     this.apiError = null;
 
+    const cleanedData = this.cleanFormData(this.patientRegisterForm.value);
     console.log(
       'Dados do Cadastro (Paciente):',
-      this.patientRegisterForm.value
+      cleanedData
     );
-    this.authService.registerPatient(this.patientRegisterForm.value).subscribe({
+    this.authService.registerPatient(cleanedData).subscribe({
       next: (response: any) => {
         console.log('Cadastro de paciente bem-sucedido!', response);
         this.router.navigate(['/auth/login']);
@@ -159,9 +206,24 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  onDoctorFilesChange(files: { [key: string]: File | null }): void {
+    this.doctorFiles = { ...files };
+    console.log('Arquivos recebidos do filho:', this.doctorFiles);
+  }
+
   onDoctorSubmit(): void {
     if (this.doctorRegisterForm.invalid) {
       this.doctorRegisterForm.markAllAsTouched();
+      return;
+    }
+
+    if (
+      !this.doctorFiles['crm-front'] ||
+      !this.doctorFiles['crm-back'] ||
+      !this.doctorFiles['proof']
+    ) {
+      this.apiError =
+        'Por favor, faça upload de todos os documentos obrigatórios.';
       return;
     }
 
@@ -169,11 +231,15 @@ export class RegisterComponent implements OnInit {
     this.doctorRegisterForm.disable();
     this.apiError = null;
 
-    console.log('Dados do Cadastro (Médico):', this.doctorRegisterForm.value);
+    const cleanedData = this.cleanFormData(this.doctorRegisterForm.value);
+    console.log('Dados do Cadastro (Médico):', cleanedData);
 
-    this.authService.registerDoctor(this.doctorRegisterForm.value).subscribe({
+    this.authService.registerDoctor(cleanedData).subscribe({
       next: (response: any) => {
         console.log('Cadastro de médico enviado para aprovação!', response);
+
+        this.uploadDoctorDocuments(response.id);
+
         this.router.navigate(['/auth/login'], {
           state: {
             message:
@@ -183,11 +249,61 @@ export class RegisterComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         console.error('Erro no cadastro do médico:', err);
+        console.error('=== DETALHES COMPLETOS DO ERRO 422 ===');
+        console.error('Status:', err.status);
+        console.error('Error object:', err.error);
+        console.error('Error detail:', err.error?.detail);
+        console.error('Validation errors:', JSON.stringify(err.error, null, 2));
+        console.error('=====================================');
         this.apiError = err.error?.detail || 'Ocorreu um erro no cadastro.';
         this.isLoading = false;
         this.doctorRegisterForm.enable();
       },
     });
+  }
+
+  private uploadDoctorDocuments(doctorId: number): void {
+    const uploadPromises: Promise<any>[] = [];
+
+    // Map frontend file keys to backend DocumentType enum values
+    const fileTypeMapping: { [key: string]: string } = {
+      'crm-front': 'crm_certificate',
+      'crm-back': 'diploma',
+      'proof': 'proof_of_address'
+    };
+
+    // Upload each file with the correct document_type using the public registration endpoint
+    Object.keys(this.doctorFiles).forEach((fileKey) => {
+      const file = this.doctorFiles[fileKey];
+      if (file) {
+        const formData = new FormData();
+        formData.append('document_type', fileTypeMapping[fileKey]);
+        formData.append('file', file);
+
+        console.log(`[Register] Uploading ${fileKey} (${fileTypeMapping[fileKey]}) for doctor ID ${doctorId}:`, file.name);
+
+        uploadPromises.push(
+          this.authService
+            .sendRegistrationDocumentation(doctorId, formData)
+            .toPromise()
+        );
+      }
+    });
+
+    // Execute all uploads in parallel
+    Promise.all(uploadPromises)
+      .then(() => {
+        console.log('[Register] All documents uploaded successfully!');
+      })
+      .catch((error) => {
+        console.error('[Register] Error uploading documents:', error);
+        this.apiError =
+          'Cadastro criado, mas houve erro no envio dos documentos. Entre em contato com o suporte.';
+      })
+      .finally(() => {
+        this.isLoading = false;
+        this.doctorRegisterForm.enable();
+      });
   }
 
   private setupCepListener(form: FormGroup): void {

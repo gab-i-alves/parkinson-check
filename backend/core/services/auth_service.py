@@ -7,6 +7,9 @@ from sqlalchemy.orm import Session
 
 from api.schemas.auth import LoginFormRequest
 from api.schemas.token import TokenResponse, UserResponse
+from core.services import doctor_management_service
+from core.enums.doctor_enum import ActivityType, DoctorStatus
+from core.models.users import Doctor
 from core.security.security import verify_password
 from core.services.email_service import (
     send_password_reset_email_background,
@@ -17,6 +20,7 @@ from core.services.user_service import (
     set_reset_token,
     update_password,
 )
+from infra.settings import settings
 
 from ..security.security import create_access_token
 
@@ -28,10 +32,40 @@ def login(login_form: LoginFormRequest, session: Session):
             HTTPStatus.UNAUTHORIZED, detail="Verifique as credenciais de acesso."
         )
 
-    token_data = create_access_token(data={"sub": login_form.email})
+    if not user.is_active:
+        raise HTTPException(
+            HTTPStatus.FORBIDDEN,
+            detail="Sua conta não está ativa, verifique o email ou entre em contato com o suporte"
+        )
+        
+    if isinstance(user, Doctor):
+        if user.status != DoctorStatus.APPROVED:
+            detail_message = "Sua conta está pendente de aprovação."
+            if user.status == DoctorStatus.REJECTED:
+                detail_message = "Seu cadastro foi rejeitado."
+                if user.rejection_reason:
+                    detail_message += f" Motivo: {user.rejection_reason}."
+            elif user.status == DoctorStatus.SUSPENDED:
+                detail_message = "Sua conta está suspensa."
+
+            raise HTTPException(
+                HTTPStatus.FORBIDDEN,
+                detail=f"{detail_message} Entre em contato com o suporte."
+            )
+        else:
+            doctor_management_service.log_activity(user.id, ActivityType.LOGIN, "Médico entrou no sistema", session)
+            
+
+    # Define a expiração do token baseado no remember_me
+    if login_form.remember_me:
+        expires_delta = timedelta(days=settings.REMEMBER_ME_EXPIRE_DAYS)
+    else:
+        expires_delta = None  # Usa o padrão (ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    token_data = create_access_token(data={"sub": login_form.email}, expires_delta=expires_delta)
 
     user_response = UserResponse(
-        id=user.id, name=user.name, email=user.email, role=user.user_type
+        id=user.id, name=user.name, email=user.email, role=user.user_type, gender=user.gender
     )
 
     return TokenResponse(access_token=token_data, user=user_response)

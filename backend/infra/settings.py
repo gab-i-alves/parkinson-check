@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -11,6 +12,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    REMEMBER_ME_EXPIRE_DAYS: int
     ENVIRONMENT: str
     SMTP_HOST: str
     SMTP_PORT: str
@@ -25,6 +27,15 @@ class Settings(BaseSettings):
         "utils",
         "email_templates",
     )
+    
+    UPLOAD_DIR: str = "uploads/doctor_documents"
+    MAX_FILE_SIZE_MB: int = 10
+    ALLOWED_MIME_TYPES: List[str] = [
+        "application/pdf",
+        "image/jpeg",
+        "image/png",
+        "image/jpg"
+    ]
 
 
 settings = Settings()

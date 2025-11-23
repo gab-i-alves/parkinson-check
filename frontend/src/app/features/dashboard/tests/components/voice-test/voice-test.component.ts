@@ -19,10 +19,13 @@ import { ClinicalTestService } from '../../../services/clinical-test.service';
 import { CommonModule } from '@angular/common';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
+import { FeedbackModalComponent } from '../../../../../shared/components/feedback-modal/feedback-modal.component';
 
 @Component({
   selector: 'app-voice-test',
-  imports: [CommonModule, TooltipDirective, BadgeComponent],
+  imports: [CommonModule, TooltipDirective, BadgeComponent, FeedbackModalComponent],
   templateUrl: './voice-test.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,6 +35,13 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
   readonly analysisResults = signal<VoiceTestResponse | null>(null);
   readonly recordedAudioUrl = signal<SafeUrl | undefined>(undefined);
   readonly isSubmitting = signal<boolean>(false);
+  readonly patientName = signal<string>('Carregando...');
+
+  // Feedback modal signals
+  readonly showFeedbackModal = signal<boolean>(false);
+  readonly feedbackType = signal<'error'>('error');
+  readonly feedbackTitle = signal<string>('');
+  readonly feedbackModalMessage = signal<string>('');
 
   private recordedAudioBlob: Blob | undefined;
   private recordingSubscription: Subscription | undefined;
@@ -48,6 +58,8 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
   // Context detection
   private route = inject(ActivatedRoute);
   private clinicalTestService = inject(ClinicalTestService);
+  private doctorDashboardService = inject(DoctorDashboardService);
+  private breadcrumbService = inject(BreadcrumbService);
   private patientId: string | null = null;
   private isClinicalMode = false;
 
@@ -62,10 +74,11 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
     this.patientId = this.route.snapshot.paramMap.get('patientId');
     this.isClinicalMode = !!this.patientId;
 
-    if (this.isClinicalMode) {
+    if (this.isClinicalMode && this.patientId) {
       console.log(
         `Modo clínico ativado para paciente ID: ${this.patientId}`
       );
+      this.loadPatientName(Number(this.patientId));
     }
 
     this.recordingSubscription = this.voiceTestService.recording$.subscribe(
@@ -97,11 +110,20 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
     this.feedbackMessage.set(null);
     this.recordStartTime = Date.now();
 
-    this.voiceTestService.startRecording().then((stream) => {
-      if (stream) {
-        this.initVisualizer(stream);
-      }
-    });
+    this.voiceTestService.startRecording()
+      .then((stream) => {
+        if (stream) {
+          this.initVisualizer(stream);
+        }
+      })
+      .catch((error) => {
+        console.error('Erro ao iniciar gravação:', error);
+        this.isRecording.set(false);
+        this.feedbackTitle.set('Erro de Microfone');
+        this.feedbackModalMessage.set(error.message || 'Não foi possível acessar o microfone.');
+        this.feedbackType.set('error');
+        this.showFeedbackModal.set(true);
+      });
   }
 
   stopRecording(): void {
@@ -116,9 +138,10 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
         await this.audioPlayer.nativeElement.play();
       } catch (error) {
         console.error('Erro ao tocar o áudio:', error);
-        alert(
-          'Não foi possível tocar o áudio. Verifique as configurações do navegador.'
-        );
+        this.feedbackTitle.set('Erro ao tocar áudio');
+        this.feedbackModalMessage.set('Não foi possível tocar o áudio. Verifique as configurações do navegador.');
+        this.feedbackType.set('error');
+        this.showFeedbackModal.set(true);
       }
     }
   }
@@ -201,6 +224,25 @@ export class VoiceTestComponent implements OnInit, OnDestroy {
     this.recordedAudioBlob = undefined;
     this.analysisResults.set(null);
     this.feedbackMessage.set(null);
+  }
+
+  private loadPatientName(patientId: number): void {
+    this.doctorDashboardService.getPatientsPage(1, 100).subscribe({
+      next: (result) => {
+        const patient = result.patients.find((p) => +p.id === patientId);
+        if (patient) {
+          this.patientName.set(patient.name);
+          const currentUrl = this.router.url;
+          this.breadcrumbService.updateBreadcrumb(currentUrl, patient.name);
+        } else {
+          this.patientName.set('Paciente não encontrado');
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar paciente:', err);
+        this.patientName.set('Erro ao carregar nome');
+      },
+    });
   }
 
   private initVisualizer(stream: MediaStream): void {

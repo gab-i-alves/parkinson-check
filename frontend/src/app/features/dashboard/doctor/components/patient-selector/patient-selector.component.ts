@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { DoctorDashboardService } from '../../../services/doctor-dashboard.service';
 import { Patient, PatientStatus } from '../../../../../core/models/patient.model';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
+import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
 
 @Component({
   selector: 'app-patient-selector',
   standalone: true,
-  imports: [CommonModule, FormsModule, BadgeComponent],
+  imports: [CommonModule, FormsModule, BadgeComponent, CpfPipe],
   templateUrl: './patient-selector.component.html',
 })
 export class PatientSelectorComponent {
@@ -41,7 +42,8 @@ export class PatientSelectorComponent {
 
   loadPatients(): void {
     this.isLoading.set(true);
-    this.doctorDashboardService.getPatientsPage(1, 100).subscribe({
+    // Filtra apenas pacientes ativos (is_active: true)
+    this.doctorDashboardService.getPatientsPage(1, 100, { is_active: true }).subscribe({
       next: (result) => {
         this.patients.set(result.patients);
         this.isLoading.set(false);

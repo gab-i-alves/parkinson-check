@@ -67,22 +67,6 @@
 } @else {
 <div class="space-y-6">
 
-  <!-- Tabs Pills Navigation - Intelly Style -->
-  <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
-    <button
-      (click)="selectedView.set('overview')"
-      [class]="selectedView() === 'overview' ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-    >
-      Visão Geral
-    </button>
-    <button
-      (click)="selectedView.set('detailed')"
-      [class]="selectedView() === 'detailed' ? 'px-4 py-2 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-2 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-    >
-      Gráficos Detalhados
-    </button>
-  </div>
-
   <!-- Enhanced Filters Section - Intelly Palette -->
   <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
     <div class="flex items-center justify-between mb-4">
@@ -170,8 +154,7 @@
     }
   </div>
 
-  @if (selectedView() === 'overview') {
-  <!-- OVERVIEW: Grid Principal de Gráficos -->
+  <!-- Grid Principal de Gráficos -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Gráfico de Linha - Progressão de Scores -->
     <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
@@ -422,144 +405,6 @@
     </div>
     }
   </div>
-  }
-
-  @if (selectedView() === 'detailed') {
-  <!-- DETAILED: Accordion with All Charts -->
-  <div class="space-y-4">
-    <!-- Accordion Item 1: Line Chart -->
-    <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
-      <button
-        (click)="toggleAccordion('line')"
-        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
-      >
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
-            </svg>
-          </div>
-          <h3 class="text-base font-semibold text-neutral-900">Progressão de Scores ao Longo do Tempo</h3>
-        </div>
-        @if (expandedAccordion() === 'line') {
-          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-          </svg>
-        } @else {
-          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        }
-      </button>
-      @if (expandedAccordion() === 'line') {
-      <div class="px-5 pb-5 border-t border-neutral-100">
-        @if (filteredChartData().length > 0) {
-        <div class="relative mt-4" style="height: 400px;">
-          <canvas
-            baseChart
-            [data]="lineChartData"
-            [options]="lineChartOptions"
-            [type]="lineChartType"
-          ></canvas>
-        </div>
-        } @else {
-        <div class="flex flex-col items-center justify-center py-12 text-center">
-          <p class="text-sm text-neutral-600">Nenhum dado disponível para o filtro selecionado.</p>
-        </div>
-        }
-      </div>
-      }
-    </div>
-
-    <!-- Accordion Item 2: Bar Chart -->
-    <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
-      <button
-        (click)="toggleAccordion('bar')"
-        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
-      >
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-base font-semibold text-neutral-900">Evolução Mensal de Scores</h3>
-        </div>
-        @if (expandedAccordion() === 'bar') {
-          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-          </svg>
-        } @else {
-          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        }
-      </button>
-      @if (expandedAccordion() === 'bar') {
-      <div class="px-5 pb-5 border-t border-neutral-100">
-        @if (filteredChartData().length > 0) {
-        <div class="relative mt-4" style="height: 400px;">
-          <canvas
-            baseChart
-            [data]="barChartData"
-            [options]="barChartOptions"
-            [type]="barChartType"
-          ></canvas>
-        </div>
-        } @else {
-        <div class="flex flex-col items-center justify-center py-12 text-center">
-          <p class="text-sm text-neutral-600">Nenhum dado disponível para o filtro selecionado.</p>
-        </div>
-        }
-      </div>
-      }
-    </div>
-
-    <!-- Accordion Item 3: Radar Chart -->
-    <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
-      <button
-        (click)="toggleAccordion('radar')"
-        class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
-      >
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
-            </svg>
-          </div>
-          <h3 class="text-base font-semibold text-neutral-900">Análise Multidimensional</h3>
-        </div>
-        @if (expandedAccordion() === 'radar') {
-          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-          </svg>
-        } @else {
-          <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        }
-      </button>
-      @if (expandedAccordion() === 'radar') {
-      <div class="px-5 pb-5 border-t border-neutral-100">
-        @if (filteredChartData().length > 0) {
-        <div class="relative mt-4" style="height: 400px;">
-          <canvas
-            baseChart
-            [data]="radarChartData"
-            [options]="radarChartOptions"
-            [type]="radarChartType"
-          ></canvas>
-        </div>
-        } @else {
-        <div class="flex flex-col items-center justify-center py-12 text-center">
-          <p class="text-sm text-neutral-600">Nenhum dado disponível para o filtro selecionado.</p>
-        </div>
-        }
-      </div>
-      }
-    </div>
-  </div>
-  }
 
 </div>
 }

@@ -8,8 +8,8 @@
     </div>
 
     <!-- KPIs Skeleton -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-      @for (i of [1,2,3,4,5,6]; track i) {
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      @for (i of [1,2,3,4]; track i) {
         <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 animate-pulse">
           <div class="h-4 bg-neutral-200 rounded w-3/4 mb-4"></div>
           <div class="h-8 bg-neutral-200 rounded w-1/2"></div>
@@ -20,8 +20,8 @@
     <!-- Charts Skeleton -->
     <div class="space-y-4">
       <div class="h-8 bg-neutral-200 rounded w-48 animate-pulse"></div>
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        @for (i of [1,2,3,4,5,6]; track i) {
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        @for (i of [1,2]; track i) {
           <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6 animate-pulse">
             <div class="h-4 bg-neutral-200 rounded w-3/4 mb-4"></div>
             <div class="h-64 bg-neutral-100 rounded-xl"></div>
@@ -33,357 +33,369 @@
 </div>
 } @else {
 <div class="min-h-screen bg-neutral-50 relative">
-  <!-- Background decorativo - Paleta Intelly -->
+  <!-- Background decorativo -->
   <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
     <div class="absolute top-[-10%] right-[-5%] w-96 h-96 bg-pink-200/20 rounded-full filter blur-3xl"></div>
     <div class="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-blue-200/20 rounded-full filter blur-3xl"></div>
     <div class="absolute top-[30%] left-[10%] w-64 h-64 bg-yellow-200/20 rounded-full filter blur-3xl"></div>
   </div>
 
-  <div class="container mx-auto px-6 py-6 space-y-5 relative">
+  <div class="container mx-auto px-6 py-8 space-y-8 relative">
 
-    <!-- Tabs Navigation -->
-    <div class="inline-flex items-center gap-2 bg-neutral-100 rounded-full p-1">
-      <button
-        (click)="selectTab('overview')"
-        [class]="selectedTab() === 'overview' ? 'px-4 py-1.5 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-1.5 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-      >
-        Visão Geral
-      </button>
-      <button
-        (click)="selectTab('analysis')"
-        [class]="selectedTab() === 'analysis' ? 'px-4 py-1.5 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-1.5 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-      >
-        Análises Detalhadas
-      </button>
-      <button
-        (click)="selectTab('patients')"
-        [class]="selectedTab() === 'patients' ? 'px-4 py-1.5 rounded-full bg-white shadow-sm text-sm font-medium text-neutral-900 transition-all' : 'px-4 py-1.5 rounded-full text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-all'"
-      >
-        <span>Pacientes em Atenção</span>
-        @if (patientsNeedingAttention().length > 0) {
-          <span class="ml-2 px-2 py-0.5 bg-red-200 text-red-900 rounded-full text-xs font-semibold">{{ patientsNeedingAttention().length }}</span>
-        }
-      </button>
-    </div>
-
-    <!-- TAB 1: VISÃO GERAL -->
-    @if (selectedTab() === 'overview') {
+    <!-- SEÇÃO 1: VISÃO GERAL -->
     <div class="space-y-5">
-      <!-- KPIs Coloridos com Padrões -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <!-- KPI 1: Total de Pacientes - AMARELO -->
-        <div class="bg-yellow-100 rounded-2xl shadow-sm border border-yellow-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
+      <h2 class="text-xl font-bold text-neutral-900">Visão Geral da Prática</h2>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- KPI 1: Total de Pacientes - AZUL -->
+        <div class="bg-blue-100 rounded-2xl shadow-sm border border-blue-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
           <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;"></div>
-          <div class="relative z-10 flex items-center justify-between">
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <p class="text-xs font-medium text-neutral-700">Total de Pacientes</p>
-                <button
-                  appTooltip="Número total de pacientes cadastrados"
-                  [tooltipPosition]="'top'"
-                >
-                  <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <p class="mt-2 text-2xl font-bold text-neutral-900">{{ kpis().totalPatients }}</p>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <p class="text-xs font-medium text-neutral-700">Total de Pacientes</p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center p-1 rounded hover:bg-blue-200/50 transition-colors"
+                aria-label="Informações sobre total de pacientes"
+                [appTooltip]="'Conta todos os pacientes que possuem vínculo ativo com você no sistema'"
+                [tooltipPosition]="'top'"
+              >
+                <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col items-center text-center space-y-1">
+              <p class="text-4xl font-bold text-neutral-900">{{ kpis().totalPatients }}</p>
+              <p class="text-sm text-neutral-600">pacientes ativos</p>
             </div>
           </div>
         </div>
 
-        <!-- KPI 2: Testes Este Mês - ROSA -->
+        <!-- KPI 2: Score Médio - ROSA -->
         <div class="bg-pink-100 rounded-2xl shadow-sm border border-pink-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
           <svg class="absolute bottom-0 right-0 w-24 h-24 opacity-20" viewBox="0 0 200 200">
             <path d="M0,100 Q50,50 100,100 T200,100 L200,200 L0,200 Z" fill="currentColor"/>
           </svg>
-          <div class="relative z-10 flex items-center justify-between">
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <p class="text-xs font-medium text-neutral-700">Testes Este Mês</p>
-                <button
-                  appTooltip="Total de testes realizados no mês atual"
-                  [tooltipPosition]="'top'"
-                >
-                  <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <p class="mt-2 text-2xl font-bold text-neutral-900">{{ kpis().totalTestsThisMonth }}</p>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <p class="text-xs font-medium text-neutral-700">Score Médio</p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center p-1 rounded hover:bg-pink-200/50 transition-colors"
+                aria-label="Informações sobre score médio"
+                [appTooltip]="'Média aritmética de todos os scores de testes concluídos (escala 0-100). Calculado a partir de todos os testes realizados por seus pacientes'"
+                [tooltipPosition]="'top'"
+              >
+                <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col items-center text-center space-y-1">
+              <p class="text-4xl font-bold text-neutral-900">
+                {{ kpis().avgScoreGeneral !== null ? (kpis().avgScoreGeneral! * 100).toFixed(0) : '-' }}
+              </p>
+              <p class="text-sm text-neutral-600">{{ kpis().totalTestsThisMonth }} testes este mês</p>
             </div>
           </div>
         </div>
 
-        <!-- KPI 3: Score Médio - AZUL -->
-        <div class="bg-blue-100 rounded-2xl shadow-sm border border-blue-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
+        <!-- KPI 3: Precisam Atenção - VERDE -->
+        <div class="bg-green-100 rounded-2xl shadow-sm border border-green-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
           <div class="absolute top-2 right-2 w-16 h-16 opacity-20">
             <div class="w-8 h-8 bg-current rounded-full"></div>
             <div class="w-5 h-5 bg-current rounded-full absolute top-3 left-6"></div>
           </div>
-          <div class="relative z-10 flex items-center justify-between">
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <p class="text-xs font-medium text-neutral-700">Score Médio</p>
-                <button
-                  appTooltip="Média de performance geral (0-100)"
-                  [tooltipPosition]="'top'"
-                >
-                  <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <div class="flex items-center gap-2 mt-2">
-                <p class="text-2xl font-bold text-neutral-900">
-                  {{ kpis().avgScoreGeneral !== null ? (kpis().avgScoreGeneral! * 100).toFixed(0) : '-' }}
-                </p>
-                @if (kpis().scoreTrend === 'up') {
-                  <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                  </svg>
-                } @else if (kpis().scoreTrend === 'down') {
-                  <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                  </svg>
-                }
-              </div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <p class="text-xs font-medium text-neutral-700">Precisam Atenção</p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center p-1 rounded hover:bg-green-200/50 transition-colors"
+                aria-label="Informações sobre pacientes que precisam atenção"
+                [appTooltip]="'Pacientes cuja média dos últimos testes está abaixo de 60%. Classificação: Crítico (<40%), Atenção (40-60%), Estável (≥60%)'"
+                [tooltipPosition]="'top'"
+              >
+                <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col items-center text-center space-y-1">
+              <p class="text-4xl font-bold text-red-600">{{ patientsNeedingAttention().length }}</p>
+              <p class="text-sm text-neutral-600">pacientes em alerta</p>
             </div>
           </div>
         </div>
 
-        <!-- KPI 4: Precisam Atenção - VERDE -->
-        <div class="bg-green-100 rounded-2xl shadow-sm border border-green-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
-          <div class="flex items-center justify-between">
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <p class="text-xs font-medium text-neutral-700">Precisam Atenção</p>
-                <button
-                  appTooltip="Pacientes com scores baixos"
-                  [tooltipPosition]="'top'"
-                >
-                  <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <p class="mt-2 text-2xl font-bold text-red-600">{{ patientsNeedingAttention().length }}</p>
-            </div>
+        <!-- KPI 4: Taxa de Adesão - AMARELO -->
+        <div class="bg-yellow-100 rounded-2xl shadow-sm border border-yellow-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10">
+            <svg class="absolute top-3 right-3 w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
           </div>
-        </div>
-
-        <!-- KPI 5: Taxa de Adesão - AMARELO COM PROGRESS -->
-        <div class="bg-yellow-100 rounded-2xl shadow-sm border border-yellow-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
-          <div class="flex items-center justify-between">
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <p class="text-xs font-medium text-neutral-700">Taxa de Adesão</p>
-                <button
-                  appTooltip="% de pacientes realizando testes"
-                  [tooltipPosition]="'top'"
-                >
-                  <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <p class="mt-2 text-2xl font-bold text-neutral-900">{{ kpis().adherenceRate }}%</p>
+          <div class="relative z-10">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <p class="text-xs font-medium text-neutral-700">Taxa de Adesão</p>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center p-1 rounded hover:bg-yellow-200/50 transition-colors"
+                aria-label="Informações sobre taxa de adesão"
+                [appTooltip]="'Percentual calculado pela fórmula: (Testes Este Mês ÷ Total de Pacientes) × 100. Indica quantos testes em média cada paciente realizou no mês'"
+                [tooltipPosition]="'top'"
+              >
+                <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col items-center text-center space-y-2">
+              <p class="text-4xl font-bold text-neutral-900">{{ kpis().adherenceRate }}%</p>
               <!-- Progress bar -->
-              <div class="mt-2 w-full h-1.5 bg-yellow-200 rounded-full overflow-hidden">
+              <div class="w-full h-2 bg-yellow-200 rounded-full overflow-hidden">
                 <div class="h-full bg-neutral-900 rounded-full transition-all duration-500" [style.width.%]="kpis().adherenceRate"></div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- KPI 6: Novos Pacientes - NEUTRAL -->
-        <div class="bg-neutral-100 rounded-2xl shadow-sm border border-neutral-200 p-5 hover:shadow-md hover:-translate-y-1 transition-all duration-200">
-          <div class="flex items-center justify-between">
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <p class="text-xs font-medium text-neutral-700">Novos Pacientes</p>
-                <button
-                  appTooltip="Pacientes cadastrados este mês"
-                  [tooltipPosition]="'top'"
-                >
-                  <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <p class="mt-2 text-2xl font-bold text-neutral-900">{{ kpis().newPatientsThisMonth }}</p>
-            </div>
+    <!-- SEÇÃO 2: ANÁLISES DE DESEMPENHO -->
+    <div class="space-y-5">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold text-neutral-900">Análises de Desempenho</h2>
+
+        <!-- Filtros (CA3) -->
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <label for="periodFilter" class="text-sm text-neutral-700">Período:</label>
+            <select
+              id="periodFilter"
+              [(ngModel)]="periodFilter"
+              (ngModelChange)="onFilterChange()"
+              class="rounded-lg border-neutral-300 text-sm shadow-sm focus:border-pink-300 focus:ring-pink-200"
+            >
+              <option value="week">Semana</option>
+              <option value="month">Mês</option>
+              <option value="quarter">Trimestre</option>
+              <option value="year">Ano</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label for="testTypeFilter" class="text-sm text-neutral-700">Tipo:</label>
+            <select
+              id="testTypeFilter"
+              [(ngModel)]="testTypeFilter"
+              (ngModelChange)="onFilterChange()"
+              class="rounded-lg border-neutral-300 text-sm shadow-sm focus:border-pink-300 focus:ring-pink-200"
+            >
+              <option value="all">Todos</option>
+              <option value="spiral">Espiral</option>
+              <option value="voice">Voz</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <!-- Gráficos Principais em Grid 1x3 -->
-      <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Gráfico 1: Evolução de Scores -->
-        <app-dashboard-chart
-          title="Evolução de Scores"
-          [chartData]="scoreEvolutionChartData"
-          [chartOptions]="scoreEvolutionChartOptions"
-          [chartType]="scoreEvolutionChartType"
-          height="280px"
-        ></app-dashboard-chart>
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <h3 class="text-lg font-semibold text-neutral-900">Evolução de Scores</h3>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-100 transition-colors"
+              aria-label="Informações sobre evolução de scores"
+              [appTooltip]="'Mostra a evolução temporal do score médio de todos os seus pacientes. Os dados são agrupados por dia, calculando a média aritmética dos scores dos testes concluídos em cada data'"
+              [tooltipPosition]="'top'"
+            >
+              <svg class="w-4 h-4 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+          <app-dashboard-chart
+            [chartData]="scoreEvolutionChartData"
+            [chartOptions]="scoreEvolutionChartOptions"
+            [chartType]="scoreEvolutionChartType"
+            height="300px"
+            [showExportButton]="false"
+          ></app-dashboard-chart>
+        </div>
 
         <!-- Gráfico 2: Distribuição por Status -->
-        <app-dashboard-chart
-          title="Distribuição por Status"
-          [chartData]="statusDistributionChartData"
-          [chartOptions]="statusDistributionChartOptions"
-          [chartType]="statusDistributionChartType"
-          height="280px"
-        ></app-dashboard-chart>
-
-        <!-- Gráfico 3: Frequência de Testes -->
-        <app-dashboard-chart
-          title="Frequência de Testes"
-          [chartData]="testFrequencyChartData"
-          [chartOptions]="testFrequencyChartOptions"
-          [chartType]="testFrequencyChartType"
-          height="280px"
-        ></app-dashboard-chart>
-      </div>
-    </div>
-    }
-
-    <!-- TAB 2: ANÁLISES DETALHADAS (Accordion) -->
-    @if (selectedTab() === 'analysis') {
-    <div class="space-y-3">
-      <!-- Accordion Item 1: Performance por Idade -->
-      <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-        <button
-          (click)="toggleAccordion('age-performance')"
-          class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
-        >
-          <h3 class="text-base font-semibold text-neutral-900">Performance por Faixa Etária</h3>
-          @if (expandedAccordion() === 'age-performance') {
-            <svg class="w-5 h-5 text-neutral-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-            </svg>
-          } @else {
-            <svg class="w-5 h-5 text-neutral-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          }
-        </button>
-        @if (expandedAccordion() === 'age-performance') {
-        <div class="px-5 pb-5 border-t border-neutral-100">
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <h3 class="text-lg font-semibold text-neutral-900">Distribuição por Status</h3>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-100 transition-colors"
+              aria-label="Informações sobre distribuição por status"
+              [appTooltip]="'Classifica os testes concluídos em duas categorias baseado no score: Saudável (score ≥ 70%) e Parkinson (score < 70%). Mostra a proporção percentual de cada categoria'"
+              [tooltipPosition]="'top'"
+            >
+              <svg class="w-4 h-4 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
           <app-dashboard-chart
-            title=""
-            [chartData]="agePerformanceChartData"
-            [chartOptions]="agePerformanceChartOptions"
-            [chartType]="agePerformanceChartType"
+            [chartData]="statusDistributionChartData"
+            [chartOptions]="statusDistributionChartOptions"
+            [chartType]="statusDistributionChartType"
             height="300px"
+            [showExportButton]="false"
           ></app-dashboard-chart>
         </div>
-        }
-      </div>
-
-      <!-- Accordion Item 2: Pacientes por Status -->
-      <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-        <button
-          (click)="toggleAccordion('patient-status')"
-          class="w-full flex items-center justify-between p-5 hover:bg-neutral-50 transition-colors"
-        >
-          <h3 class="text-base font-semibold text-neutral-900">Pacientes por Status de Atenção</h3>
-          @if (expandedAccordion() === 'patient-status') {
-            <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-            </svg>
-          } @else {
-            <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          }
-        </button>
-        @if (expandedAccordion() === 'patient-status') {
-        <div class="px-5 pb-5 border-t border-neutral-100">
-          <app-dashboard-chart
-            title=""
-            [chartData]="patientStatusChartData"
-            [chartOptions]="patientStatusChartOptions"
-            [chartType]="patientStatusChartType"
-            height="300px"
-          ></app-dashboard-chart>
-        </div>
-        }
       </div>
     </div>
-    }
 
-    <!-- TAB 3: LISTA EXPANDIDA DE PACIENTES -->
-    @if (selectedTab() === 'patients') {
+    <!-- SEÇÃO 3: ANÁLISES DETALHADAS -->
     <div class="space-y-5">
-      <!-- Header -->
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-neutral-900">Pacientes que Precisam de Atenção</h2>
-      </div>
+      <h2 class="text-xl font-bold text-neutral-900">Análises Detalhadas</h2>
 
-      <!-- Lista completa -->
-      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
-        <ul class="divide-y divide-neutral-200">
-          @for (patient of patientsNeedingAttention(); track patient.patient_id) {
-          <li
-            class="px-6 py-5 hover:bg-pink-50/50 transition-colors cursor-pointer"
-            (click)="viewPatientDetails(patient.patient_id)"
-          >
-            <div class="flex items-start justify-between gap-4">
-              <div class="flex-1">
-                <div class="flex items-center gap-3 mb-2">
-                  <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center font-semibold text-neutral-900 text-sm">
-                    {{ getPatientInitials(patient.patient_name) }}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Card 1: Pacientes Precisando Atenção (CA4) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <h3 class="text-lg font-semibold text-neutral-900">Pacientes Precisando Atenção</h3>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-100 transition-colors"
+              aria-label="Informações sobre pacientes precisando atenção"
+              [appTooltip]="'Lista de pacientes com scores abaixo de 60%, ordenados por prioridade. Crítico (<40%) e Atenção (40-60%)'"
+              [tooltipPosition]="'top'"
+            >
+              <svg class="w-4 h-4 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          @if (patientsNeedingAttention().length > 0) {
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+              @for (patient of patientsNeedingAttention(); track patient.patient_id) {
+                <div class="border border-neutral-200 rounded-lg p-3 hover:bg-neutral-50 transition-colors cursor-pointer" (click)="viewPatientDetails(patient.patient_id)">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-700 font-semibold text-sm">
+                        {{ getPatientInitials(patient.patient_name) }}
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-sm font-semibold text-neutral-900">{{ patient.patient_name }}</p>
+                        <p class="text-xs text-neutral-500">{{ patient.total_tests }} testes</p>
+                      </div>
+                    </div>
+                    <span class="text-xs px-2 py-1 rounded-full border" [ngClass]="getStatusBadgeClass(patient.status)">
+                      {{ getStatusLabel(patient.status) }}
+                    </span>
                   </div>
-                  <div>
-                    <p class="font-semibold text-neutral-900">{{ patient.patient_name }}</p>
-                    <p class="text-sm text-neutral-600">Último teste: {{ patient.last_test_date }}</p>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-neutral-600">Score médio:</span>
+                    <span class="font-bold" [ngClass]="{'text-red-600': patient.avg_score < 0.4, 'text-yellow-600': patient.avg_score >= 0.4}">
+                      {{ (patient.avg_score * 100).toFixed(0) }}%
+                    </span>
                   </div>
                 </div>
-                <div class="grid grid-cols-3 gap-4 mt-3">
-                  <div>
-                    <p class="text-xs text-neutral-500">Score Médio</p>
-                    <p class="text-sm font-semibold text-neutral-900">{{ (patient.avg_score * 100).toFixed(0) }}</p>
-                  </div>
-                  <div>
-                    <p class="text-xs text-neutral-500">Total de Testes</p>
-                    <p class="text-sm font-semibold text-neutral-900">{{ patient.total_tests }}</p>
-                  </div>
-                  <div>
-                    <p class="text-xs text-neutral-500">Status</p>
-                    @if (patient.status === 'critical') {
-                      <app-badge variant="error">Crítico</app-badge>
-                    } @else {
-                      <app-badge variant="warning">Atenção</app-badge>
-                    }
+              }
+            </div>
+          } @else {
+            <div class="text-center py-12 text-neutral-500">
+              <svg class="w-12 h-12 mx-auto mb-3 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="text-sm">Nenhum paciente precisando atenção</p>
+            </div>
+          }
+        </div>
+
+        <!-- Card 2: Frequência de Testes (CA2 - movido) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <h3 class="text-lg font-semibold text-neutral-900">Frequência de Testes</h3>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-100 transition-colors"
+              aria-label="Informações sobre frequência de testes"
+              [appTooltip]="'Exibe a quantidade total de testes concluídos ao longo do tempo. Os dados são agrupados por dia, somando todos os testes realizados em cada data'"
+              [tooltipPosition]="'top'"
+            >
+              <svg class="w-4 h-4 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+          <app-dashboard-chart
+            [chartData]="testFrequencyChartData"
+            [chartOptions]="testFrequencyChartOptions"
+            [chartType]="testFrequencyChartType"
+            height="280px"
+            [showExportButton]="false"
+          ></app-dashboard-chart>
+        </div>
+
+        <!-- Card 3: Distribuição de Testes por Tipo (CA5) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <h3 class="text-lg font-semibold text-neutral-900">Distribuição de Testes</h3>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-100 transition-colors"
+              aria-label="Informações sobre distribuição de testes"
+              [appTooltip]="'Mostra a proporção entre testes do tipo Espiral e Voz realizados pelos seus pacientes'"
+              [tooltipPosition]="'top'"
+            >
+              <svg class="w-4 h-4 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          @if (testDistribution()) {
+            <div class="space-y-4 pt-4">
+              <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                  <span class="text-neutral-700">Espiral</span>
+                  <span class="font-semibold text-pink-600">{{ testDistribution().spiral_tests?.count || 0 }}</span>
+                </div>
+                <div class="w-full bg-neutral-200 rounded-full h-2.5">
+                  <div class="bg-pink-600 h-2.5 rounded-full transition-all duration-500"
+                       [style.width.%]="testDistribution().total_tests > 0 ? ((testDistribution().spiral_tests?.count || 0) / testDistribution().total_tests) * 100 : 0">
                   </div>
                 </div>
               </div>
-              <svg class="w-5 h-5 text-neutral-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
+
+              <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                  <span class="text-neutral-700">Voz</span>
+                  <span class="font-semibold text-blue-600">{{ testDistribution().voice_tests?.count || 0 }}</span>
+                </div>
+                <div class="w-full bg-neutral-200 rounded-full h-2.5">
+                  <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
+                       [style.width.%]="testDistribution().total_tests > 0 ? ((testDistribution().voice_tests?.count || 0) / testDistribution().total_tests) * 100 : 0">
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-neutral-200">
+                <div class="flex justify-between text-sm">
+                  <span class="text-neutral-900 font-bold">Total</span>
+                  <span class="font-bold text-neutral-900">{{ testDistribution().total_tests || 0 }}</span>
+                </div>
+              </div>
             </div>
-          </li>
-          }
-          @if (patientsNeedingAttention().length === 0) {
-          <li class="px-6 py-16 text-center">
-            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
+          } @else {
+            <div class="text-center py-12 text-neutral-500">
+              <p class="text-sm">Carregando distribuição...</p>
             </div>
-            <h4 class="text-lg font-semibold text-neutral-900 mb-2">Excelente trabalho!</h4>
-            <p class="text-sm text-neutral-600 max-w-md mx-auto">
-              Todos os seus pacientes estão com scores adequados. Continue o ótimo acompanhamento!
-            </p>
-          </li>
           }
-        </ul>
+        </div>
       </div>
     </div>
-    }
   </div>
 </div>
 }

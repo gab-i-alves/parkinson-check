@@ -5,16 +5,18 @@ import {
   Output,
   ElementRef,
   ViewChild,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
+import { FeedbackModalComponent } from '../../../../shared/components/feedback-modal/feedback-modal.component';
 
 @Component({
   selector: 'app-doctor-register-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgxMaskDirective],
+  imports: [CommonModule, ReactiveFormsModule, NgxMaskDirective, FeedbackModalComponent],
   templateUrl: './doctor-register-form.component.html',
 })
 export class DoctorRegisterFormComponent {
@@ -26,6 +28,12 @@ export class DoctorRegisterFormComponent {
   @Input() apiError: string | null = null;
   @ViewChild('apiErrorDiv') apiErrorDiv: ElementRef | undefined;
   buttonTouched = false;
+
+  // Feedback modal signals
+  readonly showFeedbackModal = signal<boolean>(false);
+  readonly feedbackType = signal<'error'>('error');
+  readonly feedbackTitle = signal<string>('');
+  readonly feedbackMessage = signal<string>('');
 
   // Multi-step state
   currentStep = 1;
@@ -44,8 +52,13 @@ export class DoctorRegisterFormComponent {
     { value: 'Ortopedia', label: 'Ortopedia', icon: '🦴' },
     { value: 'Psiquiatria', label: 'Psiquiatria', icon: '🧘' },
     { value: 'Clínica Geral', label: 'Clínica Geral', icon: '👨‍⚕️' },
-    { value: 'Outra', label: 'Outra', icon: '📋' }
+    { value: 'Outra', label: 'Outra', icon: '📋' },
   ];
+
+  // CRM mask patterns
+  crmMaskPatterns = {
+    'A': { pattern: /[A-Za-z]/ }
+  };
 
   // Document upload
   activeDocumentTab: 'crm-front' | 'crm-back' | 'proof' = 'crm-front';
@@ -54,13 +67,15 @@ export class DoctorRegisterFormComponent {
   } = {
     'crm-front': null,
     'crm-back': null,
-    'proof': null
+    proof: null,
   };
 
   // DECISÃO DE ARQUITETURA: Uso de @Output para comunicar com o pai.
   // Em vez de conter a lógica de submissão, ele emite um evento.
   // Isso desacopla o componente da lógica de negócio (ex: chamadas de API).
   @Output() formSubmit = new EventEmitter<void>();
+
+  @Output() filesChange = new EventEmitter<{ [key: string]: File | null }>();
 
   // Navegação entre steps
   nextStep(): void {
@@ -84,16 +99,20 @@ export class DoctorRegisterFormComponent {
     const fieldsToValidate = this.getFieldsForCurrentStep();
     let isValid = true;
 
+    console.log(`[Doctor Form] Validating step ${this.currentStep}:`, fieldsToValidate);
+
     fieldsToValidate.forEach((fieldName) => {
       const control = this.doctorForm.get(fieldName);
       if (control) {
         control.markAsTouched();
         if (control.invalid) {
+          console.log(`[Doctor Form] Field "${fieldName}" is invalid:`, control.errors);
           isValid = false;
         }
       }
     });
 
+    console.log(`[Doctor Form] Step ${this.currentStep} validation result:`, isValid);
     return isValid;
   }
 
@@ -101,7 +120,7 @@ export class DoctorRegisterFormComponent {
   getFieldsForCurrentStep(): string[] {
     switch (this.currentStep) {
       case 1: // Dados Pessoais
-        return ['name', 'cpf', 'birthdate'];
+        return ['name', 'cpf', 'birthdate', 'gender'];
       case 2: // Dados Profissionais
         return ['crm', 'expertise_area'];
       case 3: // Endereço
@@ -115,10 +134,17 @@ export class DoctorRegisterFormComponent {
 
   // Propaga o evento de submissão para o componente pai.
   onSubmit(): void {
+    console.log('[Doctor Form] Submit button clicked');
+    console.log('[Doctor Form] Current form state:', this.doctorForm.value);
+    console.log('[Doctor Form] Form valid?', this.doctorForm.valid);
+    console.log('[Doctor Form] Uploaded files:', this.uploadedFiles);
+
     if (this.validateCurrentStep()) {
+      console.log('[Doctor Form] Validation passed, emitting formSubmit event');
       this.formSubmit.emit();
       this.scrollToError();
     } else {
+      console.log('[Doctor Form] Validation failed, marking button as touched');
       this.buttonTouched = true;
     }
   }
@@ -161,7 +187,7 @@ export class DoctorRegisterFormComponent {
     const labels: { [key: string]: string } = {
       'crm-front': 'CRM Frente',
       'crm-back': 'CRM Verso',
-      'proof': 'Comprovante'
+      proof: 'Comprovante',
     };
     return labels[tab] || '';
   }
@@ -170,21 +196,40 @@ export class DoctorRegisterFormComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
+      console.log(`[Doctor Form] File selected for ${this.activeDocumentTab}:`, {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      });
 
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Arquivo muito grande. O tamanho máximo é 5MB.');
+        this.feedbackTitle.set('Arquivo muito grande');
+        this.feedbackMessage.set('O tamanho máximo permitido é 5MB.');
+        this.feedbackType.set('error');
+        this.showFeedbackModal.set(true);
         return;
       }
 
       // Validate file type
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+      const validTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'application/pdf',
+      ];
       if (!validTypes.includes(file.type)) {
-        alert('Formato de arquivo inválido. Use JPG, PNG ou PDF.');
+        this.feedbackTitle.set('Formato inválido');
+        this.feedbackMessage.set('Use apenas arquivos JPG, PNG ou PDF.');
+        this.feedbackType.set('error');
+        this.showFeedbackModal.set(true);
         return;
       }
 
       this.uploadedFiles[this.activeDocumentTab] = file;
+      console.log('[Doctor Form] Updated uploaded files:', this.uploadedFiles);
+
+      this.filesChange.emit(this.uploadedFiles);
 
       // Reset input
       input.value = '';
@@ -193,6 +238,8 @@ export class DoctorRegisterFormComponent {
 
   removeFile(tab: string): void {
     this.uploadedFiles[tab] = null;
+
+    this.filesChange.emit(this.uploadedFiles);
   }
 
   formatFileSize(bytes: number): string {
@@ -200,6 +247,32 @@ export class DoctorRegisterFormComponent {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  // Formata o CRM automaticamente enquanto o usuário digita
+  formatCrmInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    // Remove tudo exceto números e letras
+    value = value.replace(/[^0-9A-Za-z]/g, '');
+
+    // Limita a 8 caracteres (6 dígitos + 2 letras)
+    if (value.length > 8) {
+      value = value.substring(0, 8);
+    }
+
+    // Adiciona a barra após os primeiros 6 caracteres (se houver mais de 6)
+    if (value.length > 6) {
+      value = value.substring(0, 6) + '/' + value.substring(6);
+    }
+
+    // Converte para maiúsculas
+    value = value.toUpperCase();
+
+    // Atualiza o valor do input e do FormControl
+    input.value = value;
+    this.doctorForm.patchValue({ crm: value }, { emitEvent: false });
   }
 }

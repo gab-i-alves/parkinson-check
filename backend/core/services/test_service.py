@@ -22,13 +22,17 @@ from api.schemas.tests import (
     VoiceTestResult,
 )
 
-from ..enums.test_enum import TestStatus, TestType
+from ..enums.test_enum import TestType
 from ..models import SpiralTest, Test, User, VoiceTest
 from ..utils import ai
 from .user_service import get_user_active_binds
 
 SPIRAL_MODEL_SERVICE_URL = "http://spiral-classifier:8001/predict/spiral"
 VOICE_MODEL_SERVICE_URL = "http://voice-classifier:8002/predict/voice"
+
+# Threshold de classificação: score >= 0.7 = HEALTHY, score < 0.7 = PARKINSON
+# Score representa probabilidade de estar saudável (0.0-1.0)
+HEALTHY_THRESHOLD = 0.7
 
 
 def process_spiral(
@@ -44,16 +48,35 @@ def process_spiral(
         schema.image, SPIRAL_MODEL_SERVICE_URL
     )
 
-    score = model_result.vote_count.Healthy / model_result.vote_count.Parkinson
+    # Calcular média das probabilidades de Parkinson dos 11 modelos
+    parkinson_probabilities = []
+    for model_prediction in model_result.model_results.values():
+        if model_prediction.probabilities:
+            parkinson_prob = model_prediction.probabilities.get("Parkinson", 0.0)
+            parkinson_probabilities.append(parkinson_prob)
+
+    avg_parkinson_prob = sum(parkinson_probabilities) / len(parkinson_probabilities) if parkinson_probabilities else 0.0
+
+    # Score = probabilidade de estar saudável (inverso da probabilidade de Parkinson)
+    score = 1.0 - avg_parkinson_prob
 
     spiral_test_db = SpiralTest(
         test_type=TestType.SPIRAL_TEST,
-        status=TestStatus.DONE,
-        score=score,  # TODO: DEFINIR COMO AVALIAR ISSO
+        score=score,
         patient_id=user.id,
         draw_duration=schema.draw_duration,
         method=schema.method,
     )
+
+    # Armazena resultados dos modelos (converter Pydantic para dict para serialização JSON)
+    spiral_test_db.model_predictions = {
+        key: pred.model_dump() if hasattr(pred, 'model_dump') else pred.dict()
+        for key, pred in model_result.model_results.items()
+    }
+    spiral_test_db.avg_parkinson_probability = avg_parkinson_prob
+    spiral_test_db.majority_vote = model_result.majority_decision
+    spiral_test_db.healthy_votes = model_result.vote_count.Healthy
+    spiral_test_db.parkinson_votes = model_result.vote_count.Parkinson
 
     # Armazena a imagem no banco de dados
     spiral_test_db.spiral_image_data = schema.image.image_content
@@ -82,13 +105,22 @@ def process_voice(
     schema.audio_file.file.seek(0)  # Volta ao início do arquivo
     audio_content = schema.audio_file.file.read()
 
+    # model_result.score é a probabilidade de Parkinson (0-100 ou 0-1)
+    # Assumindo que vem em formato 0-100 (percentual)
+    raw_parkinson_prob = model_result.score / 100.0 if model_result.score > 1 else model_result.score
+
+    # Score = probabilidade de estar saudável (inverso da probabilidade de Parkinson)
+    score = 1.0 - raw_parkinson_prob
+
     voice_test_db = VoiceTest(
         test_type=TestType.VOICE_TEST,
-        status=TestStatus.DONE,
-        score=model_result.score,
+        score=score,
         patient_id=user.id,
         record_duration=schema.record_duration,
     )
+
+    # Armazena probabilidade original
+    voice_test_db.raw_parkinson_probability = raw_parkinson_prob
 
     # Armazena o áudio no banco de dados
     voice_test_db.voice_audio_data = audio_content
@@ -141,8 +173,7 @@ def get_patient_tests(
             test_id=test.id,
             test_type=test.test_type,
             execution_date=test.execution_date,
-            classification="HEALTHY" if test.score >= 0.80 else "PARKINSON",
-            # Score >= 0.80 (80% ou mais) = SAUDÁVEL | Score < 0.80 = PARKINSON
+            classification="HEALTHY" if test.score >= HEALTHY_THRESHOLD else "PARKINSON",
         )
         test_results.append(patient_test)
 
@@ -326,7 +357,7 @@ def get_my_tests_statistics(session: Session, patient: User) -> PatientTestStati
     Retorna estatísticas agregadas dos testes do próprio paciente.
     Inclui tendência calculada por regressão linear simples.
     """
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     # Busca todos os testes ordenados cronologicamente
     all_tests = (
@@ -374,7 +405,7 @@ def get_my_tests_statistics(session: Session, patient: User) -> PatientTestStati
     # Último teste
     last_test = all_tests[-1]
     last_test_date = last_test.execution_date
-    days_since_last = (datetime.now() - last_test_date).days
+    days_since_last = (datetime.now(timezone.utc) - last_test_date).days
 
     # Primeiro teste
     first_test_date = all_tests[0].execution_date
@@ -412,9 +443,9 @@ def get_my_tests_statistics(session: Session, patient: User) -> PatientTestStati
     best_voice = max((t.score for t in voice_tests), default=None)
     worst_voice = min((t.score for t in voice_tests), default=None)
 
-    # Classificações (Score >= 0.80 = SAUDÁVEL | Score < 0.80 = PARKINSON)
-    healthy_count = sum(1 for t in all_tests if t.score >= 0.80)
-    parkinson_count = sum(1 for t in all_tests if t.score < 0.80)
+    # Classificações
+    healthy_count = sum(1 for t in all_tests if t.score >= HEALTHY_THRESHOLD)
+    parkinson_count = sum(1 for t in all_tests if t.score < HEALTHY_THRESHOLD)
 
     # Intervalo médio entre testes
     if len(all_tests) >= 2:
@@ -454,7 +485,7 @@ def get_patient_test_statistics(
     Retorna estatísticas agregadas dos testes de um paciente.
     Inclui tendência calculada por regressão linear simples.
     """
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     # Valida vínculo
     binds = get_user_active_binds(session, doctor)
@@ -510,7 +541,7 @@ def get_patient_test_statistics(
     # Último teste
     last_test = all_tests[-1]
     last_test_date = last_test.execution_date
-    days_since_last = (datetime.now() - last_test_date).days
+    days_since_last = (datetime.now(timezone.utc) - last_test_date).days
 
     # Primeiro teste
     first_test_date = all_tests[0].execution_date
@@ -548,9 +579,9 @@ def get_patient_test_statistics(
     best_voice = max((t.score for t in voice_tests), default=None)
     worst_voice = min((t.score for t in voice_tests), default=None)
 
-    # Classificações (Score >= 0.80 = SAUDÁVEL | Score < 0.80 = PARKINSON)
-    healthy_count = sum(1 for t in all_tests if t.score >= 0.80)
-    parkinson_count = sum(1 for t in all_tests if t.score < 0.80)
+    # Classificações
+    healthy_count = sum(1 for t in all_tests if t.score >= HEALTHY_THRESHOLD)
+    parkinson_count = sum(1 for t in all_tests if t.score < HEALTHY_THRESHOLD)
 
     # Intervalo médio entre testes
     if len(all_tests) >= 2:
@@ -611,7 +642,7 @@ def get_patient_test_timeline(
     timeline_items = []
 
     for test in all_tests:
-        classification = "HEALTHY" if test.score >= 0.80 else "PARKINSON"
+        classification = "HEALTHY" if test.score >= HEALTHY_THRESHOLD else "PARKINSON"
 
         # Campos base
         item_data = {
@@ -620,7 +651,6 @@ def get_patient_test_timeline(
             "execution_date": test.execution_date,
             "score": test.score,
             "classification": classification,
-            "status": test.status,
         }
 
         # Adicionar campos específicos por tipo
@@ -682,8 +712,8 @@ def get_test_detail(
             status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
         )
 
-    # Calcular classificação (Score >= 0.80 = SAUDÁVEL | Score < 0.80 = PARKINSON)
-    classification = "HEALTHY" if test.score >= 0.80 else "PARKINSON"
+    # Calcular classificação
+    classification = "HEALTHY" if test.score >= HEALTHY_THRESHOLD else "PARKINSON"
 
     # Buscar dados específicos por tipo e retornar
     if test.test_type == TestType.SPIRAL_TEST:
@@ -704,7 +734,6 @@ def get_test_detail(
             id=spiral_test.id,
             test_type=spiral_test.test_type,
             execution_date=spiral_test.execution_date,
-            status=spiral_test.status,
             score=spiral_test.score,
             patient_id=spiral_test.patient_id,
             draw_duration=spiral_test.draw_duration,
@@ -731,7 +760,6 @@ def get_test_detail(
             id=voice_test.id,
             test_type=voice_test.test_type,
             execution_date=voice_test.execution_date,
-            status=voice_test.status,
             score=voice_test.score,
             patient_id=voice_test.patient_id,
             record_duration=voice_test.record_duration,
@@ -766,7 +794,7 @@ def get_my_tests_timeline(session: Session, patient: User) -> PatientTestTimelin
     timeline_items = []
 
     for test in all_tests:
-        classification = "HEALTHY" if test.score >= 0.80 else "PARKINSON"
+        classification = "HEALTHY" if test.score >= HEALTHY_THRESHOLD else "PARKINSON"
 
         # Campos base
         item_data = {
@@ -775,7 +803,6 @@ def get_my_tests_timeline(session: Session, patient: User) -> PatientTestTimelin
             "execution_date": test.execution_date,
             "score": test.score,
             "classification": classification,
-            "status": test.status,
         }
 
         # Adicionar campos específicos por tipo
@@ -831,8 +858,8 @@ def get_my_test_detail(
             status_code=HTTPStatus.FORBIDDEN, detail="Você não tem acesso a este teste."
         )
 
-    # Calcular classificação (Score >= 0.80 = SAUDÁVEL | Score < 0.80 = PARKINSON)
-    classification = "HEALTHY" if test.score >= 0.80 else "PARKINSON"
+    # Calcular classificação
+    classification = "HEALTHY" if test.score >= HEALTHY_THRESHOLD else "PARKINSON"
 
     # Buscar dados específicos por tipo e retornar
     if test.test_type == TestType.SPIRAL_TEST:
@@ -853,7 +880,6 @@ def get_my_test_detail(
             id=spiral_test.id,
             test_type=spiral_test.test_type,
             execution_date=spiral_test.execution_date,
-            status=spiral_test.status,
             score=spiral_test.score,
             patient_id=spiral_test.patient_id,
             draw_duration=spiral_test.draw_duration,
@@ -880,7 +906,6 @@ def get_my_test_detail(
             id=voice_test.id,
             test_type=voice_test.test_type,
             execution_date=voice_test.execution_date,
-            status=voice_test.status,
             score=voice_test.score,
             patient_id=voice_test.patient_id,
             record_duration=voice_test.record_duration,

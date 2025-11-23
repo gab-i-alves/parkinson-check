@@ -34,11 +34,6 @@
               }
             </div>
           </div>
-          <div class="mt-1">
-            <app-badge [variant]="getClassificationBadgeVariant()">
-              {{ getClassificationLabel() }}
-            </app-badge>
-          </div>
         </div>
       </div>
 
@@ -264,7 +259,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                       <app-badge [variant]="getPredictionBadgeVariant(res.model_results[modelKey].prediction)">
-                        {{ res.model_results[modelKey].prediction === 'HEALTHY' ? 'Saudável' : 'Parkinson' }}
+                        {{ getPredictionLabel(res.model_results[modelKey].prediction) }}
                       </app-badge>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">
