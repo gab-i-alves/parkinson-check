@@ -111,6 +111,14 @@ class PatientSchema(UserSchema):
     birthdate: date = Field(..., alias="birthdate")
 
 
+class RegisterResponse(BaseModel):
+    """Response schema for user registration"""
+    id: int
+    name: str
+    email: EmailStr
+    message: str = "Cadastro realizado com sucesso"
+
+
 class PatientListResponse(UserResponse):
     cpf: str
     location: str
