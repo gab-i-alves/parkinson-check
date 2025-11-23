@@ -86,7 +86,12 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   viewDoctorDetails(doctorId: number): void {
-    this.router.navigate(['/dashboard/admin/approve', doctorId]);
+    this.router.navigate(['/dashboard/admin/doctors'], {
+      queryParams: {
+        status: 'pendente',
+        autoOpenModal: doctorId
+      }
+    });
   }
 
   getDoctorInitials(name: string): string {
