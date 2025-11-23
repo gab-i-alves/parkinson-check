@@ -221,14 +221,19 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
       ],
       '/dashboard/admin/approve/:id': [
         { label: 'Dashboard', path: '/dashboard/admin' },
-        { label: 'Aprovar Cadastros', path: '/dashboard/admin/approve' },
-        { label: 'Carregando...', path: url }
+        { label: 'Médicos', path: '/dashboard/admin/doctors' },
+        { label: 'Solicitação de Cadastro', path: url }
       ],
       '/dashboard/admin/approve': [
         { label: 'Dashboard', path: '/dashboard/admin' },
         { label: 'Aprovar Cadastros', path: '/dashboard/admin/approve' }
       ],
-      '/dashboard/admin/doctors/:id': [
+      '/dashboard/admin/doctors/edit': [
+        { label: 'Dashboard', path: '/dashboard/admin' },
+        { label: 'Gerenciar Médicos', path: '/dashboard/admin/doctors' },
+        { label: 'Carregando...', path: url }
+      ],
+      '/dashboard/admin/doctors/': [
         { label: 'Dashboard', path: '/dashboard/admin' },
         { label: 'Gerenciar Médicos', path: '/dashboard/admin/doctors' },
         { label: 'Carregando...', path: url }

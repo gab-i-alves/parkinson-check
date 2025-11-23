@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { User, UserRole, UserFilters, Doctor, DoctorStatus, DoctorFilters } from '@core/models';
 import {
@@ -12,6 +12,8 @@ import { BadgeComponent } from '../../../../../shared/components/badge/badge.com
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { formatDate } from '../../../shared/utils/display-helpers';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { DoctorDocument } from '../../../../../shared/components/document-viewer-modal/document-viewer-modal.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-doctor-management',
@@ -43,7 +45,10 @@ export class DoctorManagementComponent implements OnInit {
   readonly Math = Math;
 
   isStatusModalVisible = signal<boolean>(false);
-  userToToggleStatus = signal<Doctor | null>(null);
+  doctorToChangeStatus = signal<Doctor | null>(null);
+  doctorDocuments = signal<DoctorDocument[]>([]);
+  modalSelectedStatus: string = '';
+  modalStatusChangeReason: string = '';
 
   private searchSubject = new Subject<string>();
 
@@ -53,7 +58,8 @@ export class DoctorManagementComponent implements OnInit {
   constructor(
     private doctorManagementService: DoctorManagementService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   public Number = Number;
@@ -62,12 +68,31 @@ export class DoctorManagementComponent implements OnInit {
     // Verificar se está na rota de aprovação
     this.isApprovalRoute.set(this.router.url.includes('/approve'));
 
-    // Se estiver na rota de aprovação, filtrar apenas pendentes
-    if (this.isApprovalRoute()) {
-      this.selectedStatus.set('pendente');
-    }
+    // Verificar query params para filtro e abertura automática de modal
+    this.route.queryParams.subscribe(params => {
+      // Aplicar filtro de status se fornecido
+      if (params['status']) {
+        this.selectedStatus.set(params['status']);
+      } else if (this.isApprovalRoute()) {
+        // Se estiver na rota de aprovação, filtrar apenas pendentes
+        this.selectedStatus.set('pendente');
+      }
 
-    this.loadUsers();
+      // Carregar dados primeiro
+      this.loadUsers();
+
+      // Abrir modal automaticamente se fornecido doctorId
+      if (params['autoOpenModal']) {
+        const doctorId = Number(params['autoOpenModal']);
+        // Aguardar o carregamento dos dados antes de abrir o modal
+        setTimeout(() => {
+          const doctor = this.doctors().find(d => d.id === doctorId);
+          if (doctor) {
+            this.initiateStatusChange(doctor);
+          }
+        }, 500);
+      }
+    });
   }
 
   loadUsers(): void {
@@ -266,45 +291,123 @@ export class DoctorManagementComponent implements OnInit {
   }
 
   initiateStatusChange(doctor: Doctor): void {
-    this.userToToggleStatus.set(doctor);
+    this.doctorToChangeStatus.set(doctor);
+    this.modalSelectedStatus = this.mapApprovalStatusToBackend(doctor.approval_status || 'pending');
+    this.modalStatusChangeReason = '';
+
+    // Carregar documentos do médico
+    this.doctorManagementService.getDoctorDocuments(doctor.id).subscribe({
+      next: (docs: DoctorDocument[]) => {
+        this.doctorDocuments.set(docs);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Erro ao carregar documentos:', err);
+        this.doctorDocuments.set([]);
+      }
+    });
+
     this.isStatusModalVisible.set(true);
   }
 
-  cancelStatusChange(): void {
-    this.userToToggleStatus.set(null);
+  closeStatusModal(): void {
+    this.doctorToChangeStatus.set(null);
+    this.doctorDocuments.set([]);
     this.isStatusModalVisible.set(false);
+    this.modalSelectedStatus = '';
+    this.modalStatusChangeReason = '';
   }
 
-//   confirmStatusChange(): void {
-//     const userToToggleStatus = this.userToToggleStatus();
-//     if (!userToToggleStatus) {
-//       return;
-//     }
+  downloadDocument(doctorId: number, documentId: number): void {
+    if (!doctorId || !documentId) {
+      console.error('Invalid doctor ID or document ID');
+      this.toastService.error('Erro: IDs inválidos para download');
+      return;
+    }
 
-//     const is_active = !userToToggleStatus.status;
-//     const reason = ''; // implementar motivo de desativação
+    this.doctorManagementService.downloadDocument(doctorId, documentId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `document_${documentId}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        this.toastService.success('Download iniciado com sucesso');
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Erro ao baixar documento:', err);
+        this.toastService.error('Erro ao baixar documento');
+      }
+    });
+  }
 
-//     const statusData: ChangeStatusData = {
-//       is_active,
-//       reason,
-//     };
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  }
 
-//     this.userManagementService
-//       .changeUserStatus(userToToggleStatus.id, statusData)
-//       .subscribe({
-//         next: () => {
-//           this.loadUsers();
+  getDocumentTypeLabel(type: string): string {
+    const types: Record<string, string> = {
+      'CRM_CERTIFICATE': 'Certificado CRM',
+      'DIPLOMA': 'Diploma',
+      'IDENTITY': 'Identidade',
+      'CPF_DOCUMENT': 'Documento CPF',
+      'PROOF_OF_ADDRESS': 'Comprovante de Residência',
+      'OTHER': 'Outro'
+    };
+    return types[type] || type;
+  }
 
-//           alert('Status do Usuário alterado');
+  getDocumentIcon(mimeType: string): string {
+    if (mimeType.startsWith('image/')) {
+      return 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z';
+    } else if (mimeType === 'application/pdf') {
+      return 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z';
+    } else {
+      return 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z';
+    }
+  }
 
-//           this.isStatusModalVisible.set(false);
-//           this.userToToggleStatus.set(null);
-//         },
-//         error: (err) => {
-//           alert('Ocorreu um erro ao alterar o status do usuário.');
-//           console.error(err);
-//           this.isStatusModalVisible.set(false);
-//         },
-//       });
-//   }
+  confirmStatusChange(): void {
+    const doctor = this.doctorToChangeStatus();
+    if (!doctor) {
+      return;
+    }
+
+    const statusData: ChangeStatusData = {
+      status: this.modalSelectedStatus as any,
+      reason: this.modalStatusChangeReason || undefined,
+    };
+
+    this.doctorManagementService
+      .changeDoctorStatus(doctor.id, statusData)
+      .subscribe({
+        next: () => {
+          this.toastService.success('Status do médico alterado com sucesso');
+          this.loadUsers();
+          this.closeStatusModal();
+        },
+        error: (err) => {
+          this.toastService.error('Erro ao alterar status do médico');
+          console.error(err);
+          this.closeStatusModal();
+        },
+      });
+  }
+
+  private mapApprovalStatusToBackend(status: string): string {
+    const mapping: Record<string, string> = {
+      'pendente': 'pending',
+      'aprovado(a)': 'approved',
+      'rejeitado(a)': 'rejected',
+      'suspenso(a)': 'suspended',
+      'em_revisao': 'in_review'
+    };
+    return mapping[status] || status;
+  }
 }

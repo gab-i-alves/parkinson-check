@@ -29,7 +29,7 @@
           [routerLink]="link.path"
           routerLinkActive="bg-pink-50 text-pink-700 shadow-sm"
           #rla="routerLinkActive"
-          [routerLinkActiveOptions]="{ exact: link.path === '/dashboard' || link.path === '/dashboard/admin' || link.path === '/dashboard/doctor' }"
+          [routerLinkActiveOptions]="{ exact: link.path === '/dashboard' || link.path === '/dashboard/admin' || link.path === '/dashboard/doctor' || link.path === '/dashboard/admin/users' || link.path === '/dashboard/admin/doctors' || link.path === '/dashboard/admin/approve' }"
           class="group flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 transition-all duration-200"
           [appTooltip]="link.tooltip || link.label"
           [tooltipPosition]="'right'"

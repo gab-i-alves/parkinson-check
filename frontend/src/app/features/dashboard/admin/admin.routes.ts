@@ -45,6 +45,13 @@ export const ADMIN_ROUTES: Routes = [
       ),
   },
   {
+    path: 'doctors/edit/:id',
+    loadComponent: () =>
+      import('./components/edit-doctor/edit-doctor.component').then(
+        (c) => c.EditDoctorComponent
+      ),
+  },
+  {
     path: 'approve',
     loadComponent: () =>
       import('./components/doctor-management/doctor-management.component').then(

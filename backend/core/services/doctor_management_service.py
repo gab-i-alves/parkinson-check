@@ -17,12 +17,6 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListRe
 
     doctors = doctor_query.all()
 
-    if not doctors:
-        raise HTTPException(
-            HTTPStatus.NOT_FOUND,
-            detail="Não foram encontrados médicos com os parametros fornecidos",
-        )
-
     doctor_list = []
 
     for doc in doctors:
@@ -40,6 +34,7 @@ def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListRe
                 reason=doc.rejection_reason,
                 approved_by_admin=doc.approved_by_admin_id,
                 approval_date=doc.approval_date,
+                created_at=doc.created_at,
             )
         )
 
@@ -50,12 +45,6 @@ def get_pending_doctors(session: Session) -> list[DoctorListResponse]:
     doctor_query = doctor_query.filter(Doctor.status == DoctorStatus.PENDING)
 
     doctors = doctor_query.all()
-
-    if not doctors:
-        raise HTTPException(
-            HTTPStatus.NOT_FOUND,
-            detail="Não foram encontrados médicos com os parametros fornecidos",
-        )
 
     doctor_list = []
 
@@ -71,6 +60,7 @@ def get_pending_doctors(session: Session) -> list[DoctorListResponse]:
                 role=UserType.DOCTOR,
                 gender=doc.gender,
                 status=doc.status,
+                created_at=doc.created_at,
             )
         )
 

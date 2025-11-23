@@ -1,33 +1,44 @@
 <div class="mx-auto max-w-4xl p-6">
-  <!-- Header -->
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold text-neutral-900">Criar Novo Usuário</h1>
-    <p class="mt-1 text-sm text-neutral-600">Preencha os dados para criar um novo usuário (Paciente, Médico ou Administrador)</p>
-  </div>
-
   <!-- Form Card -->
   <div class="rounded-2xl bg-white shadow-sm border border-neutral-200">
     <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="p-6">
       <!-- Error Message -->
       @if (apiError) {
-        <div class="mb-6 rounded-lg bg-red-50 border border-red-200 p-4">
-          <div class="flex items-start">
-            <svg class="h-5 w-5 text-red-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
-            </div>
+      <div class="mb-6 rounded-lg bg-red-50 border border-red-200 p-4">
+        <div class="flex items-start">
+          <svg
+            class="h-5 w-5 text-red-600 mt-0.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-red-800">{{ apiError }}</p>
           </div>
         </div>
+      </div>
       }
 
       <!-- User Type Selection -->
       <div class="mb-8">
-        <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2">Tipo de Usuário</h2>
+        <h2
+          class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2"
+        >
+          Tipo de Usuário
+        </h2>
         <div class="grid grid-cols-1 gap-6">
           <div>
-            <label for="userType" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="userType"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Tipo de Usuário <span class="text-red-500">*</span>
             </label>
             <select
@@ -40,7 +51,8 @@
               <option value="3">Administrador</option>
             </select>
             <p class="mt-1 text-xs text-gray-500">
-              Selecione o tipo de usuário a ser criado. Campos específicos serão exibidos conforme o tipo selecionado.
+              Selecione o tipo de usuário a ser criado. Campos específicos serão
+              exibidos conforme o tipo selecionado.
             </p>
           </div>
         </div>
@@ -48,11 +60,18 @@
 
       <!-- Personal Information -->
       <div class="mb-8">
-        <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2">Dados Pessoais</h2>
+        <h2
+          class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2"
+        >
+          Dados Pessoais
+        </h2>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- Nome -->
           <div>
-            <label for="name" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="name"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Nome Completo <span class="text-red-500">*</span>
             </label>
             <input
@@ -61,14 +80,26 @@
               formControlName="name"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('name')?.invalid && createForm.get('name')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Nome é obrigatório (mínimo 3 caracteres)</span></div>
+            @if (createForm.get('name')?.invalid &&
+            createForm.get('name')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Nome é obrigatório (mínimo 3 caracteres)</span>
+            </div>
             }
           </div>
 
           <!-- Email -->
           <div>
-            <label for="email" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="email"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               E-mail <span class="text-red-500">*</span>
             </label>
             <input
@@ -77,14 +108,26 @@
               formControlName="email"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('email')?.invalid && createForm.get('email')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>E-mail inválido</span></div>
+            @if (createForm.get('email')?.invalid &&
+            createForm.get('email')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>E-mail inválido</span>
+            </div>
             }
           </div>
 
           <!-- CPF -->
           <div>
-            <label for="cpf" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="cpf"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               CPF <span class="text-red-500">*</span>
             </label>
             <input
@@ -95,14 +138,26 @@
               maxlength="11"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('cpf')?.invalid && createForm.get('cpf')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>CPF deve conter 11 dígitos</span></div>
+            @if (createForm.get('cpf')?.invalid &&
+            createForm.get('cpf')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>CPF deve conter 11 dígitos</span>
+            </div>
             }
           </div>
 
           <!-- Password -->
           <div>
-            <label for="password" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="password"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Senha <span class="text-red-500">*</span>
             </label>
             <input
@@ -111,14 +166,26 @@
               formControlName="password"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('password')?.invalid && createForm.get('password')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Senha é obrigatória (mínimo 6 caracteres)</span></div>
+            @if (createForm.get('password')?.invalid &&
+            createForm.get('password')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Senha é obrigatória (mínimo 6 caracteres)</span>
+            </div>
             }
           </div>
 
           <!-- Birthdate -->
           <div>
-            <label for="birthdate" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="birthdate"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Data de Nascimento <span class="text-red-500">*</span>
             </label>
             <input
@@ -127,14 +194,26 @@
               formControlName="birthdate"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('birthdate')?.invalid && createForm.get('birthdate')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Data de nascimento é obrigatória</span></div>
+            @if (createForm.get('birthdate')?.invalid &&
+            createForm.get('birthdate')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Data de nascimento é obrigatória</span>
+            </div>
             }
           </div>
 
           <!-- Gender -->
           <div>
-            <label for="gender" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="gender"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Sexo <span class="text-red-500">*</span>
             </label>
             <select
@@ -147,8 +226,17 @@
               <option value="F">Feminino</option>
               <option value="O">Outro</option>
             </select>
-            @if (createForm.get('gender')?.invalid && createForm.get('gender')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Sexo é obrigatório</span></div>
+            @if (createForm.get('gender')?.invalid &&
+            createForm.get('gender')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Sexo é obrigatório</span>
+            </div>
             }
           </div>
         </div>
@@ -156,11 +244,18 @@
 
       <!-- Address Information -->
       <div class="mb-8">
-        <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2">Endereço</h2>
+        <h2
+          class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2"
+        >
+          Endereço
+        </h2>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- CEP -->
           <div>
-            <label for="cep" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="cep"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               CEP <span class="text-red-500">*</span>
             </label>
             <input
@@ -171,14 +266,26 @@
               maxlength="8"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('cep')?.invalid && createForm.get('cep')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>CEP deve conter 8 dígitos</span></div>
+            @if (createForm.get('cep')?.invalid &&
+            createForm.get('cep')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>CEP deve conter 8 dígitos</span>
+            </div>
             }
           </div>
 
           <!-- Street -->
           <div>
-            <label for="street" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="street"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Rua <span class="text-red-500">*</span>
             </label>
             <input
@@ -187,14 +294,26 @@
               formControlName="street"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('street')?.invalid && createForm.get('street')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Rua é obrigatória</span></div>
+            @if (createForm.get('street')?.invalid &&
+            createForm.get('street')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Rua é obrigatória</span>
+            </div>
             }
           </div>
 
           <!-- Number -->
           <div>
-            <label for="number" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="number"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Número <span class="text-red-500">*</span>
             </label>
             <input
@@ -203,14 +322,26 @@
               formControlName="number"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('number')?.invalid && createForm.get('number')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Número é obrigatório</span></div>
+            @if (createForm.get('number')?.invalid &&
+            createForm.get('number')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Número é obrigatório</span>
+            </div>
             }
           </div>
 
           <!-- Complement -->
           <div>
-            <label for="complement" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="complement"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Complemento
             </label>
             <input
@@ -223,7 +354,10 @@
 
           <!-- Neighborhood -->
           <div>
-            <label for="neighborhood" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="neighborhood"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Bairro <span class="text-red-500">*</span>
             </label>
             <input
@@ -232,14 +366,26 @@
               formControlName="neighborhood"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('neighborhood')?.invalid && createForm.get('neighborhood')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Bairro é obrigatório</span></div>
+            @if (createForm.get('neighborhood')?.invalid &&
+            createForm.get('neighborhood')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Bairro é obrigatório</span>
+            </div>
             }
           </div>
 
           <!-- City -->
           <div>
-            <label for="city" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="city"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Cidade <span class="text-red-500">*</span>
             </label>
             <input
@@ -248,14 +394,26 @@
               formControlName="city"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('city')?.invalid && createForm.get('city')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Cidade é obrigatória</span></div>
+            @if (createForm.get('city')?.invalid &&
+            createForm.get('city')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Cidade é obrigatória</span>
+            </div>
             }
           </div>
 
           <!-- State -->
           <div>
-            <label for="state" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="state"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Estado (UF) <span class="text-red-500">*</span>
             </label>
             <input
@@ -266,8 +424,17 @@
               maxlength="2"
               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm uppercase"
             />
-            @if (createForm.get('state')?.invalid && createForm.get('state')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Estado é obrigatório (2 letras)</span></div>
+            @if (createForm.get('state')?.invalid &&
+            createForm.get('state')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Estado é obrigatório (2 letras)</span>
+            </div>
             }
           </div>
         </div>
@@ -276,16 +443,31 @@
       <!-- Doctor-specific Fields -->
       @if (createForm.get('userType')?.value === '2') {
       <div class="mb-8">
-        <h2 class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2 flex items-center gap-2">
-          <svg class="h-5 w-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <h2
+          class="mb-4 text-lg font-semibold text-neutral-900 border-b border-neutral-200 pb-2 flex items-center gap-2"
+        >
+          <svg
+            class="h-5 w-5 text-pink-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
           Dados Profissionais (Médico)
         </h2>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- CRM -->
           <div>
-            <label for="crm" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="crm"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               CRM <span class="text-red-500">*</span>
             </label>
             <input
@@ -295,8 +477,19 @@
               placeholder="Ex: 123456/SP"
               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm uppercase"
             />
-            @if (createForm.get('crm')?.invalid && createForm.get('crm')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>CRM é obrigatório no formato NNNNNN/UF (ex: 123456/SP)</span></div>
+            @if (createForm.get('crm')?.invalid &&
+            createForm.get('crm')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span
+                >CRM é obrigatório no formato NNNNNN/UF (ex: 123456/SP)</span
+              >
+            </div>
             }
             <p class="mt-1 text-xs text-gray-500">
               Número do CRM seguido de barra e UF (ex: 123456/SP)
@@ -305,7 +498,10 @@
 
           <!-- Área de Especialidade -->
           <div>
-            <label for="expertise_area" class="block text-sm font-medium text-neutral-900 mb-2">
+            <label
+              for="expertise_area"
+              class="block text-sm font-medium text-neutral-900 mb-2"
+            >
               Área de Especialidade <span class="text-red-500">*</span>
             </label>
             <input
@@ -315,8 +511,17 @@
               placeholder="Ex: Neurologia, Cardiologia, Clínica Geral"
               class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
-            @if (createForm.get('expertise_area')?.invalid && createForm.get('expertise_area')?.touched) {
-              <div class="mt-2 text-xs text-red-600 flex items-center"><svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span>Área de especialidade é obrigatória para médicos</span></div>
+            @if (createForm.get('expertise_area')?.invalid &&
+            createForm.get('expertise_area')?.touched) {
+            <div class="mt-2 text-xs text-red-600 flex items-center">
+              <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                /></svg
+              ><span>Área de especialidade é obrigatória para médicos</span>
+            </div>
             }
             <p class="mt-1 text-xs text-gray-500">
               Informe a principal área de atuação médica
@@ -327,24 +532,45 @@
       }
 
       <!-- Action Buttons -->
-      <div class="flex items-center justify-end gap-4 border-t border-neutral-200 pt-6">
+      <div
+        class="flex items-center justify-end gap-4 border-t border-neutral-200 pt-6"
+      >
         <button
           type="submit"
           [disabled]="isLoading || createForm.invalid"
           class="inline-flex items-center gap-2 rounded-lg bg-pink-600 px-6 py-2 text-sm font-medium text-white hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           @if (isLoading) {
-            <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Criando...
-          } @else {
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Criar Usuário
-          }
+          <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          Criando... } @else {
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Criar Usuário }
         </button>
       </div>
     </form>

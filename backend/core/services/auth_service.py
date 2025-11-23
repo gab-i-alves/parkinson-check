@@ -43,9 +43,11 @@ def login(login_form: LoginFormRequest, session: Session):
             detail_message = "Sua conta está pendente de aprovação."
             if user.status == DoctorStatus.REJECTED:
                 detail_message = "Seu cadastro foi rejeitado."
+                if user.rejection_reason:
+                    detail_message += f" Motivo: {user.rejection_reason}."
             elif user.status == DoctorStatus.SUSPENDED:
                 detail_message = "Sua conta está suspensa."
-            
+
             raise HTTPException(
                 HTTPStatus.FORBIDDEN,
                 detail=f"{detail_message} Entre em contato com o suporte."

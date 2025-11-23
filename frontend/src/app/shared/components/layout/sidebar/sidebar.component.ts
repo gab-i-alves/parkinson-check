@@ -178,12 +178,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
       disabled: false,
     },
     {
-      path: '/dashboard/admin/approve',
-      label: 'Aprovar Cadastros',
-      icon: 'chart',
-      disabled: false,
-    },
-    {
       path: '/dashboard/admin/users/create',
       label: 'Adicionar Usuários',
       icon: 'user-plus',

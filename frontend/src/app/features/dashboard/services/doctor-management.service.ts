@@ -20,6 +20,7 @@ interface DoctorBackendResponse {
   reason?: string;
   approved_by?: string;
   approval_date?: string;
+  created_at?: string;
 }
 
 export interface UpdateUserData {
@@ -66,6 +67,7 @@ export class DoctorManagementService {
       email: backendDoctor.email,
       approved_by: backendDoctor.approved_by,
       approval_date: backendDoctor.approval_date,
+      created_at: backendDoctor.created_at,
     };
   }
 

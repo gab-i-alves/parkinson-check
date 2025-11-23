@@ -9,12 +9,13 @@ export interface Doctor {
   location: string;
   status?: 'pending' | 'linked' | 'unlinked';
   bindingId?: number;
-  bind_id?: number; 
+  bind_id?: number;
   approval_status?: DoctorStatus
   approved_by?: string
   approval_date?: string
   email?: string
   cpf?: string
+  created_at?: string;
 }
 
 export interface PaginatedDoctors {

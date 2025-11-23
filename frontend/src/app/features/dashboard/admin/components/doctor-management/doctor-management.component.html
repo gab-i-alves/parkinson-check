@@ -70,7 +70,7 @@
           <!-- Expertise Area Filter -->
           <div class="flex-shrink-0">
             <label for="expertise_area" class="block text-sm font-medium text-gray-700">
-              Área de Atuação
+              Especialidade
             </label>
             <select
               id="expertise_area"
@@ -269,13 +269,7 @@
                 scope="col"
                 class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
-                Localização
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
-                Área de atuação
+                Cadastrado em
               </th>
               <th scope="col" class="relative px-6 py-3">
                 <span class="">Ações</span>
@@ -291,7 +285,14 @@
                     <div class="text-sm font-medium text-gray-900">
                       {{ doctor.name }}
                     </div>
-                    <div class="mt-1">
+                    <div class="mt-1 flex items-center gap-2">
+                      <app-badge
+                        [variant]="'success'"
+                        appTooltip="Tipo de usuário no sistema"
+                        tooltipPosition="right"
+                      >
+                        Médico
+                      </app-badge>
                       <app-badge
                         [variant]="getStatusBadgeVariant(doctor.approval_status || '')"
                         [appTooltip]="'Status de aprovação: ' + getStatusLabel(doctor.approval_status || '')"
@@ -324,19 +325,10 @@
               <td class="whitespace-nowrap px-6 py-4">
                 <div
                   class="text-sm text-gray-900"
-                  appTooltip="Localização de atuação do médico"
+                  appTooltip="Data de cadastro no sistema"
                   tooltipPosition="top"
                 >
-                  {{ doctor.location }}
-                </div>
-              </td>
-              <td class="whitespace-nowrap px-6 py-4">
-                <div
-                  class="text-sm text-gray-900"
-                  appTooltip="Especialização médica"
-                  tooltipPosition="top"
-                >
-                  {{ doctor.expertise_area }}
+                  {{ formatDateDisplay(doctor.created_at!) }}
                 </div>
               </td>
               <td
@@ -344,16 +336,15 @@
               >
                 <div class="flex items-center justify-end gap-2">
                   <a
-                    [routerLink]="['/dashboard/admin/doctors/', doctor.id]"
+                    [routerLink]="['/dashboard/admin/doctors/edit', doctor.id]"
                     class="inline-flex items-center px-4 py-2 border border-blue-200 text-sm font-semibold rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 transition-all"
-                    appTooltip="Visualizar detalhes completos do médico"
+                    appTooltip="Editar dados do médico"
                     tooltipPosition="left"
                   >
                     <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Ver Detalhes
+                    Editar
                   </a>
                   <button
                     type="button"
@@ -511,21 +502,25 @@
 </div>
 
 <!-- Status Change Modal -->
-@if (isStatusModalVisible() && userToToggleStatus(); as user) {
+@if (isStatusModalVisible() && doctorToChangeStatus(); as doctor) {
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/60 backdrop-blur-sm animate-fadeIn"
+  (click)="closeStatusModal()"
   role="alertdialog"
   aria-modal="true"
   aria-labelledby="status-modal-title"
 >
-  <div class="relative w-full max-w-lg mx-4 rounded-xl bg-white shadow-2xl animate-slideUp">
+  <div
+    class="relative w-full max-w-lg mx-4 rounded-xl bg-white shadow-2xl animate-slideUp"
+    (click)="$event.stopPropagation()"
+  >
     <!-- Modal Header -->
     <div class="px-6 py-5 border-b border-gray-200 bg-yellow-50 rounded-t-xl">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-200">
             <svg class="h-6 w-6 text-yellow-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" />
             </svg>
           </div>
           <div>
@@ -533,13 +528,13 @@
               Alterar Status do Médico
             </h3>
             <p class="mt-1 text-sm text-neutral-600">
-              Modificar o status de aprovação
+              Confirme a alteração de status
             </p>
           </div>
         </div>
         <button
           type="button"
-          (click)="cancelStatusChange()"
+          (click)="closeStatusModal()"
           class="rounded-lg p-1 text-neutral-400 hover:bg-yellow-100 hover:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
           appTooltip="Fechar modal"
           tooltipPosition="left"
@@ -558,47 +553,132 @@
       <div class="rounded-lg bg-gray-50 p-4">
         <div class="flex items-center gap-3">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-pink-100 text-pink-700">
-            <span class="text-lg font-bold">{{ user.id }}</span>
+            <span class="text-lg font-bold">{{ doctor.id }}</span>
           </div>
           <div>
-            <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
-            <p class="text-sm text-gray-500">{{ user.email }}</p>
-            <div class="mt-1">
-              <app-badge [variant]="getStatusBadgeVariant(user.approval_status || '')">
-                {{ getStatusLabel(user.approval_status || '') }}
+            <p class="text-sm font-medium text-gray-900">{{ doctor.name }}</p>
+            <p class="text-sm text-gray-500">{{ doctor.email }}</p>
+            <div class="mt-1 flex gap-2">
+              <app-badge [variant]="'success'">
+                Médico
+              </app-badge>
+              <app-badge [variant]="getStatusBadgeVariant(doctor.approval_status || '')">
+                {{ getStatusLabel(doctor.approval_status || '') }}
               </app-badge>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Information Notice -->
+      <!-- Documents Section -->
+      <div class="rounded-lg bg-purple-50 border border-purple-200 p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <svg class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h4 class="text-sm font-semibold text-purple-900">Documentos Anexados</h4>
+        </div>
+        @if (doctorDocuments().length === 0) {
+          <p class="text-xs text-purple-700">Nenhum documento anexado</p>
+        } @else {
+          <div class="space-y-2">
+            @for (doc of doctorDocuments(); track doc.id) {
+              <div class="flex items-center justify-between bg-white rounded-md px-3 py-2 border border-purple-100">
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                  <svg class="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getDocumentIcon(doc.mime_type)" />
+                  </svg>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs font-medium text-gray-900 truncate">
+                      {{ getDocumentTypeLabel(doc.document_type) }}
+                    </p>
+                    <p class="text-xs text-gray-500 truncate">{{ formatFileSize(doc.file_size) }}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  (click)="downloadDocument(doctor.id, doc.id)"
+                  class="flex-shrink-0 p-1 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded transition-colors"
+                  appTooltip="Baixar documento"
+                  tooltipPosition="left"
+                >
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Status Change Notice -->
       <div class="rounded-lg bg-blue-50 border border-blue-200 p-4">
         <div class="flex gap-3">
           <svg class="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div class="text-sm text-blue-800">
-            <p class="font-medium">Funcionalidade em Desenvolvimento</p>
-            <p class="mt-1">
-              A alteração de status está sendo implementada. Em breve você poderá aprovar, rejeitar ou suspender médicos diretamente desta tela.
+            <p class="font-medium">
+              O status do médico será alterado
             </p>
-            <p class="mt-2">
-              Por enquanto, use a página de detalhes do médico para aprovar ou rejeitar cadastros.
+            <p class="mt-1">
+              Esta alteração pode afetar o acesso e as permissões do médico no sistema.
             </p>
           </div>
         </div>
       </div>
+
+      <!-- Status Selection -->
+      <div>
+        <label for="status" class="block text-sm font-medium text-neutral-700 mb-2">
+          Novo Status
+        </label>
+        <select
+          id="status"
+          [(ngModel)]="modalSelectedStatus"
+          class="block w-full rounded-lg border-neutral-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 sm:text-sm"
+        >
+          <option value="pending">Pendente</option>
+          <option value="approved">Aprovado</option>
+          <option value="rejected">Rejeitado</option>
+          <option value="suspended">Suspenso</option>
+          <option value="in_review">Em Revisão</option>
+        </select>
+      </div>
+
+      <!-- Reason Field -->
+      <div>
+        <label for="reason" class="block text-sm font-medium text-neutral-700 mb-2">
+          Motivo da Alteração <span class="text-gray-500">(opcional)</span>
+        </label>
+        <textarea
+          id="reason"
+          rows="3"
+          [(ngModel)]="modalStatusChangeReason"
+          class="block w-full rounded-lg border-neutral-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500 sm:text-sm"
+          placeholder="Informe o motivo da alteração para manter registro..."
+          appTooltip="Descrever o motivo ajuda no histórico de auditoria"
+          tooltipPosition="top"
+        ></textarea>
+      </div>
     </div>
 
     <!-- Modal Footer -->
-    <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex items-center justify-end gap-3">
+    <div class="px-6 py-4 bg-neutral-50 rounded-b-xl flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
       <button
         type="button"
-        (click)="cancelStatusChange()"
-        class="inline-flex items-center justify-center rounded-full border-2 border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-all"
+        (click)="closeStatusModal()"
+        class="inline-flex w-full justify-center items-center rounded-full border-2 border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 sm:w-auto transition-all"
       >
-        Fechar
+        Cancelar
+      </button>
+      <button
+        type="button"
+        (click)="confirmStatusChange()"
+        class="inline-flex w-full justify-center items-center rounded-full border border-transparent bg-yellow-600 px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-yellow-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 sm:w-auto transition-all"
+      >
+        Confirmar Alteração
       </button>
     </div>
   </div>
