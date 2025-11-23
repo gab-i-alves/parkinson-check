@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { ChangeStatusData, UserManagementService } from '../../../services/user-management.service';
+import { UserManagementService } from '../../../services/user-management.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { User } from '../../../../../core/models/user.model';
 import { CommonModule } from '@angular/common';
@@ -26,10 +26,6 @@ import { formatDate } from '../../../shared/utils/display-helpers';
 })
 export class EditUserComponent implements OnInit {
   user = signal<User | undefined>(undefined);
-
-  isStatusModalVisible = signal<boolean>(false);
-  userToToggleStatus = signal<User | null>(null);
-  deactivationReason = signal<string>('');
 
   isSaveConfirmModalVisible = signal<boolean>(false);
 
@@ -197,51 +193,4 @@ loadUser(userId: number) {
   formatDateDisplay(dateString: string | null | undefined): string {
     return formatDate(dateString || null);
   }
-
-  initiateStatusChange(user: User): void {
-      this.userToToggleStatus.set(user);
-      this.deactivationReason.set('');
-      this.isStatusModalVisible.set(true);
-    }
-
-    cancelStatusChange(): void {
-      this.userToToggleStatus.set(null);
-      this.deactivationReason.set('');
-      this.isStatusModalVisible.set(false);
-    }
-
-    confirmStatusChange(): void {
-      const userToToggleStatus = this.userToToggleStatus();
-      if (!userToToggleStatus) {
-        return;
-      }
-
-      const is_active = !userToToggleStatus.status;
-      const reason = this.deactivationReason();
-
-      const statusData: ChangeStatusData = {
-        is_active,
-        reason: reason || undefined,
-      };
-
-      this.userManagementService
-        .changeUserStatus(userToToggleStatus.id, statusData)
-        .subscribe({
-          next: () => {
-            this.loadUser(this.user()!.id);
-
-            this.toastService.success('Status do usuário alterado com sucesso');
-
-            this.isStatusModalVisible.set(false);
-            this.userToToggleStatus.set(null);
-            this.deactivationReason.set('');
-          },
-          error: (err: HttpErrorResponse) => {
-            this.toastService.error('Erro ao alterar o status do usuário');
-            console.error(err);
-            this.isStatusModalVisible.set(false);
-            this.deactivationReason.set('');
-          },
-        });
-    }
 }
