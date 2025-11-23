@@ -42,18 +42,24 @@ def save_uploaded_file(
     }
     
 def get_doctor_document(
-    doctor_id: int, 
-    file_id: int, 
+    doctor_id: int,
+    file_id: int,
     session: Session
 ) -> list[FileResponse] :
     file_info = get_doctor_document_info(doctor_id, file_id, session)
-    
+
+    if not file_info:
+        raise HTTPException(
+            HTTPStatus.NOT_FOUND,
+            detail="Documento não encontrado no banco de dados",
+        )
+
     if not os.path.exists(file_info.file_path):
         raise HTTPException(
             HTTPStatus.NOT_FOUND,
             detail="Não foi encontrado o arquivo especificado",
         )
-        
+
     return FileResponse(
         path=file_info.file_path,
         filename=file_info.file_name,

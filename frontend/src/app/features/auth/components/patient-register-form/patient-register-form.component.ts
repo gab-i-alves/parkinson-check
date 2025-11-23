@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
@@ -18,29 +17,20 @@ import { NgxMaskDirective } from 'ngx-mask';
   templateUrl: './patient-register-form.component.html',
 })
 export class PatientRegisterFormComponent {
-  // DECISÃO DE ARQUITETURA: Uso de @Input para receber dados do pai.
-  // O componente não cria o seu próprio FormGroup, tornando-o "burro" e reutilizável.
-  // Ele apenas exibe o estado que lhe é fornecido.
   @Input() patientForm!: FormGroup;
   @Input() isLoading = false;
   @Input() apiError: string | null = null;
   @ViewChild('apiErrorDiv') apiErrorDiv: ElementRef | undefined;
   buttonTouched = false;
 
-  // Multi-step state
   currentStep = 1;
   totalSteps = 3;
 
-  // Password visibility
   showPassword = false;
   showConfirmPassword = false;
 
-  // DECISÃO DE ARQUITETURA: Uso de @Output para comunicar com o pai.
-  // Em vez de conter a lógica de submissão, ele emite um evento.
-  // Isso desacopla o componente da lógica de negócio (ex: chamadas de API).
   @Output() formSubmit = new EventEmitter<void>();
 
-  // Navegação entre steps
   nextStep(): void {
     if (this.validateCurrentStep()) {
       this.currentStep++;
@@ -57,7 +47,6 @@ export class PatientRegisterFormComponent {
     }
   }
 
-  // Valida apenas os campos do step atual
   validateCurrentStep(): boolean {
     const fieldsToValidate = this.getFieldsForCurrentStep();
     let isValid = true;
@@ -75,21 +64,19 @@ export class PatientRegisterFormComponent {
     return isValid;
   }
 
-  // Retorna os campos que devem ser validados no step atual
   getFieldsForCurrentStep(): string[] {
     switch (this.currentStep) {
-      case 1: // Dados Pessoais
+      case 1:
         return ['name', 'cpf', 'birthdate', 'gender'];
-      case 2: // Endereço
+      case 2:
         return ['cep', 'street', 'number', 'neighborhood', 'city', 'state'];
-      case 3: // Segurança
+      case 3:
         return ['email', 'password', 'confirmPassword'];
       default:
         return [];
     }
   }
 
-  // Propaga o evento de submissão para o componente pai.
   onSubmit(): void {
     if (this.validateCurrentStep()) {
       this.formSubmit.emit();

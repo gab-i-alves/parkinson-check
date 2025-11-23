@@ -1,43 +1,215 @@
+<!DOCTYPE html>
 <html>
-<body style="margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
-<div style="background: #efefef; border-radius: 10px; padding: 10px; display: flex; align-items: center; justify-content: center;">
-  <div style="margin: 0 auto; width: 90%; text-align: center;">
-
-    <div style="width: 50%; max-width: 42rem; margin-left: auto; margin-right: auto;">
-    <div style="border-radius: 0.5rem; background-color: #ffffff; padding: 1.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
-        <div style="text-align: center;">
-        <a style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
-            <div style="height:100%; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 0.5rem; background-color: #6d28d9; margin-right: 0.75rem; text-align: center; vertical-align: middle;">
-            <span style="width: 100%; font-size: 1.5rem; font-weight: 700; color: #ffffff; line-height: 3rem; display: inline-block; vertical-align: middle;">P</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f8f8f6;
+    "
+  >
+    <div style="padding: 40px 20px">
+      <div style="max-width: 600px; margin: 0 auto">
+        <!-- Header com Logo -->
+        <div style="text-align: center; margin-bottom: 32px">
+          <div style="display: inline-flex; align-items: center; gap: 12px">
+            <div
+              style="
+                width: 48px;
+                height: 48px;
+                background-color: #1a1a1a;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <span style="color: #ffffff; font-size: 24px; font-weight: 600"
+                >P</span
+              >
             </div>
-            <h1 style="font-size: 1.875rem; font-weight: 700; color: #1f2937; margin: 0 auto;">ParkinsonCheck</h1>
-        </a>
+            <h1
+              style="
+                margin: 0;
+                font-size: 28px;
+                font-weight: 600;
+                color: #1a1a1a;
+              "
+            >
+              ParkinsonCheck
+            </h1>
+          </div>
         </div>
 
-        <div style="margin: 30px 0; padding: 20px; background-color: #dcfce7; border-radius: 10px;">
-          <svg style="width: 60px; height: 60px; margin: 0 auto; display: block;" fill="#16a34a" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-          </svg>
-        </div>
-
-        <h3 style="margin-bottom: 20px; font-size: 1.25rem; color: #16a34a;">Cadastro Aprovado!</h3>
-        <p style="margin-bottom: 20px; color: #4b5563;">Olá, <strong>{{doctor_name}}</strong>!</p>
-        <p style="margin-bottom: 30px; color: #4b5563;">
-          Sua solicitação de cadastro foi <strong>aprovada</strong> pela nossa equipe.
-          Agora você já pode acessar a plataforma ParkinsonCheck e começar a acompanhar seus pacientes.
-        </p>
-        <a style="display: block; margin: 0 auto; border: none; background-color: #16a34a; color: white !important; width: 200px; line-height: 24px; padding: 10px; font-size: 20px; border-radius: 10px; cursor: pointer; text-decoration: none; text-align: center;"
-          href="http://localhost:4200/auth/login"
-          target="_blank"
+        <!-- Card Principal -->
+        <div
+          style="
+            background-color: #ffffff;
+            border-radius: 24px;
+            padding: 48px 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e8e7e1;
+          "
         >
-          Fazer Login
-        </a>
-        <p style="margin-top: 30px; font-size: 0.875rem; color: #6b7280;">
-          Se você tiver alguma dúvida, entre em contato conosco.
-        </p>
+          <!-- Ícone de Sucesso com Background Verde -->
+          <div
+            style="
+              background-color: #e5f5e5;
+              border-radius: 16px;
+              padding: 32px;
+              text-align: center;
+              margin-bottom: 32px;
+              position: relative;
+              overflow: hidden;
+            "
+          >
+            <!-- Padrão de fundo decorativo -->
+            <div
+              style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 60px;
+                height: 60px;
+                opacity: 0.2;
+              "
+            >
+              <div
+                style="
+                  width: 30px;
+                  height: 30px;
+                  background-color: #a8d0a8;
+                  border-radius: 50%;
+                "
+              ></div>
+              <div
+                style="
+                  width: 20px;
+                  height: 20px;
+                  background-color: #a8d0a8;
+                  border-radius: 50%;
+                  position: absolute;
+                  top: 20px;
+                  left: 25px;
+                "
+              ></div>
+            </div>
+
+            <svg
+              style="
+                width: 80px;
+                height: 80px;
+                margin: 0 auto;
+                display: block;
+                position: relative;
+                z-index: 1;
+              "
+              fill="#16a34a"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+
+          <!-- Título -->
+          <h2
+            style="
+              margin: 0 0 24px 0;
+              font-size: 24px;
+              font-weight: 600;
+              color: #1a1a1a;
+              text-align: center;
+            "
+          >
+            Cadastro Aprovado!
+          </h2>
+
+          <!-- Saudação -->
+          <p
+            style="
+              margin: 0 0 16px 0;
+              font-size: 16px;
+              color: #1a1a1a;
+              text-align: center;
+            "
+          >
+            Olá, <strong>{{doctor_name}}</strong>!
+          </p>
+
+          <!-- Mensagem Principal -->
+          <p
+            style="
+              margin: 0 0 32px 0;
+              font-size: 14px;
+              color: #4b5563;
+              line-height: 1.6;
+              text-align: center;
+            "
+          >
+            Sua solicitação de cadastro foi
+            <strong style="color: #16a34a">aprovada</strong> pela nossa equipe.
+            Agora você já pode acessar a plataforma ParkinsonCheck e começar a
+            acompanhar seus pacientes.
+          </p>
+
+          <!-- Badge de Status -->
+          <div style="text-align: center; margin-bottom: 32px">
+            <span
+              style="
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 16px;
+                background-color: #c1e1c1;
+                color: #1a1a1a;
+                font-size: 12px;
+                font-weight: 500;
+                border-radius: 999px;
+              "
+            >
+              ✓ Conta Ativada
+            </span>
+          </div>
+
+          <!-- Botão de Ação -->
+          <div style="text-align: center">
+            <a
+              href="http://localhost:4200/auth/login"
+              style="
+                display: inline-block;
+                background-color: #1a1a1a;
+                color: #ffffff;
+                padding: 14px 32px;
+                font-size: 16px;
+                font-weight: 500;
+                border-radius: 999px;
+                text-decoration: none;
+                transition: background-color 0.3s;
+              "
+            >
+              Fazer Login
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 32px; text-align: center">
+          <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280">
+            Se você tiver alguma dúvida, entre em contato conosco.
+          </p>
+          <p style="margin: 0; font-size: 12px; color: #9ca3af">
+            © 2025 ParkinsonCheck. Todos os direitos reservados.
+          </p>
+        </div>
+      </div>
     </div>
-    </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>

@@ -1,10 +1,10 @@
 @if (isVisible()) {
-<!-- Backdrop with fadeIn animation -->
+<!-- Backdrop -->
 <div
   (click)="onBackdropClick()"
   (keydown)="onKeyDown($event)"
   tabindex="-1"
-  class="fixed inset-0 z-50 bg-neutral-900/60 backdrop-blur-sm animate-fadeIn"
+  class="fixed inset-0 z-40 bg-neutral-900/60 backdrop-blur-sm"
   role="dialog"
   aria-modal="true"
   [attr.aria-labelledby]="'feedback-title'"
@@ -13,7 +13,7 @@
 <!-- Modal Container -->
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
   <div
-    class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl animate-slideUp overflow-hidden"
+    class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl overflow-hidden"
     (click)="$event.stopPropagation()"
   >
     <!-- Close Button -->
@@ -39,10 +39,10 @@
 
     <!-- Content -->
     <div class="p-8 text-center">
-      <!-- Icon with subtle animation -->
+      <!-- Icon -->
       <div
         [ngClass]="config.bgClass"
-        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full animate-bounce-gentle"
+        class="mx-auto flex h-16 w-16 items-center justify-center rounded-full"
       >
         <svg
           [ngClass]="config.iconClass"

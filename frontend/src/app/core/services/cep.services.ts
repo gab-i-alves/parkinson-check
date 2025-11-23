@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
-// DECISÃO: Interface para tipar a resposta da API (melhor segurança)
 export interface CepAddress {
   cep: string;
   logradouro: string;
