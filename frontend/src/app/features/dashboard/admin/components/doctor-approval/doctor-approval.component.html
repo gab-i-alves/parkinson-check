@@ -126,7 +126,7 @@
           <dd class="mt-1 text-sm font-semibold text-blue-600">{{ doc.crm }}</dd>
         </div>
         <div>
-          <dt class="text-sm font-medium text-gray-500">Área de Atuação</dt>
+          <dt class="text-sm font-medium text-gray-500">Especialidade</dt>
           <dd class="mt-1 text-sm text-gray-900">{{ doc.expertise_area || 'Não informado' }}</dd>
         </div>
         <div>
@@ -246,32 +246,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- Activity Timeline Card -->
-  @if (activities().length > 0) {
-  <div class="overflow-hidden rounded-xl bg-white shadow">
-    <div class="px-6 py-5 sm:px-6 border-b border-gray-200 bg-green-50">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-lg font-medium leading-6 text-gray-900">Histórico de Atividades</h3>
-          <p class="mt-1 text-sm text-gray-500">Timeline do processo de cadastro e revisão</p>
-        </div>
-        <svg
-          class="h-5 w-5 text-gray-400 cursor-help"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          appTooltip="Acompanhe as principais etapas do processo de aprovação do médico no sistema."
-          tooltipPosition="left"
-        >
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-        </svg>
-      </div>
-    </div>
-    <div class="px-6 py-5 sm:p-6">
-      <app-activity-timeline [activities]="activities()" />
-    </div>
-  </div>
-  }
 
   <!-- Action Buttons -->
   <div class="overflow-hidden rounded-xl bg-white shadow">

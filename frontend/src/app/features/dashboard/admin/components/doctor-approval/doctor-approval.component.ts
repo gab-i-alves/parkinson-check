@@ -14,7 +14,6 @@ import { CpfPipe } from '../../../../../shared/pipes/cpf.pipe';
 import { ConfirmationModalComponent } from '../../../../../shared/components/confirmation-modal/confirmation-modal.component';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { formatDate } from '../../../shared/utils/display-helpers';
-import { ActivityTimelineComponent, Activity } from '../../../../../shared/components/activity-timeline/activity-timeline.component';
 
 interface DoctorForApproval {
   id: number;
@@ -38,15 +37,13 @@ interface DoctorForApproval {
     FormsModule,
     CpfPipe,
     ConfirmationModalComponent,
-    TooltipDirective,
-    ActivityTimelineComponent
+    TooltipDirective
   ],
   templateUrl: './doctor-approval.component.html',
 })
 export class DoctorApprovalComponent implements OnInit {
   doctor = signal<DoctorForApproval | null>(null);
   documents = signal<DoctorDocument[]>([]);
-  activities = signal<Activity[]>([]);
   isLoading = signal<boolean>(true);
 
   isDocumentModalOpen = signal<boolean>(false);
@@ -86,12 +83,6 @@ export class DoctorApprovalComponent implements OnInit {
             status: doctor.status,
             location: doctor.location
           });
-
-          // Atualizar breadcrumb com nome do médico
-          this.breadcrumbService.updateBreadcrumb(this.router.url, doctor.name);
-
-          // Create timeline activities based on doctor data
-          this.createTimelineActivities(doctor);
         }
         this.isLoading.set(false);
       },
@@ -224,50 +215,5 @@ export class DoctorApprovalComponent implements OnInit {
 
   formatDate(dateString: string | undefined): string {
     return formatDate(dateString || null);
-  }
-
-  createTimelineActivities(doctor: any): void {
-    const activities: Activity[] = [];
-
-    // Registration activity
-    if (doctor.created_at || doctor.registration_date) {
-      activities.push({
-        id: 1,
-        activity_type: 'REGISTRATION',
-        description: `Cadastro realizado no sistema como médico ${doctor.specialty ? 'da área de ' + doctor.specialty : ''}`,
-        created_at: doctor.created_at || doctor.registration_date
-      });
-    }
-
-    // Status change activity if not pending
-    if (doctor.status && doctor.status !== 'PENDING') {
-      const statusDescriptions: Record<string, string> = {
-        'IN_REVIEW': 'Cadastro em revisão pela equipe administrativa',
-        'APPROVED': 'Cadastro aprovado - acesso ao sistema liberado',
-        'REJECTED': 'Cadastro rejeitado',
-        'SUSPENDED': 'Cadastro suspenso'
-      };
-
-      activities.push({
-        id: 2,
-        activity_type: 'STATUS_CHANGE',
-        description: statusDescriptions[doctor.status] || `Status alterado para ${doctor.status}`,
-        created_at: doctor.updated_at || doctor.created_at || new Date().toISOString()
-      });
-    }
-
-    // Documents uploaded
-    if (this.documents().length > 0) {
-      activities.push({
-        id: 3,
-        activity_type: 'NOTE_ADDED',
-        description: `${this.documents().length} documento(s) enviado(s) para verificação`,
-        created_at: doctor.created_at || new Date().toISOString()
-      });
-    }
-
-    this.activities.set(activities.sort((a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    ));
   }
 }
