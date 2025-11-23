@@ -23,13 +23,19 @@ import { LoginForm } from '../../../../core/models/login.model';
     trigger('slideUp', [
       transition(':enter', [
         style({ transform: 'translateY(100%)', opacity: 0 }),
-        animate('300ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+        animate(
+          '300ms ease-out',
+          style({ transform: 'translateY(0)', opacity: 1 })
+        ),
       ]),
       transition(':leave', [
-        animate('200ms ease-in', style({ transform: 'translateY(100%)', opacity: 0 }))
-      ])
-    ])
-  ]
+        animate(
+          '200ms ease-in',
+          style({ transform: 'translateY(100%)', opacity: 0 })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class LoginComponent implements OnInit {
   activeTab: UserRole = 'paciente';
@@ -157,7 +163,14 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro no login:', err);
-        this.showToastNotification('E-mail ou senha inválidos. Tente novamente.', 'error');
+
+        let errorMessage = 'E-mail ou senha inválidos. Tente novamente.';
+
+        if (err.error?.detail) {
+          errorMessage = err.error.detail;
+        }
+
+        this.showToastNotification(errorMessage, 'error');
         this.isLoading = false;
         this.loginForm.enable();
       },
