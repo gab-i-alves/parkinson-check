@@ -1,64 +1,550 @@
+<!DOCTYPE html>
 <html>
-<body style="margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
-<div style="background: #efefef; border-radius: 10px; padding: 10px; display: flex; align-items: center; justify-content: center;">
-  <div style="margin: 0 auto; width: 90%; text-align: center;">
-
-    <div style="width: 50%; max-width: 42rem; margin-left: auto; margin-right: auto;">
-    <div style="border-radius: 0.5rem; background-color: #ffffff; padding: 1.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
-        <div style="text-align: center;">
-        <a style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
-            <div style="height:100%; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 0.5rem; background-color: #6d28d9; margin-right: 0.75rem; text-align: center; vertical-align: middle;">
-            <span style="width: 100%; font-size: 1.5rem; font-weight: 700; color: #ffffff; line-height: 3rem; display: inline-block; vertical-align: middle;">P</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f8f8f6;
+    "
+  >
+    <div style="padding: 40px 20px">
+      <div style="max-width: 600px; margin: 0 auto">
+        <!-- Header com Logo -->
+        <div style="text-align: center; margin-bottom: 32px">
+          <div style="display: inline-flex; align-items: center; gap: 12px">
+            <div
+              style="
+                width: 48px;
+                height: 48px;
+                background-color: #1a1a1a;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <span style="color: #ffffff; font-size: 24px; font-weight: 600"
+                >P</span
+              >
             </div>
-            <h1 style="font-size: 1.875rem; font-weight: 700; color: #1f2937; margin: 0 auto;">ParkinsonCheck</h1>
-        </a>
+            <h1
+              style="
+                margin: 0;
+                font-size: 28px;
+                font-weight: 600;
+                color: #1a1a1a;
+              "
+            >
+              ParkinsonCheck
+            </h1>
+          </div>
         </div>
 
-        <div style="margin: 30px 0; padding: 20px; background-color: #dbeafe; border-radius: 10px;">
-          <svg style="width: 60px; height: 60px; margin: 0 auto; display: block;" fill="#2563eb" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-          </svg>
-        </div>
+        <!-- Card Principal -->
+        <div
+          style="
+            background-color: #ffffff;
+            border-radius: 24px;
+            padding: 48px 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e8e7e1;
+          "
+        >
+          <!-- Área Decorativa com Cor Dinâmica -->
+          {% if new_status == 'APPROVED' %}
+          <!-- VERDE - Aprovado -->
+          <div
+            style="
+              background-color: #e5f5e5;
+              border-radius: 16px;
+              padding: 32px;
+              text-align: center;
+              margin-bottom: 32px;
+              position: relative;
+              overflow: hidden;
+            "
+          >
+            <!-- Padrão de círculos decorativos -->
+            <div
+              style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 60px;
+                height: 60px;
+                opacity: 0.2;
+              "
+            >
+              <div
+                style="
+                  width: 30px;
+                  height: 30px;
+                  background-color: #a8d0a8;
+                  border-radius: 50%;
+                "
+              ></div>
+              <div
+                style="
+                  width: 20px;
+                  height: 20px;
+                  background-color: #a8d0a8;
+                  border-radius: 50%;
+                  position: absolute;
+                  top: 20px;
+                  left: 25px;
+                "
+              ></div>
+            </div>
+            <svg
+              style="
+                width: 80px;
+                height: 80px;
+                margin: 0 auto;
+                display: block;
+                position: relative;
+                z-index: 1;
+              "
+              fill="#16a34a"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
 
-        <h3 style="margin-bottom: 20px; font-size: 1.25rem; color: #2563eb;">Alteração de Status</h3>
-        <p style="margin-bottom: 20px; color: #4b5563;">Olá, <strong>{{doctor_name}}</strong>,</p>
-        <p style="margin-bottom: 20px; color: #4b5563;">
-          Informamos que o status da sua conta foi alterado.
-        </p>
+          {% elif new_status == 'REJECTED' %}
+          <!-- AMARELO - Rejeitado -->
+          <div
+            style="
+              background-color: #fff4c4;
+              border-radius: 16px;
+              padding: 32px;
+              text-align: center;
+              margin-bottom: 32px;
+              position: relative;
+              overflow: hidden;
+            "
+          >
+            <!-- Padrão de pontos radiais -->
+            <div
+              style="
+                position: absolute;
+                inset: 0;
+                opacity: 0.15;
+                background-image: radial-gradient(
+                  circle,
+                  #e6cf5d 1px,
+                  transparent 1px
+                );
+                background-size: 20px 20px;
+              "
+            ></div>
+            <svg
+              style="
+                width: 80px;
+                height: 80px;
+                margin: 0 auto;
+                display: block;
+                position: relative;
+                z-index: 1;
+              "
+              fill="#f59e0b"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
 
-        <div style="margin: 20px 0; padding: 15px; background-color: #e0e7ff; border-radius: 8px;">
-          <p style="margin: 0; font-weight: 600; color: #3730a3;">Novo Status:</p>
-          <p style="margin: 5px 0 0 0; font-size: 1.25rem; font-weight: 700; color: #4338ca;">
-            {% if new_status == 'APPROVED' %}Aprovado
-            {% elif new_status == 'REJECTED' %}Rejeitado
-            {% elif new_status == 'SUSPENDED' %}Suspenso
-            {% elif new_status == 'IN_REVIEW' %}Em Revisão
-            {% elif new_status == 'PENDING' %}Pendente
-            {% else %}{{new_status}}
+          {% elif new_status == 'SUSPENDED' %}
+          <!-- ROSA - Suspenso -->
+          <div
+            style="
+              background-color: #ffe0f5;
+              border-radius: 16px;
+              padding: 32px;
+              text-align: center;
+              margin-bottom: 32px;
+              position: relative;
+              overflow: hidden;
+            "
+          >
+            <!-- Padrão ondulado -->
+            <svg
+              style="
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 120px;
+                height: 120px;
+                opacity: 0.25;
+              "
+              viewBox="0 0 200 200"
+            >
+              <path
+                d="M0,100 Q50,50 100,100 T200,100 L200,200 L0,200 Z"
+                fill="#E89FD0"
+              />
+            </svg>
+            <svg
+              style="
+                width: 80px;
+                height: 80px;
+                margin: 0 auto;
+                display: block;
+                position: relative;
+                z-index: 1;
+              "
+              fill="#ec4899"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+
+          {% elif new_status == 'IN_REVIEW' %}
+          <!-- AZUL - Em Revisão -->
+          <div
+            style="
+              background-color: #e5f1ff;
+              border-radius: 16px;
+              padding: 32px;
+              text-align: center;
+              margin-bottom: 32px;
+              position: relative;
+              overflow: hidden;
+            "
+          >
+            <!-- Padrão de formas abstratas -->
+            <div
+              style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 80px;
+                height: 80px;
+                opacity: 0.2;
+              "
+            >
+              <div
+                style="
+                  width: 40px;
+                  height: 40px;
+                  background-color: #9bbef0;
+                  border-radius: 50%;
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                "
+              ></div>
+              <div
+                style="
+                  width: 30px;
+                  height: 30px;
+                  background-color: #9bbef0;
+                  border-radius: 50%;
+                  position: absolute;
+                  bottom: 10px;
+                  right: 0;
+                "
+              ></div>
+            </div>
+            <svg
+              style="
+                width: 80px;
+                height: 80px;
+                margin: 0 auto;
+                display: block;
+                position: relative;
+                z-index: 1;
+              "
+              fill="#3b82f6"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+
+          {% else %}
+          <!-- NEUTRO - Pendente ou outro status -->
+          <div
+            style="
+              background-color: #f0efe9;
+              border-radius: 16px;
+              padding: 32px;
+              text-align: center;
+              margin-bottom: 32px;
+              position: relative;
+              overflow: hidden;
+            "
+          >
+            <svg
+              style="
+                width: 80px;
+                height: 80px;
+                margin: 0 auto;
+                display: block;
+                position: relative;
+                z-index: 1;
+              "
+              fill="#6b7280"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          {% endif %}
+
+          <!-- Título -->
+          <h2
+            style="
+              margin: 0 0 24px 0;
+              font-size: 24px;
+              font-weight: 600;
+              color: #1a1a1a;
+              text-align: center;
+            "
+          >
+            Alteração de Status
+          </h2>
+
+          <!-- Saudação -->
+          <p
+            style="
+              margin: 0 0 16px 0;
+              font-size: 16px;
+              color: #1a1a1a;
+              text-align: center;
+            "
+          >
+            Olá, <strong>{{doctor_name}}</strong>,
+          </p>
+
+          <!-- Mensagem Principal -->
+          <p
+            style="
+              margin: 0 0 32px 0;
+              font-size: 14px;
+              color: #4b5563;
+              line-height: 1.6;
+              text-align: center;
+            "
+          >
+            Informamos que o status da sua conta foi alterado.
+          </p>
+
+          <!-- Badge de Status com Cor Dinâmica -->
+          <div style="text-align: center; margin-bottom: 32px">
+            {% if new_status == 'APPROVED' %}
+            <span
+              style="
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 16px;
+                background-color: #c1e1c1;
+                color: #1a1a1a;
+                font-size: 12px;
+                font-weight: 500;
+                border-radius: 999px;
+              "
+            >
+              ✓ Aprovado
+            </span>
+            {% elif new_status == 'REJECTED' %}
+            <span
+              style="
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 16px;
+                background-color: #ffe66d;
+                color: #1a1a1a;
+                font-size: 12px;
+                font-weight: 500;
+                border-radius: 999px;
+              "
+            >
+              ⚠ Rejeitado
+            </span>
+            {% elif new_status == 'SUSPENDED' %}
+            <span
+              style="
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 16px;
+                background-color: #ffb5e8;
+                color: #1a1a1a;
+                font-size: 12px;
+                font-weight: 500;
+                border-radius: 999px;
+              "
+            >
+              🚫 Suspenso
+            </span>
+            {% elif new_status == 'IN_REVIEW' %}
+            <span
+              style="
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 16px;
+                background-color: #b4d4ff;
+                color: #1a1a1a;
+                font-size: 12px;
+                font-weight: 500;
+                border-radius: 999px;
+              "
+            >
+              🔍 Em Revisão
+            </span>
+            {% elif new_status == 'PENDING' %}
+            <span
+              style="
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 16px;
+                background-color: #e8e7e1;
+                color: #1a1a1a;
+                font-size: 12px;
+                font-weight: 500;
+                border-radius: 999px;
+              "
+            >
+              ⏱ Pendente
+            </span>
+            {% else %}
+            <span
+              style="
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 16px;
+                background-color: #e8e7e1;
+                color: #1a1a1a;
+                font-size: 12px;
+                font-weight: 500;
+                border-radius: 999px;
+              "
+            >
+              {{new_status}}
+            </span>
             {% endif %}
+          </div>
+
+          <!-- Box de Motivo (se existir) -->
+          {% if reason %}
+          <div
+            style="{% if new_status == 'APPROVED' %}background-color: #E5F5E5; border: 1px solid #C1E1C1; border-left: 4px solid #16a34a;{% elif new_status == 'REJECTED' %}background-color: #FFF4C4; border: 1px solid #FFE66D; border-left: 4px solid #f59e0b;{% elif new_status == 'SUSPENDED' %}background-color: #FFE0F5; border: 1px solid #FFB5E8; border-left: 4px solid #ec4899;{% elif new_status == 'IN_REVIEW' %}background-color: #E5F1FF; border: 1px solid #B4D4FF; border-left: 4px solid #3b82f6;{% else %}background-color: #F0EFE9; border: 1px solid #E8E7E1; border-left: 4px solid #6b7280;{% endif %} border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: left;"
+          >
+            <p
+              style="
+                margin: 0 0 8px 0;
+                font-size: 14px;
+                font-weight: 600;
+                color: #1a1a1a;
+              "
+            >
+              Motivo:
+            </p>
+            <p
+              style="
+                margin: 0;
+                font-size: 14px;
+                color: #4b5563;
+                line-height: 1.6;
+              "
+            >
+              {{reason}}
+            </p>
+          </div>
+          {% endif %}
+
+          <!-- Mensagem de Suporte -->
+          <p
+            style="
+              margin: 0 0 32px 0;
+              font-size: 14px;
+              color: #4b5563;
+              line-height: 1.6;
+              text-align: center;
+            "
+          >
+            Para mais informações ou caso tenha dúvidas, entre em contato
+            conosco.
+          </p>
+
+          <!-- Botão de Ação -->
+          <div style="text-align: center">
+            {% if new_status == 'APPROVED' or new_status == 'IN_REVIEW' %}
+            <a
+              href="http://localhost:4200/dashboard"
+              style="
+                display: inline-block;
+                background-color: #1a1a1a;
+                color: #ffffff;
+                padding: 14px 32px;
+                font-size: 16px;
+                font-weight: 500;
+                border-radius: 999px;
+                text-decoration: none;
+                transition: background-color 0.3s;
+              "
+            >
+              Acessar Plataforma
+            </a>
+            {% else %}
+            <a
+              href="mailto:pcheck.noreply@gmail.com"
+              style="
+                display: inline-block;
+                background-color: #ffffff;
+                border: 2px solid #1a1a1a;
+                color: #1a1a1a;
+                padding: 14px 32px;
+                font-size: 16px;
+                font-weight: 500;
+                border-radius: 999px;
+                text-decoration: none;
+                transition: background-color 0.3s;
+              "
+            >
+              Entrar em Contato
+            </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 32px; text-align: center">
+          <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280">
+            Se você tiver alguma dúvida, entre em contato conosco.
+          </p>
+          <p style="margin: 0; font-size: 12px; color: #9ca3af">
+            © 2025 ParkinsonCheck. Todos os direitos reservados.
           </p>
         </div>
-
-        {% if reason %}
-        <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-left: 4px solid #f59e0b; text-align: left;">
-          <p style="margin: 0; font-weight: 600; color: #78350f;">Motivo:</p>
-          <p style="margin: 5px 0 0 0; color: #78350f;">{{reason}}</p>
-        </div>
-        {% endif %}
-
-        <p style="margin: 30px 0 20px 0; color: #4b5563;">
-          Para mais informações ou caso tenha dúvidas, entre em contato conosco.
-        </p>
-
-        <a style="display: block; margin: 0 auto; border: none; background-color: #6d28d9; color: white !important; width: 200px; line-height: 24px; padding: 10px; font-size: 20px; border-radius: 10px; cursor: pointer; text-decoration: none; text-align: center;"
-          href="http://localhost:4200/dashboard"
-          target="_blank"
-        >
-          Acessar Plataforma
-        </a>
+      </div>
     </div>
-    </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>
