@@ -104,9 +104,9 @@ class DoctorListResponse(UserResponse):
     reason: Optional[str] = None
     approved_by: Optional[str] = None
     approval_date: Optional[datetime] = None
+    created_at: Optional[datetime] = None
 
 
-# TODO: ADICIONAR MAIS DADOS PARA O USUÁRIO COMO ALERGIAS, MEDICAMENTOS, ETC...
 class PatientSchema(UserSchema):
     birthdate: date = Field(..., alias="birthdate")
 
@@ -208,14 +208,30 @@ class ChangeUserStatusSchema(BaseModel):
 
 
 class ChangeDoctorStatusSchema(BaseModel):
-    status: str  # DoctorStatus enum value
+    status: DoctorStatus
     reason: Optional[str] = None
 
 
 class UpdateDoctorDetailsSchema(BaseModel):
-    """Schema para atualização de detalhes específicos do médico"""
+    """Schema para atualização completa de detalhes do médico"""
+    # Dados básicos
+    name: Optional[str] = Field(None, min_length=3)
+    email: Optional[EmailStr] = None
+    birthdate: Optional[date] = None
+    gender: Optional[Gender] = None
+
+    # Credenciais médicas
     expertise_area: Optional[str] = None
     crm: Optional[str] = Field(None, min_length=8, max_length=10)
+
+    # Endereço
+    cep: Optional[str] = Field(None, pattern=r'^\d{8}$')
+    street: Optional[str] = None
+    number: Optional[str] = None
+    complement: Optional[str] = None
+    neighborhood: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = Field(None, min_length=2, max_length=2)
 
     @field_validator('crm')
     @classmethod
@@ -242,6 +258,25 @@ class UpdateDoctorDetailsSchema(BaseModel):
             raise ValueError(f'Estado {state} não é válido para CRM brasileiro')
 
         return crm
+
+    @field_validator('state')
+    @classmethod
+    def validate_state(cls, v: Optional[str]) -> Optional[str]:
+        """Valida estado brasileiro (UF)"""
+        if v is None:
+            return v
+
+        state = v.strip().upper()
+        valid_states = {
+            'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+            'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+            'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+        }
+
+        if state not in valid_states:
+            raise ValueError(f'Estado {state} não é válido')
+
+        return state
 
 
 class CreateUserByAdminSchema(BaseModel):

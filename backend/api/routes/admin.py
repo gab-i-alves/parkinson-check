@@ -134,13 +134,26 @@ async def list_pending_doctors(
     doctors = doctor_management_service.get_pending_doctors(session)
     return doctors
 
-@router.get("/doctors/{doctor_id}", response_model=Doctor)
+@router.get("/doctors/{doctor_id}")
 async def search_doctor(
         doctor_id: int,
         session: Session = Depends(get_session),
 ):
-    doctors = doctor_management_service.get_doctor_by_id(doctor_id, session)
-    return doctors
+    doctor = doctor_management_service.get_doctor_by_id(doctor_id, session)
+
+    return {
+        "id": doctor.id,
+        "name": doctor.name,
+        "email": doctor.email,
+        "crm": doctor.crm,
+        "specialty": doctor.expertise_area,
+        "location": f"{doctor.address.city}, {doctor.address.state}" if doctor.address else "Não informado",
+        "status": doctor.status.value,
+        "cpf": doctor.cpf,
+        "reason": doctor.rejection_reason,
+        "approved_by": None,
+        "approval_date": doctor.approval_date.isoformat() if doctor.approval_date else None
+    }
 
 @router.get("/doctors/{doctor_id}/documents/{file_id}")
 async def search_doctor_documents(
@@ -206,14 +219,11 @@ async def change_doctor_status(
     session: Session = Depends(get_session),
     current_admin: User = Depends(get_current_user)
 ):
-    # Convert string to DoctorStatus enum
-    new_status = DoctorStatus(status_data.status)
-
     doctor = doctor_management_service.change_doctor_status(
         doctor_id,
         session,
         current_admin,
-        new_status,
+        status_data.status,
         status_data.reason or ""
     )
 
@@ -222,7 +232,7 @@ async def change_doctor_status(
         background_tasks,
         doctor.email,
         doctor.name,
-        new_status.value,
+        status_data.status.value,
         status_data.reason if status_data.reason else None
     )
 
@@ -235,18 +245,67 @@ async def update_doctor_details(
     session: Session = Depends(get_session),
     current_admin: User = Depends(get_current_user)
 ):
-    """Admin atualiza detalhes do médico (área de atuação e/ou CRM)."""
+    """Admin atualiza detalhes completos do médico (dados pessoais, credenciais e endereço)."""
     from fastapi import HTTPException
+    from core.models import Address
 
     doctor = session.get(Doctor, doctor_id)
     if not doctor:
         raise HTTPException(HTTPStatus.NOT_FOUND, detail="Médico não encontrado")
 
+    # Atualizar dados básicos do médico
+    if details.name is not None:
+        doctor.name = details.name
+
+    if details.email is not None:
+        doctor.email = details.email
+
+    if details.birthdate is not None:
+        doctor.birthdate = details.birthdate
+
+    if details.gender is not None:
+        doctor.gender = details.gender
+
+    # Atualizar credenciais médicas
     if details.expertise_area is not None:
         doctor.expertise_area = details.expertise_area
 
     if details.crm is not None:
         doctor.crm = details.crm
+
+    # Atualizar endereço (se algum campo de endereço foi fornecido)
+    address_fields = ['cep', 'street', 'number', 'complement', 'neighborhood', 'city', 'state']
+    has_address_update = any(getattr(details, field) is not None for field in address_fields)
+
+    if has_address_update:
+        if not doctor.address:
+            # Se o médico não tem endereço, criar um novo
+            doctor.address = Address(
+                cep=details.cep or '',
+                street=details.street or '',
+                number=details.number or '',
+                complement=details.complement,
+                neighborhood=details.neighborhood or '',
+                city=details.city or '',
+                state=details.state or ''
+            )
+            session.add(doctor.address)
+        else:
+            # Atualizar endereço existente
+            if details.cep is not None:
+                doctor.address.cep = details.cep
+            if details.street is not None:
+                doctor.address.street = details.street
+            if details.number is not None:
+                doctor.address.number = details.number
+            if details.complement is not None:
+                doctor.address.complement = details.complement
+            if details.neighborhood is not None:
+                doctor.address.neighborhood = details.neighborhood
+            if details.city is not None:
+                doctor.address.city = details.city
+            if details.state is not None:
+                doctor.address.state = details.state
 
     session.commit()
     session.refresh(doctor)
