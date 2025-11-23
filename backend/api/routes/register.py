@@ -6,14 +6,19 @@ from sqlalchemy.orm import Session
 from core.services import doctor_service, patient_service, admin_service 
 from infra.db.connection import get_session
 
-from ..schemas.users import AdminSchema, DoctorSchema, PatientSchema
+from ..schemas.users import AdminSchema, DoctorSchema, PatientSchema, RegisterResponse
 
 router = APIRouter(prefix="/register", tags=["Register"])
 
 
-@router.post("/patient", status_code=HTTPStatus.CREATED)
+@router.post("/patient", status_code=HTTPStatus.CREATED, response_model=RegisterResponse)
 def create_patient(patient: PatientSchema, session: Session = Depends(get_session)):
-    return patient_service.create_patient(patient, session)
+    db_patient = patient_service.create_patient(patient, session)
+    return RegisterResponse(
+        id=db_patient.id,
+        name=db_patient.name,
+        email=db_patient.email
+    )
 
 
 @router.post("/doctor", status_code=HTTPStatus.CREATED)
