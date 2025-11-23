@@ -6,10 +6,6 @@ import {
   DocumentViewerModalComponent,
   DoctorDocument
 } from '../../../../../shared/components/document-viewer-modal/document-viewer-modal.component';
-import {
-  ActivityTimelineComponent,
-  Activity
-} from '../../../../../shared/components/activity-timeline/activity-timeline.component';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../../shared/services/toast.service';
@@ -39,7 +35,6 @@ interface DoctorDetail {
   imports: [
     CommonModule,
     DocumentViewerModalComponent,
-    ActivityTimelineComponent,
     BadgeComponent,
     FormsModule,
     CpfPipe,
@@ -50,15 +45,11 @@ interface DoctorDetail {
 export class DoctorDetailComponent implements OnInit {
   doctor = signal<DoctorDetail | null>(null);
   documents = signal<DoctorDocument[]>([]);
-  activities = signal<Activity[]>([]);
   isLoading = signal<boolean>(true);
 
   isDocumentModalOpen = signal<boolean>(false);
-  isStatusModalOpen = signal<boolean>(false);
   isEditingDetails = signal<boolean>(false);
 
-  selectedStatus: string = '';
-  statusChangeReason: string = '';
   editedExpertiseArea: string = '';
 
   constructor(
@@ -99,13 +90,9 @@ export class DoctorDetailComponent implements OnInit {
           });
           console.log('[Doctor Detail] Doctor signal set:', this.doctor());
           console.log('[Doctor Detail] Button should be enabled?', !!this.doctor() && !!this.doctor()?.id);
-          this.selectedStatus = doctor.status;
 
           // Atualizar breadcrumb com nome do médico
           this.breadcrumbService.updateBreadcrumb(this.router.url, doctor.name);
-
-          // Create timeline activities based on doctor data
-          this.createTimelineActivities(doctor);
         }
         this.isLoading.set(false);
       },
@@ -159,41 +146,6 @@ export class DoctorDetailComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
         console.error('Erro ao baixar documento:', err);
         this.toastService.error('Erro ao baixar documento');
-      }
-    });
-  }
-
-  openStatusModal(): void {
-    this.isStatusModalOpen.set(true);
-  }
-
-  closeStatusModal(): void {
-    this.isStatusModalOpen.set(false);
-    this.statusChangeReason = '';
-  }
-
-  confirmStatusChange(): void {
-    const doctor = this.doctor();
-    if (!doctor || !doctor.id) {
-      console.error('Doctor or doctor ID is undefined');
-      this.toastService.error('Erro: ID do médico não encontrado');
-      return;
-    }
-
-    const statusData = {
-      status: this.selectedStatus as any,
-      reason: this.statusChangeReason || undefined
-    };
-
-    this.doctorManagementService.changeDoctorStatus(doctor.id, statusData).subscribe({
-      next: () => {
-        this.toastService.success('Status atualizado com sucesso');
-        this.closeStatusModal();
-        this.loadDoctorDetails(doctor.id);
-      },
-      error: (error) => {
-        console.error('Erro ao atualizar status:', error);
-        this.toastService.error('Erro ao atualizar status do médico');
       }
     });
   }
@@ -255,53 +207,5 @@ export class DoctorDetailComponent implements OnInit {
         this.toastService.error('Erro ao atualizar dados do médico');
       }
     });
-  }
-
-  createTimelineActivities(doctor: any): void {
-    const activities: Activity[] = [];
-
-    // Registration activity
-    if (doctor.created_at || doctor.registration_date) {
-      activities.push({
-        id: 1,
-        activity_type: 'REGISTRATION',
-        description: `Cadastro realizado no sistema como médico${doctor.specialty ? ' da área de ' + doctor.specialty : ''}`,
-        created_at: doctor.created_at || doctor.registration_date
-      });
-    }
-
-    // Status change activities based on current status
-    if (doctor.status) {
-      const statusDescriptions: Record<string, string> = {
-        'IN_REVIEW': 'Cadastro em revisão pela equipe administrativa',
-        'APPROVED': 'Cadastro aprovado - acesso ao sistema liberado',
-        'REJECTED': 'Cadastro rejeitado',
-        'SUSPENDED': 'Cadastro suspenso'
-      };
-
-      if (doctor.status !== 'PENDING' && statusDescriptions[doctor.status]) {
-        activities.push({
-          id: 2,
-          activity_type: 'STATUS_CHANGE',
-          description: statusDescriptions[doctor.status],
-          created_at: doctor.updated_at || doctor.approval_date || doctor.created_at || new Date().toISOString()
-        });
-      }
-    }
-
-    // Documents uploaded
-    if (this.documents().length > 0) {
-      activities.push({
-        id: 3,
-        activity_type: 'NOTE_ADDED',
-        description: `${this.documents().length} documento(s) enviado(s) para verificação`,
-        created_at: doctor.created_at || new Date().toISOString()
-      });
-    }
-
-    // Sort by date (most recent first)
-    this.activities.set(activities.sort((a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    ));
   }
 }
