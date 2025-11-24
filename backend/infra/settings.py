@@ -19,6 +19,14 @@ class Settings(BaseSettings):
     SMTP_USER: str
     SMTP_PASSWORD: str
 
+    # URLs dos serviços de ML (Railway internal URLs)
+    SPIRAL_CLASSIFIER_URL: str = os.getenv(
+        "SPIRAL_CLASSIFIER_URL", "http://spiral-classifier:8001"
+    )
+    VOICE_CLASSIFIER_URL: str = os.getenv(
+        "VOICE_CLASSIFIER_URL", "http://voice-classifier:8002"
+    )
+
     BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
     MODEL_PATH: str = os.path.join(BASE_DIR, "models", "rf_model.pkl")
     EMAIL_TEMPLATES_PATH: str = os.path.join(
