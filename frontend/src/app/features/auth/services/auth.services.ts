@@ -24,8 +24,13 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
+  private authCheckInProgress = false;
+  private authCheckObservable: Observable<User | null> | null = null;
+
   constructor() {
-    this.checkAuthStatus().subscribe();
+    // Removido: this.checkAuthStatus().subscribe();
+    // A verificação inicial é feita pelo APP_INITIALIZER em app.config.ts
+    // para evitar chamadas desnecessárias em rotas públicas
   }
 
   get currentUserValue(): User | null {
@@ -35,19 +40,32 @@ export class AuthService {
   /**
    * Verifica o status da autenticação chamando o endpoint /users/me.
    * Se o cookie for válido, o backend retornará os dados do usuário.
+   * Previne múltiplas chamadas simultâneas reutilizando o Observable em progresso.
    */
   checkAuthStatus(): Observable<User | null> {
-    return this.http.get<User>(`${this.apiUrl}/users/me`).pipe(
+    // Se já há uma verificação em progresso, retorna o Observable existente
+    if (this.authCheckInProgress && this.authCheckObservable) {
+      return this.authCheckObservable;
+    }
+
+    this.authCheckInProgress = true;
+    this.authCheckObservable = this.http.get<User>(`${this.apiUrl}/users/me`).pipe(
       tap((user) => {
         this.currentUserSubject.next(user);
         this.userService.setCurrentUser(user);
+        this.authCheckInProgress = false;
+        this.authCheckObservable = null;
       }),
       catchError(() => {
         this.currentUserSubject.next(null);
         this.userService.setCurrentUser(null);
+        this.authCheckInProgress = false;
+        this.authCheckObservable = null;
         return of(null);
       })
     );
+
+    return this.authCheckObservable;
   }
 
   /**
