@@ -37,7 +37,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         const userService = inject(UserService);
 
       // Se a URL atual deve ser publica, não redirecione.
-      const isPublicRoute = publicRoutes.some(route => router.url.startsWith(route));
+      // Usar window.location.pathname como fallback quando router.url estiver vazio
+      const currentPath = router.url || window.location.pathname;
+      // Remover query params e hash para verificação correta de rotas com parâmetros dinâmicos
+      const pathWithoutParams = currentPath.split('?')[0].split('#')[0];
+      const isPublicRoute = publicRoutes.some(route => pathWithoutParams.startsWith(route));
 
         if (error.status === 401) {
           // Token expirado ou inválido - limpar sessão e redirecionar
