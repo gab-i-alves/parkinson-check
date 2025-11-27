@@ -5,7 +5,6 @@ import {
   Output,
   ElementRef,
   ViewChild,
-  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +14,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 @Component({
   selector: 'app-doctor-register-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgxMaskDirective, FeedbackModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxMaskDirective],
   templateUrl: './doctor-register-form.component.html',
 })
 export class DoctorRegisterFormComponent {
