@@ -34,6 +34,7 @@ def login(
             samesite="none",  # Permite o envio entre subdomínios
             max_age=max_age,  # Define a duração do cookie
             domain=".gabi-alves.com",  # Compartilha cookie entre subdomínios
+            path="/",  # Cookie disponível em todas as rotas
         )
     else:
         print("A APLICAR CONFIGURAÇÕES DE DESENVOLVIMENTO PARA O COOKIE.")
