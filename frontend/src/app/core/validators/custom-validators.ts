@@ -47,7 +47,7 @@ export function cpfValidator(): ValidatorFn {
     const cleanCpf = cpf.replace(/[^\d]/g, '');
 
     if (cleanCpf.length !== 11 || /^(\d)\1{10}$/.test(cleanCpf)) {
-      return { cpfInvalid: true };
+      return { invalidCpf: true };
     }
 
     let sum = 0;
@@ -62,7 +62,7 @@ export function cpfValidator(): ValidatorFn {
       remainder = 0;
     }
     if (remainder !== parseInt(cleanCpf.substring(9, 10))) {
-      return { cpfInvalid: true };
+      return { invalidCpf: true };
     }
 
     sum = 0;
@@ -75,7 +75,7 @@ export function cpfValidator(): ValidatorFn {
       remainder = 0;
     }
     if (remainder !== parseInt(cleanCpf.substring(10, 11))) {
-      return { cpfInvalid: true };
+      return { invalidCpf: true };
     }
 
     return null;
@@ -84,7 +84,7 @@ export function cpfValidator(): ValidatorFn {
 
 /**
  * Validador customizado para verificar se a senha cumpre os requisitos de segurança.
- * Requisitos: Pelo menos uma letra maiúscula, uma minúscula e um número.
+ * Requisitos: Pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial.
  * @returns Um ValidatorFn que pode ser aplicado a um FormControl.
  */
 export function strongPasswordValidator(): ValidatorFn {
@@ -98,8 +98,9 @@ export function strongPasswordValidator(): ValidatorFn {
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumeric = /[0-9]/.test(value);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
 
-    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric;
+    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecialChar;
 
     // O nome 'strong' nos permite verificar este erro específico no template.
     return !passwordValid ? { strong: true } : null;

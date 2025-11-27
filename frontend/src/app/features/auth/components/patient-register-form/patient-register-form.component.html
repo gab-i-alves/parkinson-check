@@ -1,20 +1,18 @@
-<!-- Progress indicator -->
+<!-- Progress indicator - Enhanced Design -->
 <div class="mb-8">
-  <div class="flex items-center justify-center space-x-2">
-    <div
-      *ngFor="let step of [1, 2, 3]; let i = index"
-      class="flex items-center"
-    >
+  <div class="flex items-center justify-between max-w-3xl mx-auto">
+    <!-- Step 1 -->
+    <div class="flex flex-col items-center gap-2 flex-1">
       <div
         [ngClass]="{
-          'bg-neutral-900 text-white': currentStep === step,
-          'bg-green-200 text-neutral-900': currentStep > step,
-          'bg-neutral-200 text-neutral-500': currentStep < step
+          'bg-pink-200 text-neutral-900': currentStep === 1,
+          'bg-green-500 text-white': currentStep > 1,
+          'bg-neutral-200 text-neutral-500': currentStep < 1
         }"
-        class="flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm transition-all duration-200"
+        class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-200"
       >
         <svg
-          *ngIf="currentStep > step"
+          *ngIf="currentStep > 1"
           class="w-5 h-5"
           fill="currentColor"
           viewBox="0 0 20 20"
@@ -25,26 +23,74 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="currentStep <= step">{{ step }}</span>
+        <span *ngIf="currentStep <= 1">1</span>
       </div>
-      <div
-        *ngIf="i < 2"
-        [ngClass]="{
-          'bg-green-200': currentStep > step,
-          'bg-neutral-200': currentStep <= step
-        }"
-        class="w-12 h-1 mx-2 transition-all duration-200"
-      ></div>
+      <span class="text-xs font-medium text-neutral-900 text-center"
+        >Pessoal</span
+      >
     </div>
-  </div>
 
-  <!-- Step labels -->
-  <div class="mt-3 flex justify-center">
-    <p class="text-xs text-neutral-600">
-      <span *ngIf="currentStep === 1">Dados Pessoais</span>
-      <span *ngIf="currentStep === 2">Endereço</span>
-      <span *ngIf="currentStep === 3">Segurança</span>
-    </p>
+    <div
+      [ngClass]="{
+        'bg-green-500': currentStep > 1,
+        'bg-neutral-200': currentStep <= 1
+      }"
+      class="flex-1 h-1 -mx-2 transition-all duration-200"
+    ></div>
+
+    <!-- Step 2 -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div
+        [ngClass]="{
+          'bg-pink-200 text-neutral-900': currentStep === 2,
+          'bg-green-500 text-white': currentStep > 2,
+          'bg-neutral-200 text-neutral-500': currentStep < 2
+        }"
+        class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-200"
+      >
+        <svg
+          *ngIf="currentStep > 2"
+          class="w-5 h-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span *ngIf="currentStep <= 2">2</span>
+      </div>
+      <span class="text-xs font-medium text-neutral-900 text-center"
+        >Endereço</span
+      >
+    </div>
+
+    <div
+      [ngClass]="{
+        'bg-green-500': currentStep > 2,
+        'bg-neutral-200': currentStep <= 2
+      }"
+      class="flex-1 h-1 -mx-2 transition-all duration-200"
+    ></div>
+
+    <!-- Step 3 -->
+    <div class="flex flex-col items-center gap-2 flex-1">
+      <div
+        [ngClass]="{
+          'bg-pink-200 text-neutral-900': currentStep === 3,
+          'bg-green-500 text-white': currentStep > 3,
+          'bg-neutral-200 text-neutral-500': currentStep < 3
+        }"
+        class="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-200"
+      >
+        <span>3</span>
+      </div>
+      <span class="text-xs font-medium text-neutral-900 text-center"
+        >Segurança</span
+      >
+    </div>
   </div>
 </div>
 
@@ -83,7 +129,7 @@
   <div *ngIf="currentStep === 1" class="space-y-5">
     <div>
       <label for="name" class="block text-sm font-medium text-neutral-900 mb-2">
-        Nome Completo
+        Nome Completo *
       </label>
       <input
         id="name"
@@ -106,18 +152,27 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="patientForm.get('name')?.errors?.['required']"
-          >Campo obrigatório.</span
+        <span
+          *ngIf="patientForm.get('name')?.errors?.['required']"
+          class="text-red-600"
         >
-        <span *ngIf="patientForm.get('name')?.errors?.['minlength']"
-          >Nome deve ter pelo menos 3 caracteres.</span
+          Campo obrigatório.
+        </span>
+        <span
+          *ngIf="patientForm.get('name')?.errors?.['minlength']"
+          class="text-red-600"
         >
+          Nome deve ter pelo menos 3 caracteres.
+        </span>
       </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
-        <label for="cpf" class="block text-sm font-medium text-neutral-900 mb-2">
+        <label
+          for="cpf"
+          class="block text-sm font-medium text-neutral-900 mb-2"
+        >
           CPF *
         </label>
         <input
@@ -142,12 +197,18 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span *ngIf="patientForm.get('cpf')?.errors?.['required']"
-            >Campo obrigatório.</span
+          <span
+            *ngIf="patientForm.get('cpf')?.errors?.['required']"
+            class="text-red-600"
           >
-          <span *ngIf="patientForm.get('cpf')?.errors?.['invalidCpf']"
-            >CPF inválido.</span
+            Campo obrigatório.
+          </span>
+          <span
+            *ngIf="patientForm.get('cpf')?.errors?.['invalidCpf']"
+            class="text-red-600"
           >
+            CPF inválido.
+          </span>
         </div>
       </div>
 
@@ -178,9 +239,12 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span *ngIf="patientForm.get('birthdate')?.errors?.['required']"
-            >Campo obrigatório.</span
+          <span
+            *ngIf="patientForm.get('birthdate')?.errors?.['required']"
+            class="text-red-600"
           >
+            Campo obrigatório.
+          </span>
         </div>
       </div>
     </div>
@@ -216,9 +280,12 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="patientForm.get('gender')?.errors?.['required']"
-          >Campo obrigatório.</span
+        <span
+          *ngIf="patientForm.get('gender')?.errors?.['required']"
+          class="text-red-600"
         >
+          Campo obrigatório.
+        </span>
       </div>
     </div>
   </div>
@@ -227,7 +294,10 @@
   <div *ngIf="currentStep === 2" class="space-y-5">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
-        <label for="cep" class="block text-sm font-medium text-neutral-900 mb-2">
+        <label
+          for="cep"
+          class="block text-sm font-medium text-neutral-900 mb-2"
+        >
           CEP *
         </label>
         <input
@@ -252,7 +322,7 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span>Campo obrigatório.</span>
+          <span class="text-red-600">Campo obrigatório.</span>
         </div>
       </div>
 
@@ -284,7 +354,7 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span>Campo obrigatório.</span>
+          <span class="text-red-600">Campo obrigatório.</span>
         </div>
       </div>
     </div>
@@ -318,7 +388,7 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span>Campo obrigatório.</span>
+          <span class="text-red-600">Campo obrigatório.</span>
         </div>
       </div>
 
@@ -368,12 +438,15 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span>Campo obrigatório.</span>
+          <span class="text-red-600">Campo obrigatório.</span>
         </div>
       </div>
 
       <div>
-        <label for="city" class="block text-sm font-medium text-neutral-900 mb-2">
+        <label
+          for="city"
+          class="block text-sm font-medium text-neutral-900 mb-2"
+        >
           Cidade *
         </label>
         <input
@@ -397,12 +470,15 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span>Campo obrigatório.</span>
+          <span class="text-red-600">Campo obrigatório.</span>
         </div>
       </div>
 
       <div>
-        <label for="state" class="block text-sm font-medium text-neutral-900 mb-2">
+        <label
+          for="state"
+          class="block text-sm font-medium text-neutral-900 mb-2"
+        >
           Estado *
         </label>
         <input
@@ -427,7 +503,7 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span>Campo obrigatório.</span>
+          <span class="text-red-600">Campo obrigatório.</span>
         </div>
       </div>
     </div>
@@ -436,7 +512,10 @@
   <!-- Step 3: Segurança -->
   <div *ngIf="currentStep === 3" class="space-y-5">
     <div>
-      <label for="email" class="block text-sm font-medium text-neutral-900 mb-2">
+      <label
+        for="email"
+        class="block text-sm font-medium text-neutral-900 mb-2"
+      >
         E-mail *
       </label>
       <input
@@ -460,12 +539,18 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="patientForm.get('email')?.errors?.['required']"
-          >Campo obrigatório.</span
+        <span
+          *ngIf="patientForm.get('email')?.errors?.['required']"
+          class="text-red-600"
         >
-        <span *ngIf="patientForm.get('email')?.errors?.['email']"
-          >E-mail inválido.</span
+          Campo obrigatório.
+        </span>
+        <span
+          *ngIf="patientForm.get('email')?.errors?.['email']"
+          class="text-red-600"
         >
+          E-mail inválido.
+        </span>
       </div>
     </div>
 
@@ -527,52 +612,6 @@
         </button>
       </div>
 
-      <!-- Password strength indicators -->
-      <div class="mt-3 space-y-2">
-        <div class="flex items-center text-xs">
-          <svg
-            [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['minlength']"
-            [class.text-gray-400]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['minlength']"
-            class="h-4 w-4 mr-2"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <span
-            [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['minlength']"
-            [class.text-gray-600]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['minlength']"
-          >
-            Mínimo de 8 caracteres
-          </span>
-        </div>
-        <div class="flex items-center text-xs">
-          <svg
-            [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['strong']"
-            [class.text-gray-400]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['strong']"
-            class="h-4 w-4 mr-2"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <span
-            [class.text-green-600]="!patientForm.get('password')?.errors?.['required'] && !patientForm.get('password')?.errors?.['strong']"
-            [class.text-gray-600]="patientForm.get('password')?.errors?.['required'] || patientForm.get('password')?.errors?.['strong']"
-          >
-            Letras maiúsculas, minúsculas e números
-          </span>
-        </div>
-      </div>
-
       <div
         *ngIf="
           patientForm.get('password')?.invalid &&
@@ -587,9 +626,25 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="patientForm.get('password')?.errors?.['required']"
-          >Campo obrigatório.</span
+        <span
+          *ngIf="patientForm.get('password')?.errors?.['required']"
+          class="text-red-600"
         >
+          Campo obrigatório.
+        </span>
+        <span
+          *ngIf="patientForm.get('password')?.errors?.['minlength']"
+          class="text-red-600"
+        >
+          A senha deve ter no mínimo 8 caracteres
+        </span>
+        <span
+          *ngIf="patientForm.get('password')?.errors?.['strong']"
+          class="text-red-600"
+        >
+          A senha deve conter letras maiúsculas, minúsculas, números e
+          caracteres especiais.
+        </span>
       </div>
     </div>
 
@@ -664,12 +719,18 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="patientForm.get('confirmPassword')?.errors?.['required']"
-          >Campo obrigatório.</span
+        <span
+          *ngIf="patientForm.get('confirmPassword')?.errors?.['required']"
+          class="text-red-600"
         >
-        <span *ngIf="patientForm.get('confirmPassword')?.errors?.['mismatch']"
-          >As senhas não coincidem.</span
+          Campo obrigatório.
+        </span>
+        <span
+          *ngIf="patientForm.get('confirmPassword')?.errors?.['mismatch']"
+          class="text-red-600"
         >
+          As senhas não coincidem.
+        </span>
       </div>
     </div>
   </div>

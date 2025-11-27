@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from api.schemas.auth import LoginFormRequest
 from api.schemas.token import TokenResponse, UserResponse
-from core.services import doctor_management_service
-from core.enums.doctor_enum import ActivityType, DoctorStatus
+from core.enums.doctor_enum import DoctorStatus
+from core.enums.user_enum import UserType
 from core.models.users import Doctor
 from core.security.security import verify_password
 from core.services.email_service import (
@@ -52,9 +52,33 @@ def login(login_form: LoginFormRequest, session: Session):
                 HTTPStatus.FORBIDDEN,
                 detail=f"{detail_message} Entre em contato com o suporte."
             )
-        else:
-            doctor_management_service.log_activity(user.id, ActivityType.LOGIN, "Médico entrou no sistema", session)
-            
+
+    # Valida se o perfil selecionado corresponde ao tipo de usuário
+    if login_form.selected_role:
+        # Mapeamento do frontend (string) para o backend (UserType)
+        role_mapping = {
+            'paciente': UserType.PATIENT,
+            'medico': UserType.DOCTOR,
+            'admin': UserType.ADMIN
+        }
+
+        expected_user_type = role_mapping.get(login_form.selected_role.lower())
+
+        if expected_user_type and user.user_type != expected_user_type:
+            # Mapeamento inverso para mensagem de erro
+            user_type_names = {
+                UserType.PATIENT: 'Paciente',
+                UserType.DOCTOR: 'Médico',
+                UserType.ADMIN: 'Administrador'
+            }
+
+            selected_name = user_type_names.get(expected_user_type, 'desconhecido')
+            actual_name = user_type_names.get(user.user_type, 'desconhecido')
+
+            raise HTTPException(
+                HTTPStatus.FORBIDDEN,
+                detail=f"Você selecionou o perfil '{selected_name}', mas suas credenciais correspondem a '{actual_name}'. Por favor, selecione o perfil correto."
+            )
 
     # Define a expiração do token baseado no remember_me
     if login_form.remember_me:

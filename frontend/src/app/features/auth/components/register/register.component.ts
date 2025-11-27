@@ -47,8 +47,9 @@ export class RegisterComponent implements OnInit {
   apiError: string | null = null;
 
   doctorFiles: { [key: string]: File | null } = {
-    'crm-front': null,
-    'crm-back': null,
+    crm: null,
+    diploma: null,
+    identity: null,
     proof: null,
   };
 
@@ -62,22 +63,19 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     this.patientRegisterForm = this.formBuilder.group(
       {
-        // Dados pessoais
         name: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required, cpfValidator()]],
         birthdate: ['', [Validators.required]],
         gender: ['', [Validators.required]],
 
-        // Endereço
         cep: ['', [Validators.required]],
         street: ['', [Validators.required]],
         number: ['', [Validators.required]],
-        complement: [''], // Opcional
+        complement: [''],
         neighborhood: ['', [Validators.required]],
         city: ['', [Validators.required]],
         state: ['', [Validators.required]],
 
-        // Segurança
         email: ['', [Validators.required, Validators.email]],
         password: [
           '',
@@ -96,7 +94,6 @@ export class RegisterComponent implements OnInit {
 
     this.doctorRegisterForm = this.formBuilder.group(
       {
-        // Dados profissionais
         name: ['', [Validators.required, Validators.minLength(3)]],
         cpf: ['', [Validators.required, cpfValidator()]],
         birthdate: ['', [Validators.required]],
@@ -112,18 +109,14 @@ export class RegisterComponent implements OnInit {
         ],
         expertise_area: ['', [Validators.required]],
 
-        // Endereço
         cep: ['', [Validators.required]],
         street: ['', [Validators.required]],
         number: ['', [Validators.required]],
-        complement: [''], // Opcional
+        complement: [''],
         neighborhood: ['', [Validators.required]],
         city: ['', [Validators.required]],
         state: ['', [Validators.required]],
 
-        // Seção Documentação (será tratada separadamente)
-
-        // Segurança
         email: ['', [Validators.required, Validators.email]],
         password: [
           '',
@@ -136,7 +129,7 @@ export class RegisterComponent implements OnInit {
         confirmPassword: ['', [Validators.required]],
       },
       {
-        validators: matchPasswordValidator('password', 'confirmPassword'), // Aplicar ao grupo
+        validators: matchPasswordValidator('password', 'confirmPassword'),
       }
     );
 
@@ -152,25 +145,20 @@ export class RegisterComponent implements OnInit {
   private cleanFormData(formData: any): any {
     const cleanedData = { ...formData };
 
-    // Remove confirmPassword (not needed in backend)
     delete cleanedData.confirmPassword;
 
-    // Convert gender to number (backend expects 1, 2, or 3)
     if (cleanedData.gender) {
       cleanedData.gender = parseInt(cleanedData.gender, 10);
     }
 
-    // Remove formatting from CPF (dots and dashes)
     if (cleanedData.cpf) {
       cleanedData.cpf = cleanedData.cpf.replace(/[^\d]/g, '');
     }
 
-    // Remove formatting from CEP (dash)
     if (cleanedData.cep) {
       cleanedData.cep = cleanedData.cep.replace(/[^\d]/g, '');
     }
 
-    // Clean CRM (trim and uppercase)
     if (cleanedData.crm) {
       cleanedData.crm = cleanedData.crm.trim().toUpperCase();
     }
@@ -188,10 +176,7 @@ export class RegisterComponent implements OnInit {
     this.apiError = null;
 
     const cleanedData = this.cleanFormData(this.patientRegisterForm.value);
-    console.log(
-      'Dados do Cadastro (Paciente):',
-      cleanedData
-    );
+    console.log('Dados do Cadastro (Paciente):', cleanedData);
     this.authService.registerPatient(cleanedData).subscribe({
       next: (response: any) => {
         console.log('Cadastro de paciente bem-sucedido!', response);
@@ -218,8 +203,9 @@ export class RegisterComponent implements OnInit {
     }
 
     if (
-      !this.doctorFiles['crm-front'] ||
-      !this.doctorFiles['crm-back'] ||
+      !this.doctorFiles['crm'] ||
+      !this.doctorFiles['diploma'] ||
+      !this.doctorFiles['identity'] ||
       !this.doctorFiles['proof']
     ) {
       this.apiError =
@@ -265,14 +251,13 @@ export class RegisterComponent implements OnInit {
   private uploadDoctorDocuments(doctorId: number): void {
     const uploadPromises: Promise<any>[] = [];
 
-    // Map frontend file keys to backend DocumentType enum values
     const fileTypeMapping: { [key: string]: string } = {
-      'crm-front': 'crm_certificate',
-      'crm-back': 'diploma',
-      'proof': 'proof_of_address'
+      crm: 'crm_certificate',
+      diploma: 'diploma',
+      identity: 'identity',
+      proof: 'proof_of_address',
     };
 
-    // Upload each file with the correct document_type using the public registration endpoint
     Object.keys(this.doctorFiles).forEach((fileKey) => {
       const file = this.doctorFiles[fileKey];
       if (file) {
@@ -280,7 +265,10 @@ export class RegisterComponent implements OnInit {
         formData.append('document_type', fileTypeMapping[fileKey]);
         formData.append('file', file);
 
-        console.log(`[Register] Uploading ${fileKey} (${fileTypeMapping[fileKey]}) for doctor ID ${doctorId}:`, file.name);
+        console.log(
+          `[Register] Uploading ${fileKey} (${fileTypeMapping[fileKey]}) for doctor ID ${doctorId}:`,
+          file.name
+        );
 
         uploadPromises.push(
           this.authService
@@ -290,7 +278,6 @@ export class RegisterComponent implements OnInit {
       }
     });
 
-    // Execute all uploads in parallel
     Promise.all(uploadPromises)
       .then(() => {
         console.log('[Register] All documents uploaded successfully!');
@@ -307,7 +294,6 @@ export class RegisterComponent implements OnInit {
   }
 
   private setupCepListener(form: FormGroup): void {
-    // DECISÃO DE ARQUITETURA: Abordagem reativa para ouvir o campo CEP.
     form
       .get('cep')
       ?.valueChanges.pipe(

@@ -1,21 +1,3 @@
-<!-- Back button icon -->
-<button
-  *ngIf="currentStep > 1"
-  type="button"
-  (click)="previousStep()"
-  class="absolute top-0 left-0 flex items-center justify-center w-10 h-10 text-neutral-600 bg-white border border-neutral-300 rounded-lg hover:bg-gray-50 hover:text-neutral-900 transition-all shadow-sm"
-  aria-label="Voltar"
->
-  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
-      d="M15 19l-7-7 7-7"
-    />
-  </svg>
-</button>
-
 <!-- Progress indicator - Enhanced Design -->
 <div class="mb-8">
   <div class="flex items-center justify-between max-w-3xl mx-auto">
@@ -43,7 +25,9 @@
         </svg>
         <span *ngIf="currentStep <= 1">1</span>
       </div>
-      <span class="text-xs font-medium text-neutral-900 text-center">Pessoal</span>
+      <span class="text-xs font-medium text-neutral-900 text-center"
+        >Pessoal</span
+      >
     </div>
 
     <div
@@ -78,7 +62,9 @@
         </svg>
         <span *ngIf="currentStep <= 2">2</span>
       </div>
-      <span class="text-xs font-medium text-neutral-900 text-center">Profissional</span>
+      <span class="text-xs font-medium text-neutral-900 text-center"
+        >Profissional</span
+      >
     </div>
 
     <div
@@ -113,7 +99,9 @@
         </svg>
         <span *ngIf="currentStep <= 3">3</span>
       </div>
-      <span class="text-xs font-medium text-neutral-900 text-center">Endereço</span>
+      <span class="text-xs font-medium text-neutral-900 text-center"
+        >Endereço</span
+      >
     </div>
 
     <div
@@ -136,7 +124,9 @@
       >
         <span>4</span>
       </div>
-      <span class="text-xs font-medium text-neutral-900 text-center">Segurança</span>
+      <span class="text-xs font-medium text-neutral-900 text-center"
+        >Segurança</span
+      >
     </div>
   </div>
 </div>
@@ -179,7 +169,7 @@
         for="name_medico"
         class="block text-sm font-medium text-neutral-900 mb-2"
       >
-        Nome Completo
+        Nome Completo *
       </label>
       <input
         id="name_medico"
@@ -188,7 +178,7 @@
         type="text"
         required
         placeholder="Digite seu nome completo"
-        class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+        class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
       />
       <div
         *ngIf="
@@ -204,10 +194,16 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="doctorForm.get('name')?.errors?.['required']">
+        <span
+          *ngIf="doctorForm.get('name')?.errors?.['required']"
+          class="text-red-600"
+        >
           Campo obrigatório.
         </span>
-        <span *ngIf="doctorForm.get('name')?.errors?.['minlength']">
+        <span
+          *ngIf="doctorForm.get('name')?.errors?.['minlength']"
+          class="text-red-600"
+        >
           O nome deve ter pelo menos 3 caracteres.
         </span>
       </div>
@@ -219,7 +215,7 @@
           for="cpf_medico"
           class="block text-sm font-medium text-neutral-900 mb-2"
         >
-          CPF
+          CPF *
         </label>
         <input
           id="cpf_medico"
@@ -229,7 +225,7 @@
           type="text"
           required
           placeholder="000.000.000-00"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -245,10 +241,16 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span *ngIf="doctorForm.get('cpf')?.errors?.['required']">
+          <span
+            *ngIf="doctorForm.get('cpf')?.errors?.['required']"
+            class="text-red-600"
+          >
             Campo obrigatório.
           </span>
-          <span *ngIf="doctorForm.get('cpf')?.errors?.['cpfInvalid']">
+          <span
+            *ngIf="doctorForm.get('cpf')?.errors?.['invalidCpf']"
+            class="text-red-600"
+          >
             O CPF informado é inválido.
           </span>
         </div>
@@ -259,7 +261,7 @@
           for="birthdate_medico"
           class="block text-sm font-medium text-neutral-900 mb-2"
         >
-          Data de Nascimento
+          Data de Nascimento *
         </label>
         <input
           id="birthdate_medico"
@@ -267,7 +269,7 @@
           formControlName="birthdate"
           type="date"
           required
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -283,7 +285,10 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span *ngIf="doctorForm.get('birthdate')?.errors?.['required']">
+          <span
+            *ngIf="doctorForm.get('birthdate')?.errors?.['required']"
+            class="text-red-600"
+          >
             Campo obrigatório.
           </span>
         </div>
@@ -295,14 +300,14 @@
         for="gender_medico"
         class="block text-sm font-medium text-neutral-900 mb-2"
       >
-        Gênero
+        Gênero *
       </label>
       <select
         id="gender_medico"
         name="gender_medico"
         formControlName="gender"
         required
-        class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+        class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
       >
         <option value="" disabled selected>Selecione seu gênero</option>
         <option value="1">Masculino</option>
@@ -323,7 +328,10 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span *ngIf="doctorForm.get('gender')?.errors?.['required']">
+        <span
+          *ngIf="doctorForm.get('gender')?.errors?.['required']"
+          class="text-red-600"
+        >
           Campo obrigatório.
         </span>
       </div>
@@ -334,8 +342,11 @@
   <div *ngIf="currentStep === 2" class="space-y-5">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
-        <label for="crm" class="block text-sm font-medium text-neutral-900 mb-2">
-          CRM
+        <label
+          for="crm"
+          class="block text-sm font-medium text-neutral-900 mb-2"
+        >
+          CRM *
         </label>
         <input
           id="crm"
@@ -346,7 +357,7 @@
           required
           maxlength="9"
           (input)="formatCrmInput($event)"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm uppercase"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm uppercase"
         />
         <div
           *ngIf="
@@ -362,19 +373,34 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span *ngIf="doctorForm.get('crm')?.errors?.['required']">
+          <span
+            *ngIf="doctorForm.get('crm')?.errors?.['required']"
+            class="text-red-600"
+          >
             Campo obrigatório.
           </span>
-          <span *ngIf="doctorForm.get('crm')?.errors?.['minlength']">
+          <span
+            *ngIf="doctorForm.get('crm')?.errors?.['minlength']"
+            class="text-red-600"
+          >
             CRM deve ter no mínimo 8 caracteres.
           </span>
-          <span *ngIf="doctorForm.get('crm')?.errors?.['maxlength']">
+          <span
+            *ngIf="doctorForm.get('crm')?.errors?.['maxlength']"
+            class="text-red-600"
+          >
             CRM deve ter no máximo 10 caracteres.
           </span>
-          <span *ngIf="doctorForm.get('crm')?.errors?.['crmInvalidFormat']">
+          <span
+            *ngIf="doctorForm.get('crm')?.errors?.['crmInvalidFormat']"
+            class="text-red-600"
+          >
             {{ doctorForm.get('crm')?.errors?.['crmInvalidFormat'].message }}
           </span>
-          <span *ngIf="doctorForm.get('crm')?.errors?.['crmInvalidState']">
+          <span
+            *ngIf="doctorForm.get('crm')?.errors?.['crmInvalidState']"
+            class="text-red-600"
+          >
             {{ doctorForm.get('crm')?.errors?.['crmInvalidState'].message }}
           </span>
         </div>
@@ -383,12 +409,9 @@
       <div>
         <label
           for="expertise_area"
-          class="flex items-center gap-2 text-sm font-medium text-neutral-900 mb-2"
+          class="block text-sm font-medium text-neutral-900 mb-2"
         >
-          <span>Especialidade</span>
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-200 text-neutral-900 text-xs font-medium">
-            Recomendado: Neurologia
-          </span>
+          Especialidade *
         </label>
 
         <!-- Custom Dropdown -->
@@ -396,13 +419,27 @@
           <button
             type="button"
             (click)="toggleSpecialtyDropdown()"
-            class="flex items-center justify-between w-full px-4 py-3 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300"
+            class="flex items-center justify-between w-full px-4 py-3 bg-white border border-neutral-300 rounded-full hover:bg-neutral-50 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300"
           >
             <span class="text-sm text-neutral-900">
-              {{ doctorForm.get('expertise_area')?.value || 'Selecione sua especialidade' }}
+              {{
+                doctorForm.get("expertise_area")?.value ||
+                  "Selecione sua especialidade"
+              }}
             </span>
-            <svg class="w-5 h-5 text-neutral-600 transition-transform" [class.rotate-180]="showSpecialtyDropdown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            <svg
+              class="w-5 h-5 text-neutral-600 transition-transform"
+              [class.rotate-180]="showSpecialtyDropdown"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </button>
 
@@ -415,9 +452,10 @@
               *ngFor="let specialty of specialties"
               (click)="selectSpecialty(specialty.value)"
               class="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-neutral-50 text-sm text-left transition-colors"
-              [class.bg-pink-50]="doctorForm.get('expertise_area')?.value === specialty.value"
+              [class.bg-pink-50]="
+                doctorForm.get('expertise_area')?.value === specialty.value
+              "
             >
-              <span class="text-2xl">{{ specialty.icon }}</span>
               <span class="text-neutral-900">{{ specialty.label }}</span>
             </button>
           </div>
@@ -437,9 +475,216 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span *ngIf="doctorForm.get('expertise_area')?.errors?.['required']">
+          <span
+            *ngIf="doctorForm.get('expertise_area')?.errors?.['required']"
+            class="text-red-600"
+          >
             Campo obrigatório.
           </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documentation Section -->
+    <div class="pt-4 border-t border-neutral-200">
+      <h3 class="text-sm font-semibold text-neutral-900 mb-4">Documentação</h3>
+
+      <!-- Enhanced Alert Banner -->
+      <div
+        class="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3"
+      >
+        <svg
+          class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <div class="flex-1">
+          <h4 class="text-sm font-semibold text-blue-900 mb-1">
+            Verificação Necessária
+          </h4>
+          <p class="text-sm text-blue-800">
+            Seu cadastro passará por análise da nossa equipe. Você receberá um
+            e-mail quando for aprovado.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tabs for document types -->
+      <div class="border-b border-neutral-200 mb-4">
+        <nav class="flex gap-6">
+          <button
+            type="button"
+            (click)="selectDocumentTab('crm')"
+            [class.border-neutral-900]="activeDocumentTab === 'crm'"
+            [class.text-neutral-900]="activeDocumentTab === 'crm'"
+            [class.border-transparent]="activeDocumentTab !== 'crm'"
+            [class.text-neutral-600]="activeDocumentTab !== 'crm'"
+            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
+          >
+            CRM
+            <span
+              *ngIf="uploadedFiles['crm']"
+              class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium"
+            >
+              ✓
+            </span>
+          </button>
+          <button
+            type="button"
+            (click)="selectDocumentTab('diploma')"
+            [class.border-neutral-900]="activeDocumentTab === 'diploma'"
+            [class.text-neutral-900]="activeDocumentTab === 'diploma'"
+            [class.border-transparent]="activeDocumentTab !== 'diploma'"
+            [class.text-neutral-600]="activeDocumentTab !== 'diploma'"
+            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
+          >
+            Diploma Médico
+            <span
+              *ngIf="uploadedFiles['diploma']"
+              class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium"
+            >
+              ✓
+            </span>
+          </button>
+          <button
+            type="button"
+            (click)="selectDocumentTab('identity')"
+            [class.border-neutral-900]="activeDocumentTab === 'identity'"
+            [class.text-neutral-900]="activeDocumentTab === 'identity'"
+            [class.border-transparent]="activeDocumentTab !== 'identity'"
+            [class.text-neutral-600]="activeDocumentTab !== 'identity'"
+            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
+          >
+            Identidade
+            <span
+              *ngIf="uploadedFiles['identity']"
+              class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium"
+            >
+              ✓
+            </span>
+          </button>
+          <button
+            type="button"
+            (click)="selectDocumentTab('proof')"
+            [class.border-neutral-900]="activeDocumentTab === 'proof'"
+            [class.text-neutral-900]="activeDocumentTab === 'proof'"
+            [class.border-transparent]="activeDocumentTab !== 'proof'"
+            [class.text-neutral-600]="activeDocumentTab !== 'proof'"
+            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
+          >
+            Comprovante de Endereço
+            <span
+              *ngIf="uploadedFiles['proof']"
+              class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium"
+            >
+              ✓
+            </span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Enhanced File Upload Area -->
+      <div *ngIf="!uploadedFiles[activeDocumentTab]" class="text-red-600">
+        <div
+          class="border-2 border-dashed border-neutral-300 rounded-xl p-8 text-center hover:border-pink-300 hover:bg-pink-50/50 transition-colors cursor-pointer"
+          (click)="fileInput.click()"
+        >
+          <div
+            class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-neutral-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-neutral-900 mb-2">
+            Envie seu documento {{ getDocumentLabel(activeDocumentTab) }}
+          </h3>
+          <p class="text-xs text-neutral-600 mb-4">
+            Arraste e solte ou clique para selecionar
+          </p>
+          <p class="text-xs text-neutral-500">
+            Formatos aceitos: PDF, JPG, PNG (máx. 5MB)
+          </p>
+          <input
+            #fileInput
+            type="file"
+            accept="image/*,.pdf"
+            (change)="onFileSelected($event)"
+            class="hidden"
+          />
+        </div>
+      </div>
+
+      <!-- Uploaded File Preview -->
+      <div *ngIf="uploadedFiles[activeDocumentTab]" class="space-y-2">
+        <div
+          class="flex items-center gap-3 p-3 bg-white rounded-xl border border-neutral-200"
+        >
+          <div
+            class="w-12 h-12 bg-neutral-900 rounded-lg flex items-center justify-center flex-shrink-0"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="text-sm font-semibold text-neutral-900 truncate">
+              {{ uploadedFiles[activeDocumentTab]!.name }}
+            </h4>
+            <p class="text-xs text-neutral-500">
+              {{ formatFileSize(uploadedFiles[activeDocumentTab]!.size) }}
+            </p>
+            <span
+              class="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-200 text-neutral-900 text-xs font-medium mt-1"
+            >
+              Aguardando verificação
+            </span>
+          </div>
+          <button
+            type="button"
+            (click)="removeFile(activeDocumentTab)"
+            class="p-2 hover:bg-red-100 rounded-lg transition-colors"
+          >
+            <svg
+              class="w-5 h-5 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -449,8 +694,11 @@
   <div *ngIf="currentStep === 3" class="space-y-5">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div>
-        <label for="cep" class="block text-sm font-medium text-neutral-900 mb-2">
-          CEP
+        <label
+          for="cep"
+          class="block text-sm font-medium text-neutral-900 mb-2"
+        >
+          CEP *
         </label>
         <input
           type="text"
@@ -458,7 +706,7 @@
           formControlName="cep"
           mask="00000-000"
           placeholder="00000-000"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -474,7 +722,10 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span *ngIf="doctorForm.get('cep')?.errors?.['required']">
+          <span
+            *ngIf="doctorForm.get('cep')?.errors?.['required']"
+            class="text-red-600"
+          >
             Campo obrigatório.
           </span>
         </div>
@@ -492,7 +743,7 @@
           id="street"
           formControlName="street"
           placeholder="Nome da rua"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
     </div>
@@ -510,7 +761,7 @@
           id="number"
           formControlName="number"
           placeholder="Nº"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
 
@@ -526,7 +777,7 @@
           id="complement"
           formControlName="complement"
           placeholder="Apto, bloco, etc. (opcional)"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
     </div>
@@ -544,12 +795,15 @@
           id="neighborhood"
           formControlName="neighborhood"
           placeholder="Seu bairro"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
 
       <div>
-        <label for="city" class="block text-sm font-medium text-neutral-900 mb-2">
+        <label
+          for="city"
+          class="block text-sm font-medium text-neutral-900 mb-2"
+        >
           Cidade
         </label>
         <input
@@ -557,12 +811,15 @@
           id="city"
           formControlName="city"
           placeholder="Sua cidade"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
       </div>
 
       <div>
-        <label for="state" class="block text-sm font-medium text-neutral-900 mb-2">
+        <label
+          for="state"
+          class="block text-sm font-medium text-neutral-900 mb-2"
+        >
           Estado
         </label>
         <input
@@ -571,7 +828,7 @@
           formControlName="state"
           placeholder="UF"
           maxlength="2"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm uppercase"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm uppercase"
         />
       </div>
     </div>
@@ -586,7 +843,7 @@
           for="email_medico"
           class="block text-sm font-medium text-neutral-900 mb-2"
         >
-          E-mail
+          E-mail *
         </label>
         <input
           id="email_medico"
@@ -595,7 +852,7 @@
           required
           formControlName="email"
           placeholder="Digite seu e-mail"
-          class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+          class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
         />
         <div
           *ngIf="
@@ -611,10 +868,16 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span *ngIf="doctorForm.get('email')?.errors?.['required']">
+          <span
+            *ngIf="doctorForm.get('email')?.errors?.['required']"
+            class="text-red-600"
+          >
             Campo obrigatório.
           </span>
-          <span *ngIf="doctorForm.get('email')?.errors?.['email']">
+          <span
+            *ngIf="doctorForm.get('email')?.errors?.['email']"
+            class="text-red-600"
+          >
             Por favor, insira um e-mail válido.
           </span>
         </div>
@@ -626,7 +889,7 @@
             for="password_medico"
             class="block text-sm font-medium text-neutral-900 mb-2"
           >
-            Senha
+            Senha *
           </label>
           <div class="relative">
             <input
@@ -636,7 +899,7 @@
               [type]="showPassword ? 'text' : 'password'"
               required
               placeholder="Digite sua senha"
-              class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 pr-11 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 pr-11 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             <button
               type="button"
@@ -681,52 +944,6 @@
             </button>
           </div>
 
-          <!-- Password strength indicators -->
-          <div class="mt-3 space-y-2">
-            <div class="flex items-center text-xs">
-              <svg
-                [class.text-green-600]="!doctorForm.get('password')?.errors?.['required'] && !doctorForm.get('password')?.errors?.['minlength']"
-                [class.text-gray-400]="doctorForm.get('password')?.errors?.['required'] || doctorForm.get('password')?.errors?.['minlength']"
-                class="h-4 w-4 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <span
-                [class.text-green-600]="!doctorForm.get('password')?.errors?.['required'] && !doctorForm.get('password')?.errors?.['minlength']"
-                [class.text-neutral-600]="doctorForm.get('password')?.errors?.['required'] || doctorForm.get('password')?.errors?.['minlength']"
-              >
-                Mínimo de 8 caracteres
-              </span>
-            </div>
-            <div class="flex items-center text-xs">
-              <svg
-                [class.text-green-600]="!doctorForm.get('password')?.errors?.['required'] && !doctorForm.get('password')?.errors?.['strong']"
-                [class.text-gray-400]="doctorForm.get('password')?.errors?.['required'] || doctorForm.get('password')?.errors?.['strong']"
-                class="h-4 w-4 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <span
-                [class.text-green-600]="!doctorForm.get('password')?.errors?.['required'] && !doctorForm.get('password')?.errors?.['strong']"
-                [class.text-neutral-600]="doctorForm.get('password')?.errors?.['required'] || doctorForm.get('password')?.errors?.['strong']"
-              >
-                Letras maiúsculas, minúsculas e números
-              </span>
-            </div>
-          </div>
-
           <div
             *ngIf="
               doctorForm.get('password')?.invalid &&
@@ -741,8 +958,24 @@
                 clip-rule="evenodd"
               />
             </svg>
-            <span *ngIf="doctorForm.get('password')?.errors?.['required']">
+            <span
+              *ngIf="doctorForm.get('password')?.errors?.['required']"
+              class="text-red-600"
+            >
               Campo obrigatório.
+            </span>
+            <span
+              *ngIf="doctorForm.get('password')?.errors?.['minlength']"
+              class="text-red-600"
+            >
+              A senha deve ter no mínimo 8 caracteres.
+            </span>
+            <span
+              *ngIf="doctorForm.get('password')?.errors?.['strong']"
+              class="text-red-600"
+            >
+              A senha deve conter letras maiúsculas, minúsculas, números e
+              caracteres especiais.
             </span>
           </div>
         </div>
@@ -752,7 +985,7 @@
             for="confirmPassword"
             class="block text-sm font-medium text-neutral-900 mb-2"
           >
-            Confirme sua Senha
+            Confirme sua Senha *
           </label>
           <div class="relative">
             <input
@@ -761,7 +994,7 @@
               formControlName="confirmPassword"
               [type]="showConfirmPassword ? 'text' : 'password'"
               placeholder="Digite sua senha novamente"
-              class="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 pr-11 text-neutral-900 placeholder-gray-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
+              class="block w-full rounded-full border border-neutral-300 bg-white px-4 py-3 pr-11 text-neutral-900 placeholder-neutral-400 shadow-sm transition-colors focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-200 sm:text-sm"
             />
             <button
               type="button"
@@ -833,145 +1066,42 @@
         </div>
       </div>
     </div>
-
-    <!-- Documentation Section -->
-    <div class="pt-4 border-t border-neutral-200">
-      <h3 class="text-sm font-semibold text-neutral-900 mb-4">Documentação</h3>
-
-      <!-- Enhanced Alert Banner -->
-      <div class="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-        <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-        </svg>
-        <div class="flex-1">
-          <h4 class="text-sm font-semibold text-blue-900 mb-1">Verificação Necessária</h4>
-          <p class="text-sm text-blue-800">
-            Seu cadastro passará por análise da nossa equipe. Você receberá um e-mail quando for aprovado.
-          </p>
-        </div>
-      </div>
-
-      <!-- Tabs for document types -->
-      <div class="border-b border-neutral-200 mb-4">
-        <nav class="flex gap-6">
-          <button
-            type="button"
-            (click)="selectDocumentTab('crm-front')"
-            [class.border-neutral-900]="activeDocumentTab === 'crm-front'"
-            [class.text-neutral-900]="activeDocumentTab === 'crm-front'"
-            [class.border-transparent]="activeDocumentTab !== 'crm-front'"
-            [class.text-neutral-600]="activeDocumentTab !== 'crm-front'"
-            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
-          >
-            CRM Frente
-            <span *ngIf="uploadedFiles['crm-front']" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium">
-              ✓
-            </span>
-          </button>
-          <button
-            type="button"
-            (click)="selectDocumentTab('crm-back')"
-            [class.border-neutral-900]="activeDocumentTab === 'crm-back'"
-            [class.text-neutral-900]="activeDocumentTab === 'crm-back'"
-            [class.border-transparent]="activeDocumentTab !== 'crm-back'"
-            [class.text-neutral-600]="activeDocumentTab !== 'crm-back'"
-            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
-          >
-            CRM Verso
-            <span *ngIf="uploadedFiles['crm-back']" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium">
-              ✓
-            </span>
-          </button>
-          <button
-            type="button"
-            (click)="selectDocumentTab('proof')"
-            [class.border-neutral-900]="activeDocumentTab === 'proof'"
-            [class.text-neutral-900]="activeDocumentTab === 'proof'"
-            [class.border-transparent]="activeDocumentTab !== 'proof'"
-            [class.text-neutral-600]="activeDocumentTab !== 'proof'"
-            class="pb-3 border-b-2 text-sm font-semibold transition-colors hover:text-neutral-900"
-          >
-            Comprovante
-            <span *ngIf="uploadedFiles['proof']" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-green-200 text-neutral-900 text-xs font-medium">
-              ✓
-            </span>
-          </button>
-        </nav>
-      </div>
-
-      <!-- Enhanced File Upload Area -->
-      <div *ngIf="!uploadedFiles[activeDocumentTab]">
-        <div
-          class="border-2 border-dashed border-neutral-300 rounded-xl p-8 text-center hover:border-pink-300 hover:bg-pink-50/50 transition-colors cursor-pointer"
-          (click)="fileInput.click()"
-        >
-          <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-          </div>
-          <h3 class="text-sm font-semibold text-neutral-900 mb-2">
-            Envie seu documento {{ getDocumentLabel(activeDocumentTab) }}
-          </h3>
-          <p class="text-xs text-neutral-600 mb-4">
-            Arraste e solte ou clique para selecionar
-          </p>
-          <p class="text-xs text-neutral-500">
-            Formatos aceitos: PDF, JPG, PNG (máx. 5MB)
-          </p>
-          <input
-            #fileInput
-            type="file"
-            accept="image/*,.pdf"
-            (change)="onFileSelected($event)"
-            class="hidden"
-          />
-        </div>
-      </div>
-
-      <!-- Uploaded File Preview -->
-      <div *ngIf="uploadedFiles[activeDocumentTab]" class="space-y-2">
-        <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-neutral-200">
-          <div class="w-12 h-12 bg-neutral-900 rounded-lg flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-          <div class="flex-1 min-w-0">
-            <h4 class="text-sm font-semibold text-neutral-900 truncate">
-              {{ uploadedFiles[activeDocumentTab]!.name }}
-            </h4>
-            <p class="text-xs text-neutral-500">
-              {{ formatFileSize(uploadedFiles[activeDocumentTab]!.size) }}
-            </p>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-200 text-neutral-900 text-xs font-medium mt-1">
-              Aguardando verificação
-            </span>
-          </div>
-          <button
-            type="button"
-            (click)="removeFile(activeDocumentTab)"
-            class="p-2 hover:bg-red-100 rounded-lg transition-colors"
-          >
-            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Navigation buttons -->
   <div
-    class="flex items-center justify-end pt-6 border-t border-gray-200"
+    class="flex items-center justify-between pt-6 border-t border-gray-200"
     (mouseenter)="buttonTouched = true"
   >
+    <button
+      *ngIf="currentStep > 1"
+      type="button"
+      (click)="previousStep()"
+      class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-neutral-300 rounded-full shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+    >
+      <svg
+        class="w-5 h-5 mr-2"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 19l-7-7 7-7"
+        />
+      </svg>
+      Voltar
+    </button>
+
+    <div *ngIf="currentStep === 1"></div>
+
     <button
       *ngIf="currentStep < totalSteps"
       type="button"
       (click)="nextStep()"
-      class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-white bg-neutral-900 rounded-lg shadow-lg hover:bg-neutral-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
+      class="inline-flex items-center px-6 py-2.5 text-sm font-semibold text-white bg-neutral-900 rounded-full shadow-lg hover:bg-neutral-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition-all"
     >
       Próximo
       <svg
@@ -993,7 +1123,7 @@
       *ngIf="currentStep === totalSteps"
       type="submit"
       [disabled]="doctorForm.invalid || isLoading"
-      class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-neutral-900 rounded-lg shadow-lg hover:bg-neutral-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+      class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-neutral-900 rounded-full shadow-lg hover:bg-neutral-800 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
     >
       <svg
         *ngIf="isLoading"

@@ -13,7 +13,7 @@ from core.enums.doctor_enum import ActivityType
 from core.enums import BindEnum, NotificationType, UserType
 from core.models import Bind, Patient, User
 from core.models.users import Doctor
-from core.services import notification_service, doctor_management_service
+from core.services import notification_service
 from core.services.patient_service import calculate_age
 
 

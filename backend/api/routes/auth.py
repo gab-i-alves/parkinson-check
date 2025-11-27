@@ -33,6 +33,7 @@ def login(
             secure=True,  # Obrigatório para samesite="none"
             samesite="none",  # Permite o envio entre subdomínios
             max_age=max_age,  # Define a duração do cookie
+            domain=".gabi-alves.com",  # Compartilha cookie entre subdomínios
         )
     else:
         print("A APLICAR CONFIGURAÇÕES DE DESENVOLVIMENTO PARA O COOKIE.")
@@ -51,7 +52,7 @@ def login(
 
 @router.post("/logout")
 def logout(response: Response):
-    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="access_token", domain=".gabi-alves.com", path="/")
     return {"message": "Logout successful"}
 
 

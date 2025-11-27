@@ -39,12 +39,8 @@ CREATE TYPE doctor_status_enum AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'SUSP
 COMMENT ON TYPE doctor_status_enum IS 'Status de aprovação do médico no sistema';
 
 -- Tipo de documento enviado pelo médico
-CREATE TYPE document_type_enum AS ENUM ('CRM_CERTIFICATE', 'DIPLOMA', 'IDENTITY', 'CPF_DOCUMENT', 'PROOF_OF_ADDRESS', 'OTHER');
-COMMENT ON TYPE document_type_enum IS 'Tipo de documento: CRM_CERTIFICATE (certificado CRM), DIPLOMA, IDENTITY (identidade), CPF_DOCUMENT, PROOF_OF_ADDRESS (comprovante de residência), OTHER (outro)';
-
--- Tipo de atividade do médico
-CREATE TYPE activity_type_enum AS ENUM ('REGISTRATION', 'LOGIN', 'STATUS_CHANGE', 'PATIENT_BOUND', 'PATIENT_UNBOUND', 'NOTE_ADDED', 'NOTE_UPDATED', 'NOTE_DELETED');
-COMMENT ON TYPE activity_type_enum IS 'Tipo de atividade registrada no histórico do médico';
+CREATE TYPE document_type_enum AS ENUM ('CRM_CERTIFICATE', 'DIPLOMA', 'IDENTITY', 'PROOF_OF_ADDRESS');
+COMMENT ON TYPE document_type_enum IS 'Tipo de documento: CRM_CERTIFICATE (certificado CRM do médico), DIPLOMA (diploma de medicina), IDENTITY (documento de identidade RG ou CNH), PROOF_OF_ADDRESS (comprovante de endereço)';
 
 -- =====================================================
 -- 2. TABLES

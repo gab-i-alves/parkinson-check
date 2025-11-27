@@ -134,6 +134,7 @@ export class LoginComponent implements OnInit {
       email: this.loginForm.value.email!,
       password: this.loginForm.value.password!,
       remember: this.loginForm.value.remember ?? false,
+      selectedRole: this.activeTab,
     };
 
     console.log('Dados do formulário:', credentials);
