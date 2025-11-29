@@ -226,7 +226,6 @@ class DoctorDocumentResponse(BaseModel):
     doctor_id: int
     document_type: str
     file_name: str
-    file_path: str
     file_size: int
     mime_type: str
     uploaded_at: datetime

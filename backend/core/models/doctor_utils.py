@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, LargeBinary
 from core.enums.doctor_enum import ActivityType, DocumentType
 from core.models.table_registry import table_registry
 from sqlalchemy.orm import Mapped, mapped_column
@@ -14,7 +14,7 @@ class DoctorDocument:
         PG_ENUM(DocumentType, name="document_type_enum"), nullable=False
     )
     file_name: Mapped[str] = mapped_column(nullable=False)
-    file_path: Mapped[str] = mapped_column(nullable=False)
+    file_data: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
     file_size: Mapped[int] = mapped_column(nullable=False)
     mime_type: Mapped[str] = mapped_column(nullable=False)
     uploaded_at: Mapped[datetime] = mapped_column(default_factory=datetime.now, init=False)
