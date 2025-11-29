@@ -26,7 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(reqWithCredentials).pipe(
     catchError((error: HttpErrorResponse) => {
-      const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password'];
+      const publicRoutes = ['/', '/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password'];
       
       // Checar as rotas publicas antes de interceptar
 
@@ -42,7 +42,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       const currentPath = router.url || window.location.pathname;
       // Remover query params e hash para verificação correta de rotas com parâmetros dinâmicos
       const pathWithoutParams = currentPath.split('?')[0].split('#')[0];
-      const isPublicRoute = publicRoutes.some(route => pathWithoutParams.startsWith(route));
+      const isPublicRoute = publicRoutes.some(route =>
+        route === '/' ? pathWithoutParams === '/' : pathWithoutParams.startsWith(route)
+      );
 
         if (error.status === 401) {
           // Token expirado ou inválido - limpar sessão e redirecionar

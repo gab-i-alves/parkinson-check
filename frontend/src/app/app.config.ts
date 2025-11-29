@@ -23,8 +23,10 @@ function initializeAuth(authService: AuthService) {
   return () => {
     // Verifica se a URL atual é uma rota pública
     const currentPath = window.location.pathname;
-    const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password'];
-    const isPublicRoute = publicRoutes.some(route => currentPath.startsWith(route));
+    const publicRoutes = ['/', '/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password'];
+    const isPublicRoute = publicRoutes.some(route =>
+      route === '/' ? currentPath === '/' : currentPath.startsWith(route)
+    );
 
     // Só verifica autenticação se não for rota pública
     if (!isPublicRoute) {
