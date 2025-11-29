@@ -16,3 +16,4 @@ pytest-cov
 faker
 fastapi-mail
 jinja2
+resend
