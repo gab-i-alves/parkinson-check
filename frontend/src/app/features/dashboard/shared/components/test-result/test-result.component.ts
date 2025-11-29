@@ -201,4 +201,8 @@ export class TestResultComponent implements OnInit {
   getFeatureKeys(features: SpiralExtractedFeatures): string[] {
     return ['area', 'perimeter', 'circularity', 'aspect_ratio', 'entropy', 'mean_thickness', 'std_thickness'];
   }
+
+  getFeatureValue(features: SpiralExtractedFeatures, key: string): number {
+    return features[key as keyof SpiralExtractedFeatures];
+  }
 }

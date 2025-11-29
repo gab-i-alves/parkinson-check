@@ -323,7 +323,7 @@
                   </button>
                 </div>
                 <p class="text-lg font-bold text-neutral-900">
-                  {{ formatFeatureValue(featureKey, res.extracted_features![featureKey]) }}
+                  {{ formatFeatureValue(featureKey, getFeatureValue(res.extracted_features!, featureKey)) }}
                   @if (getFeatureUnit(featureKey)) {
                   <span class="text-xs font-normal text-neutral-500">{{ getFeatureUnit(featureKey) }}</span>
                   }
