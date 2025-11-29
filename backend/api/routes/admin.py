@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 from core.services import file_service, email_service
-from core.models.doctor_utils import DoctorDocument
 from core.services import doctor_management_service
 from core.enums.doctor_enum import DoctorStatus
 from core.enums.user_enum import UserType
@@ -17,6 +16,7 @@ from api.schemas.users import (
     UpdateUserSchema,
     ChangeUserStatusSchema,
     ChangeDoctorStatusSchema,
+    DoctorDocumentResponse,
     PatientSchema,
     UserResponse,
     CreateUserByAdminSchema,
@@ -164,7 +164,7 @@ async def search_doctor_documents(
     document = file_service.get_doctor_document(doctor_id, file_id, session)
     return document
 
-@router.get("/doctors/{doctor_id}/documents-info", response_model=list[DoctorDocument])
+@router.get("/doctors/{doctor_id}/documents-info", response_model=list[DoctorDocumentResponse])
 async def search_doctor_documents_info(
         doctor_id: int,
         session: Session = Depends(get_session),

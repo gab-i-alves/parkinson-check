@@ -220,6 +220,23 @@ class ChangeDoctorStatusSchema(BaseModel):
     reason: Optional[str] = None
 
 
+class DoctorDocumentResponse(BaseModel):
+    """Schema para resposta de documentos do médico"""
+    id: int
+    doctor_id: int
+    document_type: str
+    file_name: str
+    file_path: str
+    file_size: int
+    mime_type: str
+    uploaded_at: datetime
+    verified: bool
+    verified_by_admin_id: Optional[int] = None
+    verified_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class UpdateDoctorDetailsSchema(BaseModel):
     """Schema para atualização completa de detalhes do médico"""
     # Dados básicos
