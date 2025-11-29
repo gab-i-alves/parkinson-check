@@ -753,6 +753,20 @@ def get_test_detail(
             method=spiral_test.method,
             patient=spiral_test.patient,
             classification=classification,
+            # Resultados dos modelos de ML
+            model_predictions=spiral_test.model_predictions,
+            avg_parkinson_probability=spiral_test.avg_parkinson_probability,
+            majority_vote=spiral_test.majority_vote,
+            healthy_votes=spiral_test.healthy_votes,
+            parkinson_votes=spiral_test.parkinson_votes,
+            # Características extraídas da imagem
+            feature_area=spiral_test.feature_area,
+            feature_perimeter=spiral_test.feature_perimeter,
+            feature_circularity=spiral_test.feature_circularity,
+            feature_aspect_ratio=spiral_test.feature_aspect_ratio,
+            feature_entropy=spiral_test.feature_entropy,
+            feature_mean_thickness=spiral_test.feature_mean_thickness,
+            feature_std_thickness=spiral_test.feature_std_thickness,
         )
 
     elif test.test_type == TestType.VOICE_TEST:
@@ -899,6 +913,20 @@ def get_my_test_detail(
             method=spiral_test.method,
             patient=spiral_test.patient,
             classification=classification,
+            # Resultados dos modelos de ML
+            model_predictions=spiral_test.model_predictions,
+            avg_parkinson_probability=spiral_test.avg_parkinson_probability,
+            majority_vote=spiral_test.majority_vote,
+            healthy_votes=spiral_test.healthy_votes,
+            parkinson_votes=spiral_test.parkinson_votes,
+            # Características extraídas da imagem
+            feature_area=spiral_test.feature_area,
+            feature_perimeter=spiral_test.feature_perimeter,
+            feature_circularity=spiral_test.feature_circularity,
+            feature_aspect_ratio=spiral_test.feature_aspect_ratio,
+            feature_entropy=spiral_test.feature_entropy,
+            feature_mean_thickness=spiral_test.feature_mean_thickness,
+            feature_std_thickness=spiral_test.feature_std_thickness,
         )
 
     elif test.test_type == TestType.VOICE_TEST:
