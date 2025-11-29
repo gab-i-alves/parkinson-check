@@ -26,9 +26,10 @@ from ..enums.test_enum import TestType
 from ..models import SpiralTest, Test, User, VoiceTest
 from ..utils import ai
 from .user_service import get_user_active_binds
+from infra.settings import settings
 
-SPIRAL_MODEL_SERVICE_URL = "http://spiral-classifier:8001/predict/spiral"
-VOICE_MODEL_SERVICE_URL = "http://voice-classifier:8002/predict/voice"
+SPIRAL_MODEL_SERVICE_URL = f"{settings.SPIRAL_CLASSIFIER_URL}/predict/spiral"
+VOICE_MODEL_SERVICE_URL = f"{settings.VOICE_CLASSIFIER_URL}/predict/voice"
 
 # Threshold de classificação: score >= 0.7 = HEALTHY, score < 0.7 = PARKINSON
 # Score representa probabilidade de estar saudável (0.0-1.0)
