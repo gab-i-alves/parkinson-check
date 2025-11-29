@@ -350,7 +350,7 @@ CREATE TABLE IF NOT EXISTS "doctor_document" (
   "doctor_id" INTEGER NOT NULL REFERENCES "doctor" ("id"),
   "document_type" document_type_enum NOT NULL DEFAULT 'CRM_CERTIFICATE',
   "file_name" VARCHAR(255) NOT NULL,
-  "file_path" VARCHAR(500) NOT NULL,
+  "file_data" BYTEA NOT NULL,
   "file_size" INTEGER NOT NULL,  -- em bytes
   "mime_type" VARCHAR(100) NOT NULL,
   "uploaded_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -361,6 +361,7 @@ CREATE TABLE IF NOT EXISTS "doctor_document" (
 
 COMMENT ON TABLE "doctor_document" IS 'Documentos enviados pelos médicos para verificação';
 COMMENT ON COLUMN "doctor_document"."document_type" IS 'Tipo de documento enviado';
+COMMENT ON COLUMN "doctor_document"."file_data" IS 'Dados binários do documento';
 COMMENT ON COLUMN "doctor_document"."verified" IS 'Indica se o documento foi verificado por um administrador';
 
 
