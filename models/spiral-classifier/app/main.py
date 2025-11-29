@@ -16,12 +16,13 @@ async def predict_spiral(image: UploadFile = File(...)):
             shutil.copyfileobj(image.file, tmp)
             tmp_path = tmp.name
 
-        results, vote_count, majority = predict_all_models(tmp_path)
+        results, vote_count, majority, extracted_features = predict_all_models(tmp_path)
 
         return {
             "model_results": results,
             "vote_count": dict(vote_count),
             "majority_decision": majority,
+            "extracted_features": extracted_features,
         }
 
     except Exception as e:

@@ -61,17 +61,49 @@ def predict_all_models(image_path, model_base_path="infra"):
         "Stacking": f"{model_base_path}/stacking.pkl",
     }
 
+    # Extract features once for all models
+    img = preprocess_image(image_path)
+    raw_features = extract_features(img)
+
+    if raw_features is None:
+        raise ValueError("Could not extract features from the image.")
+
+    # Build extracted features dict with named keys
+    extracted_features = {
+        "area": raw_features[0],
+        "perimeter": raw_features[1],
+        "circularity": raw_features[2],
+        "aspect_ratio": raw_features[3],
+        "entropy": raw_features[4],
+        "mean_thickness": raw_features[5],
+        "std_thickness": raw_features[6],
+    }
+
+    # Load scaler once
+    scaler = joblib.load(scaler_path)
+    X = np.array(raw_features, dtype=np.float32).reshape(1, -1)
+    Xs = scaler.transform(X)
+
     results = {}
     predictions = []
     for name, mpath in models.items():
         try:
-            pred_label, prob_dict, classes = predict_image(
-                mpath, scaler_path, image_path
-            )
+            model = joblib.load(mpath)
+            pred_raw = model.predict(Xs)[0]
+            pred_label = _labels(pred_raw)
+            prob_dict = None
+
+            if hasattr(model, "predict_proba"):
+                probs = model.predict_proba(Xs)[0]
+                classes = getattr(model, "classes_", None)
+                if classes is not None:
+                    prob_dict = {_labels(c): float(p) for c, p in zip(classes, probs)}
+
+            classes_learned = [_labels(c) for c in getattr(model, "classes_", [])]
             results[name] = {
                 "prediction": pred_label,
                 "probabilities": prob_dict,
-                "classes_": classes,
+                "classes_": classes_learned,
             }
             predictions.append(pred_label)
         except Exception as e:
@@ -89,8 +121,4 @@ def predict_all_models(image_path, model_base_path="infra"):
 
     majority = max(vote_count, key=vote_count.get)
 
-    return results, vote_count, majority
-
-    # majority = vote_count.most_common(1)[0][0]
-
-    # return results, vote_count, majority
+    return results, vote_count, majority, extracted_features

@@ -54,10 +54,31 @@ class SpiralTestVoteCount(BaseModel):
     Parkinson: int
 
 
+class SpiralExtractedFeatures(BaseModel):
+    """Características geométricas extraídas da imagem da espiral pelo modelo de ML"""
+
+    area: float = Field(..., description="Área do contorno principal da espiral (pixels²)")
+    perimeter: float = Field(..., description="Perímetro do contorno principal (pixels)")
+    circularity: float = Field(
+        ..., description="Circularidade: 4π×área/perímetro² (0-1, 1=círculo perfeito)"
+    )
+    aspect_ratio: float = Field(
+        ..., description="Razão de aspecto: largura/altura do bounding box"
+    )
+    entropy: float = Field(
+        ..., description="Entropia da imagem (medida de complexidade/irregularidade)"
+    )
+    mean_thickness: float = Field(..., description="Espessura média do traçado (pixels)")
+    std_thickness: float = Field(
+        ..., description="Desvio padrão da espessura do traçado (pixels)"
+    )
+
+
 class SpiralTestResult(BaseModel):
     majority_decision: str
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
+    extracted_features: Optional[SpiralExtractedFeatures] = None
 
 
 class VoiceTestResult(BaseModel):
@@ -110,6 +131,14 @@ class SpiralTestReturn(BaseTest):
     majority_vote: Optional[str] = None
     healthy_votes: Optional[int] = None
     parkinson_votes: Optional[int] = None
+    # Características extraídas da imagem
+    feature_area: Optional[float] = None
+    feature_perimeter: Optional[float] = None
+    feature_circularity: Optional[float] = None
+    feature_aspect_ratio: Optional[float] = None
+    feature_entropy: Optional[float] = None
+    feature_mean_thickness: Optional[float] = None
+    feature_std_thickness: Optional[float] = None
 
 
 class DetaildTestsReturn(BaseModel):
@@ -208,6 +237,9 @@ class ClinicalSpiralTestResult(BaseModel):
     majority_decision: str
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
+    extracted_features: Optional[SpiralExtractedFeatures] = Field(
+        None, description="Características geométricas extraídas da espiral"
+    )
     score: float = Field(..., description="Score calculado do teste")
     execution_date: datetime = Field(..., description="Data e hora de execução do teste")
 

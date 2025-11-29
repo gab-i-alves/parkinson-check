@@ -14,6 +14,7 @@ from api.schemas.tests import (
     PatientTestTimeline,
     ProcessSpiralSchema,
     ProcessVoiceSchema,
+    SpiralExtractedFeatures,
     SpiralImageSchema,
     SpiralTestDetail,
     SpiralTestResult,
@@ -78,6 +79,16 @@ def process_spiral(
     spiral_test_db.majority_vote = model_result.majority_decision
     spiral_test_db.healthy_votes = model_result.vote_count.Healthy
     spiral_test_db.parkinson_votes = model_result.vote_count.Parkinson
+
+    # Armazena as características extraídas da imagem (se disponíveis)
+    if model_result.extracted_features:
+        spiral_test_db.feature_area = model_result.extracted_features.area
+        spiral_test_db.feature_perimeter = model_result.extracted_features.perimeter
+        spiral_test_db.feature_circularity = model_result.extracted_features.circularity
+        spiral_test_db.feature_aspect_ratio = model_result.extracted_features.aspect_ratio
+        spiral_test_db.feature_entropy = model_result.extracted_features.entropy
+        spiral_test_db.feature_mean_thickness = model_result.extracted_features.mean_thickness
+        spiral_test_db.feature_std_thickness = model_result.extracted_features.std_thickness
 
     # Armazena a imagem no banco de dados
     spiral_test_db.spiral_image_data = schema.image.image_content
@@ -283,6 +294,7 @@ def process_clinical_spiral(
         majority_decision=model_result.majority_decision,
         vote_count=model_result.vote_count,
         model_results=model_result.model_results,
+        extracted_features=model_result.extracted_features,
         score=test_db.score,
         execution_date=test_db.execution_date,
     )

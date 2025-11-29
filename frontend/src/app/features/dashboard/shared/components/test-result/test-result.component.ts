@@ -5,6 +5,7 @@ import {
   ClinicalSpiralTestResult,
   ClinicalVoiceTestResult,
 } from '../../../../../core/models/clinical-test-result.model';
+import { SpiralExtractedFeatures } from '../../../../../core/models/spiral-test-response.model';
 import { TooltipDirective } from '../../../../../shared/directives/tooltip.directive';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 
@@ -139,5 +140,65 @@ export class TestResultComponent implements OnInit {
     } else {
       this.router.navigate(['/dashboard/doctor']);
     }
+  }
+
+  // Métodos para features extraídas
+  hasExtractedFeatures(result: ClinicalSpiralTestResult): boolean {
+    return !!result.extracted_features;
+  }
+
+  getFeatureLabel(key: string): string {
+    const labels: Record<string, string> = {
+      area: 'Área do Contorno',
+      perimeter: 'Perímetro',
+      circularity: 'Circularidade',
+      aspect_ratio: 'Razão de Aspecto',
+      entropy: 'Entropia',
+      mean_thickness: 'Espessura Média',
+      std_thickness: 'Desvio Padrão da Espessura',
+    };
+    return labels[key] || key;
+  }
+
+  getFeatureDescription(key: string): string {
+    const descriptions: Record<string, string> = {
+      area: 'Área total do contorno principal da espiral em pixels²',
+      perimeter: 'Comprimento total do contorno em pixels',
+      circularity: 'Quão circular é a forma (0-1, onde 1 = círculo perfeito)',
+      aspect_ratio: 'Proporção entre largura e altura do desenho',
+      entropy: 'Medida de complexidade e irregularidade do traçado',
+      mean_thickness: 'Espessura média do traçado em pixels',
+      std_thickness: 'Variação na espessura do traçado (irregularidade)',
+    };
+    return descriptions[key] || '';
+  }
+
+  getFeatureUnit(key: string): string {
+    const units: Record<string, string> = {
+      area: 'px²',
+      perimeter: 'px',
+      circularity: '',
+      aspect_ratio: '',
+      entropy: 'bits',
+      mean_thickness: 'px',
+      std_thickness: 'px',
+    };
+    return units[key] || '';
+  }
+
+  formatFeatureValue(key: string, value: number): string {
+    if (key === 'circularity' || key === 'aspect_ratio') {
+      return value.toFixed(3);
+    } else if (key === 'entropy') {
+      return value.toFixed(2);
+    } else if (key === 'area') {
+      return value.toFixed(0);
+    } else {
+      return value.toFixed(2);
+    }
+  }
+
+  getFeatureKeys(features: SpiralExtractedFeatures): string[] {
+    return ['area', 'perimeter', 'circularity', 'aspect_ratio', 'entropy', 'mean_thickness', 'std_thickness'];
   }
 }

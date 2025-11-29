@@ -99,6 +99,29 @@ class SpiralTest(Test):
         Integer, nullable=True, default=None, doc="Quantidade de modelos que classificaram como Parkinson"
     )
 
+    # Características extraídas da imagem (features usadas pelo modelo de ML)
+    feature_area: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Área do contorno principal da espiral (pixels²)"
+    )
+    feature_perimeter: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Perímetro do contorno principal (pixels)"
+    )
+    feature_circularity: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Circularidade: 4π×área/perímetro² (0-1, 1=círculo perfeito)"
+    )
+    feature_aspect_ratio: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Razão de aspecto: largura/altura do bounding box"
+    )
+    feature_entropy: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Entropia da imagem (medida de complexidade/irregularidade)"
+    )
+    feature_mean_thickness: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Espessura média do traçado (pixels)"
+    )
+    feature_std_thickness: Mapped[float | None] = mapped_column(
+        nullable=True, default=None, doc="Desvio padrão da espessura do traçado (pixels)"
+    )
+
     __mapper_args__ = {
         "polymorphic_identity": TestType.SPIRAL_TEST,
     }

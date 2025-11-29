@@ -1,3 +1,5 @@
+import { SpiralExtractedFeatures } from './spiral-test-response.model';
+
 export interface ClinicalSpiralTestResult {
   test_id?: number;
   patient_id?: number;
@@ -12,6 +14,7 @@ export interface ClinicalSpiralTestResult {
       probabilities?: { [key: string]: number };
     };
   };
+  extracted_features?: SpiralExtractedFeatures;
   score: number;
   execution_date?: string;
 }

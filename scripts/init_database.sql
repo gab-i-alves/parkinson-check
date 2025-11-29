@@ -284,6 +284,15 @@ CREATE TABLE IF NOT EXISTS "spiral_test" (
   "healthy_votes" INTEGER DEFAULT NULL,
   "parkinson_votes" INTEGER DEFAULT NULL,
 
+  -- Características extraídas da imagem (features usadas pelo modelo de ML)
+  "feature_area" REAL DEFAULT NULL,
+  "feature_perimeter" REAL DEFAULT NULL,
+  "feature_circularity" REAL DEFAULT NULL,
+  "feature_aspect_ratio" REAL DEFAULT NULL,
+  "feature_entropy" REAL DEFAULT NULL,
+  "feature_mean_thickness" REAL DEFAULT NULL,
+  "feature_std_thickness" REAL DEFAULT NULL,
+
   -- Validações
   CONSTRAINT positive_draw_duration CHECK (draw_duration > 0),
   CONSTRAINT valid_avg_probability CHECK (avg_parkinson_probability IS NULL OR (avg_parkinson_probability >= 0 AND avg_parkinson_probability <= 1)),
@@ -302,6 +311,13 @@ COMMENT ON COLUMN "spiral_test"."avg_parkinson_probability" IS 'Média das proba
 COMMENT ON COLUMN "spiral_test"."majority_vote" IS 'Decisão por voto majoritário: HEALTHY ou PARKINSON';
 COMMENT ON COLUMN "spiral_test"."healthy_votes" IS 'Quantidade de modelos que classificaram como Healthy';
 COMMENT ON COLUMN "spiral_test"."parkinson_votes" IS 'Quantidade de modelos que classificaram como Parkinson';
+COMMENT ON COLUMN "spiral_test"."feature_area" IS 'Área do contorno principal da espiral (pixels²)';
+COMMENT ON COLUMN "spiral_test"."feature_perimeter" IS 'Perímetro do contorno principal (pixels)';
+COMMENT ON COLUMN "spiral_test"."feature_circularity" IS 'Circularidade: 4π×área/perímetro² (0-1, 1=círculo perfeito)';
+COMMENT ON COLUMN "spiral_test"."feature_aspect_ratio" IS 'Razão de aspecto: largura/altura do bounding box';
+COMMENT ON COLUMN "spiral_test"."feature_entropy" IS 'Entropia da imagem (medida de complexidade/irregularidade)';
+COMMENT ON COLUMN "spiral_test"."feature_mean_thickness" IS 'Espessura média do traçado (pixels)';
+COMMENT ON COLUMN "spiral_test"."feature_std_thickness" IS 'Desvio padrão da espessura do traçado (pixels)';
 
 -- -----------------------------------------------------
 -- Tabela: note
