@@ -69,14 +69,15 @@ def predict_all_models(image_path, model_base_path="infra"):
         raise ValueError("Could not extract features from the image.")
 
     # Build extracted features dict with named keys
+    # Convert numpy.float32 to native Python float for JSON serialization
     extracted_features = {
-        "area": raw_features[0],
-        "perimeter": raw_features[1],
-        "circularity": raw_features[2],
-        "aspect_ratio": raw_features[3],
-        "entropy": raw_features[4],
-        "mean_thickness": raw_features[5],
-        "std_thickness": raw_features[6],
+        "area": float(raw_features[0]),
+        "perimeter": float(raw_features[1]),
+        "circularity": float(raw_features[2]),
+        "aspect_ratio": float(raw_features[3]),
+        "entropy": float(raw_features[4]),
+        "mean_thickness": float(raw_features[5]),
+        "std_thickness": float(raw_features[6]),
     }
 
     # Load scaler once
