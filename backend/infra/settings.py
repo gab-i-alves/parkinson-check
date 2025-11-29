@@ -14,10 +14,17 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REMEMBER_ME_EXPIRE_DAYS: int
     ENVIRONMENT: str
-    SMTP_HOST: str
-    SMTP_PORT: str
-    SMTP_USER: str
-    SMTP_PASSWORD: str
+    FRONTEND_URL: str = "http://localhost:4200"
+
+    # SMTP settings (for development)
+    SMTP_HOST: str | None = None
+    SMTP_PORT: str | None = None
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+
+    # Resend settings (for production)
+    RESEND_API_KEY: str | None = None
+    RESEND_FROM_EMAIL: str = "noreply@gabi-alves.com"
 
     # URLs dos serviços de ML (Railway internal URLs)
     SPIRAL_CLASSIFIER_URL: str = os.getenv(
