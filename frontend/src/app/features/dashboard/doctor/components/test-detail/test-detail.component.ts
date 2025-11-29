@@ -524,4 +524,77 @@ export class TestDetailComponent implements OnInit, OnDestroy {
   isReply(note: Note): boolean {
     return note.parent_note_id !== null;
   }
+
+  // ========== EXTRACTED FEATURES DISPLAY ==========
+
+  hasExtractedFeatures(test: SpiralTestDetail): boolean {
+    return test.feature_area != null;
+  }
+
+  readonly featureKeys = ['area', 'perimeter', 'circularity', 'aspect_ratio', 'entropy', 'mean_thickness', 'std_thickness'];
+
+  getFeatureLabel(key: string): string {
+    const labels: Record<string, string> = {
+      area: 'Área do Contorno',
+      perimeter: 'Perímetro',
+      circularity: 'Circularidade',
+      aspect_ratio: 'Razão de Aspecto',
+      entropy: 'Entropia',
+      mean_thickness: 'Espessura Média',
+      std_thickness: 'Desvio Padrão da Espessura',
+    };
+    return labels[key] || key;
+  }
+
+  getFeatureDescription(key: string): string {
+    const descriptions: Record<string, string> = {
+      area: 'Área total do contorno principal da espiral em pixels²',
+      perimeter: 'Comprimento total do contorno em pixels',
+      circularity: 'Quão circular é a forma (0-1, onde 1 = círculo perfeito)',
+      aspect_ratio: 'Proporção entre largura e altura do desenho',
+      entropy: 'Medida de complexidade e irregularidade do traçado',
+      mean_thickness: 'Espessura média do traçado em pixels',
+      std_thickness: 'Variação na espessura do traçado (irregularidade)',
+    };
+    return descriptions[key] || '';
+  }
+
+  getFeatureUnit(key: string): string {
+    const units: Record<string, string> = {
+      area: 'px²',
+      perimeter: 'px',
+      circularity: '',
+      aspect_ratio: '',
+      entropy: 'bits',
+      mean_thickness: 'px',
+      std_thickness: 'px',
+    };
+    return units[key] || '';
+  }
+
+  getFeatureValue(test: SpiralTestDetail, key: string): number | null {
+    const featureMap: Record<string, number | undefined> = {
+      area: test.feature_area,
+      perimeter: test.feature_perimeter,
+      circularity: test.feature_circularity,
+      aspect_ratio: test.feature_aspect_ratio,
+      entropy: test.feature_entropy,
+      mean_thickness: test.feature_mean_thickness,
+      std_thickness: test.feature_std_thickness,
+    };
+    return featureMap[key] ?? null;
+  }
+
+  formatFeatureValue(key: string, value: number | null): string {
+    if (value === null) return '-';
+    if (key === 'circularity' || key === 'aspect_ratio') {
+      return value.toFixed(3);
+    } else if (key === 'entropy') {
+      return value.toFixed(2);
+    } else if (key === 'area') {
+      return value.toFixed(0);
+    } else {
+      return value.toFixed(2);
+    }
+  }
 }
