@@ -43,7 +43,6 @@ class Settings(BaseSettings):
         "email_templates",
     )
     
-    UPLOAD_DIR: str = "uploads/doctor_documents"
     MAX_FILE_SIZE_MB: int = 10
     ALLOWED_MIME_TYPES: List[str] = [
         "application/pdf",
@@ -51,6 +50,13 @@ class Settings(BaseSettings):
         "image/png",
         "image/jpg"
     ]
+
+    @property
+    def UPLOAD_DIR(self) -> str:
+        """Retorna o diretório de upload baseado no ambiente"""
+        if self.ENVIRONMENT == "production":
+            return "/app/uploads/doctor_documents"
+        return "uploads/doctor_documents"
 
 
 settings = Settings()
