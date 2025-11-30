@@ -7,6 +7,8 @@ export interface TimelineTestItem {
   execution_date: string; // ISO datetime string
   score: number;
   classification: 'HEALTHY' | 'PARKINSON';
+  doctor_id: number;
+  doctor_name: string;
   // Spiral-specific fields
   draw_duration?: number;
   method?: SpiralMethod;

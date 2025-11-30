@@ -7,13 +7,21 @@ export interface PatientInfo {
   name: string;
 }
 
+export interface DoctorInfo {
+  id: number;
+  name: string;
+  crm: string;
+}
+
 export interface BaseTestDetail {
   id: number;
   test_type: TestType;
   execution_date: string;
   score: number;
   patient_id: number;
+  doctor_id: number;
   patient: PatientInfo;
+  doctor: DoctorInfo;
   classification: Classification;
 }
 

@@ -227,6 +227,7 @@ COMMENT ON CONSTRAINT unique_doctor_patient ON "bind" IS 'Garante apenas um vín
 CREATE TABLE IF NOT EXISTS "test" (
   "id" SERIAL PRIMARY KEY,
   "patient_id" INTEGER NOT NULL REFERENCES "patient"(id) ON DELETE CASCADE,
+  "doctor_id" INTEGER NOT NULL REFERENCES "doctor"(id) ON DELETE CASCADE,
   "execution_date" TIMESTAMPTZ NOT NULL,
   "score" REAL NOT NULL,
   "type" test_type_enum NOT NULL,
@@ -242,6 +243,7 @@ CREATE TABLE IF NOT EXISTS "test" (
 COMMENT ON TABLE "test" IS 'Tabela base de testes de diagnóstico de Parkinson (voice_test e spiral_test)';
 COMMENT ON COLUMN "test"."score" IS 'Probability of being HEALTHY (0.0-1.0): Higher score = Healthier patient - DADO DE SAÚDE';
 COMMENT ON COLUMN "test"."execution_date" IS 'Data e hora de execução do teste';
+COMMENT ON COLUMN "test"."doctor_id" IS 'ID do médico que conduziu o teste clínico';
 COMMENT ON COLUMN "test"."deleted_at" IS 'Soft delete: data de remoção lógica do teste';
 
 -- -----------------------------------------------------
@@ -400,6 +402,7 @@ CREATE INDEX idx_bind_not_deleted ON bind(id) WHERE deleted_at IS NULL;
 
 -- Índices para tabela test (consultas frequentes de histórico)
 CREATE INDEX idx_test_patient_id ON test(patient_id);
+CREATE INDEX idx_test_doctor_id ON test(doctor_id);
 CREATE INDEX idx_test_type ON test(type);
 CREATE INDEX idx_test_execution_date ON test(execution_date DESC);
 CREATE INDEX idx_test_patient_date ON test(patient_id, execution_date DESC);

@@ -56,6 +56,10 @@
                 <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ testDetail()!.patient.name }}</dd>
               </div>
               <div>
+                <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Médico Responsável</dt>
+                <dd class="mt-1 text-sm text-neutral-900 font-semibold">Dr(a). {{ testDetail()!.doctor.name }} <span class="text-xs text-neutral-500">(CRM: {{ testDetail()!.doctor.crm }})</span></dd>
+              </div>
+              <div>
                 <dt class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Data de Execução</dt>
                 <dd class="mt-1 text-sm text-neutral-900 font-semibold">{{ formatDate(testDetail()!.execution_date) }}</dd>
               </div>

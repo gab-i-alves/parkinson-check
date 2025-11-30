@@ -9,7 +9,7 @@ from core.enums import SpiralMethods, TestType
 from core.models.table_registry import table_registry
 
 if TYPE_CHECKING:
-    from core.models.users import Patient
+    from core.models.users import Doctor, Patient
 
 
 @table_registry.mapped_as_dataclass
@@ -23,10 +23,16 @@ class Test:
     )
     score: Mapped[float] = mapped_column(nullable=False)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patient.id"))
+    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctor.id"))
 
     # Relação com paciente
     patient: Mapped["Patient"] = relationship(
         "Patient", foreign_keys=[patient_id], init=False
+    )
+
+    # Relação com médico que conduziu o teste
+    doctor: Mapped["Doctor"] = relationship(
+        "Doctor", foreign_keys=[doctor_id], init=False
     )
 
     __mapper_args__ = {

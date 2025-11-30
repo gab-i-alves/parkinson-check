@@ -103,6 +103,7 @@ class BaseTest(BaseModel):
     execution_date: datetime
     score: float
     patient_id: int
+    doctor_id: int
 
     model_config = {"from_attributes": True}
 
@@ -158,10 +159,21 @@ class PatientInfo(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class DoctorInfo(BaseModel):
+    """Informações básicas do médico que conduziu o teste"""
+
+    id: int
+    name: str
+    crm: str
+
+    model_config = {"from_attributes": True}
+
+
 class VoiceTestDetail(VoiceTestReturn):
     """Detalhes completos de um teste de voz individual"""
 
     patient: PatientInfo
+    doctor: DoctorInfo
     classification: Literal["HEALTHY", "PARKINSON"]
 
     model_config = {"from_attributes": True}
@@ -171,6 +183,7 @@ class SpiralTestDetail(SpiralTestReturn):
     """Detalhes completos de um teste de espiral individual"""
 
     patient: PatientInfo
+    doctor: DoctorInfo
     classification: Literal["HEALTHY", "PARKINSON"]
 
     model_config = {"from_attributes": True}
@@ -234,6 +247,7 @@ class ClinicalSpiralTestResult(BaseModel):
 
     test_id: int = Field(..., description="ID do teste salvo no banco de dados")
     patient_id: int = Field(..., description="ID do paciente que realizou o teste")
+    doctor_id: int = Field(..., description="ID do médico que conduziu o teste")
     majority_decision: str
     vote_count: SpiralTestVoteCount
     model_results: Dict[str, ModelPrediction]
@@ -252,6 +266,7 @@ class ClinicalVoiceTestResult(BaseModel):
 
     test_id: int = Field(..., description="ID do teste salvo no banco de dados")
     patient_id: int = Field(..., description="ID do paciente que realizou o teste")
+    doctor_id: int = Field(..., description="ID do médico que conduziu o teste")
     score: float = Field(..., example=0.92)
     analysis: str = Field(..., example="A análise da voz indica A, B e C.")
     execution_date: datetime = Field(..., description="Data e hora de execução do teste")
@@ -314,6 +329,8 @@ class TimelineTestItem(BaseModel):
     execution_date: datetime
     score: float
     classification: Literal["HEALTHY", "PARKINSON"]
+    doctor_id: int
+    doctor_name: str
     # Campos específicos de espiral
     draw_duration: Optional[float] = None
     method: Optional[SpiralMethods] = None

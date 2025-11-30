@@ -38,10 +38,16 @@ HEALTHY_THRESHOLD = 0.7
 
 
 def process_spiral(
-    schema: ProcessSpiralSchema, user: User, session: Session
+    schema: ProcessSpiralSchema, user: User, doctor_id: int, session: Session
 ) -> tuple[SpiralTestResult, int]:
     """
     Processa teste de espiral e salva no banco de dados.
+
+    Args:
+        schema: Dados do teste
+        user: Paciente que realizou o teste
+        doctor_id: ID do médico que conduziu o teste
+        session: Sessão do banco de dados
 
     Returns:
         tuple: (SpiralTestResult, test_id)
@@ -66,6 +72,7 @@ def process_spiral(
         test_type=TestType.SPIRAL_TEST,
         score=score,
         patient_id=user.id,
+        doctor_id=doctor_id,
         draw_duration=schema.draw_duration,
         method=schema.method,
     )
@@ -103,10 +110,16 @@ def process_spiral(
 
 
 def process_voice(
-    schema: ProcessVoiceSchema, user: User, session: Session
+    schema: ProcessVoiceSchema, user: User, doctor_id: int, session: Session
 ) -> tuple[VoiceTestResult, int]:
     """
     Processa teste de voz e salva no banco de dados.
+
+    Args:
+        schema: Dados do teste
+        user: Paciente que realizou o teste
+        doctor_id: ID do médico que conduziu o teste
+        session: Sessão do banco de dados
 
     Returns:
         tuple: (VoiceTestResult, test_id)
@@ -128,6 +141,7 @@ def process_voice(
         test_type=TestType.VOICE_TEST,
         score=score,
         patient_id=user.id,
+        doctor_id=doctor_id,
         record_duration=schema.record_duration,
     )
 
@@ -282,7 +296,7 @@ def process_clinical_spiral(
     )
 
     # Processa o teste usando a função existente
-    model_result, test_id = process_spiral(process_schema, patient, session)
+    model_result, test_id = process_spiral(process_schema, patient, doctor.id, session)
 
     # Busca o teste criado para pegar execution_date
     test_db = session.query(SpiralTest).filter(SpiralTest.id == test_id).first()
@@ -291,6 +305,7 @@ def process_clinical_spiral(
     return ClinicalSpiralTestResult(
         test_id=test_id,
         patient_id=schema.patient_id,
+        doctor_id=doctor.id,
         majority_decision=model_result.majority_decision,
         vote_count=model_result.vote_count,
         model_results=model_result.model_results,
@@ -347,7 +362,7 @@ def process_clinical_voice(
     )
 
     # Processa o teste usando a função existente
-    model_result, test_id = process_voice(process_schema, patient, session)
+    model_result, test_id = process_voice(process_schema, patient, doctor.id, session)
 
     # Busca o teste criado para pegar execution_date
     test_db = session.query(VoiceTest).filter(VoiceTest.id == test_id).first()
@@ -356,6 +371,7 @@ def process_clinical_voice(
     return ClinicalVoiceTestResult(
         test_id=test_id,
         patient_id=schema.patient_id,
+        doctor_id=doctor.id,
         score=model_result.score,
         analysis=model_result.analysis,
         execution_date=test_db.execution_date,
@@ -635,6 +651,7 @@ def get_patient_test_timeline(
     Inclui dados completos de cada teste para visualização e gráficos.
     """
     from sqlalchemy import desc
+    from sqlalchemy.orm import joinedload
 
     # Valida vínculo
     binds = get_user_active_binds(session, doctor)
@@ -645,8 +662,10 @@ def get_patient_test_timeline(
         )
 
     # Busca todos os testes ordenados cronologicamente (mais recente primeiro)
+    # Inclui joinedload do doctor para obter nome do médico
     all_tests = (
         session.query(Test)
+        .options(joinedload(Test.doctor))
         .filter(Test.patient_id == patient_id)
         .order_by(desc(Test.execution_date))
         .all()
@@ -664,6 +683,8 @@ def get_patient_test_timeline(
             "execution_date": test.execution_date,
             "score": test.score,
             "classification": classification,
+            "doctor_id": test.doctor_id,
+            "doctor_name": test.doctor.name,
         }
 
         # Adicionar campos específicos por tipo
@@ -690,7 +711,7 @@ def get_test_detail(
 ) -> SpiralTestDetail | VoiceTestDetail:
     """
     Busca os detalhes completos de um teste individual.
-    Retorna informações do teste e do paciente.
+    Retorna informações do teste, do paciente e do médico que conduziu.
 
     Args:
         session: Sessão do banco de dados
@@ -705,10 +726,10 @@ def get_test_detail(
     """
     from sqlalchemy.orm import joinedload
 
-    # Buscar o teste com joinedload do patient
+    # Buscar o teste com joinedload do patient e doctor
     test = (
         session.query(Test)
-        .options(joinedload(Test.patient))
+        .options(joinedload(Test.patient), joinedload(Test.doctor))
         .filter(Test.id == test_id)
         .first()
     )
@@ -732,7 +753,7 @@ def get_test_detail(
     if test.test_type == TestType.SPIRAL_TEST:
         spiral_test = (
             session.query(SpiralTest)
-            .options(joinedload(SpiralTest.patient))
+            .options(joinedload(SpiralTest.patient), joinedload(SpiralTest.doctor))
             .filter(SpiralTest.id == test_id)
             .first()
         )
@@ -749,9 +770,11 @@ def get_test_detail(
             execution_date=spiral_test.execution_date,
             score=spiral_test.score,
             patient_id=spiral_test.patient_id,
+            doctor_id=spiral_test.doctor_id,
             draw_duration=spiral_test.draw_duration,
             method=spiral_test.method,
             patient=spiral_test.patient,
+            doctor=spiral_test.doctor,
             classification=classification,
             # Resultados dos modelos de ML
             model_predictions=spiral_test.model_predictions,
@@ -772,7 +795,7 @@ def get_test_detail(
     elif test.test_type == TestType.VOICE_TEST:
         voice_test = (
             session.query(VoiceTest)
-            .options(joinedload(VoiceTest.patient))
+            .options(joinedload(VoiceTest.patient), joinedload(VoiceTest.doctor))
             .filter(VoiceTest.id == test_id)
             .first()
         )
@@ -789,8 +812,10 @@ def get_test_detail(
             execution_date=voice_test.execution_date,
             score=voice_test.score,
             patient_id=voice_test.patient_id,
+            doctor_id=voice_test.doctor_id,
             record_duration=voice_test.record_duration,
             patient=voice_test.patient,
+            doctor=voice_test.doctor,
             classification=classification,
         )
 
@@ -809,10 +834,13 @@ def get_my_tests_timeline(session: Session, patient: User) -> PatientTestTimelin
     Paciente visualiza seus próprios testes sem necessidade de validação de vínculos.
     """
     from sqlalchemy import desc
+    from sqlalchemy.orm import joinedload
 
     # Busca todos os testes do paciente ordenados cronologicamente (mais recente primeiro)
+    # Inclui joinedload do doctor para obter nome do médico
     all_tests = (
         session.query(Test)
+        .options(joinedload(Test.doctor))
         .filter(Test.patient_id == patient.id)
         .order_by(desc(Test.execution_date))
         .all()
@@ -830,6 +858,8 @@ def get_my_tests_timeline(session: Session, patient: User) -> PatientTestTimelin
             "execution_date": test.execution_date,
             "score": test.score,
             "classification": classification,
+            "doctor_id": test.doctor_id,
+            "doctor_name": test.doctor.name,
         }
 
         # Adicionar campos específicos por tipo
@@ -856,7 +886,7 @@ def get_my_test_detail(
 ) -> SpiralTestDetail | VoiceTestDetail:
     """
     Busca os detalhes completos de um teste individual do próprio paciente.
-    Retorna informações do teste.
+    Retorna informações do teste e do médico que conduziu.
 
     Args:
         session: Sessão do banco de dados
@@ -892,7 +922,7 @@ def get_my_test_detail(
     if test.test_type == TestType.SPIRAL_TEST:
         spiral_test = (
             session.query(SpiralTest)
-            .options(joinedload(SpiralTest.patient))
+            .options(joinedload(SpiralTest.patient), joinedload(SpiralTest.doctor))
             .filter(SpiralTest.id == test_id)
             .first()
         )
@@ -909,9 +939,11 @@ def get_my_test_detail(
             execution_date=spiral_test.execution_date,
             score=spiral_test.score,
             patient_id=spiral_test.patient_id,
+            doctor_id=spiral_test.doctor_id,
             draw_duration=spiral_test.draw_duration,
             method=spiral_test.method,
             patient=spiral_test.patient,
+            doctor=spiral_test.doctor,
             classification=classification,
             # Resultados dos modelos de ML
             model_predictions=spiral_test.model_predictions,
@@ -932,7 +964,7 @@ def get_my_test_detail(
     elif test.test_type == TestType.VOICE_TEST:
         voice_test = (
             session.query(VoiceTest)
-            .options(joinedload(VoiceTest.patient))
+            .options(joinedload(VoiceTest.patient), joinedload(VoiceTest.doctor))
             .filter(VoiceTest.id == test_id)
             .first()
         )
@@ -949,8 +981,10 @@ def get_my_test_detail(
             execution_date=voice_test.execution_date,
             score=voice_test.score,
             patient_id=voice_test.patient_id,
+            doctor_id=voice_test.doctor_id,
             record_duration=voice_test.record_duration,
             patient=voice_test.patient,
+            doctor=voice_test.doctor,
             classification=classification,
         )
 
