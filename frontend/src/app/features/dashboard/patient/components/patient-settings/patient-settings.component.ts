@@ -32,7 +32,7 @@ export class PatientSettingsComponent implements OnInit {
 
   private loadSettings(): void {
     this.http
-      .get<PrivacySettings>(`${environment.apiUrl}/user/privacy-settings`)
+      .get<PrivacySettings>(`${environment.apiUrl}/users/privacy-settings`)
       .subscribe({
         next: (settings) => {
           this.shareDataForStatistics.set(settings.share_data_for_statistics);
@@ -57,7 +57,7 @@ export class PatientSettingsComponent implements OnInit {
     };
 
     this.http
-      .put(`${environment.apiUrl}/user/privacy-settings`, settings)
+      .put(`${environment.apiUrl}/users/privacy-settings`, settings)
       .subscribe({
         next: () => {
           this.isSaving.set(false);
