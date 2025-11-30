@@ -11,7 +11,7 @@ from infra.db.connection import get_session
 
 from ..schemas.note import CreateNoteSchema, NoteResponse, UpdateNoteSchema
 
-router = APIRouter(prefix="/notes", tags=["notes"])
+router = APIRouter(prefix="/notes", tags=["Notes"])
 
 CurrentPatient = Annotated[User, Depends(get_patient_user())]
 CurrentDoctor = Annotated[User, Depends(get_doctor_user())]
