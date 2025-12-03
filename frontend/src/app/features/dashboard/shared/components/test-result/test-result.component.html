@@ -229,7 +229,7 @@
                       <td class="px-3 py-2 whitespace-nowrap text-xs text-neutral-600">
                         @if (res.model_results[modelKey].probabilities; as probs) {
                         <div class="flex items-center gap-2">
-                          <span class="text-green-700 font-medium">H: {{ formatProbability(probs["Healthy"]) }}</span>
+                          <span class="text-green-700 font-medium">S: {{ formatProbability(probs["Healthy"]) }}</span>
                           <span class="text-neutral-400">|</span>
                           <span class="text-pink-700 font-medium">P: {{ formatProbability(probs["Parkinson"]) }}</span>
                         </div>

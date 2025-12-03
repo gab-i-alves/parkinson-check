@@ -16,205 +16,101 @@ Para rodar este projeto, você precisará ter instalado:
 - Git
 - Docker
 - Docker Compose
+- Node.js (v18+)
+- Angular CLI (`npm install -g @angular/cli`)
 
 ## Como Rodar o Projeto
 
 Siga os passos abaixo para configurar o ambiente de desenvolvimento local:
 
-1.  **Clone o repositório:**
+### 1. Clone o repositório
 
-    ```bash
-    git clone https://github.com/gab-i-alves/parkinson-check
-    cd parkinson-check
-    ```
+```bash
+git clone https://github.com/gab-i-alves/parkinson-check
+cd parkinson-check
+```
 
-2.  **Crie o arquivo de ambiente do back-end:**
-    Copie o arquivo de exemplo `.env.example` para criar seu próprio arquivo `.env`. O Docker Compose usará este arquivo para configurar os serviços.
+### 2. Configure os arquivos de ambiente
 
-    ```bash
-    cp .env.example .env
-    ```
+O projeto requer **dois** arquivos `.env`:
 
-    Se o comando cp não funcionar, utilize:
+**2.1. Arquivo `.env` na raiz do projeto** (para Docker Compose e banco de dados):
 
-    ```bash
-    copy .env.example .env
-    ```
+```bash
+cp .env.example .env
+```
 
-3.  **Inicie os serviços com Docker Compose:**
-    Este comando irá construir as imagens e iniciar os contêineres do back-end e do banco de dados.
+Conteúdo padrão:
+```
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=parkinson_check
+```
 
-    ```bash
-    docker-compose up --build -d
-    ```
+**2.2. Arquivo `.env` na pasta backend** (para a aplicação FastAPI):
 
-4.  **Instale as dependências do Front-end:**
-    Em um **novo terminal**, navegue até a pasta do front-end e execute o `npm install`.
+```bash
+cp backend/.env.example backend/.env
+```
 
-    ```bash
-    cd frontend
-    npm install
-    ```
+Revise o arquivo `backend/.env` e altere a `SECRET_KEY` para um valor seguro.
 
-5.  **Inicie a aplicação Front-end:**
-    Ainda no terminal da pasta `frontend`, execute:
+### 3. Inicie os serviços com Docker Compose
 
-    ```bash
-    ng serve
-    ```
+Este comando irá construir as imagens e iniciar os contêineres do back-end, banco de dados e classificadores de ML.
 
-6.  **Acesse as aplicações:**
+```bash
+docker-compose up --build -d
+```
 
-    - **Front-end (Angular):** [http://localhost:4200](http://localhost:4200)
-    - **Back-end (FastAPI Docs):** [http://localhost:8000/docs](http://localhost:8000/docs)
+### 4. Instale as dependências do Front-end
 
-## Roadmap do Produto
+Em um **novo terminal**, navegue até a pasta do front-end e execute o `npm install`.
 
-### Visão do Produto
+```bash
+cd frontend
+npm install
+```
 
-Oferecer monitoramento e acompanhamento de sintomas da Doença de Parkinson através de uma plataforma digital que conecta médicos e pacientes, fornecendo ferramentas de teste acessíveis e insights baseados em dados.
+### 5. Inicie a aplicação Front-end
 
----
+Ainda no terminal da pasta `frontend`, execute:
 
-### Release 1: Fundação e Testes de Prática
+```bash
+ng serve
+```
 
-**Período:** 23 de Julho a 16 de Setembro (Aproximadamente 8 semanas)  
-**Objetivo:** Permitir o cadastro inicial de pacientes e médicos, a autenticação e interação inicial com os dashboards, além de solicitar vínculos entre si.
+### 6. Acesse as aplicações
 
-#### Sprints
+- **Front-end (Angular):** [http://localhost:4200](http://localhost:4200)
+- **Back-end (FastAPI Docs):** [http://localhost:8000/docs](http://localhost:8000/docs)
 
-| Sprint | Data          | Foco                       | Resultado                                                                                        |
-| ------ | ------------- | -------------------------- | ------------------------------------------------------------------------------------------------ |
-| 1      | 23/07 a 05/08 | Estrutura e acesso inicial | Pacientes e médicos podem se cadastrar e fazer login com segurança                               |
-| 2      | 06/08 a 19/08 | Conexão médico-paciente    | Pacientes e médicos podem solicitar e aprovar vínculos                                           |
-| 3      | 20/08 a 02/09 | Teste de prática: Espiral  | Usuários podem realizar teste de desenho da espiral e ver o resultado imediato e não persistente |
-| 4      | 03/09 a 16/09 | Teste de prática: Voz      | Usuários podem realizar um teste de análise de voz e ver o resultado imediato e não persistente  |
+## Estrutura do Projeto
 
----
+```
+parkinson-check/
+├── backend/           # API FastAPI
+├── frontend/          # Aplicação Angular
+├── models/            # Serviços de ML (classificadores)
+│   ├── spiral-classifier/
+│   └── voice-classifier/
+├── scripts/           # Scripts SQL de inicialização
+├── docker-compose.yml
+└── .env.example
+```
 
-### Release 2: Funcionalidade Clínica e Análise de Dados
+## Comandos Úteis
 
-**Período:** 17 de Setembro a 28 de Outubro (Aproximadamente 6 semanas)  
-**Objetivo:** Transformar os testes de prática em ferramentas clínicas, capacitando os médicos a monitorar a progressão dos pacientes através de dados históricos e anotações.
+```bash
+# Parar todos os containers
+docker-compose down
 
-#### Sprints
+# Ver logs do backend
+docker-compose logs -f backend
 
-| Sprint | Data          | Foco                           | Resultado                                                                                                                                                  |
-| ------ | ------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 5      | 17/09 a 30/09 | Dashboard do médico            | O médico pode ver uma lista de seus pacientes vinculados e acessar seus perfis, além da aba de análises; também é possível solicitar vínculo com pacientes |
-| 6      | 01/10 a 14/10 | Implementação do teste clínico | O paciente realiza um teste clínico, os dados são analisados, salvos e o médico pode visualizar os resultados                                              |
-| 7      | 15/10 a 28/10 | Histórico e feedback           | O paciente pode ver seu histórico de testes; o médico pode adicionar anotações                                                                             |
+# Reiniciar apenas o backend
+docker-compose restart backend
 
----
-
-### Release 3: Integridade e Administração da Plataforma
-
-**Período:** 29 de Outubro a 11 de Novembro (Aproximadamente 2 semanas)  
-**Objetivo:** Garantir a confiabilidade e segurança da plataforma, implementando o controle administrativo e refinando a experiência do usuário.
-
-#### Sprints
-
-| Sprint | Data          | Foco                             | Resultado                                                                                                                                                          |
-| ------ | ------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 8      | 29/10 a 11/11 | Ferramentas administrativas e UX | Administradores podem gerenciar usuários e aprovar o cadastro de médicos para garantir a legitimidade do sistema; melhorias na interface e estabilidade do sistema |
-
----
-
-# HU018 – Gerenciar Médicos
-
-## História do Usuário
-
-**Sendo** administrador  
-**Quero** gerenciar as contas de médicos e suas verificações  
-**Para** garantir a legitimidade dos profissionais na plataforma.
-
-## Critérios de Aceitação
-
-- Verificação de credenciais
-- Categorização profissional
-- Gerenciamento de status
-- Histórico de atividades
-
-### Detalhamento dos Critérios
-
-**Critério de contexto:**  
-Dado que estou logado como administrador  
-E naveguei até "Gerenciamento de Médicos"
-
-1. **Verificação de credenciais**
-
-   - Dado que preciso verificar documentação profissional
-   - Quando acesso a seção de documentos do médico
-   - Então posso visualizar, validar e registrar decisão sobre documentos
-
-2. **Categorização profissional**
-
-   - Dado que um médico foi aprovado
-   - Quando defino sua especialidade e nível de experiência
-   - Então o sistema atualiza sua categorização para organização interna
-
-3. **Gerenciamento de status**
-
-   - Dado que preciso alterar o status de um médico
-   - Quando modifico para ativo, inativo, em verificação ou suspenso
-   - Então o sistema aplica a mudança e notifica o médico
-
-4. **Histórico de atividades**
-   - Dado que seleciono um perfil médico específico
-   - Quando acesso sua aba de atividades
-   - Então visualizo timeline com suas principais interações no sistema
-
----
-
-# HU019 – Aprovar Cadastro de Médico
-
-## História do Usuário
-
-**Sendo** administrador  
-**Quero** avaliar e aprovar/rejeitar solicitações de cadastro de médicos  
-**Para** garantir a legitimidade dos profissionais na plataforma.
-
-## Critérios de Aceitação
-
-- Lista de solicitações pendentes
-- Verificação de documentação
-- Consulta de autenticidade
-- Decisão fundamentada
-- Notificação automática
-
-### Detalhamento dos Critérios
-
-**Critério de contexto:**  
-Dado que estou logado como administrador  
-E naveguei até "Solicitações de Cadastro de Médicos"
-
-1. **Lista de solicitações pendentes**
-
-   - Dado que acessei a página de solicitações
-   - Quando a página carregar completamente
-   - Então visualizar lista organizada por data de todas as solicitações pendentes
-
-2. **Verificação de documentação**
-
-   - Dado que selecionei uma solicitação específica
-   - Quando acesso a documentação enviada pelo médico
-   - Então posso visualizar, baixar e analisar cada documento submetido
-
-3. **Consulta de autenticidade**
-
-   - Dado que preciso verificar o registro profissional
-   - Quando realizo a verificação manual dos documentos
-   - Então confirmo a validade do CRM nos sistemas dos conselhos regionais
-
-4. **Decisão fundamentada**
-
-   - Dado que concluí a análise da solicitação
-   - Quando seleciono "Aprovar" ou "Rejeitar"
-   - Então registro justificativa (obrigatória para rejeição) e confirmo decisão
-
-5. **Notificação automática**
-   - Dado que tomei uma decisão sobre a solicitação
-   - Quando confirmo a aprovação ou rejeição
-   - Então o sistema notifica automaticamente o médico sobre o resultado
-
----
+# Rebuild de um serviço específico
+docker-compose up --build -d backend
+```

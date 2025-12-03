@@ -107,7 +107,7 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">
                     @if (res.model_results[modelKey].probabilities; as probs) {
                     <span class="font-mono">
-                      H: {{ probs["Healthy"] | percent : "1.0-2" }} | P:
+                      S: {{ probs["Healthy"] | percent : "1.0-2" }} | P:
                       {{ probs["Parkinson"] | percent : "1.0-2" }}
                     </span>
                     } @else {

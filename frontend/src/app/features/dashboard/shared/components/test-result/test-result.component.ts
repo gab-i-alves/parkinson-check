@@ -94,8 +94,9 @@ export class TestResultComponent implements OnInit {
   }
 
   getPredictionLabel(prediction: string): string {
-    if (prediction === 'HEALTHY') return 'Saudável';
-    if (prediction === 'PARKINSON') return 'Parkinson';
+    const p = prediction.toUpperCase();
+    if (p === 'HEALTHY') return 'Saudável';
+    if (p === 'PARKINSON') return 'Parkinson';
     return prediction; // fallback para valores inesperados
   }
 

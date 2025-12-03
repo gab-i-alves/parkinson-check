@@ -169,8 +169,21 @@
           </div>
           } @else {
           <div class="space-y-4">
-            @for (note of notes(); track note.id) {
-            <div class="border border-neutral-200 rounded-xl p-4 bg-white">
+            @for (note of threadedNotes(); track note.id) {
+            <div [class]="isReply(note)
+              ? 'border border-neutral-200 rounded-xl p-4 bg-white ml-8 border-l-4 border-l-pink-200'
+              : 'border border-neutral-200 rounded-xl p-4 bg-white'">
+              <!-- Header de resposta -->
+              @if (isReply(note) && getParentNote(note.parent_note_id!)) {
+              <div class="mb-3 pb-3 border-b border-neutral-100">
+                <p class="text-xs text-neutral-500">
+                  <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                  </svg>
+                  Em resposta a <span class="font-medium">Dr(a). {{ getParentNote(note.parent_note_id!)!.doctor.name }}</span>
+                </p>
+              </div>
+              }
               <div class="flex justify-between items-start gap-4">
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center flex-wrap gap-2 mb-2">
@@ -181,6 +194,9 @@
                     </app-badge>
                     @if (isNoteEdited(note)) {
                     <app-badge variant="yellow" [title]="'Editado em ' + formatDate(note.updated_at)">Editado</app-badge>
+                    }
+                    @if (!isReply(note) && getReplyCount(note.id) > 0) {
+                    <app-badge variant="neutral">{{ getReplyCount(note.id) }} {{ getReplyCount(note.id) === 1 ? 'resposta' : 'respostas' }}</app-badge>
                     }
                   </div>
                   <div class="text-xs text-neutral-500 mb-2">Criado em {{ formatDate(note.created_at) }}</div>

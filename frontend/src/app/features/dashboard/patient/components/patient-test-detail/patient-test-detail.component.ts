@@ -60,6 +60,11 @@ export class PatientTestDetailComponent implements OnInit, OnDestroy {
     return null;
   });
 
+  // Computed signal para organizar notas em threads
+  readonly threadedNotes = computed<Note[]>(() => {
+    return this.organizeNotesIntoThreads(this.notes());
+  });
+
   // Enum e labels para o template
   readonly NoteCategory = NoteCategory;
   readonly NoteCategoryLabels = NoteCategoryLabels;
@@ -176,6 +181,51 @@ export class PatientTestDetailComponent implements OnInit, OnDestroy {
 
   isNoteEdited(note: Note): boolean {
     return new Date(note.updated_at).getTime() > new Date(note.created_at).getTime();
+  }
+
+  // Organiza notas: pai primeiro, seguido de suas respostas
+  organizeNotesIntoThreads(notes: Note[]): Note[] {
+    const parentNotes = notes.filter(note => note.parent_note_id === null);
+    const replyNotes = notes.filter(note => note.parent_note_id !== null);
+
+    const repliesMap = new Map<number, Note[]>();
+    replyNotes.forEach(reply => {
+      const parentId = reply.parent_note_id!;
+      if (!repliesMap.has(parentId)) {
+        repliesMap.set(parentId, []);
+      }
+      repliesMap.get(parentId)!.push(reply);
+    });
+
+    repliesMap.forEach(replies => {
+      replies.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    });
+
+    const result: Note[] = [];
+    parentNotes.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+    parentNotes.forEach(parent => {
+      result.push(parent);
+      const replies = repliesMap.get(parent.id) || [];
+      result.push(...replies);
+    });
+
+    return result;
+  }
+
+  // Verifica se é uma resposta
+  isReply(note: Note): boolean {
+    return note.parent_note_id !== null;
+  }
+
+  // Obtém a nota pai
+  getParentNote(parentId: number): Note | undefined {
+    return this.notes().find(n => n.id === parentId);
+  }
+
+  // Conta respostas de uma nota
+  getReplyCount(noteId: number): number {
+    return this.notes().filter(n => n.parent_note_id === noteId).length;
   }
 
   goBack(): void {
