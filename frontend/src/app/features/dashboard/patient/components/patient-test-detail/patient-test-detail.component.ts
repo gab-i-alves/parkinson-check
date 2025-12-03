@@ -15,6 +15,7 @@ import {
   NoteCategoryColors,
 } from '../../../../../core/enums/note-category.enum';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { BreadcrumbService } from '../../../../../shared/services/breadcrumb.service';
 import { BadgeComponent } from '../../../../../shared/components/badge/badge.component';
 import { getTestTypeLabel, getSpiralMethodLabel, getClassificationLabel } from '../../../shared/utils/display-helpers';
 
@@ -30,6 +31,7 @@ export class PatientTestDetailComponent implements OnInit, OnDestroy {
   private testDetailService = inject(TestDetailService);
   private noteService = inject(NoteService);
   private toastService = inject(ToastService);
+  private breadcrumbService = inject(BreadcrumbService);
 
   readonly testId = signal<number | null>(null);
   readonly testDetail = signal<TestDetail | null>(null);
@@ -83,6 +85,9 @@ export class PatientTestDetailComponent implements OnInit, OnDestroy {
       next: (test) => {
         this.testDetail.set(test);
         this.isLoading.set(false);
+        // Atualizar breadcrumb com ID do teste
+        const currentUrl = this.router.url;
+        this.breadcrumbService.updateBreadcrumb(currentUrl, `Teste #${testId}`);
         // Carregar mídia baseado no tipo de teste
         this.loadMedia(testId, test);
       },
