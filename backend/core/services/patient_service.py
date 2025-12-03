@@ -59,7 +59,6 @@ def create_patient(patient: PatientSchema, session: Session, confirmation_email 
         gender=patient.gender,
         user_type=UserType.PATIENT,
         address_id=address.id
-        #TODO ativação da conta pelo email de confirmação - is_active já vem como True por padrão
     )
 
     session.add(db_patient)
