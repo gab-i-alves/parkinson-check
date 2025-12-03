@@ -87,7 +87,7 @@
         <label class="flex items-center gap-2 text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2">
           Tipo de Teste
           <button
-            appTooltip="Filtre os gráficos por tipo de teste realizado"
+            appTooltip="Filtre todos os gráficos e métricas por tipo de teste: Espiral (coordenação motora) ou Voz (análise vocal)"
             [tooltipPosition]="'top'"
             class="inline-flex items-center"
           >
@@ -163,7 +163,7 @@
           Progressão de Scores ao Longo do Tempo
         </h3>
         <button
-          appTooltip="Evolução dos scores dos testes ao longo do tempo"
+          appTooltip="Evolução temporal dos scores (0-100). Quanto maior, melhor. Score ≥70 = Saudável"
           [tooltipPosition]="'top'"
         >
           <svg class="w-5 h-5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -202,7 +202,7 @@
           Evolução Mensal de Scores
         </h3>
         <button
-          appTooltip="Média dos scores agrupados por mês"
+          appTooltip="Média mensal dos scores (0-100). Identifica tendências de longo prazo na saúde"
           [tooltipPosition]="'top'"
         >
           <svg class="w-5 h-5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -244,7 +244,7 @@
           Distribuição de Classificações
         </h3>
         <button
-          appTooltip="Proporção entre classificações Saudável e Parkinson"
+          appTooltip="Distribuição: Saudável (score ≥70) vs Parkinson (score <70). Baseado nos testes filtrados"
           [tooltipPosition]="'top'"
         >
           <svg class="w-5 h-5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -270,7 +270,7 @@
           Análise Multidimensional
         </h3>
         <button
-          appTooltip="Comparação de múltiplas métricas de qualidade"
+          appTooltip="Análise multidimensional (0-100): Score Médio, Consistência, Frequência, Tendência e Qualidade"
           [tooltipPosition]="'top'"
         >
           <svg class="w-5 h-5 text-neutral-400 hover:text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -312,7 +312,7 @@
           <div class="flex items-center gap-2 mb-3">
             <h3 class="text-sm font-semibold text-neutral-900">Scores Médios</h3>
             <button
-              appTooltip="Média dos scores por tipo de teste"
+              appTooltip="Score médio (0-100) por tipo. Espiral = coordenação motora, Voz = padrões vocais"
               [tooltipPosition]="'top'"
             >
               <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
@@ -352,7 +352,7 @@
           <div class="flex items-center gap-2 mb-3">
             <h3 class="text-sm font-semibold text-neutral-900">Extremos</h3>
             <button
-              appTooltip="Melhores e piores scores registrados"
+              appTooltip="Extremos (0-100): melhor (mais saudável) e pior (requer atenção) por tipo de teste"
               [tooltipPosition]="'top'"
             >
               <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">

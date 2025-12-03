@@ -136,7 +136,7 @@
         >
           Tipo de Teste
           <button
-            appTooltip="Filtre por tipo de teste (Espiral ou Voz)"
+            appTooltip="Filtrar por tipo: Espiral (coordenação motora) ou Voz (análise vocal)"
             [tooltipPosition]="'top'"
             class="text-neutral-500 hover:text-neutral-700 transition-colors"
           >
@@ -175,7 +175,7 @@
         >
           Classificação
           <button
-            appTooltip="Filtre por resultado da classificação"
+            appTooltip="Filtrar por classificação: Saudável (score ≥70) ou Parkinson (score <70)"
             [tooltipPosition]="'top'"
             class="text-neutral-500 hover:text-neutral-700 transition-colors"
           >
@@ -291,55 +291,7 @@
     </div>
     }
 
-    <!-- Summary Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Total Tests Card -->
-      <div
-        class="bg-yellow-100 rounded-2xl p-4 relative overflow-hidden border border-yellow-200"
-      >
-        <div
-          class="absolute inset-0 opacity-10"
-          style="
-            background-image: radial-gradient(
-              circle,
-              rgb(26, 26, 26) 1px,
-              transparent 1px
-            );
-            background-size: 16px 16px;
-          "
-        ></div>
-        <div class="relative z-10">
-          <p class="text-xs font-medium text-neutral-700 mb-1">
-            Total de Testes
-          </p>
-          <p class="text-3xl font-bold text-neutral-900">
-            {{ timeline.total_count }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Average Score Card -->
-      <div
-        class="bg-pink-100 rounded-2xl p-4 relative overflow-hidden border border-pink-200"
-      >
-        <svg
-          class="absolute bottom-0 right-0 w-20 h-20 opacity-10 text-neutral-900"
-          viewBox="0 0 200 200"
-        >
-          <path
-            d="M0,100 Q50,50 100,100 T200,100 L200,200 L0,200 Z"
-            fill="currentColor"
-          />
-        </svg>
-        <div class="relative z-10">
-          <p class="text-xs font-medium text-neutral-700 mb-1">Score Médio</p>
-          <p class="text-3xl font-bold text-neutral-900">
-            {{ getAverageScore() }}
-          </p>
-        </div>
-      </div>
     </div>
-  </div>
 
   <!-- Table View -->
   <div
@@ -356,7 +308,7 @@
               <div class="flex items-center gap-2">
                 ID
                 <button
-                  appTooltip="Identificador único do teste"
+                  appTooltip="ID único do teste. Clique na linha para ver detalhes completos"
                   [tooltipPosition]="'top'"
                   class="text-neutral-400 hover:text-neutral-600"
                 >
@@ -395,7 +347,7 @@
               <div class="flex items-center gap-2">
                 Score
                 <button
-                  appTooltip="Resultado da análise de IA (0-100)"
+                  appTooltip="Score de saúde (0-100): quanto maior, mais saudável. ≥70 = Saudável, <70 = Possível Parkinson"
                   [tooltipPosition]="'top'"
                   class="text-neutral-400 hover:text-neutral-600"
                 >

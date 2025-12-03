@@ -68,14 +68,10 @@ export class ChartsTabComponent implements OnChanges {
         intersect: false,
         callbacks: {
           label: (context) => {
-            let label = context.dataset.label || '';
-            if (label) {
-              label += ': ';
-            }
-            if (context.parsed.y !== null) {
-              label += (context.parsed.y * 100).toFixed(1);
-            }
-            return label;
+            const label = context.dataset.label || '';
+            const value = context.parsed.y?.toFixed(1) || '0';
+            const status = Number(value) >= 70 ? 'Saudável' : 'Atenção';
+            return `${label}: ${value} pts (${status})`;
           }
         }
       }
@@ -158,14 +154,9 @@ export class ChartsTabComponent implements OnChanges {
       tooltip: {
         callbacks: {
           label: (context) => {
-            let label = context.dataset.label || '';
-            if (label) {
-              label += ': ';
-            }
-            if (context.parsed.y !== null) {
-              label += (context.parsed.y * 100).toFixed(1);
-            }
-            return label;
+            const label = context.dataset.label || '';
+            const value = context.parsed.y?.toFixed(1) || '0';
+            return `${label}: ${value} pts (média do mês)`;
           }
         }
       }
@@ -269,7 +260,12 @@ export class ChartsTabComponent implements OnChanges {
       return;
     }
 
-    const tests = this.chartData();
+    const tests = this.filteredChartData();
+    if (tests.length === 0) {
+      this.computedStats.set(null);
+      return;
+    }
+
     const spiralTests = tests.filter(t => t.type === 'spiral');
     const voiceTests = tests.filter(t => t.type === 'voice');
 
@@ -398,15 +394,14 @@ export class ChartsTabComponent implements OnChanges {
   }
 
   updatePieChart(): void {
-    if (!this.statistics) return;
+    const data = this.filteredChartData();
+    const healthyCount = data.filter(d => d.classification === 'HEALTHY').length;
+    const parkinsonCount = data.filter(d => d.classification === 'PARKINSON').length;
 
     this.pieChartData = {
       labels: ['Saudável', 'Parkinson'],
       datasets: [{
-        data: [
-          this.statistics.healthy_classification_count,
-          this.statistics.parkinson_classification_count
-        ],
+        data: [healthyCount, parkinsonCount],
         backgroundColor: ['#10b981', '#ef4444'],
         hoverBackgroundColor: ['#059669', '#dc2626'],
         borderWidth: 2,

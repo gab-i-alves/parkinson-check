@@ -205,4 +205,21 @@ export class TestResultComponent implements OnInit {
   getFeatureValue(features: SpiralExtractedFeatures, key: string): number {
     return features[key as keyof SpiralExtractedFeatures];
   }
+
+  calculateAverageProbability(result: ClinicalSpiralTestResult): string {
+    const modelKeys = Object.keys(result.model_results);
+    let totalProbability = 0;
+    let count = 0;
+
+    for (const key of modelKeys) {
+      const probs = result.model_results[key].probabilities;
+      if (probs && probs['Parkinson'] !== undefined) {
+        totalProbability += probs['Parkinson'];
+        count++;
+      }
+    }
+
+    if (count === 0) return '0.0';
+    return ((totalProbability / count) * 100).toFixed(1);
+  }
 }

@@ -67,7 +67,7 @@
         <div class="flex items-center gap-2 mb-2">
           <p class="text-xs font-medium text-neutral-700">Total de Testes</p>
           <button
-            appTooltip="Número total de testes realizados (espiral + voz)"
+            appTooltip="Total de testes concluídos (Espiral + Voz). Mais testes = melhor acompanhamento"
             [tooltipPosition]="'top'"
             class="inline-flex items-center"
           >
@@ -101,7 +101,7 @@
         <div class="flex items-center gap-2 mb-2">
           <p class="text-xs font-medium text-neutral-700">Último Teste</p>
           <button
-            appTooltip="Data do teste mais recente realizado"
+            appTooltip="Último teste realizado. Recomenda-se testes regulares para monitoramento contínuo"
             [tooltipPosition]="'top'"
             class="inline-flex items-center"
           >
@@ -131,7 +131,7 @@
         <div class="flex items-center gap-2 mb-2">
           <p class="text-xs font-medium text-neutral-700">Tendência Geral</p>
           <button
-            appTooltip="Direção da evolução dos scores ao longo do tempo"
+            appTooltip="Tendência: compara primeira e segunda metade dos testes. ↑ Melhorando, → Estável, ↓ Atenção"
             [tooltipPosition]="'top'"
             class="inline-flex items-center"
           >
@@ -159,7 +159,7 @@
       <div class="flex items-center gap-2 mb-2">
         <p class="text-xs font-medium text-neutral-700">Intervalo Médio</p>
         <button
-          appTooltip="Tempo médio entre a realização de testes consecutivos"
+          appTooltip="Intervalo médio entre testes. Menor intervalo = monitoramento mais frequente"
           [tooltipPosition]="'top'"
           class="inline-flex items-center"
         >
@@ -187,7 +187,7 @@
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-base font-semibold text-neutral-900">Testes de Espiral</h3>
         <button
-          appTooltip="Estatísticas dos testes de desenho em espiral"
+          appTooltip="Teste de Espiral: avalia coordenação motora fina. Score 0-100, ≥70 = saudável"
           [tooltipPosition]="'top'"
           class="inline-flex items-center"
         >
@@ -236,7 +236,7 @@
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-base font-semibold text-neutral-900">Testes de Voz</h3>
         <button
-          appTooltip="Estatísticas dos testes de análise vocal"
+          appTooltip="Teste de Voz: analisa padrões vocais para detectar alterações. Score 0-100, ≥70 = saudável"
           [tooltipPosition]="'top'"
           class="inline-flex items-center"
         >
@@ -288,7 +288,7 @@
         Distribuição de Classificações
       </h3>
       <button
-        appTooltip="Proporção entre testes classificados como saudável vs Parkinson"
+        appTooltip="Classificação baseada no threshold de 70 pts: Saudável (≥70) = baixa probabilidade de Parkinson"
         [tooltipPosition]="'top'"
         class="inline-flex items-center"
       >

@@ -258,63 +258,64 @@
     <div class="space-y-5">
       <h2 class="text-xl font-bold text-neutral-900">Análises Detalhadas</h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Card 1: Pacientes Precisando Atenção (CA4) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
-          <div class="flex items-center gap-2 mb-4">
-            <h3 class="text-lg font-semibold text-neutral-900">Pacientes Precisando Atenção</h3>
-            <button
-              type="button"
-              class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-100 transition-colors"
-              aria-label="Informações sobre pacientes precisando atenção"
-              [appTooltip]="'Lista de pacientes com scores abaixo de 60%, ordenados por prioridade. Crítico (<40%) e Atenção (40-60%)'"
-              [tooltipPosition]="'top'"
-            >
-              <svg class="w-4 h-4 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-
-          @if (patientsNeedingAttention().length > 0) {
-            <div class="space-y-3 max-h-96 overflow-y-auto">
-              @for (patient of patientsNeedingAttention(); track patient.patient_id) {
-                <div class="border border-neutral-200 rounded-lg p-3 hover:bg-neutral-50 transition-colors cursor-pointer" (click)="viewPatientDetails(patient.patient_id)">
-                  <div class="flex items-start justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                      <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-700 font-semibold text-sm">
-                        {{ getPatientInitials(patient.patient_name) }}
-                      </div>
-                      <div class="flex-1">
-                        <p class="text-sm font-semibold text-neutral-900">{{ patient.patient_name }}</p>
-                        <p class="text-xs text-neutral-500">{{ patient.total_tests }} testes</p>
-                      </div>
-                    </div>
-                    <span class="text-xs px-2 py-1 rounded-full border" [ngClass]="getStatusBadgeClass(patient.status)">
-                      {{ getStatusLabel(patient.status) }}
-                    </span>
-                  </div>
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="text-neutral-600">Score médio:</span>
-                    <span class="font-bold" [ngClass]="{'text-red-600': patient.avg_score < 0.4, 'text-yellow-600': patient.avg_score >= 0.4}">
-                      {{ (patient.avg_score * 100).toFixed(0) }}%
-                    </span>
-                  </div>
-                </div>
-              }
-            </div>
-          } @else {
-            <div class="text-center py-12 text-neutral-500">
-              <svg class="w-12 h-12 mx-auto mb-3 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <p class="text-sm">Nenhum paciente precisando atenção</p>
-            </div>
-          }
+      <!-- Card 1: Pacientes Precisando Atenção - FULL WIDTH -->
+      <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <div class="flex items-center gap-2 mb-4">
+          <h3 class="text-lg font-semibold text-neutral-900">Pacientes Precisando Atenção</h3>
+          <button
+            type="button"
+            class="inline-flex items-center justify-center p-1 rounded hover:bg-neutral-100 transition-colors"
+            aria-label="Informações sobre pacientes precisando atenção"
+            [appTooltip]="'Lista de pacientes com scores abaixo de 60%, ordenados por prioridade. Crítico (<40%) e Atenção (40-60%)'"
+            [tooltipPosition]="'top'"
+          >
+            <svg class="w-4 h-4 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+          </button>
         </div>
 
-        <!-- Card 2: Frequência de Testes (CA2 - movido) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        @if (patientsNeedingAttention().length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 max-h-72 overflow-y-auto">
+            @for (patient of patientsNeedingAttention(); track patient.patient_id) {
+              <div class="border border-neutral-200 rounded-lg p-3 hover:bg-neutral-50 transition-colors cursor-pointer" (click)="viewPatientDetails(patient.patient_id)">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-700 font-semibold text-sm">
+                      {{ getPatientInitials(patient.patient_name) }}
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-sm font-semibold text-neutral-900">{{ patient.patient_name }}</p>
+                      <p class="text-xs text-neutral-500">{{ patient.total_tests }} testes</p>
+                    </div>
+                  </div>
+                  <span class="text-xs px-2 py-1 rounded-full border" [ngClass]="getStatusBadgeClass(patient.status)">
+                    {{ getStatusLabel(patient.status) }}
+                  </span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-neutral-600">Score médio:</span>
+                  <span class="font-bold" [ngClass]="{'text-red-600': patient.avg_score < 0.4, 'text-yellow-600': patient.avg_score >= 0.4}">
+                    {{ (patient.avg_score * 100).toFixed(0) }}%
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="text-center py-12 text-neutral-500">
+            <svg class="w-12 h-12 mx-auto mb-3 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-sm">Nenhum paciente precisando atenção</p>
+          </div>
+        }
+      </div>
+
+      <!-- Row 2: Gráficos em layout 2/3 + 1/3 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Card 2: Frequência de Testes - 2/3 width -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
           <div class="flex items-center gap-2 mb-4">
             <h3 class="text-lg font-semibold text-neutral-900">Frequência de Testes</h3>
             <button
@@ -338,8 +339,8 @@
           ></app-dashboard-chart>
         </div>
 
-        <!-- Card 3: Distribuição de Testes por Tipo (CA5) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
+        <!-- Card 3: Distribuição de Testes - 1/3 width -->
+        <div class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-neutral-200 p-6">
           <div class="flex items-center gap-2 mb-4">
             <h3 class="text-lg font-semibold text-neutral-900">Distribuição de Testes</h3>
             <button

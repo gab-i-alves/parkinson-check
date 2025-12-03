@@ -126,193 +126,139 @@
       <!-- Content Section -->
       <div class="px-6 py-6">
         @if (isSpiralResult(res)) {
-        <!-- Spiral Test Analysis -->
-        <div>
-          <h3 class="text-lg font-bold text-neutral-900 mb-4">
-            Análise da Espiral
-          </h3>
+        <!-- Spiral Test Analysis - Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left Column - Analysis -->
+          <div class="lg:col-span-2">
+            <h3 class="text-lg font-bold text-neutral-900 mb-4">
+              Análise da Espiral
+            </h3>
 
-          <!-- Vote Count Cards -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div class="bg-green-50 border border-green-200 p-5 rounded-2xl hover:shadow-md hover:-translate-y-1 transition-all duration-200">
-              <div class="flex items-center gap-2 mb-2">
-                <p class="text-xs text-neutral-700 font-medium">
-                  Votos para "Saudável"
-                </p>
-                <button
-                  appTooltip="Número de modelos que classificaram como saudável"
-                  [tooltipPosition]="'top'"
-                  class="inline-flex items-center"
-                >
-                  <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <p class="text-3xl font-bold text-green-600">
-                {{ res.vote_count.Healthy }}
-              </p>
-            </div>
-            <div class="bg-pink-50 border border-pink-200 p-5 rounded-2xl hover:shadow-md hover:-translate-y-1 transition-all duration-200">
-              <div class="flex items-center gap-2 mb-2">
-                <p class="text-xs text-neutral-700 font-medium">
-                  Votos para "Parkinson"
-                </p>
-                <button
-                  appTooltip="Número de modelos que classificaram como Parkinson"
-                  [tooltipPosition]="'top'"
-                  class="inline-flex items-center"
-                >
-                  <svg class="w-3.5 h-3.5 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-              <p class="text-3xl font-bold text-pink-600">
-                {{ res.vote_count.Parkinson }}
-              </p>
-            </div>
-          </div>
-
-          <!-- Model Results Table - Intelly Style -->
-          <h4 class="text-base font-bold text-neutral-900 mb-3">
-            Resultados por Modelo de IA
-          </h4>
-          <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-neutral-200">
-                <thead class="bg-neutral-50">
-                  <tr>
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-neutral-700 uppercase tracking-wider"
-                    >
-                      <div class="flex items-center gap-2">
-                        Modelo
-                        <button
-                          appTooltip="Nome do modelo de inteligência artificial utilizado"
-                          [tooltipPosition]="'top'"
-                          class="text-neutral-400 hover:text-neutral-600"
-                        >
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-neutral-700 uppercase tracking-wider"
-                    >
-                      <div class="flex items-center gap-2">
-                        Previsão
-                        <button
-                          appTooltip="Classificação prevista pelo modelo"
-                          [tooltipPosition]="'top'"
-                          class="text-neutral-400 hover:text-neutral-600"
-                        >
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-neutral-700 uppercase tracking-wider"
-                    >
-                      <div class="flex items-center gap-2">
-                        Probabilidades
-                        <button
-                          appTooltip="Confiança do modelo em cada classificação"
-                          [tooltipPosition]="'top'"
-                          class="text-neutral-400 hover:text-neutral-600"
-                        >
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-neutral-100">
-                  @for (modelKey of getModelKeys(res); track modelKey; let i = $index) {
-                  <tr [class]="i % 2 === 0 ? 'hover:bg-yellow-50/30 transition-colors' : 'hover:bg-pink-50/30 transition-colors'">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-neutral-900">
-                      {{ modelKey }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                      <app-badge [variant]="getPredictionBadgeVariant(res.model_results[modelKey].prediction)">
-                        {{ getPredictionLabel(res.model_results[modelKey].prediction) }}
-                      </app-badge>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">
-                      @if (res.model_results[modelKey].probabilities; as probs) {
-                      <div class="flex items-center gap-3">
-                        <span class="text-green-700 font-medium">H: {{ formatProbability(probs["Healthy"]) }}</span>
-                        <span class="text-neutral-400">|</span>
-                        <span class="text-pink-700 font-medium">P: {{ formatProbability(probs["Parkinson"]) }}</span>
-                      </div>
-                      } @else {
-                      <span class="text-neutral-400">N/A</span>
-                      }
-                    </td>
-                  </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Extracted Features Section -->
-          @if (hasExtractedFeatures(res)) {
-          <div class="mt-6">
-            <h4 class="text-base font-bold text-neutral-900 mb-3">
-              <div class="flex items-center gap-2">
-                Características Extraídas
-                <button
-                  appTooltip="Métricas geométricas extraídas da imagem da espiral usadas pelos modelos de IA para classificação"
-                  [tooltipPosition]="'top'"
-                  class="text-neutral-400 hover:text-neutral-600"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </h4>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              @for (featureKey of getFeatureKeys(res.extracted_features!); track featureKey) {
-              <div class="bg-neutral-50 border border-neutral-200 p-4 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-                <div class="flex items-center gap-1.5 mb-1">
-                  <p class="text-xs text-neutral-600 font-medium">{{ getFeatureLabel(featureKey) }}</p>
+            <!-- Vote Count Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+              <div class="bg-green-50 border border-green-200 p-3 rounded-2xl hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="text-xs text-neutral-700 font-medium">
+                    Votos para "Saudável"
+                  </p>
                   <button
-                    [appTooltip]="getFeatureDescription(featureKey)"
+                    appTooltip="Número de modelos que classificaram como saudável"
+                    [tooltipPosition]="'top'"
+                    class="inline-flex items-center"
+                  >
+                    <svg class="w-3 h-3 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+                <p class="text-2xl font-bold text-green-600">
+                  {{ res.vote_count.Healthy }}
+                </p>
+              </div>
+              <div class="bg-pink-50 border border-pink-200 p-3 rounded-2xl hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="text-xs text-neutral-700 font-medium">
+                    Votos para "Parkinson"
+                  </p>
+                  <button
+                    appTooltip="Número de modelos que classificaram como Parkinson"
+                    [tooltipPosition]="'top'"
+                    class="inline-flex items-center"
+                  >
+                    <svg class="w-3 h-3 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+                <p class="text-2xl font-bold text-pink-600">
+                  {{ res.vote_count.Parkinson }}
+                </p>
+              </div>
+              <div class="bg-purple-50 border border-purple-200 p-3 rounded-2xl hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="text-xs text-neutral-700 font-medium">
+                    Média de Probabilidade
+                  </p>
+                  <button
+                    appTooltip="Média das probabilidades de Parkinson de todos os modelos"
+                    [tooltipPosition]="'top'"
+                    class="inline-flex items-center"
+                  >
+                    <svg class="w-3 h-3 text-neutral-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+                <p class="text-2xl font-bold text-purple-600">
+                  {{ calculateAverageProbability(res) }}%
+                </p>
+              </div>
+            </div>
+
+            <!-- Model Results Table - Compact -->
+            <h4 class="text-sm font-bold text-neutral-900 mb-2">
+              Resultados por Modelo de IA
+            </h4>
+            <div class="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-neutral-200">
+                  <thead class="bg-neutral-50">
+                    <tr>
+                      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-neutral-700 uppercase tracking-wider">
+                        Modelo
+                      </th>
+                      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-neutral-700 uppercase tracking-wider">
+                        Previsão
+                      </th>
+                      <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-neutral-700 uppercase tracking-wider">
+                        Probabilidades
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-neutral-100">
+                    @for (modelKey of getModelKeys(res); track modelKey; let i = $index) {
+                    <tr [class]="i % 2 === 0 ? 'hover:bg-yellow-50/30 transition-colors' : 'hover:bg-pink-50/30 transition-colors'">
+                      <td class="px-3 py-2 whitespace-nowrap text-xs font-semibold text-neutral-900">
+                        {{ modelKey }}
+                      </td>
+                      <td class="px-3 py-2 whitespace-nowrap text-xs">
+                        <app-badge [variant]="getPredictionBadgeVariant(res.model_results[modelKey].prediction)">
+                          {{ getPredictionLabel(res.model_results[modelKey].prediction) }}
+                        </app-badge>
+                      </td>
+                      <td class="px-3 py-2 whitespace-nowrap text-xs text-neutral-600">
+                        @if (res.model_results[modelKey].probabilities; as probs) {
+                        <div class="flex items-center gap-2">
+                          <span class="text-green-700 font-medium">H: {{ formatProbability(probs["Healthy"]) }}</span>
+                          <span class="text-neutral-400">|</span>
+                          <span class="text-pink-700 font-medium">P: {{ formatProbability(probs["Parkinson"]) }}</span>
+                        </div>
+                        } @else {
+                        <span class="text-neutral-400">N/A</span>
+                        }
+                      </td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column - Features + Warning -->
+          <div class="lg:col-span-1">
+            <!-- Extracted Features Section -->
+            @if (hasExtractedFeatures(res)) {
+            <div class="mb-4">
+              <h4 class="text-sm font-bold text-neutral-900 mb-2">
+                <div class="flex items-center gap-2">
+                  Características Extraídas
+                  <button
+                    appTooltip="Métricas geométricas extraídas da imagem da espiral usadas pelos modelos de IA para classificação"
                     [tooltipPosition]="'top'"
                     class="text-neutral-400 hover:text-neutral-600"
                   >
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
@@ -322,17 +268,58 @@
                     </svg>
                   </button>
                 </div>
-                <p class="text-lg font-bold text-neutral-900">
-                  {{ formatFeatureValue(featureKey, getFeatureValue(res.extracted_features!, featureKey)) }}
-                  @if (getFeatureUnit(featureKey)) {
-                  <span class="text-xs font-normal text-neutral-500">{{ getFeatureUnit(featureKey) }}</span>
-                  }
-                </p>
+              </h4>
+              <div class="grid grid-cols-2 gap-2">
+                @for (featureKey of getFeatureKeys(res.extracted_features!); track featureKey) {
+                <div class="bg-neutral-50 border border-neutral-200 p-2.5 rounded-lg hover:shadow-sm transition-all duration-200">
+                  <div class="flex items-center gap-1 mb-0.5">
+                    <p class="text-[10px] text-neutral-600 font-medium leading-tight">{{ getFeatureLabel(featureKey) }}</p>
+                    <button
+                      [appTooltip]="getFeatureDescription(featureKey)"
+                      [tooltipPosition]="'top'"
+                      class="text-neutral-400 hover:text-neutral-600"
+                    >
+                      <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="text-sm font-bold text-neutral-900">
+                    {{ formatFeatureValue(featureKey, getFeatureValue(res.extracted_features!, featureKey)) }}
+                    @if (getFeatureUnit(featureKey)) {
+                    <span class="text-[10px] font-normal text-neutral-500">{{ getFeatureUnit(featureKey) }}</span>
+                    }
+                  </p>
+                </div>
+                }
               </div>
-              }
+            </div>
+            }
+
+            <!-- Aviso de Não-Diagnóstico -->
+            <div class="bg-yellow-50 border border-yellow-300 rounded-xl p-3 relative overflow-hidden">
+              <div class="absolute inset-0 opacity-10"
+                style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 12px 12px;">
+              </div>
+              <div class="relative z-10 flex items-start gap-2">
+                <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                  <p class="text-xs font-semibold text-yellow-800 mb-0.5">Aviso Importante</p>
+                  <p class="text-xs text-yellow-700 leading-relaxed">
+                    Este resultado funciona como <strong>indicador auxiliar</strong> e <strong>não constitui diagnóstico médico</strong>.
+                    A interpretação clínica é responsabilidade exclusiva de um profissional de saúde qualificado.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-          }
         </div>
         } @else {
         <!-- Voice Test Analysis -->
@@ -389,27 +376,27 @@
               {{ res.analysis || "Análise não disponível" }}
             </p>
           </div>
-        </div>
-        }
 
-        <!-- Aviso de Não-Diagnóstico -->
-        <div class="mt-6 bg-yellow-50 border border-yellow-300 rounded-2xl p-5 relative overflow-hidden">
-          <div class="absolute inset-0 opacity-10"
-            style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;">
-          </div>
-          <div class="relative z-10 flex items-start gap-3">
-            <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-            </svg>
-            <div>
-              <p class="text-sm font-semibold text-yellow-800 mb-1">Aviso Importante</p>
-              <p class="text-sm text-yellow-700 leading-relaxed">
-                Este resultado funciona como <strong>indicador auxiliar</strong> e <strong>não constitui diagnóstico médico</strong>.
-                A interpretação clínica é responsabilidade exclusiva de um profissional de saúde qualificado.
-              </p>
+          <!-- Aviso de Não-Diagnóstico (Voice Test) -->
+          <div class="mt-6 bg-yellow-50 border border-yellow-300 rounded-2xl p-5 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10"
+              style="background-image: radial-gradient(circle, rgb(26, 26, 26) 1px, transparent 1px); background-size: 16px 16px;">
+            </div>
+            <div class="relative z-10 flex items-start gap-3">
+              <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <div>
+                <p class="text-sm font-semibold text-yellow-800 mb-1">Aviso Importante</p>
+                <p class="text-sm text-yellow-700 leading-relaxed">
+                  Este resultado funciona como <strong>indicador auxiliar</strong> e <strong>não constitui diagnóstico médico</strong>.
+                  A interpretação clínica é responsabilidade exclusiva de um profissional de saúde qualificado.
+                </p>
+              </div>
             </div>
           </div>
         </div>
+        }
       </div>
     </div>
     } @else {
