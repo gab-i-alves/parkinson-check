@@ -58,7 +58,7 @@ export class StatisticsTabComponent {
 
   formatScore(score: number | null): string {
     if (score === null) return 'N/A';
-    return score.toFixed(2);
+    return (score * 100).toFixed(1);
   }
 
   getDaysBadgeVariant(days: number): 'success' | 'warning' | 'error' | 'neutral' {

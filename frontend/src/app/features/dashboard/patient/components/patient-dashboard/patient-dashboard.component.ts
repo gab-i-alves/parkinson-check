@@ -77,7 +77,7 @@ export class PatientDashboardComponent implements OnInit {
       labels: ['Você', 'Média Global'],
       datasets: [
         {
-          data: [stats.patient_avg_score, stats.global_avg_score || 0],
+          data: [stats.patient_avg_score * 100, (stats.global_avg_score || 0) * 100],
           label: 'Score Médio',
           backgroundColor: ['rgba(219, 39, 119, 0.8)', 'rgba(163, 163, 163, 0.6)'],
           borderColor: ['rgb(219, 39, 119)', 'rgb(163, 163, 163)'],
@@ -94,7 +94,7 @@ export class PatientDashboardComponent implements OnInit {
         title: { display: false },
       },
       scales: {
-        y: { beginAtZero: true, max: 1 },
+        y: { beginAtZero: true, max: 100 },
       },
     };
   }
@@ -111,8 +111,8 @@ export class PatientDashboardComponent implements OnInit {
       labels: ['Você', `Faixa ${stats.demographics.age_group} anos`, this.getRegionLabel()],
       datasets: [
         {
-          data: [stats.patient_avg_score, stats.age_group_avg_score || 0, regionalAvg],
-          label: 'Score Médio (0-1)',
+          data: [stats.patient_avg_score * 100, (stats.age_group_avg_score || 0) * 100, regionalAvg * 100],
+          label: 'Score Médio',
           backgroundColor: [
             'rgba(219, 39, 119, 0.8)',
             'rgba(59, 130, 246, 0.8)',
@@ -137,12 +137,7 @@ export class PatientDashboardComponent implements OnInit {
       scales: {
         y: {
           beginAtZero: true,
-          max: 1,
-          ticks: {
-            callback: function(value) {
-              return (Number(value) * 100).toFixed(0);
-            }
-          }
+          max: 100,
         },
       },
     };
@@ -159,7 +154,7 @@ export class PatientDashboardComponent implements OnInit {
       labels: ['Masculino', 'Feminino', 'Você'],
       datasets: [
         {
-          data: [maleAvg, femaleAvg, stats.patient_avg_score],
+          data: [maleAvg * 100, femaleAvg * 100, stats.patient_avg_score * 100],
           label: 'Score Médio',
           backgroundColor: [
             'rgba(59, 130, 246, 0.7)',
@@ -184,7 +179,7 @@ export class PatientDashboardComponent implements OnInit {
         legend: { display: false },
       },
       scales: {
-        x: { beginAtZero: true, max: 1 },
+        x: { beginAtZero: true, max: 100 },
       },
     };
   }

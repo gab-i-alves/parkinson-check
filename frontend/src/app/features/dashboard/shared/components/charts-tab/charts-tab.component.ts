@@ -73,7 +73,7 @@ export class ChartsTabComponent implements OnChanges {
               label += ': ';
             }
             if (context.parsed.y !== null) {
-              label += context.parsed.y.toFixed(2);
+              label += (context.parsed.y * 100).toFixed(1);
             }
             return label;
           }
@@ -92,9 +92,13 @@ export class ChartsTabComponent implements OnChanges {
         display: true,
         title: {
           display: true,
-          text: 'Score'
+          text: 'Score (0-100)'
         },
-        beginAtZero: true
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+          callback: (value) => value
+        }
       }
     }
   };
@@ -159,7 +163,7 @@ export class ChartsTabComponent implements OnChanges {
               label += ': ';
             }
             if (context.parsed.y !== null) {
-              label += context.parsed.y.toFixed(2);
+              label += (context.parsed.y * 100).toFixed(1);
             }
             return label;
           }
@@ -176,6 +180,7 @@ export class ChartsTabComponent implements OnChanges {
       },
       y: {
         display: true,
+        max: 100,
         title: {
           display: true,
           text: 'Score Médio'
@@ -358,7 +363,7 @@ export class ChartsTabComponent implements OnChanges {
     if (spiralData.length > 0 && (this.selectedTestType() === 'all' || this.selectedTestType() === 'spiral')) {
       datasets.push({
         label: 'Teste de Espiral',
-        data: spiralData.map(d => d.score),
+        data: spiralData.map(d => d.score * 100),
         borderColor: '#3b82f6',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.4,
@@ -371,7 +376,7 @@ export class ChartsTabComponent implements OnChanges {
     if (voiceData.length > 0 && (this.selectedTestType() === 'all' || this.selectedTestType() === 'voice')) {
       datasets.push({
         label: 'Teste de Voz',
-        data: voiceData.map(d => d.score),
+        data: voiceData.map(d => d.score * 100),
         borderColor: '#a855f7',
         backgroundColor: 'rgba(168, 85, 247, 0.1)',
         tension: 0.4,
@@ -446,7 +451,7 @@ export class ChartsTabComponent implements OnChanges {
     if (this.selectedTestType() === 'all' || this.selectedTestType() === 'spiral') {
       const spiralAvgs = sortedMonths.map(month => {
         const scores = monthlyData.get(month)!.spiral;
-        return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+        return scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length) * 100 : 0;
       });
 
       if (spiralAvgs.some(v => v > 0)) {
@@ -463,7 +468,7 @@ export class ChartsTabComponent implements OnChanges {
     if (this.selectedTestType() === 'all' || this.selectedTestType() === 'voice') {
       const voiceAvgs = sortedMonths.map(month => {
         const scores = monthlyData.get(month)!.voice;
-        return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+        return scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length) * 100 : 0;
       });
 
       if (voiceAvgs.some(v => v > 0)) {
@@ -519,10 +524,10 @@ export class ChartsTabComponent implements OnChanges {
       const trend = avgSecond >= avgFirst ? 100 : Math.max(0, 100 - Math.abs(((avgFirst - avgSecond) / avgFirst) * 100));
 
       // Qualidade: baseada no score médio normalizado
-      const quality = Math.min(100, avgScore * 10);
+      const quality = Math.min(100, avgScore * 100);
 
       return {
-        scoreNorm: Math.min(100, avgScore * 10),
+        scoreNorm: Math.min(100, avgScore * 100),
         consistency,
         frequency,
         trend,

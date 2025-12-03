@@ -130,7 +130,7 @@
             <p class="text-xs font-medium text-neutral-700 mb-1">Score Médio</p>
             @if (computedStats(); as stats) {
             <p class="text-2xl font-bold text-neutral-900">
-              {{ ((stats.avgSpiralScore + stats.avgVoiceScore) / 2).toFixed(1) }}
+              {{ ((stats.avgSpiralScore + stats.avgVoiceScore) / 2 * 100).toFixed(1) }}
             </p>
             }
           </div>
@@ -327,7 +327,7 @@
                 <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
                 <span class="text-xs font-medium text-neutral-700">Espiral</span>
               </div>
-              <span class="text-base font-bold text-blue-600">{{ stats.avgSpiralScore.toFixed(2) }}</span>
+              <span class="text-base font-bold text-blue-600">{{ (stats.avgSpiralScore * 100).toFixed(1) }}</span>
             </div>
             }
             @if (stats.totalVoiceTests > 0) {
@@ -336,7 +336,7 @@
                 <div class="w-2.5 h-2.5 bg-pink-500 rounded-full"></div>
                 <span class="text-xs font-medium text-neutral-700">Voz</span>
               </div>
-              <span class="text-base font-bold text-pink-600">{{ stats.avgVoiceScore.toFixed(2) }}</span>
+              <span class="text-base font-bold text-pink-600">{{ (stats.avgVoiceScore * 100).toFixed(1) }}</span>
             </div>
             }
           </div>
@@ -369,13 +369,13 @@
                   <svg class="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                   </svg>
-                  <span class="font-semibold text-green-700">{{ stats.bestSpiralScore.toFixed(2) }}</span>
+                  <span class="font-semibold text-green-700">{{ (stats.bestSpiralScore * 100).toFixed(1) }}</span>
                 </div>
                 <div class="flex items-center gap-1">
                   <svg class="w-3 h-3 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
                   </svg>
-                  <span class="font-semibold text-red-700">{{ stats.worstSpiralScore.toFixed(2) }}</span>
+                  <span class="font-semibold text-red-700">{{ (stats.worstSpiralScore * 100).toFixed(1) }}</span>
                 </div>
               </div>
             </div>
@@ -388,13 +388,13 @@
                   <svg class="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                   </svg>
-                  <span class="font-semibold text-green-700">{{ stats.bestVoiceScore.toFixed(2) }}</span>
+                  <span class="font-semibold text-green-700">{{ (stats.bestVoiceScore * 100).toFixed(1) }}</span>
                 </div>
                 <div class="flex items-center gap-1">
                   <svg class="w-3 h-3 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
                   </svg>
-                  <span class="font-semibold text-red-700">{{ stats.worstVoiceScore.toFixed(2) }}</span>
+                  <span class="font-semibold text-red-700">{{ (stats.worstVoiceScore * 100).toFixed(1) }}</span>
                 </div>
               </div>
             </div>

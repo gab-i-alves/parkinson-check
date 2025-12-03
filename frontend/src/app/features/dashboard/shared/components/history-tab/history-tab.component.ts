@@ -155,10 +155,10 @@ export class HistoryTabComponent implements OnChanges {
 
   getAverageScore(): string {
     if (!this.timeline || this.timeline.tests.length === 0) {
-      return '0.00';
+      return '0.0';
     }
     const sum = this.timeline.tests.reduce((acc, test) => acc + test.score, 0);
     const avg = sum / this.timeline.tests.length;
-    return avg.toFixed(2);
+    return (avg * 100).toFixed(1);
   }
 }

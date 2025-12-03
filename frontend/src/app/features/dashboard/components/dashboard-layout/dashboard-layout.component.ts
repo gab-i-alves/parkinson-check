@@ -271,6 +271,11 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
         { label: 'Dashboard', path: '/dashboard' },
         { label: 'Meus Médicos', path: '/dashboard/my-doctors' }
       ],
+      '/dashboard/my-test': [
+        { label: 'Dashboard', path: '/dashboard' },
+        { label: 'Meus Resultados', path: '/dashboard/results' },
+        { label: 'Carregando...', path: url }
+      ],
       '/dashboard/patient-requests': [
         { label: 'Dashboard', path: '/dashboard' },
         { label: 'Solicitações', path: '/dashboard/patient-requests' }

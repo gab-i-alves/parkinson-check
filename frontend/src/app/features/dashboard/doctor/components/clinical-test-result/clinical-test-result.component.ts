@@ -52,8 +52,8 @@ export class ClinicalTestResultComponent implements OnInit {
     if (this.isSpiralResult(res)) {
       return res.majority_decision;
     } else {
-      // Para voz, classificar baseado no score
-      return res.score >= 0.5 ? 'PARKINSON' : 'HEALTHY';
+      // Para voz, classificar baseado no score (threshold 0.7 = backend)
+      return res.score >= 0.7 ? 'HEALTHY' : 'PARKINSON';
     }
   }
 

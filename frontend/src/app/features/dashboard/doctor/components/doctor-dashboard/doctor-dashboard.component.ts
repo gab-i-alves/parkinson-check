@@ -208,7 +208,7 @@ export class DoctorDashboardComponent implements OnInit {
       labels: timeSeries.map((d: any) => d.date),
       datasets: [
         {
-          data: timeSeries.map((d: any) => d.avg_score),
+          data: timeSeries.map((d: any) => d.avg_score * 100),
           label: 'Score Médio',
           fill: false,
           borderColor: 'rgb(255, 181, 232)', // pink-200
@@ -228,7 +228,7 @@ export class DoctorDashboardComponent implements OnInit {
         title: { display: false },
       },
       scales: {
-        y: { beginAtZero: true, max: 1, title: { display: true, text: 'Score' } },
+        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score (0-100)' } },
         x: { title: { display: true, text: 'Período' } },
       },
     };
