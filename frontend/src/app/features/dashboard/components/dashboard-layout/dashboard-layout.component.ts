@@ -207,9 +207,19 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
         { label: 'Tipo de Teste', path: url },
         { label: 'Espiral por Webcam', path: url }
       ],
+      '/dashboard/doctor/clinical-test/result': [
+        { label: 'Dashboard', path: '/dashboard/doctor' },
+        { label: 'Realizar Testes', path: '/dashboard/doctor/clinical-test/patient-selection' },
+        { label: 'Resultado', path: url }
+      ],
       '/dashboard/doctor/clinical-test': [
         { label: 'Dashboard', path: '/dashboard/doctor' },
         { label: 'Realizar Testes', path: url }
+      ],
+      '/dashboard/doctor/test': [
+        { label: 'Dashboard', path: '/dashboard/doctor' },
+        { label: 'Meus Pacientes', path: '/dashboard/doctor/patients' },
+        { label: 'Carregando...', path: url }
       ],
       '/dashboard/doctor/binding-requests': [
         { label: 'Dashboard', path: '/dashboard/doctor' },
@@ -222,7 +232,7 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
       '/dashboard/admin/approve/:id': [
         { label: 'Dashboard', path: '/dashboard/admin' },
         { label: 'Médicos', path: '/dashboard/admin/doctors' },
-        { label: 'Solicitação de Cadastro', path: url }
+        { label: 'Carregando...', path: url }
       ],
       '/dashboard/admin/approve': [
         { label: 'Dashboard', path: '/dashboard/admin' },
@@ -258,6 +268,26 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
       '/dashboard/admin': [
         { label: 'Dashboard', path: '/dashboard/admin' },
         { label: 'Visão Geral', path: '/dashboard/admin' }
+      ],
+      '/dashboard/tests/spiral-test/webcam': [
+        { label: 'Dashboard', path: '/dashboard' },
+        { label: 'Realizar Testes', path: '/dashboard/tests' },
+        { label: 'Espiral por Webcam', path: url }
+      ],
+      '/dashboard/tests/spiral-test/paper': [
+        { label: 'Dashboard', path: '/dashboard' },
+        { label: 'Realizar Testes', path: '/dashboard/tests' },
+        { label: 'Espiral por Papel', path: url }
+      ],
+      '/dashboard/tests/voice-test': [
+        { label: 'Dashboard', path: '/dashboard' },
+        { label: 'Realizar Testes', path: '/dashboard/tests' },
+        { label: 'Teste de Voz', path: url }
+      ],
+      '/dashboard/tests/result': [
+        { label: 'Dashboard', path: '/dashboard' },
+        { label: 'Realizar Testes', path: '/dashboard/tests' },
+        { label: 'Resultado', path: url }
       ],
       '/dashboard/tests': [
         { label: 'Dashboard', path: '/dashboard' },

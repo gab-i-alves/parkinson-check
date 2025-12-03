@@ -83,6 +83,8 @@ export class DoctorApprovalComponent implements OnInit {
             status: doctor.status,
             location: doctor.location
           });
+          // Atualizar breadcrumb com nome do médico
+          this.breadcrumbService.updateBreadcrumb(this.router.url, doctor.name);
         }
         this.isLoading.set(false);
       },
