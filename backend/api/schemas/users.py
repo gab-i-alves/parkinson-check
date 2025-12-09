@@ -80,11 +80,14 @@ class DoctorSchema(UserSchema):
 
 
 class GetDoctorsSchema(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     name: Optional[str] = None
     cpf: Optional[str] = None
     email: Optional[str] = None
     crm: Optional[str] = None
-    specialty: Optional[str] = None
+    specialty: Optional[str] = Field(None, alias="expertise_area")
+    location: Optional[str] = None
 
 
 class GetPatientsSchema(BaseModel):

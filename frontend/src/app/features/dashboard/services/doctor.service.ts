@@ -28,7 +28,7 @@ export class DoctorService {
     };
   }
 
-  searchDoctors(term: string, specialty: string): Observable<Doctor[] | null> {
+  searchDoctors(term: string, specialty: string, location?: string): Observable<Doctor[] | null> {
     let params = new HttpParams();
 
     if (term) {
@@ -36,6 +36,9 @@ export class DoctorService {
     }
     if (specialty) {
       params = params.append('expertise_area', specialty);
+    }
+    if (location) {
+      params = params.append('location', location);
     }
 
     return this.http

@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
 from fastapi import Depends, HTTPException
 from http import HTTPStatus
@@ -6,13 +7,41 @@ from core.security.security import get_current_user
 from core.enums.doctor_enum import DoctorStatus
 
 from api.schemas.users import DoctorListResponse, GetDoctorsSchema
-from core.models import  Doctor, User
+from core.models import Address, Doctor, User
 from ..enums import UserType
 
 def get_doctors(session: Session, doctor: GetDoctorsSchema) -> list[DoctorListResponse]:
     doctor_query = session.query(Doctor).options(joinedload(Doctor.address))
-    filters = doctor.model_dump(exclude_none=True)
-    doctor_query = doctor_query.filter_by(**filters)
+
+    # Busca por nome OU CRM (campo de busca unificado)
+    if doctor.name:
+        doctor_query = doctor_query.filter(
+            or_(
+                Doctor.name.ilike(f'%{doctor.name}%'),
+                Doctor.crm.ilike(f'%{doctor.name}%')
+            )
+        )
+
+    if doctor.cpf:
+        doctor_query = doctor_query.filter(Doctor.cpf.ilike(f'%{doctor.cpf}%'))
+
+    if doctor.email:
+        doctor_query = doctor_query.filter(Doctor.email.ilike(f'%{doctor.email}%'))
+
+    if doctor.crm:
+        doctor_query = doctor_query.filter(Doctor.crm.ilike(f'%{doctor.crm}%'))
+
+    if doctor.specialty:
+        doctor_query = doctor_query.filter(Doctor.expertise_area.ilike(f'%{doctor.specialty}%'))
+
+    if doctor.location:
+        # Separar cidade e estado se houver vírgula (ex: "Curitiba, PR")
+        location_parts = [p.strip() for p in doctor.location.split(',')]
+        location_filters = []
+        for part in location_parts:
+            location_filters.append(Doctor.address.has(Address.city.ilike(f'%{part}%')))
+            location_filters.append(Doctor.address.has(Address.state.ilike(f'%{part}%')))
+        doctor_query = doctor_query.filter(or_(*location_filters))
 
     doctors = doctor_query.all()
 

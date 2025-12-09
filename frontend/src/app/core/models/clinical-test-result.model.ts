@@ -27,4 +27,5 @@ export interface ClinicalVoiceTestResult {
   score: number;
   analysis: string;
   execution_date?: string;
+  classification: 'HEALTHY' | 'PARKINSON';
 }

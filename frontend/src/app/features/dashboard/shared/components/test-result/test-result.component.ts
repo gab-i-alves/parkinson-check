@@ -56,8 +56,8 @@ export class TestResultComponent implements OnInit {
     if (this.isSpiralResult(res)) {
       return res.majority_decision;
     } else {
-      // Para voz, classificar baseado no score (threshold 0.7 = backend)
-      return res.score >= 0.7 ? 'HEALTHY' : 'PARKINSON';
+      // Usar classificação calculada pelo backend
+      return res.classification;
     }
   }
 

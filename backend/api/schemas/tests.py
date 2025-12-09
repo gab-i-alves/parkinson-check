@@ -270,6 +270,9 @@ class ClinicalVoiceTestResult(BaseModel):
     score: float = Field(..., example=0.92)
     analysis: str = Field(..., example="A análise da voz indica A, B e C.")
     execution_date: datetime = Field(..., description="Data e hora de execução do teste")
+    classification: Literal["HEALTHY", "PARKINSON"] = Field(
+        ..., description="Classificação final baseada no threshold de 0.7"
+    )
 
 
 # Schemas para perfil e estatísticas do paciente
