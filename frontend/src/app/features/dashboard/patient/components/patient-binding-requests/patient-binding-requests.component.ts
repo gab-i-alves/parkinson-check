@@ -58,6 +58,14 @@ export class PatientBindingRequestsComponent implements OnInit {
     return Array.from(locations).sort();
   });
 
+  availableSpecialties = computed(() => {
+    const specialties = new Set<string>();
+    this.searchResults().forEach(doc => {
+      if (doc.expertise_area) specialties.add(doc.expertise_area);
+    });
+    return Array.from(specialties).sort();
+  });
+
   ngOnInit(): void {
     this.loadLinkedDoctors();
     this.loadRequests();
@@ -70,7 +78,7 @@ export class PatientBindingRequestsComponent implements OnInit {
     const delayPromise = new Promise((resolve) => setTimeout(resolve, 500));
 
     const searchPromise = firstValueFrom(
-      this.medicService.searchDoctors(this.searchTerm(), this.specialty())
+      this.medicService.searchDoctors(this.searchTerm(), this.specialty(), this.locationFilter())
     );
 
     try {

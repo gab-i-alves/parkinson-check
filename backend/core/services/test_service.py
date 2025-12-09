@@ -367,6 +367,9 @@ def process_clinical_voice(
     # Busca o teste criado para pegar execution_date
     test_db = session.query(VoiceTest).filter(VoiceTest.id == test_id).first()
 
+    # Calcula classificação baseado no score invertido (probabilidade de saúde)
+    classification = "HEALTHY" if test_db.score >= HEALTHY_THRESHOLD else "PARKINSON"
+
     # Retorna resultado detalhado para o médico
     return ClinicalVoiceTestResult(
         test_id=test_id,
@@ -375,6 +378,7 @@ def process_clinical_voice(
         score=model_result.score,
         analysis=model_result.analysis,
         execution_date=test_db.execution_date,
+        classification=classification,
     )
 
 

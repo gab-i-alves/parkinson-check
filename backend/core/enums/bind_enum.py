@@ -1,8 +1,8 @@
 from enum import Enum
 
 
-class BindEnum(Enum):
-    PENDING = 1
-    ACTIVE = 2
-    REVERSED = 3
-    REJECTED = 4
+class BindEnum(str, Enum):
+    PENDING = "PENDING"
+    ACTIVE = "ACTIVE"
+    REVERSED = "REVERSED"
+    REJECTED = "REJECTED"
